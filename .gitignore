@@ -2,3 +2,4 @@
 frontend/.env
 .trash/
 *.bak
+.DS_Store
