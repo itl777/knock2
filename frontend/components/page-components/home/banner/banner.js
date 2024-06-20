@@ -7,7 +7,7 @@ export default function Banner() {
     <>
       <div className={styles["banner"]}>
         <Image
-          src="/images/sections/home/banner/bg-1.png"
+          src="/home/bg-small.png"
           alt="banner-background"
           fill="true"
           priority={true}
@@ -15,7 +15,7 @@ export default function Banner() {
         />
         <div className={styles["banner-text01"]}>
           <Image
-            src="/images/sections/home/banner/bg-text-01.png"
+            src="/home/bg-text-01.png"
             alt="banner-background"
             fill="true"
             sizes="30%"
@@ -24,7 +24,7 @@ export default function Banner() {
         </div>
         <div className={styles["banner-text02"]}>
           <Image
-            src="/images/sections/home/banner/bg-text-02.png"
+            src="/home/bg-text-02.png"
             alt="banner-background"
             fill="true"
             sizes="30%"
