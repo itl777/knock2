@@ -1,0 +1,12 @@
+@import "@/styles/variables.scss";
+
+
+.card-01{
+  p{
+    @include font-small;
+  }
+  span{
+    @include font-small;
+  }
+  
+}

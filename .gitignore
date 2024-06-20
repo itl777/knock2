@@ -1,2 +1,4 @@
 .vscode/
 frontend/.env
+.trash/
+*.bak
