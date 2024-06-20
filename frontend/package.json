@@ -9,12 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/joy": "^5.0.0-beta.36",
+    "animate.css": "^4.1.1",
     "axios": "^1.6.8",
     "lodash": "^4.17.21",
     "next": "14.2.3",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.2.1",
+    "sass": "^1.77.6",
     "validator": "^13.12.0"
   },
   "devDependencies": {
