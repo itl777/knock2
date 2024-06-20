@@ -7,7 +7,7 @@ export default function Banner() {
     <>
       <div className={styles["banner"]}>
         <Image
-          src="/home/bg-small.png"
+          src="/home/bg-big.png"
           alt="banner-background"
           fill="true"
           priority={true}

@@ -14,8 +14,8 @@
 //   );
 // })}
 
-import styles from "./cards.module.scss";
-import Image from "next/image";
+import styles from './cards.module.scss'
+import Image from 'next/image'
 
 import {
   AspectRatio,
@@ -24,49 +24,50 @@ import {
   CardOverflow,
   Typography,
   Box,
-} from "@mui/joy";
+} from '@mui/joy'
 
-import { MdOutlineGroup, MdOutlineAccessTime } from "react-icons/md";
+import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
 
 export default function Card01({
-  branchName = "",
-  themeImg = "/images/UI/cards/theme-img.png",
-  themeName = "",
-  difficulty = "",
-  description = "",
-  suitablePlayers = "",
+  branchName = '',
+  themeImg = '/images/UI/cards/theme-img.png',
+  themeName = '',
+  difficulty = '',
+  description = '',
+  suitablePlayers = '',
   themeTime = 0,
 }) {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case "EASY":
-        return "#63AA90"; // 黑色
-      case "MEDIUM":
-        return "#B99755"; // 白色
-      case "HARD":
-        return "#A43131"; // 藍色
+      case 'EASY':
+        return '#63AA90' // 黑色
+      case 'MEDIUM':
+        return '#B99755' // 白色
+      case 'HARD':
+        return '#A43131' // 藍色
       default:
-        return "#222222"; // 默認顏色
+        return '#222222' // 默認顏色
     }
-  };
+  }
 
   return (
     <Card
-      sx={{ width: 375, height: 422, "--Card-radius": "0px", p: 0 }}
-      className={styles["card-01"]}
+      variant="plain"
+      sx={{ width: 375, height: 422, '--Card-radius': '0px', p: 0 }}
+      className={styles['card-01']}
     >
       {/* 圖片 */}
       <CardOverflow
         sx={{
-          position: "relative",
+          position: 'relative',
         }}
       >
         <Typography
           sx={{
-            position: "absolute",
-            top: "15px",
-            left: "15px",
-            color: "#FFFFFF",
+            position: 'absolute',
+            top: '15px',
+            left: '15px',
+            color: '#FFFFFF',
             zIndex: 1,
           }}
         >
@@ -77,23 +78,23 @@ export default function Card01({
         </AspectRatio>
         <Box
           sx={{
-            position: "absolute",
-            bottom: "-20px",
-            left: "25px",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
+            position: 'absolute',
+            bottom: '-20px',
+            left: '25px',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
           }}
         >
           <Typography
             sx={{
-              bgcolor: "#222222",
-              color: "#FFFFFF",
+              bgcolor: '#222222',
+              color: '#FFFFFF',
               width: 160,
               height: 40,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             {themeName}
@@ -101,12 +102,12 @@ export default function Card01({
           <Typography
             sx={{
               bgcolor: getDifficultyColor(difficulty),
-              color: "#FFFFFF",
+              color: '#FFFFFF',
               width: 100,
               height: 40,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             {difficulty}
@@ -115,7 +116,7 @@ export default function Card01({
       </CardOverflow>
 
       {/* 文字 title-md body-sm */}
-      <CardContent sx={{ px: 6, justifyContent: "center" }}>
+      <CardContent sx={{ px: 6, justifyContent: 'center' }}>
         <span>{description}</span>
       </CardContent>
       <CardOverflow>
@@ -128,17 +129,17 @@ export default function Card01({
           </Typography>
           <Typography
             sx={{
-              display: "flax",
-              alignContent: "center",
-              justifyContent: "center",
-              position: "absolute",
-              bottom: "16px",
-              right: "-20px",
+              display: 'flax',
+              alignContent: 'center',
+              justifyContent: 'center',
+              position: 'absolute',
+              bottom: '16px',
+              right: '-20px',
             }}
           >
             <span>立即預訂</span>
             <Image
-              src="/images/UI/cards/arrow-special.svg"
+              src="/components/arrow-special.svg"
               alt=""
               width={49}
               height={16}
@@ -147,5 +148,5 @@ export default function Card01({
         </CardContent>
       </CardOverflow>
     </Card>
-  );
+  )
 }

@@ -1,22 +1,22 @@
-import styles from "./footer-styles.module.scss";
-import { FaFacebook, FaInstagram, FaXTwitter } from "react-icons/fa6";
-import Link from "next/link";
-import Image from "next/image";
+import styles from './footer-styles.module.scss'
+import { FaFacebook, FaInstagram, FaXTwitter } from 'react-icons/fa6'
+import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
     <>
-      <footer className={styles["my-footer"]}>
+      <footer className={styles['my-footer']}>
         <div>
           <Image
-            src="images/layout/footer/tree.svg"
+            src="/home/tree.png"
             alt="footer-tree"
             width={1440}
             height={205}
             priority={false}
           />
           <Image
-            src="images/layout/footer/tree.svg"
+            src="/home/tree.png"
             alt="footer-tree"
             width={1440}
             height={205}
@@ -42,17 +42,12 @@ export default function Footer() {
             </li>
             <li>
               <Image
-                src="images/layout/footer/ghost-logo.svg"
+                src="/home/ghost-logo.svg"
                 alt="ghost-logo"
                 width={74}
                 height={69}
               />
-              <Image
-                src="images/layout/footer/LOGO.svg"
-                alt="LOGO"
-                width={94}
-                height={42}
-              />
+              <Image src="/home/LOGO.svg" alt="LOGO" width={94} height={42} />
             </li>
             <li>
               <div />
@@ -93,5 +88,5 @@ export default function Footer() {
         </div>
       </footer>
     </>
-  );
+  )
 }

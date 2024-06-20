@@ -13,7 +13,7 @@ export default function TopBtn() {
     <>
       <button onClick={scrollToTop} className={styles["top-btn"]}>
         <Image
-          src="/images/layout/top-btn/ghost-top-default.svg"
+          src="/ghost/ghost_15.png"
           alt="top-button-default"
           width={100}
           height={84}
@@ -21,7 +21,7 @@ export default function TopBtn() {
           priority={false}
         />
         <Image
-          src="/images/layout/top-btn/ghost-top-hover.svg"
+          src="/ghost/ghost_07.png"
           alt="top-button-hover"
           width={100}
           height={84}

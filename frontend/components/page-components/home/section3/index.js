@@ -7,7 +7,7 @@ export default function HomeSection3() {
     {
       theme_id: 1,
       branch_name: "台北館",
-      theme_img: "/images/UI/cards/theme-img.png",
+      theme_img: "/themes-main/themes-3.jpg",
       theme_name: "尋找失落的寶藏",
       difficulty: "MEDIUM",
       description: "尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功",
@@ -17,7 +17,7 @@ export default function HomeSection3() {
     {
       theme_id: 2,
       branch_name: "台北館",
-      theme_img: "/images/UI/cards/theme-img.png",
+      theme_img: "/themes-main/themes-3.jpg",
       theme_name: "尋找失落的寶藏",
       difficulty: "EASY",
       description: "尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功",
@@ -27,7 +27,7 @@ export default function HomeSection3() {
     {
       theme_id: 3,
       branch_name: "台北館",
-      theme_img: "/images/UI/cards/theme-img.png",
+      theme_img: "/themes-main/themes-3.jpg",
       theme_name: "尋找失落的寶藏",
       difficulty: "HARD",
       description: "尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功",
@@ -37,7 +37,7 @@ export default function HomeSection3() {
     {
       theme_id: 4,
       branch_name: "台北館",
-      theme_img: "/images/UI/cards/theme-img.png",
+      theme_img: "/themes-main/themes-3.jpg",
       theme_name: "尋找失落的寶藏",
       difficulty: "MEDIUM",
       description: "尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功",
@@ -47,7 +47,7 @@ export default function HomeSection3() {
     {
       theme_id: 5,
       branch_name: "台北館",
-      theme_img: "/images/UI/cards/theme-img.png",
+      theme_img: "/themes-main/themes-3.jpg",
       theme_name: "尋找失落的寶藏",
       difficulty: "MEDIUM",
       description: "尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功",
@@ -57,7 +57,7 @@ export default function HomeSection3() {
     {
       theme_id: 6,
       branch_name: "台北館",
-      theme_img: "/images/UI/cards/theme-img.png",
+      theme_img: "/themes-main/themes-3.jpg",
       theme_name: "尋找失落的寶藏",
       difficulty: "MEDIUM",
       description: "尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功",

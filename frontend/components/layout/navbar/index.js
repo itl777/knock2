@@ -22,7 +22,7 @@ export default function Navbar() {
             <li className="logo">
               <Link href="#">
               <Image
-                src="images/layout/navbar/LOGO.svg"
+                src="/home/LOGO.svg"
                 alt="LOGO"
                 width={134.96}
                 height={61.26}
