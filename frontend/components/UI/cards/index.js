@@ -134,7 +134,7 @@ export default function Card01({
               justifyContent: 'center',
               position: 'absolute',
               bottom: '16px',
-              right: '-20px',
+              right: '16px',
             }}
           >
             <span>立即預訂</span>
@@ -143,6 +143,7 @@ export default function Card01({
               alt=""
               width={49}
               height={16}
+              className={styles['arrow']}
             />
           </Typography>
         </CardContent>

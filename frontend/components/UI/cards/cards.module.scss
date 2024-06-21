@@ -1,12 +1,17 @@
-@import "@/styles/variables.scss";
+@import '@/styles/variables.scss';
 
-
-.card-01{
-  p{
+.card-01 {
+  margin: auto;
+  p {
     @include font-small;
   }
-  span{
+  span {
     @include font-small;
   }
-  
+
+  .arrow {
+    position: absolute;
+    bottom: 3px;
+    right: -50px;
+  }
 }
