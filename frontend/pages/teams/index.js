@@ -1,5 +1,5 @@
 import React from "react";
-// import IndexLayout from "@/components/layout";
+import IndexLayout from "@/components/layout";
 
 export default function Teams() {
   return (

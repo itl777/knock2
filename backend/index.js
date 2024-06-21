@@ -15,9 +15,6 @@ app.use(express.json());
 
 app.use("/teams",teamsRouter);
 
-
-
-
 app.use((req,res)=>{
     res.type("text/plain");
     res.status(404);
