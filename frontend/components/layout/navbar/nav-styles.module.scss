@@ -1,0 +1,64 @@
+@import "@/styles/variables.scss";
+$hover-color: #a6a7a7;
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: #000000;
+  padding: 20px 0;
+  nav {
+    margin: auto;
+    width: 100%;
+
+    ul {
+      padding: 0;
+      margin: 0;
+      margin: auto;
+      width: 60%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: $text-white;
+      list-style: none;
+
+      li {
+        display: flex;
+
+        a {
+          text-decoration: none;
+          @include font-h5;
+          color: $text-grey;
+          span {
+            background: linear-gradient(to right, $hover-color, $hover-color)
+              no-repeat right bottom;
+            background-size: 0 1px;
+            transition: background-size 500ms, color 500ms;
+            &:hover {
+              color: $hover-color;
+              background-position: left bottom;
+              background-size: 100% 1px;
+            }
+          }
+        }
+      }
+    }
+    ul:last-child {
+      justify-content: center;
+      gap:  30px;
+      width: 10%;
+      position: absolute;
+      top: 50%;
+      right: 10%;
+      transform: translateY(-50%);
+      a {
+        text-decoration: none;
+        transition: color 500ms;
+        &:hover {
+          color: $hover-color;
+          border-bottom: unset;
+        }
+      }
+    }
+  }
+}
