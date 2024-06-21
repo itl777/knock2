@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import frameSvg from '@/public/pics/frame.svg'
+import frameSvg from '@/public/products/frame.svg'
 import FilterBtn from './filter-btn'
 
 export default function PdFilter() {
