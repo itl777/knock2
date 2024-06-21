@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import pdImg from '@/public/pics/t2.jpg'
+import pdImg from '@/public/products/p1.png'
 import { useEffect, useState } from 'react'
 
 export default function PdCard({ data }) {

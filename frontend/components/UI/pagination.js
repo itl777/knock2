@@ -3,8 +3,6 @@ import Image from 'next/image'
 import ReactPaginate from 'react-paginate'
 import { Pagination, PaginationItem } from '@mui/material'
 // 箭頭圖
-import arrowLeft from '@/public/pics/arrow-left.svg'
-import arrowRight from '@/public/pics/arrow-right.svg'
 import { TbDog } from 'react-icons/tb'
 
 // 改顏色

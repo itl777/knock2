@@ -1,12 +1,12 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
-import Breadcrumb from '@/components/product/breadcrumb'
-import ProductTag from '@/components/product/product-tag'
-import ProductReview from '@/components/product/product-review'
-import ReviewStar from '@/components/product/review-star'
-import PdBtnOutlined from '@/components/product/pd-btn-outlined'
-import FilterBtn from '@/components/product/filter-btn'
-import PdBtnContained from '@/components/product/pd-btn-contained'
+import Breadcrumb from '@/components/UI/breadcrumb'
+import ProductTag from '@/components/UI/product-tag'
+import ProductReview from '@/components/UI/product-review'
+import ReviewStar from '@/components/UI/review-star'
+import PdBtnOutlined from '@/components/UI/pd-btn-outlined'
+import FilterBtn from '@/components/UI/filter-btn'
+import PdBtnContained from '@/components/UI/pd-btn-contained'
 
 export default function ProductDetails() {
   return (
