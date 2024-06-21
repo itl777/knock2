@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import Slider from 'react-slick'
 import Card01 from '@/components/UI/cards'
-import { Box, Button } from '@mui/joy'
+import { Box } from '@mui/joy'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styles from './section3.module.scss'
+import HomeBtn from '@/components/UI/home-btn'
 
-export default function SimpleSlider() {
+export default function HomeSection3() {
   const data = [
     {
       theme_id: 1,
@@ -126,6 +127,10 @@ export default function SimpleSlider() {
               )
             })}
           </Slider>
+        </div>
+
+        <div className={styles['HomeBtn']}>
+          <HomeBtn linkSrc="/themes" btnText="Check More" fill={false} />
         </div>
       </Box>
     </>
