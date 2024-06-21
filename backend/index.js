@@ -1,27 +1,51 @@
 import express from "express";
-import multer from "multer";
-import db from "./utils/connect-mysql.js";
-import teamsRouter from "./routes/teams.js";
-// import mysql_session from "express-mysql-session";
+import cors from "cors";
+// 路由模組
+import themes from "./routes/themes.js";
+import teams from "./routes/teams.js";
+import products from "./routes/products.js";
+import users from "./routes/users.js";
+import orders from "./routes/orders.js";
 
-const web_port = 3001;
+// 掛載 express
 const app = express();
 
-app.set("view engine", "ejs");
-app.use(express.urlencoded({extended:false}));
+
+
+
+
+// middleware
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
+const corsOptions = {
+  credentials: true,
+  origin: (origin, callback) => {
+    callback(null, true); // 全部origin都允許
+  },
+};
+app.use(cors(corsOptions));
 
-app.use("/teams",teamsRouter);
-
-app.use((req,res)=>{
-    res.type("text/plain");
-    res.status(404);
-    res.send("404-找不到網頁");
+// 自訂頂層的 middleware
+app.use((req, res, next) => {
+  res.locals.session = req.session; 
+  next();
 });
 
 
-app.listen(web_port, () => {
-  console.log(`伺服器啟動於通訊埠：${web_port}`);
+
+// 路由模組
+app.use("/themes", themes);
+app.use("/teams", teams);
+app.use("/products", products);
+app.use("/users", users);
+app.use("/orders", orders);
+
+
+
+
+// 偵聽 port
+app.listen(3001, function () {
+  console.log("啟動 server 偵聽埠號 3001");
 });
