@@ -1,4 +1,3 @@
-import React, { Component } from 'react'
 import Slider from 'react-slick'
 import Card01 from '@/components/UI/cards'
 import { Box } from '@mui/joy'
@@ -12,7 +11,7 @@ export default function HomeSection3() {
     {
       theme_id: 1,
       branch_name: '台北館',
-      theme_img: '/themes-main/themes-3.jpg',
+      theme_img: 'themes-3.jpg',
       theme_name: '尋找失落的寶藏',
       difficulty: 'MEDIUM',
       description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
@@ -22,7 +21,7 @@ export default function HomeSection3() {
     {
       theme_id: 2,
       branch_name: '台北館',
-      theme_img: '/themes-main/themes-3.jpg',
+      theme_img: 'themes-3.jpg',
       theme_name: '尋找失落的寶藏',
       difficulty: 'EASY',
       description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
@@ -32,7 +31,7 @@ export default function HomeSection3() {
     {
       theme_id: 3,
       branch_name: '台北館',
-      theme_img: '/themes-main/themes-3.jpg',
+      theme_img: 'themes-3.jpg',
       theme_name: '尋找失落的寶藏',
       difficulty: 'HARD',
       description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
@@ -42,7 +41,7 @@ export default function HomeSection3() {
     {
       theme_id: 4,
       branch_name: '台北館',
-      theme_img: '/themes-main/themes-3.jpg',
+      theme_img: 'themes-3.jpg',
       theme_name: '尋找失落的寶藏',
       difficulty: 'MEDIUM',
       description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
@@ -52,7 +51,7 @@ export default function HomeSection3() {
     {
       theme_id: 5,
       branch_name: '台北館',
-      theme_img: '/themes-main/themes-3.jpg',
+      theme_img: 'themes-3.jpg',
       theme_name: '尋找失落的寶藏',
       difficulty: 'MEDIUM',
       description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
@@ -62,7 +61,7 @@ export default function HomeSection3() {
     {
       theme_id: 6,
       branch_name: '台北館',
-      theme_img: '/themes-main/themes-3.jpg',
+      theme_img: 'themes-3.jpg',
       theme_name: '尋找失落的寶藏',
       difficulty: 'MEDIUM',
       description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
@@ -84,20 +83,37 @@ export default function HomeSection3() {
     arrows: false,
     responsive: [
       {
-        breakpoint: 1950,
+        breakpoint: 2100,
         settings: {
+          centerMode: true,
           slidesToShow: 4,
         },
       },
       {
-        breakpoint: 1560,
+        breakpoint: 1800,
         settings: {
+          centerMode: true,
           slidesToShow: 3,
         },
       },
       {
-        breakpoint: 1173,
+        breakpoint: 1500,
         settings: {
+          centerMode: true,
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 850,
+        settings: {
+          centerMode: true,
+          slidesToShow: 1,
+        },
+      },
+      {
+        breakpoint: 500,
+        settings: {
+          centerMode: false,
           slidesToShow: 1,
         },
       },
@@ -130,7 +146,13 @@ export default function HomeSection3() {
         </div>
 
         <div className={styles['HomeBtn']}>
-          <HomeBtn linkSrc="/themes" btnText="Check More" fill={false} />
+          <HomeBtn
+            linkSrc="/themes"
+            btnText="Check More"
+            hoverColor="#ffffff"
+            hoverBorderColor="#222222"
+            hoverBackgroundColor="#222222"
+          />
         </div>
       </Box>
     </>

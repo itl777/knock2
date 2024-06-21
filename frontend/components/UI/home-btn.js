@@ -20,12 +20,19 @@ export default function HomeBtn({
           sx={{
             color: color,
             fontFamily: 'Noto Serif JP',
-            fontSize: '20px',
             lineHeight: 2.5,
             borderRadius: '100px',
             borderColor: borderColor,
             backgroundColor: backgroundColor,
             textTransform: 'none',
+            padding: {
+              xs: '10px 25px', // 小於600px寬度時
+              sm: '16px 40px', // 大於等於600px寬度時
+            },
+            fontSize: {
+              xs: '16px', // 小於600px寬度時
+              sm: '20px', // 大於等於600px寬度時
+            },
             ':hover': {
               color: hoverColor,
               borderColor: hoverBorderColor,
@@ -33,7 +40,7 @@ export default function HomeBtn({
             },
           }}
         >
-          <span style={{ padding: '0 20px' }}>{btnText}</span>
+          <span>{btnText}</span>
         </Button>
       </Link>
     </>

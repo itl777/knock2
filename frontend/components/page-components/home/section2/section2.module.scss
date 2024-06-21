@@ -1,4 +1,4 @@
-@import "@/styles/variables.scss";
+@import '@/styles/variables.scss';
 
 .home-section2 {
   display: flex;
@@ -6,13 +6,16 @@
   justify-items: center;
   align-items: center;
   width: 100%;
-  padding: 100px 0;
-  background: url("/home/wall.jpg") no-repeat
-    top left;
-  background-size: 100%;
+  padding: 100px 30px;
+  background: url('/home/wall.jpg') no-repeat top left;
+  background-size: cover;
   h5 {
-    @include font-h5;
+    @include font-small;
+
     text-align: center;
+    @media screen and (min-width: 890px) {
+      @include font-h5;
+    }
     span {
       opacity: 0;
       transition: all 3s;
