@@ -4,9 +4,11 @@ import { FaCircleUser, FaCartShopping } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
 import Link from 'next/link'
 import Image from 'next/image'
+import NavMenu from './nav-menu'
 
 export default function Navbar() {
-  const [menuState, setMenuState] = useState(`${styles['first-time-hide']}`)
+  const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
+  const [showNavMenu, setShowNavMenu] = useState()
 
   const openMenu = () => {
     const newMenu =
@@ -16,9 +18,18 @@ export default function Navbar() {
     setMenuState(newMenu)
   }
 
+  const handleMouseOver = () => {
+    setShowNavMenu('animate__bounceInDown')
+  }
+
+  const handleMouseOut = () => {
+    setShowNavMenu('animate__bounceOutUp')
+  }
+
   return (
     <>
-      <header className={styles['navbar']}>
+      <header className={styles['navbar']} onMouseLeave={handleMouseOut}>
+        <NavMenu show={showNavMenu} />
         <nav>
           <ul className={styles['navbar-icon']}>
             <li>
@@ -33,7 +44,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="#">
+              <Link href="#" onMouseEnter={handleMouseOver}>
                 <FaCircleUser />
               </Link>
               <Link href="#">
