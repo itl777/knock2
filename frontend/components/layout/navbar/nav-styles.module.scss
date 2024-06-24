@@ -6,6 +6,9 @@ $hover-color: #a6a7a7;
   top: 0;
   z-index: 100;
 
+  .nav-menu-hide {
+    display: none;
+  }
   nav {
     margin: auto;
     width: 100%;

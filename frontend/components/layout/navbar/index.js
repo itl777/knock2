@@ -8,7 +8,7 @@ import NavMenu from './nav-menu'
 
 export default function Navbar() {
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
-  const [showNavMenu, setShowNavMenu] = useState()
+  const [showNavMenu, setShowNavMenu] = useState(`${styles['nav-menu-hide']}`)
 
   const openMenu = () => {
     const newMenu =
