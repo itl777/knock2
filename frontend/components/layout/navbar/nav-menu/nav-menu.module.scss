@@ -1,0 +1,51 @@
+@import '@/styles/variables.scss';
+
+.nav-menu {
+  width: 350px;
+  background: #000;
+  border-radius: 0 0 16px 16px;
+  padding: 5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  overflow: hidden;
+  position: absolute;
+  top: 60%;
+  right: 0%;
+  z-index: -10;
+
+  .user {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    list-style: none;
+    @include font-p-bold;
+    li {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+    }
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: $text-grey;
+    }
+  }
+  .line {
+    width: 100%;
+    border-bottom: 1px solid #fff;
+  }
+  .bg-ghost {
+    opacity: 0.3;
+    transform: rotate(-12.44deg);
+    position: absolute;
+    right: -112px;
+    bottom: -100px;
+  }
+}
+
+.nav-menu-hide {
+  display: none;
+}
