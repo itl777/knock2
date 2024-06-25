@@ -3,5 +3,4 @@ frontend/.env
 _trash/
 *.bak
 .DS_Store
-frontend/config/
-
+config/
