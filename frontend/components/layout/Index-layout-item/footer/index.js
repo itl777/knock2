@@ -58,13 +58,13 @@ export default function Footer() {
                   <p>法律資訊</p>
                 </li>
                 <li>
-                  <Link href="#">
+                  <Link href="/">
                     <span>隱私政策</span>
                   </Link>
-                  <Link href="#">
+                  <Link href="/">
                     <span>使用條款</span>
                   </Link>
-                  <Link href="#">
+                  <Link href="/">
                     <span>退款政策</span>
                   </Link>
                 </li>
@@ -72,13 +72,13 @@ export default function Footer() {
               <ul>
                 <li>
                   <p>追蹤我們</p>
-                  <Link href="#">
+                  <Link href="/">
                     <FaFacebook />
                   </Link>
-                  <Link href="#">
+                  <Link href="/">
                     <FaInstagram />
                   </Link>
-                  <Link href="#">
+                  <Link href="/">
                     <FaXTwitter />
                   </Link>
                 </li>

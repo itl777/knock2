@@ -3,7 +3,7 @@ import Image from 'next/image'
 import styles from './nav-menu.module.scss'
 import { MdLogout } from 'react-icons/md'
 
-export default function NavMenu({ show = `${styles['nav-menu-hide']}` }) {
+export default function NavMenu({ show = '' }) {
   return (
     <>
       <div
@@ -13,7 +13,7 @@ export default function NavMenu({ show = `${styles['nav-menu-hide']}` }) {
         <ul className={styles['user']}>
           <li>
             <div className={styles['avatar']}>
-              <Image />
+              {/* <Image /> */}
             </div>
             <span>會員暱稱</span>
           </li>
