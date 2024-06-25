@@ -1,7 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
-import frameSvg from '@/public/pics/frame.svg'
-import FilterBtn from '../filter-btn'
+import frameSvg from '@/public/products/frame.svg'
+import FilterBtn from '@/components/UI/filter-btn'
 
 export default function PdFilter() {
   return (
@@ -46,6 +46,10 @@ export default function PdFilter() {
             border-bottom: 3px solid black;
 
             padding: 50px 0;
+          }
+          .container {
+            max-width: 1200px;
+            margin-bottom: 5rem;
           }
 
           .line-img {

@@ -1,12 +1,13 @@
 import Image from 'next/image'
-import ReviewStar from '../review-star'
+import ReviewStar from '@/components/UI/review-star'
+
 export default function ProductReview() {
   return (
     <>
       <div className="add-line pb-5 d-flex justify-content-between align-items-center">
         <div>
           <Image
-            src="/pics/t1.jpg"
+            src="/products/p1.png"
             width={95}
             height={95}
             alt="Picture of the author"

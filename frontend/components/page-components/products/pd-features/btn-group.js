@@ -1,5 +1,5 @@
-import PdBtnOutlined from '@/components/product/pd-btn-outlined'
-import PdBtnContained from '@/components/product/pd-btn-contained'
+import PdBtnContained from '@/components/UI/pd-btn-contained'
+import PdBtnOutlined from '@/components/UI/pd-btn-outlined'
 
 export default function BtnGroup() {
   return (

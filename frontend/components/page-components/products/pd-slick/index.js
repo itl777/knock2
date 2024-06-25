@@ -8,7 +8,7 @@ function PdSlick() {
     customPaging: function (i) {
       return (
         <a>
-          <img src={`/pics/tea${i + 1}.jpg`} />
+          <img src={`/products/tea${i + 1}.jpg`} />
         </a>
       )
     },
@@ -24,13 +24,13 @@ function PdSlick() {
     <div className={myStyle['slider-container']}>
       <Slider {...settings}>
         <div>
-          <img src="/pics/tea1.jpg" />
+          <img src="/products/tea1.jpg" />
         </div>
         <div>
-          <img src="/pics/tea2.jpg" />
+          <img src="/products/tea2.jpg" />
         </div>
         <div>
-          <img src="/pics/tea3.jpg" />
+          <img src="/products/tea3.jpg" />
         </div>
         {/* <div>
           <img src="/pics/tea4.jpg" />

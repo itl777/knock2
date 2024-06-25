@@ -4,7 +4,6 @@ import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import PdFilter from '@/components/page-components/products/pd-filter'
 import PdCard from '@/components/page-components/products/pd-card'
 
-
 export default function ProductList() {
   const [data, setData] = useState([])
 
@@ -24,8 +23,12 @@ export default function ProductList() {
         <Breadcrumb />
 
         <PdFilter />
+{/* 
+        {data.map((r, i) => {
+          return <PdCard key={r.product_id} data={r} />
+        })} */}
 
-        <PdCard data={data} />
+        <PdCard data={data}/>
 
         <style jsx global>
           {`
@@ -36,8 +39,7 @@ export default function ProductList() {
               max-width: 1200px;
               margin-bottom: 5rem;
             }
-             {
-            }
+
             body {
               font-family: 'Noto Sans TC', 'Noto Serif JP';
               font-style: normal;

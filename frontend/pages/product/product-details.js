@@ -1,7 +1,7 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
-import PdTabs from '@/components/page-components/products/pd-tabs'
+import PdTabs from '@/components/page-components/products/pd-tabs/index'
 
 import PdFeatures from '@/components/page-components/products/pd-features'
 

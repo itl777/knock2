@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import pdImg from '@/public/pics/t2.jpg'
+import pdImg from '@/public/products/p1.png'
 import BuyBtn from './buy-btn'
 
 export default function Card({ data }) {

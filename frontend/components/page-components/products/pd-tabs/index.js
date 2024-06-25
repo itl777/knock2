@@ -5,8 +5,7 @@ import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import ProductReview from './product-review'
-import { border, borderRadius, padding } from '@mui/system'
-import FilterBtn from '../filter-btn'
+import FilterBtn from '@/components/UI/filter-btn'
 
 export default function PdTabs() {
   const [value, setValue] = React.useState('1')

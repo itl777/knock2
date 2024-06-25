@@ -1,6 +1,6 @@
-import ReviewStar from '@/components/product/review-star'
-import PdSlick from '@/components/product/pd-slick'
-import NumInput from '@/components/product/pd-features/num-input'
+import ReviewStar from '@/components/UI/review-star'
+import PdSlick from '../pd-slick'
+import NumInput from './num-input'
 import BtnGroup from './btn-group'
 import CategoryGroup from './category-group'
 
@@ -33,7 +33,6 @@ export default function PdFeatures() {
 
             <div className="d-flex">
               <div>數量:</div>
-
               <NumInput />
             </div>
             <BtnGroup />
