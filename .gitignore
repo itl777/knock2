@@ -1,5 +1,6 @@
 .vscode/
 frontend/.env
-.trash/
+_trash/
 *.bak
 .DS_Store
+config/

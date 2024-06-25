@@ -1,3 +1,4 @@
+import '@/styles/share-order.css'
 import '@/styles/globals.css'
 
 export default function MyApp({ Component, pageProps }) {

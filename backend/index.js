@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import jwt from "jsonwebtoken"
 // 路由模組
 import themes from "./routes/themes.js";
 import teams from "./routes/teams.js";

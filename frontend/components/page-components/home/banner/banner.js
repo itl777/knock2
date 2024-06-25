@@ -13,23 +13,24 @@ export default function Banner() {
           priority={true}
           className={styles['banner-key']}
         />
-        <div className={styles['banner-text01']}>
+        <div className={styles['banner-text']}>
           <Image
             src="/home/bg-text-01.png"
             alt="banner-background"
             fill="true"
-            sizes="30%"
             priority={false}
           />
         </div>
-        <div className={styles['banner-text02']}>
+        <div className={styles['banner-text']}>
           <Image
             src="/home/bg-text-02.png"
             alt="banner-background"
             fill="true"
-            sizes="30%"
             priority={false}
           />
+        </div>
+        <div className={styles['title']}>
+          <span>searching for the truth</span>
         </div>
       </div>
       <div className={styles['banner-btn']}>

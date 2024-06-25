@@ -1,13 +1,16 @@
 @import '@/styles/variables.scss';
 
-$nav-height: 108px;
+$nav-height: 97px;
+@media screen and (min-width: 768px) {
+  $nav-height: 108px;
+}
 .banner {
   position: relative;
   height: calc(100vh - #{$nav-height});
   overflow: hidden;
   background-color: rgb(0, 0, 0);
 
-  z-index: -100;
+  z-index: 1;
   &::after {
     content: '';
     position: absolute;
@@ -22,7 +25,7 @@ $nav-height: 108px;
       rgba(0, 0, 0, 0.5) 60%,
       rgba(0, 0, 0, 1) 100%
     );
-    z-index: -1;
+    z-index: 2;
   }
 
   .banner-key {
@@ -32,7 +35,7 @@ $nav-height: 108px;
     position: absolute;
     inset: 0;
     opacity: 1;
-    z-index: -10;
+    z-index: 2;
     mask-image: url('/home/key.svg'),
       linear-gradient(
         rgb(0, 0, 0, 0) 0%,
@@ -64,52 +67,67 @@ $nav-height: 108px;
       }
     }
   }
-  .banner-text01 {
+
+  $text-mobile-width: 80vw;
+  $text-screen-width: 30vw;
+
+  .banner-text {
     position: absolute;
-    top: 10%;
-    left: 5%;
-    width: 30%;
-    height: 25%;
-    z-index: 1;
+    width: $text-mobile-width;
+    @media screen and (min-width: 768px) {
+      width: $text-screen-width;
+    }
+    z-index: 4;
     opacity: 0;
     animation: key-text-show 1s 4s linear forwards;
     &::after {
       content: '';
       position: absolute;
       inset: 0;
-      z-index: -10;
+      z-index: 3;
       border-radius: 50px 50px 50px 50px;
       background: rgba(0, 0, 0, 0.5);
       filter: blur(10px);
     }
     > img {
       object-fit: contain;
-      animation: key-text 5s linear infinite alternate;
+    }
+    &:nth-child(2) {
+      top: 5%;
+      left: 5%;
+      height: calc($text-mobile-width * (831 / 1877));
+      @media screen and (min-width: 768px) {
+        height: calc($text-screen-width * (831 / 1877));
+      }
+      animation: key-text-show 1s 4s linear forwards;
+      > img {
+        animation: key-text 5s linear infinite alternate;
+      }
+    }
+    &:nth-child(3) {
+      top: 50%;
+      right: 5%;
+      transform: translateY(-50%);
+      height: calc($text-mobile-width * (416 / 1935));
+      @media screen and (min-width: 768px) {
+        height: calc($text-screen-width * (416 / 1935));
+      }
+      animation: key-text-show 1s 5s linear forwards;
+      > img {
+        animation: key-text 6s linear infinite alternate-reverse;
+      }
     }
   }
-  .banner-text02 {
+  .title {
+    @include font-p;
+    width: 100%;
+    text-align: center;
     position: absolute;
-    top: 50%;
-    right: 5%;
-    transform: translateY(-50%);
-    width: 30%;
-    height: 10%;
-    z-index: 1;
+    top: 0%;
+    left: 50%;
+    transform: translateX(-50%);
     opacity: 0;
-    animation: key-text-show 1s 6s linear forwards;
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      z-index: -10;
-      border-radius: 50px 50px 50px 50px;
-      background: rgba(0, 0, 0, 0.5);
-      filter: blur(10px);
-    }
-    > img {
-      object-fit: contain;
-      animation: key-text 6s linear infinite alternate-reverse;
-    }
+    animation: title-show 1s 7s linear forwards;
   }
 }
 
@@ -117,10 +135,12 @@ $nav-height: 108px;
   position: absolute;
   bottom: 10%;
   left: 10%;
-  z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: 30px;
+  opacity: 0;
+  animation: key-text-show 1s 6s linear forwards;
+  z-index: 5;
 }
 @keyframes key-text-show {
   from {
@@ -160,5 +180,17 @@ $nav-height: 108px;
   }
   52% {
     filter: unset;
+  }
+}
+
+@keyframes title-show {
+  from {
+    top: 0%;
+    opacity: 0;
+  }
+  to {
+    top: 30%;
+    opacity: 1;
+    filter: drop-shadow(0px 0px 10px rgba(255, 255, 255, 1));
   }
 }
