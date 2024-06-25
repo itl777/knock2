@@ -51,11 +51,11 @@ export default function Navbar({ pageName }) {
                 <FaCircleUser />
               </Link>
               <a>
+                <CheckoutOffcanvas />
+              </a>
+              <a>
                 <TiThMenu onClick={openMenu} className={styles['menu']} />
               </a>
-            </li>
-            <li>
-              <CheckoutOffcanvas />
             </li>
           </ul>
           <ul

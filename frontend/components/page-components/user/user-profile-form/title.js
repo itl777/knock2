@@ -1,12 +1,12 @@
-import React from 'react'
-
-export default function UserProfileFormTitle() {
+export default function UserProfileFormTitle({ text = '' }) {
   return (
     <>
-      <div>
-
-      </div>
-      
+      <p className="title">{text}</p>
+      <style jsx>{`
+        .title {
+          width: 100%;
+        }
+      `}</style>
     </>
   )
 }
