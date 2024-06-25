@@ -10,7 +10,7 @@ $nav-height: 97px;
   overflow: hidden;
   background-color: rgb(0, 0, 0);
 
-  z-index: -100;
+  z-index: 1;
   &::after {
     content: '';
     position: absolute;
@@ -25,7 +25,7 @@ $nav-height: 97px;
       rgba(0, 0, 0, 0.5) 60%,
       rgba(0, 0, 0, 1) 100%
     );
-    z-index: -1;
+    z-index: 2;
   }
 
   .banner-key {
@@ -35,7 +35,7 @@ $nav-height: 97px;
     position: absolute;
     inset: 0;
     opacity: 1;
-    z-index: -1;
+    z-index: 2;
     mask-image: url('/home/key.svg'),
       linear-gradient(
         rgb(0, 0, 0, 0) 0%,
@@ -77,14 +77,14 @@ $nav-height: 97px;
     @media screen and (min-width: 768px) {
       width: $text-screen-width;
     }
-    z-index: 1;
+    z-index: 4;
     opacity: 0;
     animation: key-text-show 1s 4s linear forwards;
     &::after {
       content: '';
       position: absolute;
       inset: 0;
-      z-index: -10;
+      z-index: 3;
       border-radius: 50px 50px 50px 50px;
       background: rgba(0, 0, 0, 0.5);
       filter: blur(10px);
@@ -140,6 +140,7 @@ $nav-height: 97px;
   gap: 30px;
   opacity: 0;
   animation: key-text-show 1s 6s linear forwards;
+  z-index: 5;
 }
 @keyframes key-text-show {
   from {
