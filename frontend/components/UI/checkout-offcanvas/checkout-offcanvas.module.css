@@ -1,41 +1,13 @@
-/* @import '~bootstrap/dist/css/bootstrap.min.css'; */
-
-/* .checkout-module {
-  float: right;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 448px;
-  height: 100vh;
-  padding: 2rem;
-  background-color: white;
+.offcanvasBody {
+  margin: 1.5rem;
 }
-
-.checkout-main {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-
-
- */
-
-/* .total {
-  text-align: right;
-} */
 
 .checkoutTitle {
   display: flex;
   align-items: center;
   gap: .75rem;
+  margin-bottom: 1.5rem;
 }
-
-/* .checkoutTitle h5 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0;
-} */
 
 
 .cartItemCount {
@@ -74,39 +46,6 @@
   /* font-size: .75rem;
   font-weight: normal; */
   text-decoration: line-through;
-}
-
-/* .numberInput {
-  margin-top: .5rem;
-} */
-
-
-
-
-/* .checkout-module .btn-medium-fill {
-  justify-content: flex-end;
-  align-self: flex-end;
-} */
-
-.numberInput {
-  display: flex;
-  gap: .25rem;
-}
-
-.stepper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 100%;
-  background-color: white;
-  border: 1px solid var(--input-grey);
-}
-
-.stepperNumber {
-  width: 1.5rem;
-  text-align: center;
 }
 
 .addToFavoriteIcon {

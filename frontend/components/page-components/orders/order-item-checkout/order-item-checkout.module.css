@@ -1,0 +1,62 @@
+/* order item component module style */
+.itemInfo {
+  flex: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.itemBox {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.itemImgBox {
+  overflow: hidden;
+  flex: none;
+  width: 7rem;
+  height: 7rem;
+  border-radius: var(--img-radius);
+}
+
+
+.itemImgBox > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.productName {
+  margin-bottom: .5rem;
+}
+
+.addToFavoriteIcon {
+  font-size: 1.5rem;
+}
+
+@media screen and (max-width: 640px) {
+  .itemInfo {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .itemNamePrice {
+    margin-bottom: 0.5rem;
+  }
+}
+
+
+@media screen and (max-width: 480px) {
+  
+  .itemBox {
+    gap: 1rem;
+  }
+
+  .itemImgBox {
+    width: 5rem;
+    height: 5rem;
+  }
+}
