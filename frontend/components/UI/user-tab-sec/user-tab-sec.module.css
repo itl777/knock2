@@ -1,0 +1,14 @@
+/* 會員資料 第二層選單 components styles */
+
+.userTabSec {
+  display: flex;
+  gap: 3rem;
+  font-size: 1.125rem;
+  font-weight: bold;
+  margin: 1rem 0 2rem 0;
+}
+
+.userTabSec .active {
+  padding-bottom: .5rem;
+  border-bottom: 4px solid var(--pri-1);
+}

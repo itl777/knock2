@@ -1,0 +1,69 @@
+.orderBox {
+  width: 100%;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: var(--content-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.orderHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.orderContent {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.orderInfoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.orderStatusTag {
+  margin-top: 1rem;
+  display: inline-block;
+  padding: .5rem 1rem;
+  border-radius: .5rem;
+}
+
+.orderStatusOrange {
+  color: rgb(233, 126, 0);
+  background-color: rgb(232, 124, 0, 0.2);
+}
+
+.orderStatusGreen {
+  color: rgb(59, 167, 121);
+  background-color: rgb(59, 167, 121, 0.2);
+}
+
+.orderStatusBlue {
+  color: rgb(58, 168, 192);
+  background-color: rgb(58, 168, 192, 0.2);
+}
+
+.orderProductImg {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 800px) {
+  .orderContent {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .orderProductImg {
+    justify-content: center;
+  }
+}

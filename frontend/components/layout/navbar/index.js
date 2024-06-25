@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import styles from './nav-styles.module.scss'
-import { FaCircleUser, FaCartShopping } from 'react-icons/fa6'
+import { FaCircleUser } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
 import Link from 'next/link'
 import Image from 'next/image'
 import NavMenu from './nav-menu'
+import CheckoutOffcanvas from '@/components/UI/checkout-offcanvas'
 
 export default function Navbar() {
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
@@ -47,12 +48,15 @@ export default function Navbar() {
               <Link href="#" onMouseEnter={handleMouseOver}>
                 <FaCircleUser />
               </Link>
-              <Link href="#">
+              {/* <Link href="#">
                 <FaCartShopping />
-              </Link>
+              </Link> 改成購物車元件 CheckoutOffcanvas */}
               <a>
                 <TiThMenu onClick={openMenu} className={styles['menu']} />
               </a>
+            </li>
+            <li>
+              <CheckoutOffcanvas />
             </li>
           </ul>
           <ul
