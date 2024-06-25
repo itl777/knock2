@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/share-order.css'
 import '@/styles/globals.css'
 
