@@ -1,5 +1,5 @@
 import IndexLayout from '@/components/layout'
-import Loading from '@/components/_trash/loading-test'
+import Loading from '@/components/UI/loading'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 
