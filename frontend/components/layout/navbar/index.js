@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import NavMenu from './nav-menu'
 
-export default function Navbar() {
+export default function Navbar({ pageName }) {
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
   const [showNavMenu, setShowNavMenu] = useState(`${styles['nav-menu-hide']}`)
 
@@ -44,7 +44,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="#" onMouseEnter={handleMouseOver}>
+              <Link href="/user" onMouseEnter={handleMouseOver}>
                 <FaCircleUser />
               </Link>
               <Link href="#">
@@ -59,17 +59,25 @@ export default function Navbar() {
             className={`${styles['navbar-links']} animate__animated ${menuState}`}
           >
             <li>
-              <Link href="#">
-                <span>首頁</span>
+              <Link href="/">
+                <span
+                  className={styles[pageName === 'index' ? 'page-name' : '']}
+                >
+                  首頁
+                </span>
               </Link>
             </li>
             <li>
-              <Link href="#">
-                <span>密室逃脫</span>
+              <Link href="/themes">
+                <span
+                  className={styles[pageName === 'themes' ? 'page-name' : '']}
+                >
+                  密室逃脫
+                </span>
               </Link>
             </li>
             <li className="logo">
-              <Link href="#">
+              <Link href="/">
                 <Image
                   src="/home/LOGO.svg"
                   alt="LOGO"
@@ -80,13 +88,21 @@ export default function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="#">
-                <span>揪團</span>
+              <Link href="/teams">
+                <span
+                  className={styles[pageName === 'teams' ? 'page-name' : '']}
+                >
+                  揪團
+                </span>
               </Link>
             </li>
             <li>
-              <Link href="#">
-                <span>桌遊商城</span>
+              <Link href="/product">
+                <span
+                  className={styles[pageName === 'product' ? 'page-name' : '']}
+                >
+                  桌遊商城
+                </span>
               </Link>
             </li>
           </ul>

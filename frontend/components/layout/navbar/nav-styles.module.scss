@@ -54,6 +54,11 @@ $hover-color: #a6a7a7;
               background-size: 100% 1px;
             }
           }
+          .page-name {
+            color: $hover-color;
+            background-position: left bottom;
+            background-size: 100% 1px;
+          }
         }
       }
     }
@@ -103,7 +108,7 @@ $hover-color: #a6a7a7;
         justify-content: space-between;
       }
 
-      .nav-menu{
+      .nav-menu {
         position: absolute;
         bottom: -100%;
         right: -100%;
@@ -133,7 +138,6 @@ $hover-color: #a6a7a7;
           border-bottom: unset;
         }
       }
-    
     }
   }
 }

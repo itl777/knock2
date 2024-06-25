@@ -7,7 +7,7 @@ import HomeSection4 from '@/components/page-components/home/section4'
 export default function Home() {
   return (
     <>
-      <IndexLayout>
+      <IndexLayout pageName="index">
         <Banner />
         <HomeSection2 />
         <HomeSection3 />
