@@ -1,3 +1,35 @@
+import IndexLayout from '@/components/layout'
+import Loading from '@/components/_trash/loading-test'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+
 export default function Custom404() {
-  return <h1>404 - Page Not Found</h1>
+  const router = useRouter()
+  useEffect(() => {
+    setTimeout(() => {
+      router.push('/')
+      console.log('回家了')
+    }, 3000)
+  }, [])
+
+  return (
+    <>
+      <IndexLayout title="迷路了！" background="dark">
+        <div className="main">
+          <Loading />
+          <h1>404 - Page Not Found</h1>
+          <h1>你迷路了！3秒後帶你回家</h1>
+        </div>
+      </IndexLayout>
+      <style jsx>
+        {`
+          .main {
+            padding: 3rem 0;
+            margin: auto;
+            text-align: center;
+          }
+        `}
+      </style>
+    </>
+  )
 }
