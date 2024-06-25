@@ -20,6 +20,14 @@ export default function ThemeBranches() {
             gap: 6,
           }}
         >
+          <hr
+            style={{
+              borderColor: '#D9D9D9',
+              width: '200px',
+              opacity: 1,
+              marginTop: '22px',
+            }}
+          />
           <Tab
             disableIndicator
             sx={{
@@ -36,7 +44,6 @@ export default function ThemeBranches() {
                 color: '#676767 !important',
               },
               [`&.${tabClasses.selected}`]: {
-                borderColor: 'primary.main',
                 color: '#676767',
                 backgroundColor: '#D9D9D9',
               },
@@ -48,7 +55,7 @@ export default function ThemeBranches() {
             disableIndicator
             sx={{
               height: '50px',
-              width: '138px',
+              width: '140px',
               fontFamily: 'Noto Serif JP',
               fontWeight: 'bold',
               border: '1px solid',
@@ -60,7 +67,6 @@ export default function ThemeBranches() {
                 color: '#676767 !important',
               },
               [`&.${tabClasses.selected}`]: {
-                borderColor: 'primary.main',
                 color: '#676767',
                 backgroundColor: '#D9D9D9',
               },
@@ -72,7 +78,7 @@ export default function ThemeBranches() {
             disableIndicator
             sx={{
               height: '50px',
-              width: '138px',
+              width: '140px',
               fontFamily: 'Noto Serif JP',
               fontWeight: 'bold',
               border: '1px solid',
@@ -84,7 +90,6 @@ export default function ThemeBranches() {
                 color: '#676767 !important',
               },
               [`&.${tabClasses.selected}`]: {
-                borderColor: 'primary.main',
                 color: '#676767',
                 backgroundColor: '#D9D9D9',
               },
@@ -92,7 +97,14 @@ export default function ThemeBranches() {
           >
             台北店
           </Tab>
-          <div style={{ borderColor: 'black', width: '100%' }}></div>
+          <hr
+            style={{
+              borderColor: '#D9D9D9',
+              width: '200px',
+              opacity: 1,
+              marginTop: '22px',
+            }}
+          />
         </TabList>
       </Tabs>
     </div>
