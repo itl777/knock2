@@ -2,10 +2,10 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 
 import 'bootstrap/dist/css/bootstrap.css'
-import Breadcrumb from '@/components/UI/breadcrumb'
-import PdFilter from '@/components/UI/pd-filter'
-import PdCard from '@/components/UI/pd-card'
-import MyPagination from '@/components/UI/pagination'
+import Breadcrumb from '@/components/page-components/products/breadcrumb'
+import PdFilter from '@/components/page-components/products/pd-filter'
+import PdCard from '@/components/page-components/products/pd-card'
+import MyPagination from '@/components/page-components/products/pagination'
 
 export default function ProductList() {
   const [data, setData] = useState([])

@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import ReviewStar from './review-star'
+import ReviewStar from '../../UI/review-star'
 export default function ProductReview() {
   return (
     <>
