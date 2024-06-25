@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import Head from 'next/head'
-import Navbar from './navbar/index'
-import Footer from './footer/index'
-import TopBtn from './top-btn'
+import Navbar from './Index-layout-item/navbar/index'
+import Footer from './Index-layout-item/footer/index'
+import TopBtn from './Index-layout-item/top-btn'
 
 export default function IndexLayout({
   children = '',
@@ -30,10 +30,12 @@ export default function IndexLayout({
           }
           .light {
             background: url('/bg-light.png') no-repeat;
+            background-attachment: fixed;
             background-size: cover;
           }
           .dark {
             background: url('/bg-dark.png') no-repeat;
+            background-attachment: fixed;
             background-size: cover;
           }
         `}

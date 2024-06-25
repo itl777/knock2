@@ -1,0 +1,30 @@
+@import '@/styles/variables.scss';
+
+.user-profile-form {
+  display: flex;
+  width: 100%;
+  padding: 40px;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.25);
+  .account {
+    display: flex;
+    padding: 0px 40px;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    align-self: stretch;
+    .avatar {
+      width: 250px;
+      height: 250px;
+      border-radius: 125px;
+      background: url('/ghost/ghost_02.png') no-repeat, $pri-1;
+      background-size: contain;
+      background-position: center;
+      box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.25);
+    }
+  }
+}

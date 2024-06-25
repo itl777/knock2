@@ -8,7 +8,8 @@ import NavMenu from './nav-menu'
 
 export default function Navbar({ pageName }) {
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
-  const [showNavMenu, setShowNavMenu] = useState(`${styles['nav-menu-hide']}`)
+  const [showNavMenu, setShowNavMenu] = useState(false)
+  const [navMenuAnimate, setNavMenuAnimate] = useState('')
 
   const openMenu = () => {
     const newMenu =
@@ -19,21 +20,22 @@ export default function Navbar({ pageName }) {
   }
 
   const handleMouseOver = () => {
-    setShowNavMenu('animate__bounceInDown')
+    if (showNavMenu === false) setShowNavMenu(true)
+    setNavMenuAnimate('animate__bounceInDown')
   }
 
   const handleMouseOut = () => {
-    setShowNavMenu('animate__bounceOutUp')
+    setNavMenuAnimate('animate__bounceOutUp')
   }
 
   return (
     <>
       <header className={styles['navbar']} onMouseLeave={handleMouseOut}>
-        <NavMenu show={showNavMenu} />
+        {showNavMenu ? <NavMenu show={navMenuAnimate} /> : ''}
         <nav>
           <ul className={styles['navbar-icon']}>
             <li>
-              <Link href="#">
+              <Link href="/">
                 <Image
                   src="/home/ghost-logo.svg"
                   alt="LOGO"
@@ -47,7 +49,7 @@ export default function Navbar({ pageName }) {
               <Link href="/user" onMouseEnter={handleMouseOver}>
                 <FaCircleUser />
               </Link>
-              <Link href="#">
+              <Link href="/user">
                 <FaCartShopping />
               </Link>
               <a>
