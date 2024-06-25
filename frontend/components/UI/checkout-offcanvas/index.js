@@ -32,7 +32,7 @@ export default function CheckoutOffcanvas() {
         <Offcanvas.Body>
           <div className={styles.itemBox}>
             <div className="itemImgBox">
-              <img src="http://localhost:3000/products/p1.png" alt="" />
+              <img src="/products/p1.png" alt="" />
             </div>
             <div className={styles.itemInfo}>
               <p>決戰大富翁</p>

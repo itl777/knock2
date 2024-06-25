@@ -4,7 +4,6 @@
   width: 100%;
   height: auto;
   padding: 80px;
-  background-image: url("/bg-light.png");
   background-size: cover;
 }
 
@@ -12,9 +11,6 @@
 .sectionRight {
   flex-grow: 1;
 }
-
-
-
 
 @media screen and (max-width: 800px) {
 

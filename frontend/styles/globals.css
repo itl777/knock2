@@ -141,9 +141,9 @@ ul, li {
 }
 
 a {
-  color: var(--text-dark) !important;
-  text-decoration: none !important; 
-  letter-spacing: var(--letter-spacing-2) !important;
+  color: var(--text-dark);
+  text-decoration: none; 
+  letter-spacing: var(--letter-spacing-2);
 }
 
 

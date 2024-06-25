@@ -1,15 +1,14 @@
 import React from 'react'
 import styles from './order-list-cards.module.css'
 import { FiShoppingBag, FiCreditCard, FiPackage } from 'react-icons/fi'
+import FilterBtn from '@/components/UI/filter-btn'
 
 export default function OrderListCards() {
   return (
     <div className={styles.orderBox}>
       <div className={styles.orderHeader}>
         <p>2024.05.22</p>
-        {/* <a className={styles.btnSmallOutline} href="#">
-          詳情
-        </a> */}
+        <FilterBtn btnText="詳情" href='/user/orders/details'/>
       </div>
       <div className="horizontalDivider" />
       <div className={styles.orderContent}>
@@ -34,13 +33,13 @@ export default function OrderListCards() {
         </div>
         <div className={styles.orderProductImg}>
           <div className="itemImgBox">
-            <img src="http://localhost:3000/products/p1.png" alt="" />
+            <img src="/products/p1.png" alt="" />
           </div>
           <div className="itemImgBox">
-            <img src="http://localhost:3000/products/p1.png" alt="" />
+            <img src="/products/p1.png" alt="" />
           </div>
           <div className="itemImgBox">
-            <img src="http://localhost:3000/products/p1.png" alt="" />
+            <img src="/products/p1.png" alt="" />
           </div>
         </div>
       </div>
