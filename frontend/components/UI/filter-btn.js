@@ -1,23 +1,26 @@
 import { Button } from '@mui/material'
+import Link from 'next/link'
 
-export default function FilterBtn({ btnText = '沒設名字' }) {
+export default function FilterBtn({ btnText = '沒設名字', href = '/' }) {
   return (
     <>
-      <Button
-        variant="outlined"
-        sx={{
-          color: 'black',
-          fontFamily: 'Noto Sans TC',
-          borderRadius: '100px',
-          borderColor: '#222',
-          marginLeft: '0.625rem',
-          ':hover': {
+      <Link href={href} passHref>
+        <Button
+          variant="outlined"
+          sx={{
+            color: 'black',
+            fontFamily: 'Noto Sans TC',
+            borderRadius: '100px',
             borderColor: '#222',
-          },
-        }}
-      >
-        {btnText}
-      </Button>
+            marginLeft: '0.625rem',
+            ':hover': {
+              borderColor: '#222',
+            },
+          }}
+        >
+          {btnText}
+        </Button>
+      </Link>
     </>
   )
 }

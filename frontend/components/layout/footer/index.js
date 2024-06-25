@@ -37,10 +37,10 @@ export default function Footer() {
                 </li>
               </ul>
             </li>
-            <li>
+            <li className={styles['mobile-hide']}>
               <div />
             </li>
-            <li>
+            <li className={styles['mobile-hide']}>
               <Image
                 src="/home/ghost-logo.svg"
                 alt="ghost-logo"
@@ -49,11 +49,11 @@ export default function Footer() {
               />
               <Image src="/home/LOGO.svg" alt="LOGO" width={94} height={42} />
             </li>
-            <li>
+            <li className={styles['mobile-hide']}>
               <div />
             </li>
             <li>
-              <ul>
+              <ul className={styles['mobile-hide']}>
                 <li>
                   <p>法律資訊</p>
                 </li>

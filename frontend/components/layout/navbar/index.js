@@ -1,14 +1,67 @@
-import styles from "./nav-styles.module.scss";
-import { FaCircleUser, FaCartShopping } from "react-icons/fa6";
-import Link from "next/link";
-import Image from "next/image";
+import { useState } from 'react'
+import styles from './nav-styles.module.scss'
+import { FaCircleUser } from 'react-icons/fa6'
+import { TiThMenu } from 'react-icons/ti'
+import Link from 'next/link'
+import Image from 'next/image'
+import NavMenu from './nav-menu'
+import CheckoutOffcanvas from '@/components/UI/checkout-offcanvas'
 
 export default function Navbar() {
+  const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
+  const [showNavMenu, setShowNavMenu] = useState()
+
+  const openMenu = () => {
+    const newMenu =
+      menuState === 'animate__bounceInDown'
+        ? 'animate__bounceOutUp'
+        : 'animate__bounceInDown'
+    setMenuState(newMenu)
+  }
+
+  const handleMouseOver = () => {
+    setShowNavMenu('animate__bounceInDown')
+  }
+
+  const handleMouseOut = () => {
+    setShowNavMenu('animate__bounceOutUp')
+  }
+
   return (
     <>
-      <header className={styles.navbar}>
+      <header className={styles['navbar']} onMouseLeave={handleMouseOut}>
+        <NavMenu show={showNavMenu} />
         <nav>
-          <ul>
+          <ul className={styles['navbar-icon']}>
+            <li>
+              <Link href="#">
+                <Image
+                  src="/home/ghost-logo.svg"
+                  alt="LOGO"
+                  width={50}
+                  height={50}
+                  className={styles['logo-mobile']}
+                />
+              </Link>
+            </li>
+            <li>
+              <Link href="#" onMouseEnter={handleMouseOver}>
+                <FaCircleUser />
+              </Link>
+              {/* <Link href="#">
+                <FaCartShopping />
+              </Link> 改成購物車元件 CheckoutOffcanvas */}
+              <a>
+                <TiThMenu onClick={openMenu} className={styles['menu']} />
+              </a>
+            </li>
+            <li>
+              <CheckoutOffcanvas />
+            </li>
+          </ul>
+          <ul
+            className={`${styles['navbar-links']} animate__animated ${menuState}`}
+          >
             <li>
               <Link href="#">
                 <span>首頁</span>
@@ -21,12 +74,13 @@ export default function Navbar() {
             </li>
             <li className="logo">
               <Link href="#">
-              <Image
-                src="/home/LOGO.svg"
-                alt="LOGO"
-                width={134.96}
-                height={61.26}
-              />
+                <Image
+                  src="/home/LOGO.svg"
+                  alt="LOGO"
+                  width={134.96}
+                  height={61.26}
+                  className={styles['logo-screen']}
+                />
               </Link>
             </li>
             <li>
@@ -40,20 +94,8 @@ export default function Navbar() {
               </Link>
             </li>
           </ul>
-          <ul>
-            <li>
-              <Link href="#">
-                <FaCircleUser />
-              </Link>
-            </li>
-            <li>
-              <Link href="#">
-                <FaCartShopping />
-              </Link>
-            </li>
-          </ul>
         </nav>
       </header>
     </>
-  );
+  )
 }
