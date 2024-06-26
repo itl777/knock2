@@ -1,10 +1,11 @@
 import React from 'react'
 import { Button } from '@mui/material'
 
-export default function BuyBtn({ btnText = '直接購買' }) {
+export default function BuyBtn({ btnText = '直接購買', product_id }) {
   return (
     <>
       <Button
+        href={`product-details/${product_id}`}
         sx={{
           fontFamily: 'Noto Sans TC',
           color: 'black',

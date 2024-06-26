@@ -7,7 +7,11 @@ import 'hover.css/css/hover-min.css'
 export default function Card({ data }) {
   return (
     <>
-      <div className="card hvr-grow-shadow" id={data.product_id} style={{ width: '20rem' }}>
+      <div
+        className="card hvr-grow-shadow"
+        id={data.product_id}
+        style={{ width: '20rem' }}
+      >
         <Link href={`product-details`} style={{ textDecoration: 'none' }}>
           <Image
             src={pdImg}
@@ -26,12 +30,12 @@ export default function Card({ data }) {
                 <div className="buy-btn">${data.price}</div>
               </div>
               <div className="buy-btn-outer w-100">
-                <a
+                {/* <a
                   href={`product-details/${data.product_id}`}
                   className="buy-btn"
-                >
-                  <BuyBtn />
-                </a>
+                > */}
+                <BuyBtn product_id={data.product_id} />
+                {/* </a> */}
               </div>
             </div>
           </div>
