@@ -12,7 +12,6 @@ export default function FilterBtn({ btnText = '沒設名字', href = '/' }) {
             fontFamily: 'Noto Sans TC',
             borderRadius: '100px',
             borderColor: '#222',
-            marginLeft: '0.625rem',
             ':hover': {
               borderColor: '#222',
             },
