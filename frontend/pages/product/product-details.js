@@ -1,8 +1,8 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
-import PdTabs from '@/components/page-components/products/pd-tabs/index'
-import PdFeatures from '@/components/page-components/products/pd-features'
+import PdTabs from '@/components/page-components/products/details-section/pd-tabs/index'
+import PdFeatures from '@/components/page-components/products/details-section/pd-features'
 import IndexLayout from '@/components/layout'
 
 export default function ProductDetails() {
@@ -19,29 +19,10 @@ export default function ProductDetails() {
 
       <style jsx global>
         {`
-          .d-grid {
-            grid-template-columns: auto auto auto;
-          }
-          .pd-features {
-            height: 500px;
-          }
           .container {
             max-width: 1200px;
             margin-bottom: 5rem;
           }
-          body {
-            font-family: 'Noto Sans TC', 'Noto Serif JP';
-            font-style: normal;
-          }
-          .add-line::after {
-            content: '';
-            width: 100%;
-            height: 2px;
-            position: absolute;
-            bottom: 0px;
-            background: #d9d9d9;
-          }
-
           .col-12.bg-white {
             border-radius: 16px;
           }

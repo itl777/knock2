@@ -6,6 +6,7 @@ import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import ProductReview from './product-review'
 import FilterBtn from '@/components/UI/filter-btn'
+import myStyle from './tabs.module.css'
 
 export default function PdTabs() {
   const [value, setValue] = React.useState('1')
@@ -42,7 +43,7 @@ export default function PdTabs() {
   }
 
   return (
-    <div className="container" style={{ padding: 0 }}>
+    <div className={`$myStyle['container'] container`} style={{ padding: 0 }}>
       <Box
         sx={{ width: '100%', typography: 'body1', fontFamily: 'Noto Sans TC' }}
       >

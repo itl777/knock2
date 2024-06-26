@@ -9,8 +9,8 @@ export default function PdFeatures() {
   return (
     <>
       {/* 商品詳情 */}
-      <div className={`$myStyle['container'] container`}>
-        <div className={`row pd-features $myStyle['pd-features']`}>
+      <div className={`${myStyle['container']} container`}>
+        <div className={`${myStyle['pd-features']} row pd-features `}>
           {/*詳情左側-商品圖 */}
           <div className="col-5 px-0 position-relative">
             <PdSlick />
