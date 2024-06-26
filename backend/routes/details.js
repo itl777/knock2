@@ -1,13 +1,13 @@
 import express from "express";
-import db from "./../utils/connect.js";
+import db from "../utils/connect.js";
 import moment from "moment-timezone";
 
 const router = express.Router();
 const dateFormat = "YYYY-MM-DD";
 
-router.get("/", async (req, res) => {
+router.get("/details/:orderId", async (req, res) => {
   // 從 query 中取得 member_id, order_status_id
-  const { member_id, order_status_id } = req.query;
+  const orderId = req.params.orderId;
 
   try {
     // 取得訂單資料
@@ -26,11 +26,11 @@ router.get("/", async (req, res) => {
       LEFT JOIN district d ON d.id = o.order_district_id
       LEFT JOIN city c ON c.id = d.city_id
       LEFT JOIN order_status os ON os.id = o.order_status_id
-      WHERE o.member_id = ? AND o.order_status_id = ?
+      WHERE o.id = ?
       GROUP BY o.id;
     `;
 
-    const [orders] = await db.query(orderSql, [member_id, order_status_id]);
+    const [orders] = await db.query(orderSql, [orderId]);
 
     // 格式化 order_date
     orders.forEach((order) => {
@@ -47,20 +47,20 @@ router.get("/", async (req, res) => {
       SELECT 
         od.order_id,
         od.order_product_id AS product_id,
+        pm.product_name,
+        od.order_quantity,
         img.product_img
       FROM order_details od
+      LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
       LEFT JOIN (
         SELECT img_product_id, product_img,
           ROW_NUMBER() OVER (PARTITION BY img_product_id ORDER BY img_id) AS rn
         FROM product_img
       ) img ON img.img_product_id = od.order_product_id AND img.rn = 1
-      WHERE od.order_id IN (SELECT id FROM orders WHERE member_id = ? AND order_status_id = ?);
+      WHERE od.order_id = ?
     `;
 
-    const [orderDetails] = await db.query(orderDetailsSql, [
-      member_id,
-      order_status_id,
-    ]);
+    const [orderDetails] = await db.query(orderDetailsSql, [orderId]);
 
     console.log("orders data: ", orders);
     console.log("order details data: ", orderDetails);

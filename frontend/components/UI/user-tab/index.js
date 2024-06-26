@@ -21,7 +21,7 @@ export default function UserTab() {
       name: '揪團行程',
       path: '/user/group-reservation',
     },
-    { key: 'orders', name: '商品訂單', path: '/user/orders' },
+    { key: 'orders', name: '商品訂單', path: '/user/orders/ongoing' },
     { key: 'favorite', name: '我的收藏', path: '/user/favorite' },
     { key: 'coupons', name: '優惠券', path: '/user/coupons' },
   ]

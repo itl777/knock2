@@ -57,7 +57,7 @@ export default function OrderListCards({ orderStatusId }) {
           <div key={v.order_id} className={styles.orderBox}>
             <div className={styles.orderHeader}>
               <p>{v.order_date}</p>
-              <FilterBtn btnText="詳情" href="/user/orders/details" />
+              <FilterBtn btnText="詳情" href={`/user/orders/details/${v.order_id}`} />
             </div>
             <div className="horizontalDivider" />
             <div className={styles.orderContent}>

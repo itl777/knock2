@@ -7,6 +7,8 @@ import teams from "./routes/teams.js";
 import products from "./routes/products.js";
 import users from "./routes/users.js";
 import orders from "./routes/orders.js";
+import orderDetails from "./routes/details.js";
+
 
 // 掛載 express
 const app = express();
@@ -42,6 +44,8 @@ app.use("/teams", teams);
 app.use("/products", products);
 app.use("/users", users);
 app.use("/orders", orders);
+app.use("/user/orders", orderDetails);
+
 
 
 
