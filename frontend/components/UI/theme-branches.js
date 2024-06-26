@@ -2,6 +2,7 @@ import * as React from 'react'
 import Tabs from '@mui/joy/Tabs'
 import TabList from '@mui/joy/TabList'
 import Tab, { tabClasses } from '@mui/joy/Tab'
+import TabPanel from '@mui/joy/TabPanel'
 
 export default function ThemeBranches() {
   return (
@@ -106,6 +107,15 @@ export default function ThemeBranches() {
             }}
           />
         </TabList>
+        <TabPanel value={0}>
+          <b>First</b> tab panel
+        </TabPanel>
+        <TabPanel value={1}>
+          <b>Second</b> tab panel
+        </TabPanel>
+        <TabPanel value={2}>
+          <b>Third</b> tab panel
+        </TabPanel>
       </Tabs>
     </div>
   )
