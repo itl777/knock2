@@ -13,6 +13,13 @@
   top: 60%;
   right: 0%;
   z-index: -10;
+  color: $text-white;
+  span {
+    color: $text-white;
+  }
+  svg {
+    fill: $text-white;
+  }
 
   .user {
     display: flex;

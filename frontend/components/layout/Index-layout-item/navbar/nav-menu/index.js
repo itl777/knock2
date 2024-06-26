@@ -12,9 +12,7 @@ export default function NavMenu({ show = '' }) {
       >
         <ul className={styles['user']}>
           <li>
-            <div className={styles['avatar']}>
-              {/* <Image /> */}
-            </div>
+            <div className={styles['avatar']}>{/* <Image /> */}</div>
             <span>會員暱稱</span>
           </li>
           <li>
@@ -24,10 +22,10 @@ export default function NavMenu({ show = '' }) {
         </ul>
         <div className={styles['line']}></div>
         <div>
-          <div>M</div>
-          <div>E</div>
-          <div>N</div>
-          <div>U</div>
+          <span>M</span>
+          <span>E</span>
+          <span>N</span>
+          <span>U</span>
         </div>
         <Image
           src="/ghost/ghost_02.png"

@@ -20,11 +20,20 @@
     .avatar {
       width: 250px;
       height: 250px;
+      max-width: 250px;
+      max-height: 250px;
       border-radius: 125px;
       background: url('/ghost/ghost_02.png') no-repeat, $pri-1;
       background-size: contain;
       background-position: center;
       box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.25);
+    }
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      flex: 1 0 0;
     }
   }
 }
