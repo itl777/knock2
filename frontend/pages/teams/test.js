@@ -3,7 +3,11 @@ import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
 import TeamList from '@/components/page-components/teams/teamlist'
 
+import { TEAM_LIST } from "@/configs/team-api-path";
+
 export default function TeamListTest() {
+
+  
   return (
     <>
       <IndexLayout title="糾團">
