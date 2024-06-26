@@ -38,6 +38,9 @@
       height: 50px;
       border-radius: 50%;
       background: $sec-1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
   .line {

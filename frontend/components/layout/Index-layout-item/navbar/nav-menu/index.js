@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import styles from './nav-menu.module.scss'
 import { MdLogout } from 'react-icons/md'
+import Avatar from '@mui/joy/Avatar'
 
 export default function NavMenu({ show = '' }) {
   return (
@@ -12,7 +13,9 @@ export default function NavMenu({ show = '' }) {
       >
         <ul className={styles['user']}>
           <li>
-            <div className={styles['avatar']}>{/* <Image /> */}</div>
+            <div className={styles['avatar']}>
+              <Avatar size="lg" variant="plain" alt="" src="" />
+            </div>
             <span>會員暱稱</span>
           </li>
           <li>
