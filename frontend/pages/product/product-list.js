@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.css'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import PdFilter from '@/components/page-components/products/pd-filter'
 import PdCard from '@/components/page-components/products/pd-card'
+import IndexLayout from '@/components/layout'
 
 export default function ProductList() {
   const [data, setData] = useState([])
@@ -18,35 +19,23 @@ export default function ProductList() {
 
   return (
     <>
-      <>
+      <IndexLayout pageName="product">
         {/* 麵包屑 還沒改中間圖 */}
         <Breadcrumb />
 
         <PdFilter />
-{/* 
-        {data.map((r, i) => {
-          return <PdCard key={r.product_id} data={r} />
-        })} */}
 
-        <PdCard data={data}/>
+        <PdCard data={data} />
 
         <style jsx global>
           {`
-            .d-grid {
-              grid-template-columns: auto auto auto;
-            }
             .container {
               max-width: 1200px;
               margin-bottom: 5rem;
             }
-
-            body {
-              font-family: 'Noto Sans TC', 'Noto Serif JP';
-              font-style: normal;
-            }
           `}
         </style>
-      </>
+      </IndexLayout>
     </>
   )
 }

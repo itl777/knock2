@@ -22,6 +22,9 @@ export default function PdCard({ data }) {
 
       <style jsx>
         {`
+          .d-grid {
+            grid-template-columns: auto auto auto;
+          }
           .card-btn {
             border: 2px solid black;
             width: 270px;

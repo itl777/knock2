@@ -3,13 +3,14 @@ import PdSlick from '../pd-slick'
 import NumInput from './num-input'
 import BtnGroup from './btn-group'
 import CategoryGroup from './category-group'
+import myStyle from './features.module.css'
 
 export default function PdFeatures() {
   return (
-    <div>
+    <>
       {/* 商品詳情 */}
-      <div className="container">
-        <div className="row pd-features">
+      <div className={`$myStyle['container'] container`}>
+        <div className={`row pd-features $myStyle['pd-features']`}>
           {/*詳情左側-商品圖 */}
           <div className="col-5 px-0 position-relative">
             <PdSlick />
@@ -39,6 +40,6 @@ export default function PdFeatures() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

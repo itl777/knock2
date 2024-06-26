@@ -2,19 +2,20 @@ import React from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import PdTabs from '@/components/page-components/products/pd-tabs/index'
-
 import PdFeatures from '@/components/page-components/products/pd-features'
-
+import IndexLayout from '@/components/layout'
 
 export default function ProductDetails() {
   return (
     <>
-      {/* 麵包屑 還沒改中間圖 */}
-      <Breadcrumb />
+      <IndexLayout pageName="productDetails">
+        {/* 麵包屑 還沒改中間圖 */}
+        <Breadcrumb />
 
-      <PdFeatures />
+        <PdFeatures />
 
-      <PdTabs />
+        <PdTabs />
+      </IndexLayout>
 
       <style jsx global>
         {`
@@ -27,8 +28,6 @@ export default function ProductDetails() {
           .container {
             max-width: 1200px;
             margin-bottom: 5rem;
-          }
-           {
           }
           body {
             font-family: 'Noto Sans TC', 'Noto Serif JP';
