@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import PdFilter from '@/components/page-components/products/list-section/pd-filter'
-import PdCard from '@/components/page-components/products/pd-card'
+import PdCard from '@/components/page-components/products/list-section/pd-card'
 import IndexLayout from '@/components/layout'
 
 export default function ProductList() {

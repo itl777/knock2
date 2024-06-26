@@ -1,4 +1,4 @@
-import MyPagination from '../pagination'
+import MyPagination from '../../pagination'
 import Card from './card'
 
 export default function PdCard({ data }) {
