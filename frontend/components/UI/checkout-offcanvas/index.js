@@ -19,9 +19,9 @@ export default function CheckoutOffcanvas() {
       <FaCartShopping onClick={toggleShow} />
       <Drawer open={show} onClose={handleClose} anchor="right">
         <div className={styles.offcanvasBody}>
-          <div class={styles.checkoutTitle}>
+          <div className={styles.checkoutTitle}>
             <h5>購物車</h5>
-            <div class={styles.cartItemCount}>5</div>
+            <div className={styles.cartItemCount}>5</div>
           </div>
 
           <div className={styles.itemBox}>

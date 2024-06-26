@@ -32,7 +32,7 @@ export default function OrderListCards({ orderStatusId }) {
   return (
     <>
       {data.map((v, i) => (
-        <div key={v.id} className={styles.orderBox}>
+        <div key={v.order_id} className={styles.orderBox}>
           <div className={styles.orderCard}>
             <div className={styles.orderHeader}>
               <p>{formatDate(v.order_date)}</p>
@@ -43,7 +43,7 @@ export default function OrderListCards({ orderStatusId }) {
               <div className={styles.orderInfo}>
                 <div className={styles.orderInfoRow}>
                   <FiShoppingBag />
-                  <p>{v.id}</p>
+                  <p>{v.order_id}</p>
                 </div>
                 <div className={styles.orderInfoRow}>
                   <FiCreditCard />
@@ -57,16 +57,27 @@ export default function OrderListCards({ orderStatusId }) {
               </div>
 
               <div className={styles.orderProductImg}>
-                <div className="itemImgBox">
-                  <img src="/products/p1.png" alt="" />
-                </div>
-                <div className="itemImgBox">
-                  <img src="/products/p1.png" alt="" />
-                </div>
-                <div className="itemImgBox">
-                  <img src="/products/p1.png" alt="" />
-                </div>
+                {v.product_imgs && v.product_imgs.split(',').map((imgPath, index) => (
+                  <div key={index} className="itemImgBox">
+                    <img src={`/products/${imgPath}`} alt="" />
+                  </div>
+                ))}
               </div>
+
+              {/* <div className={styles.orderProductImg}>
+                <div className="itemImgBox">
+                  <p>{v.product_img}</p>
+                  <img src="/products/p1.png" alt="" />
+                </div>
+                <div className="itemImgBox">
+                  <p>{v.product_img}</p>
+                  <img src="/products/p1.png" alt="" />
+                </div>
+                <div className="itemImgBox">
+                  <p>{v.product_img}</p>
+                  <img src="/products/p1.png" alt="" />
+                </div>
+              </div> */}
             </div>
           </div>
         </div>
