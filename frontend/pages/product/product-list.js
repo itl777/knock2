@@ -20,7 +20,7 @@ export default function ProductList() {
   return (
     <>
       <IndexLayout pageName="product">
-        {/* 麵包屑 還沒改中間圖 */}
+
         <Breadcrumb />
 
         <PdFilter />

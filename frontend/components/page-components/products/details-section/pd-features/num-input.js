@@ -136,6 +136,7 @@ const StyledButton = styled('button')(
   height: 32px;
   display: flex;
   margin:0 4px;
+  padding:1px 6px;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;

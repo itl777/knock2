@@ -5,11 +5,13 @@ import PdTabs from '@/components/page-components/products/details-section/pd-tab
 import PdFeatures from '@/components/page-components/products/details-section/pd-features'
 import IndexLayout from '@/components/layout'
 
+
+
 export default function ProductDetails() {
   return (
     <>
       <IndexLayout pageName="productDetails">
-        {/* 麵包屑 還沒改中間圖 */}
+
         <Breadcrumb />
 
         <PdFeatures />

@@ -2,11 +2,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import pdImg from '@/public/products/p1.png'
 import BuyBtn from './buy-btn'
+import 'hover.css/css/hover-min.css'
 
 export default function Card({ data }) {
   return (
     <>
-      <div className="card" id={data.product_id} style={{ width: '20rem' }}>
+      <div className="card hvr-grow-shadow" id={data.product_id} style={{ width: '20rem' }}>
         <Link href={`product-details`} style={{ textDecoration: 'none' }}>
           <Image
             src={pdImg}
