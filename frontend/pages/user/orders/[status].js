@@ -8,13 +8,12 @@ import UserLayout from '@/components/layout/user-layout'
 
 export default function OrdersPage() {
   const router = useRouter()
-
-  const { status } = router.query // 取得 query 參數
+  const { status } = router.query // 取得動態路由參數
 
   const tabItems = [
-    { key: 'ongoing', name: '處理中', path: '/user/orders?status=ongoing' },
-    { key: 'canceled', name: '已取消', path: '/user/orders?status=canceled' },
-    { key: 'completed', name: '已完成', path: '/user/orders?status=completed' },
+    { key: 'ongoing', name: '處理中', path: '/user/orders/ongoing' },
+    { key: 'canceled', name: '已取消', path: '/user/orders/canceled' },
+    { key: 'completed', name: '已完成', path: '/user/orders/completed' },
   ]
 
   // 根據 status 設置 order_status_id
@@ -33,7 +32,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     if (!status) {
-      router.push('/user/orders?status=ongoing') // 如果沒有狀態，默認跳轉到 ongoing
+      router.push('/user/orders/ongoing') // 如果沒有狀態，默認跳轉到 ongoing
     }
   }, [status])
 

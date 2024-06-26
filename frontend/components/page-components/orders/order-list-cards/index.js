@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from 'react'
 import styles from './order-list-cards.module.css'
 import FilterBtn from '@/components/UI/filter-btn'
-import { FiShoppingBag, FiCreditCard, FiPackage } from 'react-icons/fi'
 import OrderStatusTag from '../order-status-tag'
+import { FiShoppingBag, FiCreditCard, FiPackage } from 'react-icons/fi'
 
 
 export default function OrderListCards({ orderStatusId }) {
   const [data, setData] = useState([])
-  const memberId = 23;
+  const memberId = 1;
 
   useEffect(() => {
     fetch(`http://127.0.0.1:3001/orders?member_id=${memberId}&order_status_id=${orderStatusId}`)
