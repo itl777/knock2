@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from 'react'
 import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
+import Link from 'next/link'
 
-import { TEAM_ALL } from '@/configs/team-api-path'
+import { TEAM_ONE } from '@/configs/team-api-path'
 
-import CTAButton from '@/components/common/cta-button'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
 
 import { IoMdPeople } from 'react-icons/io'
@@ -19,7 +19,7 @@ export default function TeamListTest() {
   })
 
   useEffect(() => {
-    fetch(`${TEAM_ALL}`)
+    fetch(`${TEAM_ONE}`)
       .then((r) => r.json())
       .then((myData) => {
         console.log(data)
@@ -72,7 +72,9 @@ export default function TeamListTest() {
                         狀態：招募中
                       </p>
                       <div style={{ textAlign: 'center' }}>
-                        <PdBtnContained btnText="查看詳情" color="black" />
+                        <Link href={`/teamNo/${r.team_id}`}>
+                          <PdBtnContained btnText="查看詳情" color="black" />
+                        </Link>
                       </div>
                     </div>
                   </div>
