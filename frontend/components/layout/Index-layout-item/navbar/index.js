@@ -6,8 +6,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import NavMenu from './nav-menu'
 import CheckoutOffcanvas from '@/components/UI/checkout-offcanvas'
+import { useAuth } from '@/context/auth-context'
+import Avatar from '@mui/joy/Avatar'
+import { API_SERVER } from '@/config/app-path'
 
 export default function Navbar({ pageName }) {
+  const { login, auth } = useAuth()
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
   const [showNavMenu, setShowNavMenu] = useState(false)
   const [navMenuAnimate, setNavMenuAnimate] = useState('')
@@ -26,13 +30,13 @@ export default function Navbar({ pageName }) {
   }
 
   const handleMouseOut = () => {
-    setNavMenuAnimate('animate__bounceOutUp')
+    setNavMenuAnimate('animate__bounceOutUp animate__delay-2s')
   }
 
   return (
     <>
       <header className={styles['navbar']} onMouseLeave={handleMouseOut}>
-        {showNavMenu ? <NavMenu show={navMenuAnimate} /> : ''}
+        {showNavMenu && auth.id ? <NavMenu show={navMenuAnimate} /> : ''}
         <nav>
           <ul className={styles['navbar-icon']}>
             <li>
@@ -47,8 +51,26 @@ export default function Navbar({ pageName }) {
               </Link>
             </li>
             <li>
-              <Link href="/user" onMouseEnter={handleMouseOver}>
-                <FaCircleUser />
+              <Link
+                href="#/"
+                onMouseEnter={handleMouseOver}
+                onClick={() => {
+                  login('test@test.com', '123456')
+                }}
+              >
+                {auth.id ? (
+                  <Avatar
+                    size="sm"
+                    variant="plain"
+                    alt={auth.nickname}
+                    src={
+                      auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''
+                    }
+                    // sx={{ border: '5px sold' }}
+                  />
+                ) : (
+                  <FaCircleUser />
+                )}
               </Link>
               <a>
                 <CheckoutOffcanvas />
