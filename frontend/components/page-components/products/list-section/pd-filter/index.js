@@ -2,6 +2,7 @@ import React from 'react'
 import Image from 'next/image'
 import frameSvg from '@/public/products/frame.svg'
 import FilterBtn from '@/components/UI/filter-btn'
+import 'hover.css/css/hover-min.css'
 
 export default function PdFilter() {
   return (
