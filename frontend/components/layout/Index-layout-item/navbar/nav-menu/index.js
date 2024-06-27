@@ -11,7 +11,6 @@ import MenuList from './menu'
 
 export default function NavMenu({ show = '' }) {
   const { login, logout, auth } = useAuth()
-  console.log(`${API_SERVER}/avatar/${auth.avatar}`)
   return (
     <>
       <div
@@ -39,7 +38,7 @@ export default function NavMenu({ show = '' }) {
         </ul>
         <div className={styles['line']}></div>
         <div>
-          <MenuList/>
+          <MenuList />
         </div>
         <Image
           src="/ghost/ghost_02.png"

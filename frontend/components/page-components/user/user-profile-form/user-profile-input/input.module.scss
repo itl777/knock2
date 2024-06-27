@@ -25,7 +25,7 @@ $color: #1c2025;
     flex-direction: column;
     gap: 0.3125rem;
 
-    span {
+    .errorText {
       @include font-small;
       padding-left: 1rem;
     }

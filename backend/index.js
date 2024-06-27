@@ -56,7 +56,7 @@ app.post("/login-jwt", upload.none(), async (req, res) => {
     },
   };
 
-  const sql = "SELECT * FROM members WHERE account=?";
+  const sql = "SELECT * FROM users WHERE account=?";
   const [rows] = await db.query(sql, [req.body.account]);
 
   if (!rows.length) {
@@ -76,15 +76,15 @@ app.post("/login-jwt", upload.none(), async (req, res) => {
 
   // 沒有要紀錄session狀態，改jwt
   const payload = {
-    id: rows[0].id,
+    id: rows[0].user_id,
     account: rows[0].account,
   };
   const token = jwt.sign(payload, process.env.JWT_KEY);
 
   output.data = {
-    id: rows[0].id,
+    id: rows[0].user_id,
     account: rows[0].account,
-    nickname: rows[0].nickname,
+    nickname: rows[0].nick_name,
     avatar: rows[0].avatar,
     token,
   };

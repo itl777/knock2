@@ -1,24 +1,15 @@
-import Box from '@mui/joy/Box'
-import List from '@mui/joy/List'
-import ListItem from '@mui/joy/ListItem'
-import Radio from '@mui/joy/Radio'
-import RadioGroup from '@mui/joy/RadioGroup'
-import { useState } from 'react'
+import { Box, List, ListItem, Radio, RadioGroup } from '@mui/joy'
 
-export default function UserProfileRadio({
+export default function Radio01({
   radio = [],
   name = '',
-  DBvalue = '',
+  checked = '0',
   disabled = false,
+  onChange = () => {},
 }) {
-  const [selectedValue, setSelectedValue] = useState(DBvalue)
-
-  const handleChange = (event) => {
-    setSelectedValue(event.target.value)
-  }
   return (
     <Box height={50} display="flex" alignItems="center" sx={{ width: '100%' }}>
-      <RadioGroup overlay name="example-payment-channel" defaultValue="Paypal">
+      <RadioGroup overlay name={name}>
         <List component="div" orientation="horizontal">
           {radio?.map((v, i) => {
             return (
@@ -26,10 +17,9 @@ export default function UserProfileRadio({
                 <Radio
                   value={v.value}
                   label={v.label}
-                  name={name}
-                  disabled={disabled === true ? disabled : ''}
-                  checked={selectedValue === v.value}
-                  onChange={handleChange}
+                  disabled={disabled}
+                  checked={checked === v.value}
+                  onChange={onChange}
                 />
               </ListItem>
             )

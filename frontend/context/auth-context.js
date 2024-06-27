@@ -12,6 +12,7 @@ const emptyAuth = {
 // component
 export function AuthContextProvider({ children }) {
   const [auth, setAuth] = useState({ ...emptyAuth })
+  const [authState, setAuthState] = useState(true)
 
   const login = async (account, password) => {
     try {
@@ -72,6 +73,7 @@ export function AuthContextProvider({ children }) {
         })
       if (data?.id && data?.token) {
         setAuth(data)
+        setAuthState(false);
       }
     } catch (ex) {
       console.log(ex)
@@ -79,7 +81,9 @@ export function AuthContextProvider({ children }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ login, logout, auth, getAuthHeader }}>
+    <AuthContext.Provider
+      value={{ login, logout, auth, authState, getAuthHeader }}
+    >
       {children}
     </AuthContext.Provider>
   )

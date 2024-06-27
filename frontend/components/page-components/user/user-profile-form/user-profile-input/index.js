@@ -32,7 +32,11 @@ export default function UserProfileInput({
             disabled={disabled}
             onChange={onChange}
           />
-          {errorTextState === true ? <span>{errorText}</span> : ''}
+          {errorTextState === true ? (
+            <span className={styles.errorText}>{errorText}</span>
+          ) : (
+            ''
+          )}
         </div>
       </div>
     </>

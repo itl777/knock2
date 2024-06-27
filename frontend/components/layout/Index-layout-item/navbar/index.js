@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from './nav-styles.module.scss'
 import { FaCircleUser } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
@@ -15,6 +15,8 @@ export default function Navbar({ pageName }) {
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
   const [showNavMenu, setShowNavMenu] = useState(false)
   const [navMenuAnimate, setNavMenuAnimate] = useState('')
+  const timeOutRef = useRef(null)
+  const hideNavMenuRef = useRef(null)
 
   const openMenu = () => {
     const newMenu =
@@ -24,18 +26,34 @@ export default function Navbar({ pageName }) {
     setMenuState(newMenu)
   }
 
+  const handleMouseOut = () => {
+    timeOutRef.current = setTimeout(() => {
+      setNavMenuAnimate('animate__bounceOutUp')
+      hideNavMenuRef.current = setTimeout(() => {
+        setShowNavMenu(false)
+      }, 1000)
+    }, 1000)
+  }
+
   const handleMouseOver = () => {
+    clearTimeout(timeOutRef.current)
+    clearTimeout(hideNavMenuRef.current)
     if (showNavMenu === false) setShowNavMenu(true)
     setNavMenuAnimate('animate__bounceInDown')
   }
 
-  const handleMouseOut = () => {
-    setNavMenuAnimate('animate__bounceOutUp animate__delay-2s')
+  const handleNavMenuMouseOver = () => {
+    clearTimeout(timeOutRef.current)
+    clearTimeout(hideNavMenuRef.current)
   }
 
   return (
     <>
-      <header className={styles['navbar']} onMouseLeave={handleMouseOut}>
+      <header
+        className={styles['navbar']}
+        onMouseLeave={handleMouseOut}
+        onMouseEnter={handleNavMenuMouseOver}
+      >
         {showNavMenu && auth.id ? <NavMenu show={navMenuAnimate} /> : ''}
         <nav>
           <ul className={styles['navbar-icon']}>
@@ -55,7 +73,7 @@ export default function Navbar({ pageName }) {
                 href="#/"
                 onMouseEnter={handleMouseOver}
                 onClick={() => {
-                  login('test@test.com', '123456')
+                  login('user1@example.com', '123456')
                 }}
               >
                 {auth.id ? (

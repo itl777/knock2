@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import styles from './radio.module.scss'
 import Radio01 from './radio01'
 
-export default function UserProfileInput({
-  radio = [],
+export default function UserProfileRadio({
   label = '',
-  name = '',
-  disabled = false,
-  DBvalue = '',
   errorText = '',
+  radio = [],
+  name = '',
+  checked = '',
+  disabled = false,
+  onChange = () => {},
 }) {
   const [errorTextState, setErrorTextState] = useState(false)
 
@@ -28,7 +29,8 @@ export default function UserProfileInput({
             radio={radio}
             name={name}
             disabled={disabled}
-            DBvalue={DBvalue}
+            checked={checked}
+            onChange={onChange}
           />
           {errorTextState === true ? (
             <span className={styles.errorText}>{errorText}</span>
