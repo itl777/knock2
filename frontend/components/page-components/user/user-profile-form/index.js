@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import styles from './user-profile-form.module.scss'
-import UserProfileFormTitle from './title'
-import UserProfileInput from './input-item'
+import UserProfileFormTitle from './user-profile-title'
+import UserProfileInput from './user-profile-input'
+import UserProfileRadio from './user-profile-radio'
+import UserProfileSelect from './user-profile-select'
+
 import { z } from 'zod'
 
 export default function UserProfileForm() {
@@ -10,6 +13,7 @@ export default function UserProfileForm() {
     password: 'password+password+password',
     name: '',
     nick_name: '',
+    gender: '',
     mobile_phone: '',
     invoice_carrier_id: '',
     tax_id: '',
@@ -75,6 +79,30 @@ export default function UserProfileForm() {
               placeholder="請輸入暱稱"
               errorText=""
               onChange={handleChange}
+            />
+            <UserProfileRadio
+              radio={[
+                {
+                  value: '0',
+                  label: '男',
+                },
+                {
+                  value: '1',
+                  label: '女',
+                },
+              ]}
+              label="性別"
+              name="gender"
+              disabled={false}
+              DBvalue={profileForm.gender}
+              errorText=""
+            />
+            <UserProfileSelect
+              options={[]} // DB 抓到的資料 需要
+              label="地址"
+              name="address"
+              placeholder="請選擇常用地址"
+              errorText=""
             />
           </div>
         </div>

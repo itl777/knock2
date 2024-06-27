@@ -8,18 +8,6 @@ export default function Input01({
   disabled = false,
   onChange = () => {},
 }) {
-  const inputClassName = (() => {
-    switch (type) {
-      case 'email':
-        return styles.inputDisabled
-      case 'password':
-        return styles.inputDisabled
-      case 'text':
-        return styles.inputDefault
-      default:
-        return styles.inputDefault
-    }
-  })()
   return (
     <>
       <input
@@ -28,7 +16,9 @@ export default function Input01({
         value={value}
         placeholder={placeholder}
         disabled={disabled === true ? 'disabled' : ''}
-        className={inputClassName}
+        className={
+          disabled === true ? styles.inputDisabled : styles.inputDefault
+        }
         onChange={onChange}
       />
     </>
