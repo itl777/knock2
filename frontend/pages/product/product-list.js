@@ -9,7 +9,7 @@ export default function ProductList() {
   const [data, setData] = useState([])
 
   useEffect(() => {
-    fetch('http://127.0.0.1:3001/product')
+    fetch('http://127.0.0.1:3001/products')
       .then((r) => r.json())
       .then((data) => {
         console.log(data.data.rows)
@@ -20,7 +20,6 @@ export default function ProductList() {
   return (
     <>
       <IndexLayout pageName="product">
-
         <Breadcrumb />
 
         <PdFilter />
