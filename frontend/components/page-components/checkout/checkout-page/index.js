@@ -1,10 +1,28 @@
-import styles from './checkout-page.module.css'
-import FilterBtn from '@/components/UI/filter-btn'
-import OrderItemCheckout from '../../orders/order-item-checkout'
-import BlackBtn from '@/components/UI/black-btn'
-import { IoIosArrowForward } from 'react-icons/io'
+// pages/checkout-page.jsx
+import React, { useState } from 'react';
+import styles from './checkout-page.module.css';
+import FilterBtn from '@/components/UI/filter-btn';
+import OrderItemCheckout from '../../orders/order-item-checkout';
+import BlackBtn from '@/components/UI/black-btn';
+import HDivider from '@/components/UI/divider/horizontal-divider';
+import VDivider from '@/components/UI/divider/vertical-divider';
+import RecipientButton from '../../orders/recipient-button';
+import RecipientButtonEdit from '../../orders/recipient-button-edit';
+import RecipientButtonSelected from '../../orders/recipient-button-selected';
+import BasicModal from '@/components/UI/basic-modal';
+import Button from '@mui/material/Button';
 
 export default function CheckOutPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
@@ -13,58 +31,64 @@ export default function CheckOutPage() {
         <div className={styles.checkoutLeft}>
           <h5>訂購資訊</h5>
 
-          <OrderItemCheckout
-            productName="哈利波特的奶油啤酒"
-            productOriginalPrice={1000}
-            productDiscountedPrice={800}
-            productImg=""
-            orderQty=""
-          />
+          <div className={styles.itemList}>
+            <OrderItemCheckout
+              productName="哈利波特的奶油啤酒"
+              productOriginalPrice={1000}
+              productDiscountedPrice={800}
+              productImg=""
+              orderQty="1"
+            />
 
-          <FilterBtn btnText="使用優惠券" />
+            <OrderItemCheckout
+              productName="桌遊名稱"
+              productOriginalPrice={1000}
+              productDiscountedPrice={800}
+              productImg=""
+              orderQty="1"
+            />
+          </div>
+
+          <FilterBtn btnText="使用優惠券" margin="2rem 0" />
 
           <div className={styles.totalBox}>
             <div className={styles.totalRow}>
-              <div className={styles.totalHeader}>小計</div>
-              <div className={styles.totalContent}>$1000</div>
+              <p>小計</p>
+              <p>$1000</p>
             </div>
             <div className={styles.totalRow}>
-              <div className={styles.totalHeader}>折扣</div>
-              <div className={styles.totalContent}>$1000</div>
+              <p>折扣</p>
+              <p>$1000</p>
             </div>
             <div className={styles.totalRow}>
-              <div className={styles.totalHeader}>運費</div>
-              <div className={styles.totalContent}>$1000</div>
+              <p>運費</p>
+              <p>$1000</p>
             </div>
-            <div className="horizontalDividerS" />
+            <HDivider margin="1rem 0" />
             <div className={styles.totalRow}>
-              <div className={styles.totalHeader}>合計</div>
-              <div className={styles.totalContent}>$1000</div>
+              <p>合計</p>
+              <p>$1000</p>
             </div>
           </div>
         </div>
         {/* LEFT ORDER INFO END */}
 
-        <div className="verticalDividerS" />
+        <VDivider margin="2rem 0" />
 
         {/* RIGHT RECIPIENT INFO START */}
         <div className={styles.checkoutRight}>
+          <h5>收件資料</h5>
+
           <div className={styles.checkoutRightMain}>
-            <h5>收件資料</h5>
-            <div className="recipient-form">
-              <div className="recipient-desc">
-                <div className="recipient-label">收件人</div>
-                <button className="recipient-content">
-                  <p className="recipient-name">請選擇收件人資料</p>
-                  <IoIosArrowForward />
-                </button>
-              </div>
-            </div>
+            <RecipientButton onClick={openModal} />
+            <RecipientButtonSelected />
+            <RecipientButtonEdit />
           </div>
 
           <BlackBtn btnText="前往結帳" href="/checkout/success" />
         </div>
       </form>
+      <BasicModal open={isModalOpen} handleClose={closeModal} />
     </section>
-  )
+  );
 }

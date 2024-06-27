@@ -19,6 +19,7 @@
 
 .contentContainer h5 {
   margin-bottom: 2rem;
+  flex-basis:1
 }
 
 .checkoutLeft {
@@ -28,29 +29,76 @@
 
 .checkoutRight {
   width: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 2rem;
   padding: var(--content-padding);
 }
 
-.checkoutRightMain {
+
+.itemList {
   display: flex;
   flex-direction: column;
+  gap: 1.5rem;
 }
 
+.totalBox{
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
 
 .totalRow {
   display: flex;
   justify-content: space-between;
-  margin-bottom: .5rem;
   font-size: 1.125rem;
 }
 
 .totalRow:nth-last-child(1) {
   font-weight: bold;
 }
+
+.checkoutRightMain {
+  display: flex;
+  flex-direction: column;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 4rem;
+}
+
+
+.recipientDesc {
+  /* width: 100%; */
+  grid-column: span 2;
+  font-size: 1rem;
+}
+
+.recipientContent, .recipientContentEdit, .recipientContentAdd {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: none;
+  border-radius: var(--input-radius);
+  text-align: left;
+}
+
+.recipientLabel {
+  margin-bottom: .375rem;
+}
+
+.recipientContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.recipientContent .recipientName {
+  margin-bottom: .5rem;
+}
+
+
+
+
+
+
+
 
 
 

@@ -43,14 +43,14 @@ export default function InputStepper({
 
   return (
     <div className={styles.stepperInputContainer}>
-      <StepperButton>
-        <IoIosRemove onClick={handleDecrease} />
+      <StepperButton onClick={handleDecrease}>
+        <IoIosRemove />
       </StepperButton>
 
       <div className={styles.stepperValue}>{value}</div>
 
-      <StepperButton>
-        <IoIosAdd onClick={handleIncrease} />
+      <StepperButton onClick={handleIncrease}>
+        <IoIosAdd />
       </StepperButton>
     </div>
   )
