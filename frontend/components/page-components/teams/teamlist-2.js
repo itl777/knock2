@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { teamsData } from '@/data/teams/kk-teams.js'
+import {teamsData} from '@/data/teams/kk-teams.js'
 import TeamItem from './teamitem'
 
 export default function TeamList() {
@@ -10,7 +10,7 @@ export default function TeamList() {
   const [teams, setTeams] = useState(initState)
   return (
     <>
-      {teamsData.map((p) => {
+      {teamData.map((data) => {
         const { team_id, team_title, leader_id, tour } = data
         data,
           (
