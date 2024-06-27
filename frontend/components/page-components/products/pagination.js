@@ -10,7 +10,7 @@ import theme from '@/context/theme'
 
 export default function MyPagination({ totalPages, setPage }) {
   const handlePageChange = (event, value) => {
-    console.log('MyPagination', value)
+    // console.log('MyPagination', value)
     setPage(value)
   }
 

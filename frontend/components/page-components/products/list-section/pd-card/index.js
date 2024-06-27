@@ -3,7 +3,7 @@ import Card from './card'
 
 export default function PdCard({ data, setPage }) {
   const cardData = data['rows'] || []
-  console.log('pdData', data)
+  // console.log('pdData', data)
   return (
     <>
       <div className="container">
