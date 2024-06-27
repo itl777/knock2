@@ -4,12 +4,12 @@ import pdImg from '@/public/products/p1.png'
 import BuyBtn from './buy-btn'
 import 'hover.css/css/hover-min.css'
 
-export default function Card({ data }) {
+export default function Card({ dbData }) {
   return (
     <>
       <div
         className="card hvr-grow-shadow"
-        id={data.product_id}
+        id={dbData.product_id}
         style={{ width: '20rem' }}
       >
         <Link href={`product-details`} style={{ textDecoration: 'none' }}>
@@ -22,19 +22,19 @@ export default function Card({ data }) {
           />
         </Link>
         <div className="card-body text-center d-flex flex-column">
-          <h5 className="card-title">{data.product_name}</h5>
+          <h5 className="card-title">{dbData.product_name}</h5>
 
           <div className="card-btn-outer d-flex justify-content-center my-3">
             <div className="card-btn d-flex">
               <div className="buy-btn-outer w-100 py-1">
-                <div className="buy-btn">${data.price}</div>
+                <div className="buy-btn">${dbData.price}</div>
               </div>
               <div className="buy-btn-outer w-100">
                 {/* <a
                   href={`product-details/${data.product_id}`}
                   className="buy-btn"
                 > */}
-                <BuyBtn product_id={data.product_id} />
+                <BuyBtn product_id={dbData.product_id} />
                 {/* </a> */}
               </div>
             </div>

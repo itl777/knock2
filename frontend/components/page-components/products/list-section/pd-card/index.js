@@ -1,7 +1,9 @@
 import MyPagination from '../../pagination'
 import Card from './card'
 
-export default function PdCard({ data }) {
+export default function PdCard({ data, setPage }) {
+  const cardData = data['rows'] || []
+  console.log('pdData', data)
   return (
     <>
       <div className="container">
@@ -9,14 +11,14 @@ export default function PdCard({ data }) {
           <div className="col-12 d-grid">
             {/* 商品卡片 */}
 
-            {data.map((r, i) => {
-              return <Card key={r.product_id} data={r} />
+            {cardData.map((r) => {
+              return <Card key={r.product_id} dbData={r} />
             })}
 
             {/* 商品區塊end */}
           </div>
 
-          <MyPagination />
+          <MyPagination totalPages={data.totalPages} setPage={setPage} />
         </div>
       </div>
 

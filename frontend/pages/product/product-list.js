@@ -7,15 +7,18 @@ import IndexLayout from '@/components/layout'
 
 export default function ProductList() {
   const [data, setData] = useState([])
+  const [page, setPage] = useState(1)
 
   useEffect(() => {
-    fetch('http://127.0.0.1:3001/products')
+    fetch(`http://127.0.0.1:3001/products?page=${page}`)
       .then((r) => r.json())
       .then((data) => {
-        console.log(data.data.rows)
-        setData(data.data.rows)
+        // console.log(data.data.rows)
+        // setData(data.data.rows)
+        console.log(data.data)
+        setData(data.data)
       })
-  }, [])
+  }, [page])
 
   return (
     <>
@@ -24,7 +27,7 @@ export default function ProductList() {
 
         <PdFilter />
 
-        <PdCard data={data} />
+        <PdCard data={data} setPage={setPage} />
 
         <style jsx global>
           {`
