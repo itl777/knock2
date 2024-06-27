@@ -19,12 +19,12 @@
   line-height: 1.5rem;
   border-radius: 50%;
 }
-
+/* 
 .itemBox {
   display: flex;
   align-items: center;
   gap: 1.25rem;
-}
+} */
 
 .itemInfo {
   flex: auto;
@@ -57,13 +57,13 @@
     width: 90%;
     padding: 1.25rem;
   } */
-  .itemBox {
+  /* .itemBox {
     gap: 1rem;
-  }
+  } */
 
-  .itemBox span{
+  /* .itemBox span{
     font-size: 1rem;
-  }
+  } */
 
   .item-img-box {
     width: 5rem;

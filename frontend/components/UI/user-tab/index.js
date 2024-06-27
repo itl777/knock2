@@ -1,15 +1,15 @@
 // components > user-tab
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-
-// styles
 import styles from './user-tab.module.css'
 import { FaGhost } from 'react-icons/fa'
 
 export default function UserTab() {
   const router = useRouter()
-
   const isActive = (path) => {
+    if (path === '/user/orders/ongoing') {
+      return router.pathname.startsWith('/user/orders')
+    }
     return router.pathname.startsWith(path)
   }
 

@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import IndexLayout from '@/components/layout'
+import UserLayout from '@/components/layout/user-layout'
 import UserTab from '@/components/UI/user-tab'
 import UserTabSec from '@/components/UI/user-tab-sec'
 import OrderListCards from '@/components/page-components/orders/order-list-cards'
-import UserLayout from '@/components/layout/user-layout'
 
 export default function OrdersPage() {
   const router = useRouter()

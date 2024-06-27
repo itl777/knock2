@@ -48,6 +48,7 @@ router.get("/details/:orderId", async (req, res) => {
         od.order_id,
         od.order_product_id AS product_id,
         pm.product_name,
+        od.order_unit_price,
         od.order_quantity,
         img.product_img
       FROM order_details od

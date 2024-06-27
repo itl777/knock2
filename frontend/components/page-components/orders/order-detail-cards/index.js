@@ -3,69 +3,109 @@ import Link from 'next/link'
 import styles from './order-detail-cards.module.css'
 import FilterBtn from '@/components/UI/filter-btn'
 import OrderStatusTag from '../order-status-tag'
+import OrderProductImgBox from '../order-product-img-box'
 import { FaArrowLeftLong } from 'react-icons/fa6'
 
-export default function OrderDetailCards() {
+export default function OrderDetailCards({ orderId }) {
+  const [orderData, setOrderData] = useState([])
+  const [orderDetailData, setOrderDetailData] = useState([])
+  const orderIdNumber = orderId.order_id
+  console.log(orderIdNumber)
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:3001/user/orders/details/${orderIdNumber}`
+        )
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch order data')
+        }
+
+        const data = await response.json()
+
+        console.log('order detail data:', data)
+        setOrderData(data.orders) // 取得訂單資料
+        setOrderDetailData(data.orderDetails) // 取得訂單詳情
+      } catch (error) {
+        console.log('Error fetching orders: ', error)
+      }
+    }
+    fetchOrders()
+  }, [orderIdNumber])
+
+  const o = orderData[0]
+
   return (
     <div className={styles.orderDetailBox}>
-      <Link className={styles.orderDetailHeader} href="/user/orders/ongoing">
-        <div className={styles.titleBox}>
+      {/* card header */}
+      <div className={styles.orderDetailHeader}>
+        <Link className={styles.titleBox} href="/user/orders/ongoing">
           <FaArrowLeftLong />
           <h5>訂單明細</h5>
-        </div>
+        </Link>
         <FilterBtn btnText="發票" href="https://mui.com/" />
-      </Link>
+      </div>
 
       <div className="horizontalDividerS" />
+
+      {/* card body */}
       <div className={styles.orderDetailContent}>
+        {/* card body left */}
         <div className={styles.orderDetailLeft}>
-          <div className="itemBoxS">
-            <div className="itemImgBoxS">
-              <img src="/products/p1.png" alt="" />
-            </div>
-            <div className="itemInfoS">
-              <p className="product-name">決戰大富翁</p>
-              <div className="itemQtyPriceBoxS">
-                <p>x 1</p>
-                <div className="itemPriceS">
-                  <p>$720</p>
-                  <small>$800</small>
+          {/* order product mapping */}
+          {orderDetailData.map((v, i) => (
+            <div key={v.product_id} className="itemBoxS">
+              <OrderProductImgBox
+                imgSrc={v.product_img ? `/products/${v.product_img}` : ''}
+              />
+              <div className="itemInfoS">
+                <p className="product-name">{v.product_name}</p>
+                <div className="itemQtyPriceBoxS">
+                  <p>x {v.order_quantity}</p>
+                  <div className="itemPriceS">
+                    <p>$ 700</p>
+                    <small>$ {v.order_unit_price}</small>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
+
+        {/* card body right */}
         <div className={styles.orderDetailRight}>
           <div className={styles.orderInfoBox}>
             <div className={styles.orderInfoRow}>
               <p>訂單日期</p>
-              <p>2024.05.22</p>
+              <p>{o?.order_date}</p>
             </div>
             <div className={styles.orderInfoRow}>
               <p>訂單編號</p>
-              <p>202405220001</p>
+              <p>202405220001_fake</p>
             </div>
             <div className={styles.orderInfoRow}>
               <p>總金額</p>
-              <p>$ 32,000</p>
+              <p>$ {o?.total_price}</p>
             </div>
             <div className={styles.orderInfoRow}>
               <p>付款方式</p>
-              <p>信用卡</p>
+              <p>{orderData.length > 0 && o?.payment_method}</p>
             </div>
             <div className={styles.orderInfoRow}>
               <p>付款時間</p>
-              <p>2024.05.22 16:30:30</p>
+              <p>2024.05.22 16:30:30_fake</p>
             </div>
             <div className={styles.orderInfoRow}>
               <p>地址</p>
-              <p>台北市大安區天堂路38號</p>
+              <p>{o?.full_address}</p>
             </div>
             <div className={styles.orderInfoRow}>
               <p>到貨時間</p>
-              <p>2024.05.25 16:30:30</p>
+              <p>2024.05.25 16:30:30_fake</p>
             </div>
-            <OrderStatusTag status="ongoing" />
+            <OrderStatusTag status={o?.order_status_name} />
           </div>
 
           <div className={styles.orderReviewHintBox}>

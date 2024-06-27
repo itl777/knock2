@@ -14,7 +14,8 @@
 }
 
 .imgTextBox Img {
-  width: 70%;
+  width: 65%;
   max-width: 4rem;
+  min-width: 2rem;
   margin-bottom: .5rem;
 }

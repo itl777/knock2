@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import styles from './order-list-cards.module.css'
 import FilterBtn from '@/components/UI/filter-btn'
 import OrderStatusTag from '../order-status-tag'
 import NoData from '@/components/UI/no-data'
 import { FiShoppingBag, FiCreditCard, FiPackage } from 'react-icons/fi'
+import OrderProductImgBox from '../order-product-img-box'
 
 export default function OrderListCards({ orderStatusId }) {
   const [orderData, setOrderData] = useState([])
   const [orderDetailData, setOrderDetailData] = useState([])
   const memberId = 1 // 暫時設定會員 id
 
+  const router = useRouter()
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -34,11 +37,16 @@ export default function OrderListCards({ orderStatusId }) {
     fetchOrders()
   }, [memberId, orderStatusId])
 
-  // const formatDate = (dateString) => {
-  //   const date = new Date(dateString)
-  //   return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${(
-  //     '0' + date.getDate()
-  //   ).slice(-2)}`
+  /* const formatDate = (dateString) => {
+    const date = new Date(dateString)
+    return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${(
+      '0' + date.getDate()
+    ).slice(-2)}`
+  } */
+
+  // // 詳情按鈕
+  // const handleOrderDetail = (orderId) => {
+  //   router.push(`/user/orders/details/${orderId}`)
   // }
 
   return (
@@ -57,9 +65,12 @@ export default function OrderListCards({ orderStatusId }) {
           <div key={v.order_id} className={styles.orderBox}>
             <div className={styles.orderHeader}>
               <p>{v.order_date}</p>
-              <FilterBtn btnText="詳情" href={`/user/orders/details/${v.order_id}`} />
+              <FilterBtn
+                btnText="詳情"
+                href={`/user/orders/details/${v.order_id}`}
+              />
             </div>
-            <div className="horizontalDivider" />
+            <div className="horizontalDividerS" />
             <div className={styles.orderContent}>
               <div className={styles.orderInfo}>
                 <div className={styles.orderInfoRow}>
@@ -76,19 +87,18 @@ export default function OrderListCards({ orderStatusId }) {
                 </div>
                 <OrderStatusTag status={v.order_status_name} />
               </div>
-
               <div className={styles.orderProductImg}>
                 {orderDetailData
                   .filter((detail) => detail.order_id === v.order_id) // 取得訂單下所有的商品
                   .map((detail, i) => (
-                    <div key={i} className="itemImgBox">
-                      {/* 如果有商品圖顯示商品圖，如果沒有顯示無資料 */}
-                      {detail.product_img ? (
-                        <img src={`/products/${detail.product_img}`} alt="" />
-                      ) : (
-                        <NoData text="無商品圖" borderRadius="0rem" />
-                      )}
-                    </div>
+                    <OrderProductImgBox
+                      key={i}
+                      imgSrc={
+                        detail.product_img
+                          ? `/products/${detail.product_img}`
+                          : ''
+                      }
+                    />
                   ))}
               </div>
             </div>

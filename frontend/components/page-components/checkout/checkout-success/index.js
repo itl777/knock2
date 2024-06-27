@@ -2,6 +2,7 @@
 
 import BlackBtn from '@/components/UI/black-btn'
 import styles from './checkout-success.module.css'
+import OrderProductImgBox from '../../orders/order-product-img-box'
 
 export default function CheckoutSuccess() {
   return (
@@ -13,10 +14,8 @@ export default function CheckoutSuccess() {
         alt=""
       />
       <div className={styles.contentContainer}>
-        <div className={styles.itemBox}>
-          <div className={styles.itemImgBox}>
-            <img src="/products/p1.png" alt="" />
-          </div>
+        <div className="itemBoxS">
+          <OrderProductImgBox />
           <div className={styles.itemInfo}>
             <p className={styles.productName}>決戰大富翁</p>
             <div className={styles.itemQtyPriceBox}>

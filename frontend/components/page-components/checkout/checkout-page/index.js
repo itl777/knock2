@@ -17,7 +17,7 @@ export default function CheckOutPage() {
             productName="哈利波特的奶油啤酒"
             productOriginalPrice={1000}
             productDiscountedPrice={800}
-            productImg="/products/p1.png"
+            productImg=""
             orderQty=""
           />
 

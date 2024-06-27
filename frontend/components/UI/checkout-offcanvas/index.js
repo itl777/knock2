@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import Drawer from '@mui/joy/Drawer'
-import { FaCartShopping } from 'react-icons/fa6'
 import styles from './checkout-offcanvas.module.css'
-import { IoHeartOutline } from 'react-icons/io5'
+import Drawer from '@mui/joy/Drawer'
 import InputStepper from '../input-stepper'
+import OrderProductImgBox from '@/components/page-components/orders/order-product-img-box'
+import { FaCartShopping } from 'react-icons/fa6'
+import { IoHeartOutline } from 'react-icons/io5'
 
 // import { IoAdd, IoHeartOutline } from 'react-icons/io5'
 // import { IoIosRemove } from 'react-icons/io'
@@ -16,7 +17,7 @@ export default function CheckoutOffcanvas() {
 
   return (
     <>
-      <FaCartShopping onClick={toggleShow} />
+      <FaCartShopping onMouseEnter={toggleShow} />
       <Drawer open={show} onClose={handleClose} anchor="right">
         <div className={styles.offcanvasBody}>
           <div className={styles.checkoutTitle}>
@@ -24,10 +25,8 @@ export default function CheckoutOffcanvas() {
             <div className={styles.cartItemCount}>5</div>
           </div>
 
-          <div className={styles.itemBox}>
-            <div className="itemImgBox">
-              <img src="/products/p1.png" alt="" />
-            </div>
+          <div className="itemBoxS">
+            <OrderProductImgBox/>
             <div className={styles.itemInfo}>
               <p>決戰大富翁</p>
               <div className={styles.itemPrice}>
