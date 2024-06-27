@@ -18,6 +18,7 @@ export default function ProductList() {
         console.log(data.data)
         setData(data.data)
       })
+    window.scrollTo({ top: 0, behavior: 'auto' })
   }, [page])
 
   return (
