@@ -60,7 +60,7 @@ const grey = {
   50: '#F3F6F9',
   100: '#E5EAF2',
   200: '#DAE2ED',
-  300: '#C7D0DD',
+  300: '#D9D9D9',
   400: '#B0B8C4',
   500: '#9DA8B7',
   600: '#6B7A90',
@@ -146,7 +146,7 @@ const StyledButton = styled('button')(
 
   &:hover {
     cursor: pointer;
-    background: ${theme.palette.mode === 'dark' ? grey[700] : grey[500]};
+    background: ${theme.palette.mode === 'dark' ? grey[100] : grey[300]};
     border-color: ${theme.palette.mode === 'dark' ? grey[500] : grey[400]};
     color: ${grey[50]};
   }

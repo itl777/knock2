@@ -16,7 +16,7 @@ export default function PdTabs() {
   }
   const mySxTab = {
     fontFamily: 'Noto Serif JP',
-    border: 2,
+    border: 1,
     color: 'black',
     borderColor: '#8C764C',
     borderTopLeftRadius: '15px',
@@ -48,7 +48,7 @@ export default function PdTabs() {
         sx={{ width: '100%', typography: 'body1', fontFamily: 'Noto Sans TC' }}
       >
         <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Box>
             <TabList
               onChange={handleChange}
               aria-label="lab API tabs example"
