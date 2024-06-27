@@ -1,8 +1,9 @@
 .teamsPage {
-    max-width: 1440px;
+    /* max-width: 1440px; */
     margin:auto;
     border: 1px solid #B99755;
     color:#B99755;
+    background-color: #000;
 }
 
 .borderbox{
@@ -15,4 +16,29 @@
 .tourInfo{
     padding:16px 0;
     
+}
+
+.teamsSection {
+    padding: 30px 12px;
+    line-height: 2;
+}
+
+.teamUnite{
+    display: inline-grid;
+    padding: 6px 20px;
+}
+
+.teamContent{
+    border: 1px solid #B99755;
+    background-color: #FFF;
+}
+
+.teamInfo{
+    margin-top: -20px;
+    display: inline-block;
+}
+
+.teamTitle{
+    background-color: #000;
+    color:#bbb
 }

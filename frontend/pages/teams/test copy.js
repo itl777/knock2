@@ -26,23 +26,19 @@ export default function TeamListTest() {
         <div>
           <h2>糾團頁面</h2>
         </div>
-        <div className="container">
-          <div className="row">
-            <div className={styles.teamsPage}>
-              {data.rows.map((r, i) => {
-                return (
-                  <div className="ttt col-4 borderbox" key={r.team_id}>
-                    <h4>團隊名稱：{r.team_title}</h4>
-                    <p>
-                      隊長：{r.leader_id}
-                      <br />
-                      行程編號：{r.tour}
-                    </p>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
+        <div className={styles.teamsPage}>
+          {data.rows.map((r, i) => {
+            return (
+              <div key={r.team_id}>
+                <h4>團隊名稱：{r.team_title}</h4>
+                <p>
+                  隊長：{r.leader_id}
+                  <br />
+                  行程編號：{r.tour}
+                </p>
+              </div>
+            )
+          })}
         </div>
       </IndexLayout>
     </>

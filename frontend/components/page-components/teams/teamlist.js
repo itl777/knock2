@@ -1,13 +1,24 @@
-import { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { teamsData } from '@/data/teams/kk-teams.js'
 import TeamItem from './teamitem'
 
+import { TEAM_LIST } from '@/configs/team-api-path'
+
 export default function TeamList() {
-  const initState = teamsData.map((v, i) => {
-    return { ...v }
+  const [data, setData] = useState({
+    success: false,
+    rows: [],
   })
 
-  const [teams, setTeams] = useState(initState)
+  useEffect(() => {
+    fetch(`${TEAM_LIST}`)
+      .then((r) => r.json())
+      .then((myData) => {
+        console.log(data)
+        setData(myData)
+      })
+  }, [])
+
   return (
     <>
       {teamsData.map((p) => {

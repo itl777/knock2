@@ -4,6 +4,36 @@ import db from "../utils/connect-mysql.js";
 
 const router = express.Router();
 
+const getAllData = async (req) => {
+  
+  let success = false;
+  let redirect = "";
+
+  
+  const sql = `SELECT team_id, team_title, leader_id, nick_name, theme_desc, avatar, tour, theme_name, team_limit, count(join_user_id) as member_n
+        FROM teams 
+        join \`users\` on leader_id = users.user_id
+        join \`themes\` on \`tour\` = themes.theme_id
+        left join \`teams_members\` on team_id = join_team_id
+         group by team_id;`;
+        console.log(sql);
+        
+        let rows = []; //分頁資料填入
+
+        [rows] = await db.query(sql);
+        success = true;
+        return {
+          success,
+          // perPage,
+          // page,
+          // totalRows,
+          // totalPages,
+          rows,
+          qs: req.query,
+        };
+        
+      };
+
 const getListData = async (req) => {
   let success = false;
   let redirect = "";
@@ -40,6 +70,12 @@ const getListData = async (req) => {
 router.get("/api", async (req, res) => {
     const data = await getListData(req);
     res.json(data);
+  });
+    
+router.get("/apiall", async (req, res) => {
+  const data = await getAllData(req);
+  res.json(data);
+
   });
   export default router;
   
