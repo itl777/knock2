@@ -30,6 +30,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.static('public'));
+
 // 路由模組
 app.use("/themes", themes);
 app.use("/teams", teams);

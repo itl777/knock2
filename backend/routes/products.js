@@ -39,6 +39,7 @@ const getListDate = async (req) => {
   const [[{ totalRows }]] = await db.query(t_sql);
   let totalPages = 0;
   let rows = [];
+  let productImg='';
 
   // 查詢的db有無回傳值
   if (totalRows) {
@@ -49,12 +50,19 @@ const getListDate = async (req) => {
       redirect = `?page=${totalPages}`;
       return { success, redirect };
     }
+    // 文字
+    // const sql = `SELECT * FROM \`product_management\` ${where} ORDER BY product_id  DESC LIMIT ${
+    //   (page - 1) * perPage
+    // },${perPage}`;
 
-    const sql = `SELECT * FROM \`product_management\` ${where} ORDER BY product_id  DESC LIMIT ${
+    // 圖片
+    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\`
+    on \`product_id\` = \`img_product_id\` ${where} ORDER BY product_id  DESC LIMIT ${
       (page - 1) * perPage
     },${perPage}`;
 
     [rows] = await db.query(sql);
+    
 
     success = true;
     return {

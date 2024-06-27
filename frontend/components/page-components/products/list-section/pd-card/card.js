@@ -22,7 +22,7 @@ export default function Card({ dbData }) {
       >
         <Link href={`product-details`} style={{ textDecoration: 'none' }}>
           <Image
-            src={pdImg}
+            src={`http://127.0.0.1:3001/images/${dbData.product_img}`}
             width={318}
             height={200}
             className="card-img-top"
