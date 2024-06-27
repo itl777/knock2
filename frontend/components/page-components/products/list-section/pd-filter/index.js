@@ -3,6 +3,7 @@ import Image from 'next/image'
 import frameSvg from '@/public/products/frame.svg'
 import FilterBtn from '@/components/UI/filter-btn'
 import 'hover.css/css/hover-min.css'
+import CategoryBtn from './category-btn'
 
 export default function PdFilter() {
   return (
@@ -11,17 +12,9 @@ export default function PdFilter() {
         <Image id="frame-head" layout="responsive" src={frameSvg} alt="" />
 
         <div id="frame">
-          <div className="row">
-            <div className="col-6 offset-3">
-              <ul id="category-ul" className="d-flex">
-                <li className="line-img">派對遊戲</li>
-                <li className="line-img">益智遊戲</li>
-                <li className="line-img">兒童遊戲</li>
-                <li className="line-img">家庭遊戲</li>
-                <li className="line-img">猜謎遊戲</li>
-              </ul>
-            </div>
-          </div>
+          <CategoryBtn />
+
+
           {/* price range */}
           <div className="row mt-4">
             <div className="col-6 offset-1 d-flex">
@@ -32,6 +25,7 @@ export default function PdFilter() {
                 <input type="range" className="form-range" id="customRange1" />
               </div>
             </div>
+
             <div className="col-4 text-end">
               <FilterBtn btnText={'最新上架'} />
               <FilterBtn btnText={'價格排序'} />
@@ -51,24 +45,6 @@ export default function PdFilter() {
           .container {
             max-width: 1200px;
             margin-bottom: 5rem;
-          }
-
-          .line-img {
-            position: relative;
-            box-sizing: border-box;
-            width: 100%;
-            text-align: center;
-            font-weight: 700;
-          }
-          .line-img:not(:last-child)::before {
-            content: '';
-            position: absolute;
-            box-sizing: border-box;
-            top: 20%;
-            right: 0;
-            width: 2px;
-            height: 1em;
-            background-color: #878787;
           }
 
           .text {
