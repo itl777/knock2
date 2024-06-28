@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from './nav-styles.module.scss'
 import { FaCircleUser } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
@@ -6,11 +6,17 @@ import Link from 'next/link'
 import Image from 'next/image'
 import NavMenu from './nav-menu'
 import CheckoutOffcanvas from '@/components/UI/checkout-offcanvas'
+import { useAuth } from '@/context/auth-context'
+import Avatar from '@mui/joy/Avatar'
+import { API_SERVER } from '@/config/app-path'
 
 export default function Navbar({ pageName }) {
+  const { login, auth } = useAuth()
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
   const [showNavMenu, setShowNavMenu] = useState(false)
   const [navMenuAnimate, setNavMenuAnimate] = useState('')
+  const timeOutRef = useRef(null)
+  const hideNavMenuRef = useRef(null)
 
   const openMenu = () => {
     const newMenu =
@@ -20,19 +26,35 @@ export default function Navbar({ pageName }) {
     setMenuState(newMenu)
   }
 
+  const handleMouseOut = () => {
+    timeOutRef.current = setTimeout(() => {
+      setNavMenuAnimate('animate__bounceOutUp')
+      hideNavMenuRef.current = setTimeout(() => {
+        setShowNavMenu(false)
+      }, 1000)
+    }, 1000)
+  }
+
   const handleMouseOver = () => {
+    clearTimeout(timeOutRef.current)
+    clearTimeout(hideNavMenuRef.current)
     if (showNavMenu === false) setShowNavMenu(true)
     setNavMenuAnimate('animate__bounceInDown')
   }
 
-  const handleMouseOut = () => {
-    setNavMenuAnimate('animate__bounceOutUp')
+  const handleNavMenuMouseOver = () => {
+    clearTimeout(timeOutRef.current)
+    clearTimeout(hideNavMenuRef.current)
   }
 
   return (
     <>
-      <header className={styles['navbar']} onMouseLeave={handleMouseOut}>
-        {showNavMenu ? <NavMenu show={navMenuAnimate} /> : ''}
+      <header
+        className={styles['navbar']}
+        onMouseLeave={handleMouseOut}
+        onMouseEnter={handleNavMenuMouseOver}
+      >
+        {showNavMenu && auth.id ? <NavMenu show={navMenuAnimate} /> : ''}
         <nav>
           <ul className={styles['navbar-icon']}>
             <li>
@@ -47,8 +69,26 @@ export default function Navbar({ pageName }) {
               </Link>
             </li>
             <li>
-              <Link href="/user" onMouseEnter={handleMouseOver}>
-                <FaCircleUser />
+              <Link
+                href="#/"
+                onMouseEnter={handleMouseOver}
+                onClick={() => {
+                  login('user1@example.com', '123456')
+                }}
+              >
+                {auth.id ? (
+                  <Avatar
+                    size="sm"
+                    variant="plain"
+                    alt={auth.nickname}
+                    src={
+                      auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''
+                    }
+                    // sx={{ border: '5px sold' }}
+                  />
+                ) : (
+                  <FaCircleUser />
+                )}
               </Link>
               <a>
                 <CheckoutOffcanvas />
