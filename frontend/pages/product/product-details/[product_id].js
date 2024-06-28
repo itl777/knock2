@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
-import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import PdTabs from '@/components/page-components/products/details-section/pd-tabs/index'
+import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import PdFeatures from '@/components/page-components/products/details-section/pd-features'
 import IndexLayout from '@/components/layout'
 import { useRouter } from 'next/router'
