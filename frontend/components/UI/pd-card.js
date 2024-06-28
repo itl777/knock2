@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import Card02 from '@/components/UI/cards-test'
+import Card02 from '@/components/UI/cards-themes'
 import GoogleMap from '@/components/UI/google-map'
 import ThemeBranches from '@/components/UI/theme-branches'
 
