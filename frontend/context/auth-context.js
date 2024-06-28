@@ -73,7 +73,7 @@ export function AuthContextProvider({ children }) {
         })
       if (data?.id && data?.token) {
         setAuth(data)
-        setAuthState(false);
+        setAuthState(false)
       }
     } catch (ex) {
       console.log(ex)

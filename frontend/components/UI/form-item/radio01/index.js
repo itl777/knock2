@@ -8,7 +8,7 @@ export default function Radio01({
   onChange = () => {},
 }) {
   return (
-    <Box height={50} display="flex" alignItems="center" sx={{ width: '100%' }}>
+    <Box height={44} display="flex" alignItems="center" sx={{ width: '100%' }}>
       <RadioGroup overlay name={name}>
         <List component="div" orientation="horizontal">
           {radio?.map((v, i) => (
