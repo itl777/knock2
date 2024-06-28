@@ -20,7 +20,10 @@ export default function Card({ dbData }) {
         id={dbData.product_id}
         style={{ width: '20rem' }}
       >
-        <Link href={`product-details`} style={{ textDecoration: 'none' }}>
+        <Link
+          href={`product/product-details/${dbData.product_id}`}
+          style={{ textDecoration: 'none' }}
+        >
           <Image
             src={`http://127.0.0.1:3001/images/${dbData.product_img}`}
             width={318}
