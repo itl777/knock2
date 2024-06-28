@@ -43,7 +43,7 @@ export default function PdTabs() {
   }
 
   return (
-    <div className={`$myStyle['container'] container`} style={{ padding: 0 }}>
+    <div className={`${myStyle['container']} container`} style={{ padding: 0 }}>
       <Box
         sx={{ width: '100%', typography: 'body1', fontFamily: 'Noto Sans TC' }}
       >

@@ -26,19 +26,6 @@ export default function ProductDetails() {
 
         <PdTabs data={data} />
       </IndexLayout>
-
-      <style jsx global>
-        {`
-          .container {
-            max-width: 1200px;
-            margin-bottom: 5rem;
-            padding:0;
-          }
-          .col-12.bg-white {
-            border-radius: 16px;
-          }
-        `}
-      </style>
     </>
   )
 }

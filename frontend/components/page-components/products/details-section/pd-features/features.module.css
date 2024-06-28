@@ -10,6 +10,7 @@
 .container {
   max-width: 1200px;
   margin-bottom: 5rem;
+  padding:0;
 }
 
 .add-line::after {
@@ -21,9 +22,6 @@
   background: #d9d9d9;
 }
 
-.col-12.bg-white {
-  border-radius: 16px;
-}
 .price {
   font-family: 'Noto Serif JP';
   font-size: 36px;
