@@ -10,7 +10,6 @@ import PdBtnContained from '@/components/UI/pd-btn-contained'
 
 import { IoMdPeople } from 'react-icons/io'
 import { MdSchedule } from 'react-icons/md'
-import { textAlign } from '@mui/system'
 
 export default function TeamListTest() {
   const [data, setData] = useState({
@@ -47,7 +46,7 @@ export default function TeamListTest() {
                     className={`${styles.teamUnite} col-4 borderbox`}
                     key={r.team_id}
                   >
-                    <div className={styles.teamContent}>
+                    <div className={styles.teamCard}>
                       <div className="teamPhoto">
                         {/* <img src={catImage} alt="cat" /> */}
                         <img
@@ -56,25 +55,32 @@ export default function TeamListTest() {
                           width={'100%'}
                         />
                       </div>
-                      <div className={styles.teamInfo}>
+                      <div className={styles.teamTourInfo}>
                         <span className={styles.teamTitle}>{r.theme_name}</span>
                         <span>難度</span>
                       </div>
-                      <h5>團名：{r.team_title}</h5>
-                      <p>
-                        團長：{r.nick_name}
-                        <br />
-                        時段：
-                        <br />
-                        <IoMdPeople />
-                        人數：2 / 6
-                        <MdSchedule />
-                        狀態：招募中
-                      </p>
-                      <div style={{ textAlign: 'center' }}>
-                        <Link href={`/teamNo/${r.team_id}`}>
-                          <PdBtnContained btnText="查看詳情" color="black" />
-                        </Link>
+                      <div className={styles.teamContent}>
+                        <h5>團名：{r.team_title}</h5>
+                        <p>
+                          團長：{r.nick_name}
+                          <br />
+                          時段：2024/09/09 14:00
+                        </p>
+                        <div className="row">
+                          <div className="col-6">
+                            <IoMdPeople />
+                            人數：2 / 6
+                          </div>
+                          <div className="col-6">
+                            <MdSchedule />
+                            狀態：招募中
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'center' }}>
+                          <Link href={`/teamNo/${r.team_id}`}>
+                            <PdBtnContained btnText="查看詳情" color="black" />
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -28,17 +28,23 @@
     padding: 6px 20px;
 }
 
-.teamContent{
+.teamCard{
     border: 1px solid #B99755;
     background-color: #FFF;
 }
 
-.teamInfo{
-    margin-top: -20px;
+.teamTourInfo{
     display: inline-block;
+    margin:-40px 0 0 10px;
+    padding: 16px;
+    background-color: #000;
 }
 
 .teamTitle{
     background-color: #000;
-    color:#bbb
+    color:#bbb;
+}
+
+.teamContent{
+    padding: 26px;
 }
