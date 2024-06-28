@@ -3,7 +3,7 @@ import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
 import Link from 'next/link'
 
-import { TEAM_ALL } from '@/configs/team-api-path'
+import { TEAM_ONE } from '@/configs/team-api-path'
 
 import PdBtnContained from '@/components/UI/pd-btn-contained'
 import { IoMdPeople } from 'react-icons/io'
@@ -16,7 +16,7 @@ export default function TeamListTest() {
   })
 
   useEffect(() => {
-    fetch(`${TEAM_ALL}`)
+    fetch(`${TEAM_ONE}`)
       .then((r) => r.json())
       .then((myData) => {
         console.log(data)
@@ -54,16 +54,14 @@ export default function TeamListTest() {
                       </div>
                       <div className={styles.teamTourInfo}>
                         <span className={styles.teamTitle}>{r.theme_name}</span>
-                        <span>{r.difficulty}</span>
+                        <span>難度</span>
                       </div>
                       <div className={styles.teamContent}>
                         <h5>團名：{r.team_title}</h5>
                         <p>
                           團長：{r.nick_name}
                           <br />
-                          時段：{r.reservation_date}
-                          <br />
-                          {r.start_time} ~ {r.end_time}
+                          時段：2024/09/09 14:00
                         </p>
                         <div className="row">
                           <div className="col-6">
