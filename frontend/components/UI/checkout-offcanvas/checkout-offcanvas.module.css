@@ -1,0 +1,63 @@
+.drawerContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 1.5rem;
+  height: 100%;
+}
+
+.checkoutTitle {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.cartItemCount {
+  background-color: var(--sec-1);
+  width: 1.5rem;
+  height: 1.5rem;
+  color: white;
+  text-align: center;
+  line-height: 1.5rem;
+  border-radius: 50%;
+}
+
+.cartIcon {
+  width: 100%;
+  color: red;
+}
+
+.drawerTop {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.MuiBadge-badge {
+  background-color: red;
+}
+
+.itemInfo {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  gap: 0.5em;
+}
+
+.total{
+  text-align: right;
+  font-weight: bold;
+}
+
+.addToFavoriteIcon {
+  font-size: 1.5rem;
+}
+
+.alignEnd {
+  align-self: flex-end;
+}
+
+@media screen and (max-width: 480px) {
+
+}

@@ -1,0 +1,85 @@
+
+/* 
+.itemImgBox {
+  overflow: hidden;
+  flex: none;
+  width: 8rem;
+  height: 8rem;
+  border-radius: var(--img-radius);
+}
+
+
+.itemImgBox img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+} */
+
+
+/* new */
+.horizontalDividerS {
+  width: 100%;
+  height: 2px;
+  background-color: var(--pri-3);
+  margin: 1.5rem 0;
+}
+
+.verticalDividerS {
+  width: 2px;
+  background-color: var(--pri-3);
+  align-self: stretch;
+}
+
+
+.itemBoxS {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* .itemImgBoxS {
+  overflow: hidden;
+  flex: none;
+  width: 8rem;
+  height: 8rem;
+  border-radius: var(--img-radius);
+}
+
+
+.itemImgBoxS img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+} */
+
+
+.itemInfoS {
+  /* width: 100%;
+  padding: 0 .25rem; */
+  flex: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.itemQtyPriceBoxS {
+  display: flex;
+  justify-content: space-between;
+}
+
+.itemPriceS {
+  display: flex;
+  align-items: baseline;
+  gap: .75rem;
+}
+
+
+.itemPriceS small {
+  color: var(--text-grey);
+  font-size: .75rem;
+  font-weight: normal;
+  text-decoration: line-through;
+}
+
+

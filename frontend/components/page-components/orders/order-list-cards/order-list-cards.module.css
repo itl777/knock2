@@ -1,0 +1,48 @@
+.orderBox {
+  width: 100%;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background-color: white;
+  border-radius: var(--content-radius);
+  box-shadow: var(--card-shadow);
+}
+
+.orderHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.orderContent {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.orderInfoRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+
+.orderProductImg {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 800px) {
+  .orderContent {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .orderProductImg {
+    justify-content: center;
+  }
+}

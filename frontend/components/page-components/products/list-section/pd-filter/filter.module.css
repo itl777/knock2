@@ -1,0 +1,42 @@
+.li-line {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  text-align: center;
+  font-weight: 700;
+}
+.li-line:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  box-sizing: border-box;
+  top: 20%;
+  right: 0;
+  width: 2px;
+  height: 1em;
+  background-color: #878787;
+}
+.li-line a {
+  text-decoration: none;
+  color: black;
+}
+.li-line a:hover{
+  color: #676767;
+}
+.li-line a:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 22px;
+  left: 33px;
+  width: 50px;
+  height: 50px;
+  background-image: url('/ghost/ghost_11.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation-name: ghost;
+  animation-duration: 0.5s;
+}
+
+@keyframes ghost {
+  from {transform: translateY(30px) rotate(-20deg)}
+  to {transform: translateY(0px)}
+}

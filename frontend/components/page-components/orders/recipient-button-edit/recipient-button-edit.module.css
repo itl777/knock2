@@ -1,0 +1,38 @@
+
+.header p {
+  font-size: 1rem;
+  margin-bottom: .375rem;
+}
+
+.iconTextRow {
+  display: flex;
+  align-items: center;
+  gap: .375rem;
+}
+
+.iconTextRow span {
+  font-size: .875rem;
+}
+
+.iconTextRow svg {
+  width: .75rem;
+  fill: var(--sec-1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.btnStack {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.btnDivider {
+  height: 1rem;
+  width: 1px;
+  background-color: var(--pri-3);
+}

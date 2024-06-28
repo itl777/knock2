@@ -30,7 +30,7 @@ import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
 
 export default function Card01({
   branchName = '',
-  themeImg = '/images/UI/cards/theme-img.png',
+  themeImg = 'theme-img.png',
   themeName = '',
   difficulty = '',
   description = '',
@@ -53,7 +53,10 @@ export default function Card01({
   return (
     <Card
       variant="plain"
-      sx={{ width: 375, height: 422, '--Card-radius': '0px', p: 0 }}
+      sx={{
+        '--Card-radius': '0px',
+        p: 0,
+      }}
       className={styles['card-01']}
     >
       {/* 圖片 */}
@@ -74,7 +77,12 @@ export default function Card01({
           {branchName}
         </Typography>
         <AspectRatio ratio="375/240">
-          <Image src={themeImg} alt="" width={375} height={240} />
+          <Image
+            src={`/themes-main/${themeImg}`}
+            alt=""
+            width={375}
+            height={240}
+          />
         </AspectRatio>
         <Box
           sx={{
@@ -116,11 +124,27 @@ export default function Card01({
       </CardOverflow>
 
       {/* 文字 title-md body-sm */}
-      <CardContent sx={{ px: 6, justifyContent: 'center' }}>
+      <CardContent
+        sx={{
+          py: 3,
+          px: { xs: 4, sm: 6 },
+          justifyContent: 'center',
+        }}
+      >
         <span>{description}</span>
       </CardContent>
       <CardOverflow>
-        <CardContent orientation="horizontal" sx={{ px: 6, pb: 2, gap: 3 }}>
+        <CardContent
+          orientation="horizontal"
+          sx={{
+            px: 6,
+            pb: 2,
+            gap: {
+              xs: 1,
+              sm: 3,
+            },
+          }}
+        >
           <Typography
             startDecorator={<MdOutlineGroup />}
           >{`${suitablePlayers} 人`}</Typography>

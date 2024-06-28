@@ -16,14 +16,14 @@ export default function Teams() {
               <div className={styles.borderbox}>
                 <h3 className="boxTitle">創立團隊</h3>
                 <form>
-                  <div class="mb-3">
-                    <label htmlFor={'lead_name'} class="form-label">
+                  <div className="mb-3">
+                    <label htmlFor={'lead_name'} className="form-label">
                       團長： {tempTour.leader_id}
                     </label>
                   </div>
                   <div className="mb-3">
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                     >
                       <option selected>請選擇已預約的行程</option>
@@ -39,23 +39,23 @@ export default function Teams() {
                     <br />
                     人數：
                   </div>
-                  <div class="mb-3">
-                    <label htmlFor={'team_name'} class="form-label">
+                  <div className="mb-3">
+                    <label htmlFor={'team_name'} className="form-label">
                       團隊名稱
                     </label>
                     <input
                       type="text"
-                      class="form-control"
+                      className="form-control"
                       id="team_name"
                       aria-describedby="enterteamname"
                     />
                   </div>
                   <div className="mb-3">
-                    <label htmlFor={'team_name'} class="form-label">
+                    <label htmlFor={'team_name'} className="form-label">
                       募集人數
                     </label>
                     <select
-                      class="form-select"
+                      className="form-select"
                       aria-label="Default select example"
                     >
                       <option value="1" selected>
@@ -65,26 +65,26 @@ export default function Teams() {
                       <option value="3">3人</option>
                     </select>
                   </div>
-                  <div class="mb-3">
-                    <label htmlFor={'team_name'} class="form-label">
+                  <div className="mb-3">
+                    <label htmlFor={'team_name'} className="form-label">
                       開團備註（200字以內）
                     </label>
                     <textarea
-                      class="form-control"
+                      className="form-control"
                       id="floatingTextarea"
                     ></textarea>
                   </div>
-                  <div class="mb-3 form-check">
+                  <div className="mb-3 form-check">
                     <input
                       type="checkbox"
-                      class="form-check-input"
+                      className="form-check-input"
                       id="exampleCheck1"
                     />
-                    <label class="form-check-label" htmlfor={'exampleCheck1'}>
+                    <label className="form-check-label" htmlor={'exampleCheck1'}>
                       我已閱讀<b>注意事項</b>
                     </label>
                   </div>
-                  <button type="submit" class="btn btn-primary">
+                  <button type="submit" className="btn btn-primary">
                     創立團隊
                   </button>
                 </form>
