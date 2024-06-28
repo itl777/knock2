@@ -43,6 +43,17 @@ export default function HomeBtn({
           <span>{btnText}</span>
         </Button>
       </Link>
+      <style jsx>
+        {`
+          span {
+            color: ${color};
+          }
+
+          span:hover: {
+            color: ${hoverColor};
+          }
+        `}
+      </style>
     </>
   )
 }

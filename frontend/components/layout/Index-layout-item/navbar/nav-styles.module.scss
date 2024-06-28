@@ -27,6 +27,7 @@ $hover-color: #a6a7a7;
 
       li {
         display: flex;
+        align-items: center;
 
         .logo-screen {
           display: none;
@@ -37,13 +38,15 @@ $hover-color: #a6a7a7;
 
         a,
         button {
+          display: flex;
+          align-items: center;
           text-decoration: none;
           margin: 0 0.5rem;
           @include font-h5;
-          color: $text-grey;
 
           span {
             line-height: 2;
+            color: $text-grey;
             background: linear-gradient(to right, $hover-color, $hover-color)
               no-repeat right bottom;
             background-size: 0 1px;
@@ -132,10 +135,13 @@ $hover-color: #a6a7a7;
       a,
       button {
         text-decoration: none;
-        transition: color 500ms;
-        &:hover {
-          color: $hover-color;
-          border-bottom: unset;
+        svg {
+          fill: $text-grey;
+          transition: fill 500ms;
+          &:hover {
+            fill: $hover-color;
+            border-bottom: unset;
+          }
         }
       }
     }

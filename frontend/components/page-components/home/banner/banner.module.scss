@@ -128,6 +128,8 @@ $nav-height: 97px;
     transform: translateX(-50%);
     opacity: 0;
     animation: title-show 1s 7s linear forwards;
+    z-index: 5;
+    color: $text-white;
   }
 }
 

@@ -8,7 +8,6 @@ $footer-bg: #181615;
   // background-color: #fff;
   overflow: hidden;
 
-
   > div > img {
     object-fit: cover;
     object-position: center;
@@ -28,6 +27,8 @@ $footer-bg: #181615;
   }
 
   a {
+    display: flex;
+    align-items: center;
     text-decoration: none;
     color: $text-white;
   }
@@ -114,6 +115,10 @@ $footer-bg: #181615;
         }
       }
     }
+  }
+
+  svg {
+    fill: $text-white;
   }
 
   .mobile-hide {

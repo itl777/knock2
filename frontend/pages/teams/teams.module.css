@@ -1,0 +1,50 @@
+.teamsPage {
+    /* max-width: 1440px; */
+    margin:auto;
+    border: 1px solid #B99755;
+    color:#B99755;
+    background-color: #000;
+}
+
+.borderbox{
+    padding:24px 16px;
+    border: 3px solid #B99755;
+    border-radius: 10px;
+    background-color: #222222;
+}
+
+.tourInfo{
+    padding:16px 0;
+    
+}
+
+.teamsSection {
+    padding: 30px 12px;
+    line-height: 2;
+}
+
+.teamUnite{
+    display: inline-grid;
+    padding: 6px 20px;
+}
+
+.teamCard{
+    border: 1px solid #B99755;
+    background-color: #FFF;
+}
+
+.teamTourInfo{
+    display: inline-block;
+    margin:-40px 0 0 10px;
+    padding: 16px;
+    background-color: #000;
+}
+
+.teamTitle{
+    background-color: #000;
+    color:#bbb;
+}
+
+.teamContent{
+    padding: 26px;
+}

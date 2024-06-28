@@ -6,10 +6,13 @@ import { useRouter } from 'next/router'
 export default function Custom404() {
   const router = useRouter()
   useEffect(() => {
-    setTimeout(() => {
+    const backToHome = setTimeout(() => {
       router.push('/')
       console.log('回家了')
     }, 3000)
+    return () => {
+      clearTimeout(backToHome)
+    }
   }, [])
 
   return (
