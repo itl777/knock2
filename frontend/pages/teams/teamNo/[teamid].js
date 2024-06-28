@@ -7,11 +7,8 @@ import { useRouter } from 'next/router'
 import { TEAM_ONE } from '@/configs/team-api-path'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
 
-import { IoMdPeople } from 'react-icons/io'
-import { MdSchedule } from 'react-icons/md'
-
 export default function teamInfo() {
-  const router = useRouter()
+  // const router = useRouter()
 
   const [data, setData] = useState({
     success: false,
@@ -46,9 +43,9 @@ export default function teamInfo() {
                       width={'100%'}
                     />
                   </div>
-                  <div className={styles.teamInfo}>
+                  <div className={styles.teamTourInfo}>
                     <span className={styles.teamTitle}>{r.theme_name}</span>
-                    <span>難度</span>
+                    <span>{r.difficulty}</span>
                   </div>
                   <h5>團名：{r.team_title}</h5>
                   <p>
@@ -56,10 +53,7 @@ export default function teamInfo() {
                     <br />
                     時段：
                     <br />
-                    <IoMdPeople />
-                    人數：2 / 6
-                    <MdSchedule />
-                    狀態：招募中
+                    人數：2 / 6 狀態：招募中
                   </p>
                   <div style={{ textAlign: 'center' }}>
                     <Link href={`/teamNo/${r.team_id}`}>

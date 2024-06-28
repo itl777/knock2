@@ -3,7 +3,7 @@ import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
 import Link from 'next/link'
 
-import { TEAM_ALL } from '@/configs/team-api-path'
+import { TEAM_ALL } from '@/configs/api-path'
 
 import PdBtnContained from '@/components/UI/pd-btn-contained'
 import { IoMdPeople } from 'react-icons/io'
@@ -15,12 +15,37 @@ export default function TeamListTest() {
     rows: [],
   })
 
+  const exampleData = {
+    success: true,
+    rows: [
+      {
+        nick_name: '示例團長1',
+        theme_name: 'Ex主題',
+        difficulty: '難度',
+        team_id: 1,
+        team_title: '範例團',
+        reservation_date: '2024-09-30',
+        start_time: '09:00',
+        end_time: '11:00',
+      },
+    ],
+  }
+
   useEffect(() => {
     fetch(`${TEAM_ALL}`)
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) {
+          throw new Error('Fetch Failed')
+        }
+        return r.json()
+      })
       .then((myData) => {
         console.log(data)
         setData(myData)
+      })
+      .catch((error) => {
+        console.error('Fetch error:', error)
+        setData(exampleData)
       })
   }, [])
 
@@ -45,7 +70,6 @@ export default function TeamListTest() {
                   >
                     <div className={styles.teamCard}>
                       <div className="teamPhoto">
-                        {/* <img src={catImage} alt="cat" /> */}
                         <img
                           src="/teams/collage-maker-02.jpg"
                           alt="cat"
