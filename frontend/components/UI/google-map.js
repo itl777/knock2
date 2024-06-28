@@ -18,7 +18,6 @@ function GoogleMap() {
       style={{
         display: 'flex',
         justifyContent: 'center',
-        marginTop: '80px',
         marginBottom: '80px',
       }}
     >
