@@ -29,14 +29,14 @@ export default function ProductList() {
 
         <PdCard data={data} setPage={setPage} />
 
-        <style jsx global>
+        {/* <style jsx global>
           {`
             .container {
               max-width: 1200px;
               margin-bottom: 5rem;
             }
           `}
-        </style>
+        </style> */}
       </IndexLayout>
     </>
   )

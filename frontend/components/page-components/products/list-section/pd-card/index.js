@@ -26,6 +26,9 @@ export default function PdCard({ data, setPage }) {
         {`
           .d-grid {
             grid-template-columns: auto auto auto;
+            max-width:1200px;
+            padding:0;
+            margin:auto;
           }
           .card-btn {
             border: 2px solid black;

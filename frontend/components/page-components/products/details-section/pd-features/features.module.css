@@ -3,6 +3,9 @@
 }
 .pd-features {
   height: 500px;
+  max-width: 1200px;
+  margin: auto;
+
 }
 .container {
   max-width: 1200px;

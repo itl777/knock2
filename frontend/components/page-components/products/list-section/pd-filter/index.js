@@ -44,6 +44,7 @@ export default function PdFilter() {
           .container {
             max-width: 1200px;
             margin-bottom: 5rem;
+            padding:0;
           }
 
           .text {
