@@ -1,45 +1,59 @@
-import * as React from 'react'
+import { useState, useEffect } from 'react'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
+import myStyle from './bread.module.css'
+import { useRouter } from 'next/router'
 
+export default function Breadcrumb({ productName = '商品名稱' }) {
+  const router = useRouter()
+  const [name, setName] = useState('')
 
-function handleClick(event) {
-  event.preventDefault()
-  console.info('You clicked a breadcrumb.')
-}
-
-export default function Breadcrumb() {
-  const breadcrumbs = [
+  useEffect(() => {
+    if (productName) {
+      setName(productName)
+    }
+  }, [productName])
+  let breadcrumbs = [
     <Link
+      className={myStyle.font}
       underline="hover"
       key="1"
-      color="inherit"
-      href="/"
-      onClick={handleClick}
+      color="#000"
+      href="http://localhost:3000"
     >
-      MUI
+      首頁
     </Link>,
     <Link
+      className={myStyle.font}
       underline="hover"
       key="2"
-      color="inherit"
-      href="#"
-      onClick={handleClick}
+      color="#000"
+      href="http://localhost:3000/product"
     >
-      Core
+      商品列表
     </Link>,
-    <Typography key="3" color="text.primary">
-      Breadcrumb
-    </Typography>,
+    <Link className={myStyle.font} underline="none" key="3" color="#000">
+      {name}
+    </Link>,
   ]
+
+  if (router.asPath.split('/').length < 4) {
+    breadcrumbs.pop()
+    // console.log(router.asPath.split('/').length)
+    // console.log(breadcrumbs)
+  }
 
   return (
     <>
       {/* material方式 */}
+
       <Breadcrumbs
-        separator={<NavigateNextIcon fontSize="small" />}
+        className={myStyle.bread}
+        separator={
+          <NavigateNextIcon htmlColor="rgba(91, 91, 91, 1)" fontSize="small" />
+        }
         aria-label="breadcrumb"
       >
         {breadcrumbs}

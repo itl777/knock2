@@ -5,9 +5,9 @@ import BtnGroup from './btn-group'
 import CategoryGroup from './category-group'
 import myStyle from './features.module.css'
 import { useEffect, useState } from 'react'
-
+import Breadcrumb from '@/components/page-components/products/breadcrumb'
 export default function PdFeatures({ data }) {
-  console.log('PdFeatures', data)
+  // console.log('PdFeatures', data)
   const [productData, setProductData] = useState({
     product_name: '',
     price: 0,
@@ -18,12 +18,17 @@ export default function PdFeatures({ data }) {
   })
 
   useEffect(() => {
-    let newData = { ...data[0] } || {}
-    console.log('newData', newData)
-    setProductData(newData)
+    if (data && data.length > 0) {
+      const newData = { ...data[0] }
+      // console.log('newData', newData)
+      setProductData(newData)
+    }
   }, [data])
   return (
     <>
+     <div className="container" style={{ marginBottom: 0 }}>
+      <Breadcrumb productName={productData.product_name} />
+      </div>
       {/* 商品詳情 */}
       <div className={`${myStyle['container']} container`}>
         <div className={`${myStyle['pd-features']} row pd-features `}>

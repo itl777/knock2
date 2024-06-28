@@ -1,8 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import PdTabs from '@/components/page-components/products/details-section/pd-tabs/index'
-import Breadcrumb from '@/components/page-components/products/breadcrumb'
-import PdFeatures from '@/components/page-components/products/details-section/pd-features'
+import PdFeatures from '@/components/page-components/products/details-section/pd-features/index'
 import IndexLayout from '@/components/layout'
 import { useRouter } from 'next/router'
 
@@ -23,8 +22,6 @@ export default function ProductDetails() {
   return (
     <>
       <IndexLayout pageName="productDetails" background="light">
-        <Breadcrumb />
-
         <PdFeatures data={data} />
 
         <PdTabs data={data} />
@@ -35,6 +32,7 @@ export default function ProductDetails() {
           .container {
             max-width: 1200px;
             margin-bottom: 5rem;
+            padding:0;
           }
           .col-12.bg-white {
             border-radius: 16px;
