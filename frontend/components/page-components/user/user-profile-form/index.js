@@ -77,7 +77,7 @@ export default function UserProfileForm() {
                 label="密碼"
                 name="password"
                 type="password"
-                value={profileForm.password}
+                value="PasswordPasswordPassword"
                 disabled={true}
               />
             </div>
@@ -123,11 +123,11 @@ export default function UserProfileForm() {
                 onChange={handleChange}
               />
               <UserProfileSelect
-                label="地址"
-                options={[]} // DB 抓到的資料 需要
+                label="常用地址"
+                options={addressForm} // DB 抓到的資料 需要
                 name="address"
                 placeholder="請選擇常用地址"
-                errorText=""
+                errorText="1234"
               />
             </div>
           </div>

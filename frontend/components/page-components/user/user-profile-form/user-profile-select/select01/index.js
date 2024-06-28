@@ -44,14 +44,12 @@ export default function SelectIndicator({
         },
       }}
     >
-      <Option value="dog">Dog</Option>
-      <Option value="cat">Cat</Option>
-      <Option value="fish">Fish</Option>
-      <Option value="bird">Bird</Option>
-      <Option value="bird">Bird</Option>
-      <Option value="bird">Bird</Option>
-      <Option value="bird">Bird</Option>
-      <Option value="bird">Bird</Option>
+      {options.map((v) => (
+        <Option
+          key={v.id}
+          value={v.id}
+        >{`${v.district_id} ${v.city_name}${v.district_name}${v.address} - ${v.recipient_name} / ${v.recipient_phone}`}</Option>
+      ))}
     </Select>
   )
 }

@@ -11,19 +11,17 @@ export default function Radio01({
     <Box height={50} display="flex" alignItems="center" sx={{ width: '100%' }}>
       <RadioGroup overlay name={name}>
         <List component="div" orientation="horizontal">
-          {radio?.map((v, i) => {
-            return (
-              <ListItem key={i}>
-                <Radio
-                  value={v.value}
-                  label={v.label}
-                  disabled={disabled}
-                  checked={checked === v.value}
-                  onChange={onChange}
-                />
-              </ListItem>
-            )
-          })}
+          {radio?.map((v, i) => (
+            <ListItem key={i}>
+              <Radio
+                value={v.value}
+                label={v.label}
+                disabled={disabled}
+                checked={checked === v.value}
+                onChange={onChange}
+              />
+            </ListItem>
+          ))}
         </List>
       </RadioGroup>
     </Box>

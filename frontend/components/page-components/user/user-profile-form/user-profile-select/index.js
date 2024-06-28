@@ -9,13 +9,6 @@ export default function UserProfileSelect({
   placeholder = '',
   errorText = '',
 }) {
-  const [errorTextState, setErrorTextState] = useState(false)
-
-  useEffect(() => {
-    const newErrorTextState = errorText !== '' ? true : false
-    setErrorTextState(newErrorTextState)
-  }, [errorText])
-
   return (
     <>
       <div className={styles.formItem}>
@@ -24,7 +17,7 @@ export default function UserProfileSelect({
         </label>
         <div className={styles.myDiv}>
           <Select01 options={options} name={name} placeholder={placeholder} />
-          {errorTextState === true ? (
+          {errorText !== '' ? (
             <span className={styles.errorText}>{errorText}</span>
           ) : (
             ''

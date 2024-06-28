@@ -12,12 +12,6 @@ export default function UserProfileInput({
   errorText = '',
   onChange = () => {},
 }) {
-  const [errorTextState, setErrorTextState] = useState(false)
-
-  useEffect(() => {
-    const newErrorTextState = errorText !== '' ? true : false
-    setErrorTextState(newErrorTextState)
-  }, [errorText])
 
   return (
     <>
@@ -32,7 +26,7 @@ export default function UserProfileInput({
             disabled={disabled}
             onChange={onChange}
           />
-          {errorTextState === true ? (
+          {errorText !== '' ? (
             <span className={styles.errorText}>{errorText}</span>
           ) : (
             ''
