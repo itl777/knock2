@@ -1,47 +1,53 @@
-import Image from 'next/image'
-import pdImg from '@/public/products/p1.png'
 import { useEffect, useState } from 'react'
+import Card02 from '@/components/UI/cards-test'
+import GoogleMap from '@/components/UI/google-map'
+import ThemeBranches from '@/components/UI/theme-branches'
 
-export default function PdCard({ data }) {
+export default function ThemeList() {
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:3001/themes')
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.status === 'success') {
+          setData(result.themes) // 將從 API 獲取的主題資料設置到狀態中
+        } else {
+          console.error('Failed to fetch themes:', result.message)
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching themes:', error)
+      })
+  }, [])
+
   return (
     <>
-      <div className="card" style={{ width: '20rem' }}>
-        <Image src={pdImg} className="card-img-top" alt="..." />
-
-        <div className="card-body text-center d-flex flex-column">
-          <h5 className="card-title">{data.product_name}</h5>
-
-          <div className="card-btn-outer d-flex justify-content-center my-3">
-            <div className="card-btn d-flex">
-              <div className="buy-btn-outer w-100 py-1">
-                <a href="#" className="buy-btn">
-                  ${data.price}
-                </a>
-              </div>
-              <div className="buy-btn-outer w-100 py-1">
-                <a href="#" className="buy-btn">
-                  直接購買
-                </a>
-              </div>
-            </div>
+      <div className="container">
+        <ThemeBranches />
+      </div>
+      <div className="container">
+        <div className="row">
+          <div className="col-12 d-grid d-flex flex-row flex-wrap justify-content-between">
+            {data.map((theme) => (
+              <Card02
+                key={theme.theme_id}
+                branchName={theme.branch_name} // 確保這些屬性名稱正確反映你的資料結構
+                themeImg={theme.theme_img}
+                themeName={theme.theme_name}
+                difficulty={theme.difficulty}
+                introduction={theme.introduction}
+                min_players={theme.min_players}
+                max_players={theme.max_players}
+                themeTime={theme.theme_time}
+              />
+            ))}
+          </div>
+          <div>
+            <GoogleMap />
           </div>
         </div>
       </div>
-      <style jsx>
-        {`
-          .card-btn {
-            border: 2px solid black;
-            width: 270px;
-          }
-
-          .buy-btn-outer:first-child {
-            border-right: 2px solid black;
-          }
-          .card {
-            margin: 2.2rem;
-          }
-        `}
-      </style>
     </>
   )
 }

@@ -20,7 +20,6 @@ const getListData = async (req) => {
   let birth_start = req.query.birth_start || "";
   let birth_end = req.query.birth_end || "";
 
-
   let where = " WHERE 1 "; // 1是true的意思，其實有下跟沒下一樣
   if (search) {
     //where += ` AND \`name\` LIKE '%${search}%' `; //沒有處理SQL injection
@@ -30,24 +29,22 @@ const getListData = async (req) => {
     where+=` AND \`name\` LIKE ${db.escape(search_)} `; */
 
     where += ` OR \`mobile\` LIKE ${db.escape(`%${search}%`)}) `; // 同一input搜尋多欄
-
   }
 
   if (birth_start) {
     const m = moment(birth_start);
-    if(m.isValid()){
-      where += ` AND birthday >= '${m.format(dateFormat)}' `
+    if (m.isValid()) {
+      where += ` AND birthday >= '${m.format(dateFormat)}' `;
     }
   }
 
   if (birth_end) {
     const m = moment(birth_end);
-    if(m.isValid()){
-      where += ` AND birthday <= '${m.format(dateFormat)}' `
+    if (m.isValid()) {
+      where += ` AND birthday <= '${m.format(dateFormat)}' `;
     }
   }
 
-  
   const t_sql = `SELECT COUNT(1) totalRows FROM address_book ${where}`;
   const [[{ totalRows }]] = await db.query(t_sql);
   let totalPages = 0; // 總頁數, 預設值
@@ -66,7 +63,7 @@ const getListData = async (req) => {
     [rows] = await db.query(sql);
     rows.forEach((item) => {
       const m = moment(item.birthday);
-      item.birthday = m.isValid() ? m.format(dateFormat) : '';
+      item.birthday = m.isValid() ? m.format(dateFormat) : "";
     });
   }
 
@@ -79,7 +76,7 @@ const getListData = async (req) => {
     totalRows,
     totalPages,
     rows,
-    qs:req.query,
+    qs: req.query,
   };
 };
 
