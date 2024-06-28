@@ -2,10 +2,6 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
-import styles from './basic-modal.module.css'
-import BlackBtn from '../black-btn'
-import RecipientButtonEdit from '@/components/page-components/orders/recipient-button-edit'
-import RecipientButton from '@/components/page-components/orders/recipient-button'
 
 const style = {
   position: 'absolute',
@@ -21,23 +17,17 @@ const style = {
 }
 
 export default function BasicModal({
+  modalTitle = 'Modal Title',
+  modalBody,
   open,
   handleClose,
-  modalTitle = 'Modal Title',
 }) {
   return (
     <div>
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          <h5>{modalTitle}</h5>
-          <div className={styles.modalBody}>
-            <RecipientButtonEdit />
-            <RecipientButtonEdit />
-            <RecipientButton btnText='新增收件人資料' iconType='add' bgtype='outline'/>
-          </div>
-          <div className={styles.btnStack}>
-            <BlackBtn btnText="關閉" />
-          </div>
+          <h6>{modalTitle}</h6>
+          {modalBody}
         </Box>
       </Modal>
     </div>

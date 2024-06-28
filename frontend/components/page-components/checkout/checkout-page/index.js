@@ -1,27 +1,36 @@
 // pages/checkout-page.jsx
-import React, { useState } from 'react';
-import styles from './checkout-page.module.css';
-import FilterBtn from '@/components/UI/filter-btn';
-import OrderItemCheckout from '../../orders/order-item-checkout';
-import BlackBtn from '@/components/UI/black-btn';
-import HDivider from '@/components/UI/divider/horizontal-divider';
-import VDivider from '@/components/UI/divider/vertical-divider';
-import RecipientButton from '../../orders/recipient-button';
-import RecipientButtonEdit from '../../orders/recipient-button-edit';
-import RecipientButtonSelected from '../../orders/recipient-button-selected';
-import BasicModal from '@/components/UI/basic-modal';
-import Button from '@mui/material/Button';
+import React, { useState } from 'react'
+import styles from './checkout-page.module.css'
+import FilterBtn from '@/components/UI/filter-btn'
+import OrderItemCheckout from '../../orders/order-item-checkout'
+import BlackBtn from '@/components/UI/black-btn'
+import HDivider from '@/components/UI/divider/horizontal-divider'
+import VDivider from '@/components/UI/divider/vertical-divider'
+import RecipientButton from '../../orders/recipient-button'
+import RecipientButtonSelected from '../../orders/recipient-button-selected'
+import BasicModal from '@/components/UI/basic-modal'
+import RecipientModalBody from '../../orders/recipient-modal-body'
+import AddRecipientModalBody from '../../orders/add-recipient-modal-body'
 
 export default function CheckOutPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isAddRecipientModalOpen, setIsAddRecipientModalOpen] = useState(false)
 
   const openModal = () => {
-    setIsModalOpen(true);
-  };
+    setIsModalOpen(true)
+  }
 
   const closeModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
+
+  const openAddRecipientModal = () => {
+    setIsAddRecipientModalOpen(true)
+  }
+
+  const closeAddRecipientModal = () => {
+    setIsAddRecipientModalOpen(false)
+  }
 
   return (
     <section className={styles.sectionContainer}>
@@ -81,14 +90,27 @@ export default function CheckOutPage() {
 
           <div className={styles.checkoutRightMain}>
             <RecipientButton onClick={openModal} />
-            <RecipientButtonSelected />
-            <RecipientButtonEdit />
+            <RecipientButtonSelected onClick={openModal} />
           </div>
 
           <BlackBtn btnText="前往結帳" href="/checkout/success" />
         </div>
       </form>
-      <BasicModal open={isModalOpen} handleClose={closeModal} />
+
+      <BasicModal
+        modalTitle="請選擇收件人資料"
+        open={isModalOpen}
+        handleClose={closeModal}
+        modalBody={<RecipientModalBody handleClose={closeModal} openAddRecipientModal={openAddRecipientModal} />}
+      />
+      
+      <BasicModal
+        modalTitle="新增收件人資料"
+        open={isAddRecipientModalOpen}
+        handleClose={closeAddRecipientModal}
+        modalBody={<AddRecipientModalBody handleClose={closeAddRecipientModal} />}
+      />
+      
     </section>
-  );
+  )
 }

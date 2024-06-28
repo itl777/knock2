@@ -16,7 +16,7 @@ const RecipientBtn = styled(Button)(({ bgtype }) => ({
   borderRadius: 'var(--input-radius)',
   boxShadow: 'none',
   '&:hover': {
-    backgroundColor: '#eaeaea',
+    backgroundColor: '#fafafa',
     boxShadow: 'none',
   },
 }));

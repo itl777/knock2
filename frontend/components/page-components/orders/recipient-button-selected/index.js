@@ -6,7 +6,7 @@ import { FaLocationDot } from 'react-icons/fa6'
 import { IoIosArrowForward } from 'react-icons/io'
 
 
-const RecipientBtnSelected = styled(Button)(({ theme }) => ({
+const RecipientBtnSelected = styled(Button)(({  }) => ({
   gridColumn: 'span 2',
   display: 'flex',
   justifyContent: 'space-between',
@@ -18,7 +18,7 @@ const RecipientBtnSelected = styled(Button)(({ theme }) => ({
   borderRadius: 'var(--input-radius)',
   boxShadow: 'none',
   '&:hover': {
-    backgroundColor: '#eaeaea',
+    backgroundColor: '#fafafa',
     boxShadow: 'none',
   },
 }))
@@ -27,10 +27,10 @@ export default function RecipientButtonSelected({
   name = '收件人',
   phone = '0900000000',
   address = '天堂市地獄路444號4樓',
-  href = '/'
+  onClick = () => {},
 }) {
   return (
-    <RecipientBtnSelected variant="contained" href={href}>
+    <RecipientBtnSelected onClick={onClick}>
       <div className={styles.infoBox}>
         <p>{name}</p>
         <div className={styles.iconTextRow}>
