@@ -16,6 +16,7 @@
 
 import styles from './cards.module.scss'
 import Image from 'next/image'
+import Link from 'next/link'
 
 import {
   AspectRatio,
@@ -162,7 +163,12 @@ export default function Card02({
               right: '16px',
             }}
           >
-            <span>立即預訂</span>
+            <Link
+              style={{ textDecoration: 'none', color: '#222222' }}
+              href={`?#`}
+            >
+              <span>立即預訂</span>
+            </Link>
             <Image
               src="/components/arrow-special.svg"
               alt=""

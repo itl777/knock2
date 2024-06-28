@@ -23,7 +23,7 @@ export default function ThemeBranches() {
       })
   }, [selectedBranch])
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (e, newValue) => {
     setSelectedBranch(newValue) // 更新選中的分店
   }
 
@@ -39,7 +39,7 @@ export default function ThemeBranches() {
         value={selectedBranch}
         onChange={handleChange}
         sx={{ bgcolor: 'transparent' }}
-        centered // 添加 centered 属性来居中标签
+        centered
       >
         <TabList
           disableUnderline
