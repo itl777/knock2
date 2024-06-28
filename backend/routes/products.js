@@ -10,7 +10,7 @@ const getListDate = async (req) => {
   let success = false;
   let redirect = "";
 
-  const perPage = 9;
+  const perPage = 9; //每頁數量
   let page = parseInt(req.query.page) || 1;
 
   if (page < 1) {
@@ -19,13 +19,18 @@ const getListDate = async (req) => {
   }
   // 處裡搜尋欄位
   let userSearch = req.query.userSearch || "";
+  let idSearch = req.params.product_id || "";
   let category_id = req.query.category_id || "";
   let where = " WHERE 1 ";
 
   if (userSearch) {
-    console.log("userSearch:", userSearch);
     const userSearch_ = db.escape(`%${userSearch}%`);
-    where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_} ) `;
+    where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_} `;
+  }
+  if (idSearch) {
+    const idSearch_ = db.escape(`%${idSearch}%`);
+    where += `AND ( \`product_id\` LIKE ${idSearch_} ) `;
+    console.log("where:", where);
   }
 
   // 類別篩選
@@ -39,7 +44,7 @@ const getListDate = async (req) => {
   const [[{ totalRows }]] = await db.query(t_sql);
   let totalPages = 0;
   let rows = [];
-  let productImg='';
+  let productImg = "";
 
   // 查詢的db有無回傳值
   if (totalRows) {
@@ -62,7 +67,6 @@ const getListDate = async (req) => {
     },${perPage}`;
 
     [rows] = await db.query(sql);
-    
 
     success = true;
     return {
@@ -99,9 +103,9 @@ router.get("/", async (req, res) => {
   }
 });
 
-// router.get("/api", async (req, res) => {
-//     const data = await getListDate(req);
-//     res.json(data)
-// })
+router.get("/details/:product_id", async (req, res) => {
+  const data = await getListDate(req);
+  res.json(data);
+});
 
 export default router;
