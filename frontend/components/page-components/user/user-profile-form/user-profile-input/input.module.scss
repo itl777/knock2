@@ -1,0 +1,33 @@
+@import '@/styles/variables.scss';
+
+$box-shadow: #80bfff;
+$border-color: #3399ff;
+$border: #dae2ed;
+$color: #1c2025;
+
+.formItem {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  align-self: stretch;
+
+  label {
+    @include font-p;
+    width: 7.5rem;
+    height: 3.125rem;
+    display: flex;
+    align-items: center;
+  }
+  div {
+    width: 100%;
+    height: 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3125rem;
+
+    .errorText {
+      @include font-small;
+      padding-left: 1rem;
+    }
+  }
+}

@@ -36,4 +36,19 @@
       flex: 1 0 0;
     }
   }
+  .box {
+    display: flex;
+    padding: 0px 40px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 80px;
+    align-self: stretch;
+    > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      flex: 1 0 0;
+    }
+  }
 }
