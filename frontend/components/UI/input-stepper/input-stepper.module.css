@@ -1,0 +1,11 @@
+.stepperInputContainer {
+  display: flex;
+  gap: .25rem;
+}
+
+
+
+.stepperValue {
+  width: 1.5rem;
+  text-align: center;
+}

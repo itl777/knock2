@@ -2,90 +2,79 @@ import express from "express";
 import db from "./../utils/connect.js";
 import moment from "moment-timezone";
 
-const dateFormat = "YYYY-MM-DD";
 const router = express.Router();
+const dateFormat = "YYYY-MM-DD";
 
-const getListData = async (req) => {
-  let success = false;
-  let redirect = "";
+router.get("/", async (req, res) => {
+  // 從 query 中取得 member_id, order_status_id
+  const { member_id, order_status_id } = req.query;
 
-  const perPage = 25; // 每頁最多有幾筆資料
-  let page = parseInt(req.query.page) || 1; // 從 query string 最得 page 的值
-  if (page < 1) {
-    redirect = "?page=1";
-    return { success, redirect }; // 跳轉頁面
-  }
+  try {
+    // 取得訂單資料
+    const orderSql = `
+      SELECT 
+        o.id AS order_id,
+        o.order_date,
+        o.customer_order_id,
+        o.payment_method,
+        CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
+        os.order_status_name,
+        SUM(od.order_quantity * pm.price) AS total_price
+      FROM orders o
+      LEFT JOIN order_details od ON od.order_id = o.id
+      LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
+      LEFT JOIN district d ON d.id = o.order_district_id
+      LEFT JOIN city c ON c.id = d.city_id
+      LEFT JOIN order_status os ON os.id = o.order_status_id
+      WHERE o.member_id = ? AND o.order_status_id = ?
+      GROUP BY o.id;
+    `;
 
-  let search = req.query.search || "";
-  let birth_start = req.query.birth_start || "";
-  let birth_end = req.query.birth_end || "";
+    const [orders] = await db.query(orderSql, [member_id, order_status_id]);
 
-
-  let where = " WHERE 1 "; // 1是true的意思，其實有下跟沒下一樣
-  if (search) {
-    //where += ` AND \`name\` LIKE '%${search}%' `; //沒有處理SQL injection
-
-    where += ` AND (\`name\` LIKE ${db.escape(`%${search}%`)} `; // 這個方法會自動標單引號
-    /* const search_ = `%${search}%`;
-    where+=` AND \`name\` LIKE ${db.escape(search_)} `; */
-
-    where += ` OR \`mobile\` LIKE ${db.escape(`%${search}%`)}) `; // 同一input搜尋多欄
-
-  }
-
-  if (birth_start) {
-    const m = moment(birth_start);
-    if(m.isValid()){
-      where += ` AND birthday >= '${m.format(dateFormat)}' `
-    }
-  }
-
-  if (birth_end) {
-    const m = moment(birth_end);
-    if(m.isValid()){
-      where += ` AND birthday <= '${m.format(dateFormat)}' `
-    }
-  }
-
-  
-  const t_sql = `SELECT COUNT(1) totalRows FROM address_book ${where}`;
-  const [[{ totalRows }]] = await db.query(t_sql);
-  let totalPages = 0; // 總頁數, 預設值
-  let rows = []; // 分頁資料
-  if (totalRows) {
-    totalPages = Math.ceil(totalRows / perPage);
-    if (page > totalPages) {
-      redirect = `?page=${totalPages}`;
-      return { success, redirect }; // 跳轉頁面
-    }
-    // 取得分頁資料
-    const sql = `SELECT * FROM \`address_book\` ${where} ORDER BY sid DESC LIMIT ${
-      (page - 1) * perPage
-    },${perPage}`;
-
-    [rows] = await db.query(sql);
-    rows.forEach((item) => {
-      const m = moment(item.birthday);
-      item.birthday = m.isValid() ? m.format(dateFormat) : '';
+    // 格式化 order_date
+    orders.forEach((order) => {
+      const m = moment(order.order_date);
+      if (m.isValid()) {
+        order.order_date = m.format(dateFormat);
+      } else {
+        order.order_date = "無訂單日期";
+      }
     });
+
+    // 取得訂單商品圖片
+    const orderDetailsSql = `
+      SELECT 
+        od.order_id,
+        od.order_product_id AS product_id,
+        img.product_img
+      FROM order_details od
+      LEFT JOIN (
+        SELECT img_product_id, product_img,
+          ROW_NUMBER() OVER (PARTITION BY img_product_id ORDER BY img_id) AS rn
+        FROM product_img
+      ) img ON img.img_product_id = od.order_product_id AND img.rn = 1
+      WHERE od.order_id IN (SELECT id FROM orders WHERE member_id = ? AND order_status_id = ?);
+    `;
+
+    const [orderDetails] = await db.query(orderDetailsSql, [
+      member_id,
+      order_status_id,
+    ]);
+
+    console.log("orders data: ", orders);
+    console.log("order details data: ", orderDetails);
+
+    // 將查詢結果傳送到前端
+    res.json({
+      status: true,
+      orders: orders,
+      orderDetails: orderDetails,
+    });
+  } catch (error) {
+    console.error("Error fetching orders: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
-
-  // res.json({ success, perPage, page, totalRows, totalPages, rows });
-  success = true;
-  return {
-    success,
-    perPage,
-    page,
-    totalRows,
-    totalPages,
-    rows,
-    qs:req.query,
-  };
-};
-
-router.get("/api", async (req, res) => {
-  const data = await getListData(req);
-  res.json(data);
 });
 
 export default router;
