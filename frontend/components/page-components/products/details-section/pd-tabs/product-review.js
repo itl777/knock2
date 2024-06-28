@@ -1,5 +1,6 @@
 import Image from 'next/image'
-import ReviewStar from './review-star'
+import ReviewStar from '@/components/UI/review-star'
+
 export default function ProductReview() {
   return (
     <>
@@ -27,6 +28,18 @@ export default function ProductReview() {
           </div>
         </div>
       </div>
+      <style jsx global>
+        {`
+          .add-line::after {
+            content: '';
+            width: 100%;
+            height: 2px;
+            position: absolute;
+            bottom: 0px;
+            background: #d9d9d9;
+          }
+        `}
+      </style>
     </>
   )
 }

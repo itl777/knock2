@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 // 路由模組
 import themes from "./routes/themes.js";
 import teams from "./routes/teams.js";
@@ -12,10 +12,6 @@ import orderDetails from "./routes/details.js";
 
 // 掛載 express
 const app = express();
-
-
-
-
 
 // middleware
 app.use(express.urlencoded({ extended: true }));
@@ -32,11 +28,11 @@ app.use(cors(corsOptions));
 
 // 自訂頂層的 middleware
 app.use((req, res, next) => {
-  res.locals.session = req.session; 
+  res.locals.session = req.session;
   next();
 });
 
-
+app.use(express.static('public'));
 
 // 路由模組
 app.use("/themes", themes);
@@ -45,9 +41,6 @@ app.use("/products", products);
 app.use("/users", users);
 app.use("/orders", orders);
 app.use("/user/orders", orderDetails);
-
-
-
 
 
 // 偵聽 port
