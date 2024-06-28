@@ -1,10 +1,11 @@
 import { Button } from '@mui/material'
-import Link from 'next/link'
+
 
 export default function BlackBtn({
   btnText = '確認購買',
   href = '/',
   onClick = () => {},
+  paddingType = '',
 }) {
   return (
     <Button
@@ -18,7 +19,8 @@ export default function BlackBtn({
         borderColor: '#222',
         background: '#222',
         fontSize: '16px',
-        padding: '8px 16px',
+        padding:
+          paddingType === 'medium' ? '8px 32px' : '8px 16px',
         ':hover': {
           color: 'black',
           borderColor: '#222',

@@ -5,21 +5,24 @@ import InputStepper from '../input-stepper'
 import OrderProductImgBox from '@/components/page-components/orders/order-product-img-box'
 import HDivider from '../divider/horizontal-divider'
 import BlackBtn from '../black-btn'
-import { FaCartShopping } from 'react-icons/fa6'
-import { IoHeartOutline } from 'react-icons/io5'
 // for badge
 import Badge from '@mui/material/Badge'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
+import { FaCartShopping } from 'react-icons/fa6'
+import { IoHeartOutline } from 'react-icons/io5'
+import { color } from 'framer-motion'
 // import { IoAdd, IoHeartOutline } from 'react-icons/io5'
 // import { IoIosRemove } from 'react-icons/io'
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
+const StyledBadge = styled(Badge)(({  }) => ({
   '& .MuiBadge-badge': {
     right: -3,
     top: -3,
+    color: 'white',
     backgroundColor: 'var(--sec-1)',
   },
+
 }))
 
 
@@ -33,7 +36,7 @@ export default function CheckoutOffcanvas() {
   return (
     <>
       <IconButton aria-label="cart">
-        <StyledBadge badgeContent={1} color="secondary" max={99} onMouseEnter={toggleShow}>
+        <StyledBadge badgeContent={1} color="secondary" max={99} onClick={toggleShow}>
           <FaCartShopping />
         </StyledBadge>
       </IconButton>
@@ -88,7 +91,7 @@ export default function CheckoutOffcanvas() {
           </div>
 
           <div className={styles.alignEnd}>
-            <BlackBtn btnText='前往結帳' href='/checkout'/>
+            <BlackBtn btnText='前往結帳' href='/checkout' paddingType='medium'/>
           </div>
         </div>
       </Drawer>

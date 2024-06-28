@@ -6,15 +6,14 @@ import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
 import HDivider from '@/components/UI/divider/horizontal-divider'
 import VDivider from '@/components/UI/divider/vertical-divider'
-import RecipientButton from '../../orders/recipient-button'
-import RecipientButtonSelected from '../../orders/recipient-button-selected'
+import RecipientButton from '../recipient-button'
+import RecipientButtonSelected from '../recipient-button-selected'
 import BasicModal from '@/components/UI/basic-modal'
-import RecipientModalBody from '../../orders/recipient-modal-body'
-import AddRecipientModalBody from '../../orders/add-recipient-modal-body'
+import RecipientModalBody from '../recipient-modal-body'
+import Input01 from '../../user/user-profile-form/user-profile-input/input01'
 
 export default function CheckOutPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isAddRecipientModalOpen, setIsAddRecipientModalOpen] = useState(false)
 
   const openModal = () => {
     setIsModalOpen(true)
@@ -24,17 +23,10 @@ export default function CheckOutPage() {
     setIsModalOpen(false)
   }
 
-  const openAddRecipientModal = () => {
-    setIsAddRecipientModalOpen(true)
-  }
-
-  const closeAddRecipientModal = () => {
-    setIsAddRecipientModalOpen(false)
-  }
-
   return (
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
+   
       <form className={styles.contentContainer}>
         {/* LEFT ORDER INFO START */}
         <div className={styles.checkoutLeft}>
@@ -91,9 +83,15 @@ export default function CheckOutPage() {
           <div className={styles.checkoutRightMain}>
             <RecipientButton onClick={openModal} />
             <RecipientButtonSelected onClick={openModal} />
+
+            <Input01/>
+            <Input01/>
+            
           </div>
 
-          <BlackBtn btnText="前往結帳" href="/checkout/success" />
+
+
+          <BlackBtn btnText="前往結帳" href="/checkout/success" paddingType='medium'/>
         </div>
       </form>
 
@@ -101,15 +99,9 @@ export default function CheckOutPage() {
         modalTitle="請選擇收件人資料"
         open={isModalOpen}
         handleClose={closeModal}
-        modalBody={<RecipientModalBody handleClose={closeModal} openAddRecipientModal={openAddRecipientModal} />}
+        modalBody={<RecipientModalBody handleClose={closeModal}  />}
       />
       
-      <BasicModal
-        modalTitle="新增收件人資料"
-        open={isAddRecipientModalOpen}
-        handleClose={closeAddRecipientModal}
-        modalBody={<AddRecipientModalBody handleClose={closeAddRecipientModal} />}
-      />
       
     </section>
   )

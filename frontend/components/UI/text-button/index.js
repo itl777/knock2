@@ -18,9 +18,14 @@ const TextBtn = styled(Button)(({ type }) => ({
   },
 }))
 
-export default function TextButton({ btnText, type = 'def' }) {
+export default function TextButton({
+  btnText,
+  type = 'def',
+  href = '/',
+  onClick,
+}) {
   return (
-    <TextBtn size="medium" type={type}>
+    <TextBtn size="medium" type={type} href={href} onClick={onClick}>
       {btnText}
     </TextBtn>
   )
