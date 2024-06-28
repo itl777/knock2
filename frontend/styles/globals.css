@@ -102,7 +102,6 @@
   margin: 0;
   /* Iris 新增的 */
   font-family: "Noto Serif JP", serif;
-  color: var(--text-dark);
 }
 
 /* Iris 新增的 */
@@ -157,6 +156,7 @@ a {
 html,
 body {
   max-width: 100vw;
+  color: var(--text-dark);
   /* overflow-x: hidden; */
 }
 

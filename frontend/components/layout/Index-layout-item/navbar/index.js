@@ -8,7 +8,7 @@ import NavMenu from './nav-menu'
 import CheckoutOffcanvas from '@/components/UI/checkout-offcanvas'
 import { useAuth } from '@/context/auth-context'
 import Avatar from '@mui/joy/Avatar'
-import { API_SERVER } from '@/config/app-path'
+import { API_SERVER } from '@/configs/api-path'
 
 export default function Navbar({ pageName }) {
   const { login, auth } = useAuth()

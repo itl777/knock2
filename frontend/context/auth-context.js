@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { API_SERVER, JWT_LOGIN_POST } from '@/config/app-path'
+import { API_SERVER, JWT_LOGIN_POST } from '@/configs/api-path'
 
 const AuthContext = createContext()
 const storageKey = 'knock-knock-auth'

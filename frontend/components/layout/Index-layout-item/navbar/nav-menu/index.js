@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { useAuth } from '@/context/auth-context'
-import { API_SERVER } from '@/config/app-path'
+import { API_SERVER } from '@/configs/api-path'
 
 import styles from './nav-menu.module.scss'
 import { MdLogout } from 'react-icons/md'

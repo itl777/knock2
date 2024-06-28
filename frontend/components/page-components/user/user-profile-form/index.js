@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { z } from 'zod'
 // context
 import { useAuth } from '@/context/auth-context'
-import { API_SERVER } from '@/config/app-path'
+import { API_SERVER } from '@/configs/api-path'
 // styles
 import styles from './user-profile-form.module.scss'
 // components
