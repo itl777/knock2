@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { z } from 'zod'
+import { useRouter } from 'next/router'
 // context
 import { useAuth } from '@/context/auth-context'
 import { API_SERVER } from '@/configs/api-path'
@@ -16,6 +17,7 @@ export default function UserProfileForm() {
   const [profileForm, setProfileForm] = useState({})
   const [addressForm, setAddressForm] = useState({})
   const [fetchDataState, setFetchDataState] = useState(false)
+  const router = useRouter()
 
   const handleChange = (e) => {
     console.log(e)
@@ -45,17 +47,17 @@ export default function UserProfileForm() {
       let response = await fetch(url, option)
       let data = await response?.json()
 
-      setProfileForm(data['users'])
-      setAddressForm(data['address'])
+      setProfileForm(data.users)
+      setAddressForm(data.address)
       setFetchDataState(true)
     } catch (error) {
-      console.log(`fetch-Error: ${error}`)
+      console.error(`fetch-Error: ${error}`)
     }
   }
 
   useEffect(() => {
     fetchData()
-  }, [fetchDataState])
+  }, [router, fetchDataState])
 
   return (
     <>
@@ -122,13 +124,6 @@ export default function UserProfileForm() {
                 errorText=""
                 onChange={handleChange}
               />
-              <UserProfileSelect
-                label="常用地址"
-                options={addressForm} // DB 抓到的資料 需要
-                name="address"
-                placeholder="請選擇常用地址"
-                errorText="1234"
-              />
             </div>
           </div>
           <div className={styles['box']}>
@@ -142,6 +137,12 @@ export default function UserProfileForm() {
                 placeholder="請輸入電話"
                 errorText=""
                 onChange={handleChange}
+              />
+              <UserProfileSelect
+                label="常用地址"
+                options={addressForm}
+                name="address"
+                errorText=""
               />
             </div>
           </div>

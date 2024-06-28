@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
 import styles from './select.module.scss'
-import Select01 from './select01'
+import Select01 from '../../../../UI/form-item/select01'
 
 export default function UserProfileSelect({
   options = [],

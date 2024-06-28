@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styles from './radio.module.scss'
-import Radio01 from './radio01'
+import Radio01 from '../../../../UI/form-item/radio01'
 
 export default function UserProfileRadio({
   label = '',

@@ -3,24 +3,32 @@ import Select, { selectClasses } from '@mui/joy/Select'
 import Option from '@mui/joy/Option'
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
 
-export default function SelectIndicator({
+export default function Select01({
   options = [],
   name = '',
-  placeholder = '',
   borderColor = '#d9d9d9',
   borderHoverColor = '#3399ff',
 }) {
+  if (!Array.isArray(options)) {
+    return (options = [])
+  }
+
+  const getPlaceholderText = (options) => {
+    const item = options.find((v) => v.type === '1')
+    return item.id
+  }
+
   return (
     <Select
       name={name}
-      placeholder={placeholder}
+      defaultValue={getPlaceholderText(options)}
       indicator={<KeyboardArrowDown />}
       sx={{
-        height: 50,
+        height: 44,
         fontFamily: 'Noto Serif JP',
         borderRadius: '8px',
         border: '2px solid #d9d9d9',
-        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+        boxShadow: 'none',
         backgroundColor: '#ffffff',
         borderColor: borderColor,
         [`&:hover`]: {
