@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.css'
+import { Block } from '@mui/icons-material'
 
 function GoogleMap() {
   const [isClient, setIsClient] = useState(false)
@@ -23,9 +24,29 @@ function GoogleMap() {
     >
       <div className="col-6">
         <ul>
-          <div>台北館</div>
-          <li>營業時間</li>
-          <li>電話</li>
+          <div
+            style={{
+              marginBottom: '196px',
+              fontSize: '48px',
+              fontWeight: 'bold',
+            }}
+          >
+            台北館
+          </div>
+          <li
+            style={{
+              marginBottom: '18px',
+            }}
+          >
+            營業時間 10:00-21:00（預約洽詢時間）
+          </li>
+          <li
+            style={{
+              marginBottom: '18px',
+            }}
+          >
+            電話
+          </li>
           <li>地址</li>
         </ul>
       </div>

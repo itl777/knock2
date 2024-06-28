@@ -6,19 +6,27 @@ const router = express.Router();
 const getThemesList = async (req) => {
   let success = false;
 
-  let theme_id = req.query.category_id || "";
-  let where = " WHERE 1 ";
-
-  // 類別篩選
-  // if (category_id) {
-  //   const category_id_ = db.escape(`${category_id}`);
-  //   where = ` JOIN \`product_category\` ON themes.category_id = product_category.category_id WHERE themes.category_id=${category_id_} `;
-  // }
-
-  const sql = `SELECT * FROM \`themes\` ${where} ORDER BY theme_id DESC`;
+  const sql = `
+    SELECT 
+      t.theme_id,
+      t.theme_name,
+      t.theme_img,
+      t.difficulty,
+      t.introduction,
+      t.min_players,
+      t.max_players,
+      t.theme_time,
+      b.branch_name
+    FROM themes t
+    LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
+    LEFT JOIN branches b ON bt.branch_id = b.branch_id
+    ORDER BY t.theme_id DESC
+  `;
 
   try {
+    console.log("Executing SQL:", sql); // 添加日志查看执行的SQL查询
     const [rows] = await db.query(sql);
+    console.log("SQL Result:", rows); // 添加日志查看SQL查询的结果
     success = true;
     return {
       success,
@@ -31,6 +39,7 @@ const getThemesList = async (req) => {
 };
 
 router.get("/", async (req, res) => {
+  // 确保路径与前端请求一致
   const data = await getThemesList(req);
   if (!data.success) {
     return res.json({
