@@ -22,7 +22,7 @@ export default function ProductList() {
 
   return (
     <>
-      <IndexLayout pageName="product">
+      <IndexLayout pageName="product" background="light">
         <Breadcrumb />
 
         <PdFilter />

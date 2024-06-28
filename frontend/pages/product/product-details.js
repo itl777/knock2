@@ -7,7 +7,7 @@ import IndexLayout from '@/components/layout'
 export default function ProductDetails() {
   return (
     <>
-      <IndexLayout pageName="productDetails">
+      <IndexLayout pageName="productDetails" background="light">
         <Breadcrumb />
 
         <PdFeatures />
