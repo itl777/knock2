@@ -1,5 +1,6 @@
 .vscode/
 frontend/.env
+backend/package-lock.json
 _trash/
 *.bak
 .DS_Store
