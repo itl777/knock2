@@ -3,7 +3,7 @@ import lineImg from '@/public/products/line.svg'
 import FavCard from '@/components/page-components/products/fav-card'
 import { useEffect, useState, useRef } from 'react'
 
-export default function FavouriteSection() {
+export default function FavoriteSection() {
   // const localTitle = ['測試', '測試', '測試']
   //變更各區名稱
   const [title, setTitle] = useState(['馬上買', '考慮中', '禮物區'])
@@ -156,7 +156,6 @@ export default function FavouriteSection() {
       <style jsx>
         {`
           .container {
-            max-width: 1040px;
             background-color: white;
             border-radius: 12px;
             margin-bottom: 30px;
