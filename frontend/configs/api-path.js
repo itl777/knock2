@@ -5,3 +5,20 @@ export const AB_LIST = `${API_SERVER}/teams/api`
 
 // JWT 登入, 方法: POST, 欄位: account, password
 export const JWT_LOGIN_POST = `${API_SERVER}/login-jwt`
+
+
+
+// product image path
+export const PRODUCT_IMG = `${API_SERVER}/images`
+
+
+
+
+
+
+
+// order & checkout
+export const CHECKOUT_POST = `${API_SERVER}/checkout/api/checkout`
+export const CHECKOUT_ADD_ADDRESS_POST = `${API_SERVER}/checkout/api/add_address`
+export const CHECKOUT_GET = `${API_SERVER}/checkout/`
+export const CHECKOUT_DELETE_ADDRESS = `${API_SERVER}/checkout/api/delete_address`

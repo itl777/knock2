@@ -2,13 +2,15 @@ import { Button } from '@mui/material'
 
 
 export default function BlackBtn({
-  btnText = '確認購買',
+  btnText = 'button',
+  type = 'button',
   href = '/',
   onClick = () => {},
   paddingType = '',
 }) {
   return (
     <Button
+      type={type}
       href={href}
       variant="outlined"
       onClick={onClick}

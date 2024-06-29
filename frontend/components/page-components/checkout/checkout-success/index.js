@@ -1,5 +1,4 @@
 // checkout success page components
-
 import BlackBtn from '@/components/UI/black-btn'
 import styles from './checkout-success.module.css'
 import OrderProductImgBox from '../../orders/order-product-img-box'
@@ -36,7 +35,7 @@ export default function CheckoutSuccess() {
         </div>
       </div>
       <div className={styles.btnHorizontal}>
-        <BlackBtn btnText="繼續購物" href="/product-list" paddingType='medium' />
+        <BlackBtn btnText="繼續購物" href="/product" paddingType='medium' />
         <BlackBtn btnText="檢視訂單" href="/user/orders/ongoing" paddingType='medium' />
       </div>
     </section>

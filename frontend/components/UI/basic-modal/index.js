@@ -1,7 +1,8 @@
-// components/UI/basic-modal.jsx
+// COMPONENT basic modal layout
 import * as React from 'react'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
+import styles from './basic-modal.module.css'
 
 const style = {
   position: 'absolute',
@@ -16,6 +17,8 @@ const style = {
   padding: '1.5rem',
 }
 
+
+
 export default function BasicModal({
   modalTitle = 'Modal Title',
   modalBody,
@@ -26,7 +29,7 @@ export default function BasicModal({
     <div>
       <Modal open={open} onClose={handleClose}>
         <Box sx={style}>
-          <h6>{modalTitle}</h6>
+          <h6 className={styles.modalHeader}>{modalTitle}</h6>
           {modalBody}
         </Box>
       </Modal>

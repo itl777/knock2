@@ -5,12 +5,12 @@ import OrderProductImgBox from '../order-product-img-box'
 import { IoHeartOutline } from 'react-icons/io5'
 
 export default function OrderItemCheckout({
+  productId = 0,
   productName = '產品名稱',
   productOriginalPrice = 0,
   productDiscountedPrice = 0,
   productImg = '',
   orderQty = 1,
-
 }) {
   return (
     <div className="itemBoxS">
@@ -19,8 +19,8 @@ export default function OrderItemCheckout({
         <div className="item-name-price">
           <p className={styles.productName}>{productName}</p>
           <div className="itemPriceS">
-            <p>{productDiscountedPrice}</p>
-            <small>{productOriginalPrice}</small>
+            <p>$ {productDiscountedPrice}</p>
+            <small>$ {productOriginalPrice}</small>
           </div>
         </div>
         <InputStepper stepperValue={orderQty} />
