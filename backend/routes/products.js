@@ -71,12 +71,60 @@ const getListDate = async (req) => {
     success = true;
     return {
       success,
-      perPage,
+      // perPage,
       page,
       totalRows,
       totalPages,
       rows,
       // qs: req.query,
+    };
+  } else {
+    return { success, redirect };
+  }
+};
+
+const getFavoriteDate = async (req) => {
+  let success = false;
+  let redirect = "";
+  const perPage = 9; //每頁卡片數量
+
+  let where = " WHERE 1 ";
+
+  let page = parseInt(req.query.page) || 1;
+
+  if (page < 1) {
+    redirect = "?page=1";
+    return { success, redirect };
+  }
+
+ // user_id 暫設1
+  const t_sql = `SELECT COUNT(1) totalRows FROM product_favorites WHERE \`user_id\`=1`;
+
+  const [[{ totalRows }]] = await db.query(t_sql);
+
+  let totalPages = 0;
+  let rows = [];
+
+  if (totalRows) {
+    totalPages = Math.ceil(totalRows / perPage);
+    if (page > totalPages) {
+      redirect = `?page=${totalPages}`;
+      return { success, redirect };
+    }
+
+    // user_id 暫設1
+    const sql = `SELECT * FROM \`product_favorites\` JOIN product_management ON \`fav_product_id\` = \`product_id\` WHERE \`user_id\`=1 ORDER BY \`favorite_id\`  DESC LIMIT ${
+      (page - 1) * perPage
+    },${perPage}`;
+
+    [rows] = await db.query(sql);
+    success = true;
+    return {
+      success,
+      page,
+      totalRows,
+      totalPages,
+      rows,
     };
   } else {
     return { success, redirect };
@@ -105,6 +153,11 @@ router.get("/", async (req, res) => {
 
 router.get("/details/:product_id", async (req, res) => {
   const data = await getListDate(req);
+  res.json(data);
+});
+
+router.get("/favorite", async (req, res) => {
+  const data = await getFavoriteDate(req);
   res.json(data);
 });
 
