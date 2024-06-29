@@ -1,14 +1,10 @@
 import Image from 'next/image'
 import BlackBtn from '@/components/UI/black-btn'
-
+import myStyle from './list.module.css'
 import IconButton from '@mui/material/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
 
-export default function FavCardLarge({
-  pdId = 1,
-  pdName = '大富翁',
-  pdPrice = '2500',
-}) {
+export default function FavCardLarge({ dbData }) {
   const imgStyle = {
     width: ' 100%',
     height: '100%',
@@ -25,49 +21,33 @@ export default function FavCardLarge({
     <>
       <div
         draggable="true"
-        id={pdId}
-        className="pd-card position-relative mb-2"
+        id={dbData.product_name}
+        className={`${myStyle['pd-card']} pd-card position-relative mb-2`}
       >
-        <div className="img-div position-relative">
+        <div className={`${myStyle['img-div']}`}>
           <Image
-            src="/pics/tea3.jpg"
+            // src={`http://127.0.0.1:3001/images/${dbData.product_img}`}
+            src="/products/p1-1.jpg"
             width={81}
             height={113}
             style={imgStyle}
             draggable="false"
-            alt=""
+            alt="..."
           />
 
           <IconButton aria-label="delete" size="large" sx={trashStyle}>
             <DeleteIcon />
           </IconButton>
         </div>
-        <div className="p-2 d-flex flex-column align-items-center">
-          <p className="card-text">{pdName}</p>
-          <p className="card-text">${pdPrice}</p>
+        <div
+          className={`${myStyle['gap']} d-flex flex-column align-items-center`}
+        >
+          <p className={myStyle['card-text']}>{dbData.product_name}</p>
+          <p className={myStyle['card-text']}>${dbData.price}</p>
           <BlackBtn btnText={'加入購物車'} />
         </div>
       </div>
-      <style jsx>
-        {`
-          .pd-card {
-            width: 260px;
-            background-color: white;
-            border-radius: 12px;
-          }
-          .img-div {
-            width: 100%;
-          }
-          .p-2.d-flex.flex-column {
-            gap: 10px;
-          }
-          .card-text {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 400;
-          }
-        `}
-      </style>
+
     </>
   )
 }
