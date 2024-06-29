@@ -30,17 +30,6 @@ export default function PdCard({ data, setPage }) {
             padding:0;
             margin:auto;
           }
-          .card-btn {
-            border: 2px solid black;
-            width: 270px;
-          }
-
-          .buy-btn-outer:first-child {
-            border-right: 2px solid black;
-          }
-          .card {
-            margin: 2.2rem;
-          }
         `}
       </style>
     </>

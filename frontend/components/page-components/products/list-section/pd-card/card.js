@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import pdImg from '@/public/products/p1.png'
 import BuyBtn from './buy-btn'
 import 'hover.css/css/hover-min.css'
 import IconButton from '@mui/material/IconButton'

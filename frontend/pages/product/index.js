@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import IndexLayout from '@/components/layout'
 import ListSection from '@/components/page-components/products/list-section'
+import Breadcrumb from '@/components/page-components/products/breadcrumb'
+import PdFilter from '@/components/page-components/products/list-section/pd-filter'
+import PdCard from '@/components/page-components/products/list-section/pd-card'
 
 export default function ProductList() {
   const [data, setData] = useState([])
@@ -19,7 +22,13 @@ export default function ProductList() {
   return (
     <>
       <IndexLayout pageName="product" background="light">
-        <ListSection data={data} setPage={setPage} />
+        <ListSection
+          data={data}
+          setPage={setPage}
+          top={<Breadcrumb />}
+          filter={<PdFilter />}
+          card={<PdCard data={data} setPage={setPage} />}
+        />
       </IndexLayout>
     </>
   )

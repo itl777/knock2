@@ -1,14 +1,12 @@
-import Breadcrumb from '@/components/page-components/products/breadcrumb'
-import PdFilter from '@/components/page-components/products/list-section/pd-filter'
-import PdCard from '@/components/page-components/products/list-section/pd-card'
+
 import myStyle from './list.module.css'
 
-export default function ListSection({ data, setPage }) {
+export default function ListSection({ data, setPage, top, filter, card }) {
   return (
     <div className={myStyle.section}>
-      <Breadcrumb />
-      <PdFilter />
-      <PdCard data={data} setPage={setPage} />
+      {top}
+      {filter}
+      {card}
     </div>
   )
 }
