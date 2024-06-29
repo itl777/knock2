@@ -2,7 +2,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Jolly+Lodger&display=swap');
 
 .home-section4 {
-  padding: 4.375rem 7.5rem;
+  padding: 4.375rem 0;
+  @media screen and (min-width: 1055px) {
+    padding: 4.375rem 7.5rem;
+  }
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -37,6 +40,10 @@
           @include font-p;
         }
       }
+    }
+
+    a {
+      align-self: stretch;
     }
   }
   @media screen and (min-width: 1055px) {

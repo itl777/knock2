@@ -26,12 +26,16 @@ export default function HomeBtn({
             backgroundColor: backgroundColor,
             textTransform: 'none',
             padding: {
-              xs: '10px 25px', // 小於600px寬度時
-              sm: '16px 40px', // 大於等於600px寬度時
+              xs: '10px 25px',
+              sm: '16px 40px',
             },
             fontSize: {
-              xs: '16px', // 小於600px寬度時
-              sm: '20px', // 大於等於600px寬度時
+              xs: '16px',
+              sm: '20px',
+            },
+            width: {
+              xs: '100%',
+              sm: 'unset',
             },
             ':hover': {
               color: hoverColor,

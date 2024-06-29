@@ -1,4 +1,4 @@
-import styles from './select.module.scss'
+import styles from './item.module.scss'
 import Select01 from '../../../../UI/form-item/select01'
 
 export default function UserProfileSelect({

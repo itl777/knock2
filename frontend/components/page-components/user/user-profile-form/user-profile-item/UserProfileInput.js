@@ -1,29 +1,29 @@
 import { useEffect, useState } from 'react'
-import styles from './radio.module.scss'
-import Radio01 from '../../../../UI/form-item/radio01'
+import styles from './item.module.scss'
+import Input01 from '../../../../UI/form-item/input01'
 
-export default function UserProfileRadio({
+export default function UserProfileInput({
   label = '',
-  errorText = '',
-  radio = [],
   name = '',
-  checked = '',
+  type = '',
+  value = '',
+  placeholder = '',
   disabled = false,
+  errorText = '',
   onChange = () => {},
 }) {
 
   return (
     <>
       <div className={styles.formItem}>
-        <label className={styles.mylabel} htmlFor={name}>
-          {label}
-        </label>
-        <div className={styles.radio}>
-          <Radio01
-            radio={radio}
+        <label htmlFor={name} className={styles.myLabel}>{label}</label>
+        <div className={styles.myDiv}>
+          <Input01
             name={name}
+            type={type}
+            value={value}
+            placeholder={placeholder}
             disabled={disabled}
-            checked={checked}
             onChange={onChange}
           />
           {errorText !== '' ? (
