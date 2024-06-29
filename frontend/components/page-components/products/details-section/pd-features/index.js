@@ -26,9 +26,9 @@ export default function PdFeatures({ data }) {
   }, [data])
   return (
     <>
-     <div className="container" style={{ marginBottom: 0 }}>
+     {/* <div className="container">
       <Breadcrumb productName={productData.product_name} />
-      </div>
+      </div> */}
       {/* 商品詳情 */}
       <div className={`${myStyle['container']} container`}>
         <div className={`${myStyle['pd-features']} row pd-features `}>

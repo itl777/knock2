@@ -1,0 +1,7 @@
+.section{
+    display: flex;
+    flex-direction: column;
+    /* padding-top: 82px; */
+    gap: 82px;
+    padding-bottom: 82px;
+    }
