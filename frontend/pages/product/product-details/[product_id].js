@@ -10,6 +10,14 @@ import Breadcrumb from '@/components/page-components/products/breadcrumb'
 export default function ProductDetails() {
   const router = useRouter()
   const [data, setData] = useState([])
+  const [productData, setProductData] = useState({
+    product_name: '',
+    price: 0,
+    summary: '',
+    players: '',
+    age: '',
+    category_id: 0,
+  })
 
   useEffect(() => {
     console.log(router.query.product_id)
@@ -20,15 +28,6 @@ export default function ProductDetails() {
         setData(dbData.rows)
       })
   }, [router])
-
-  const [productData, setProductData] = useState({
-    product_name: '',
-    price: 0,
-    summary: '',
-    players: '',
-    age: '',
-    category_id: 0,
-  })
 
   useEffect(() => {
     if (data && data.length > 0) {
