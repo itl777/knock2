@@ -1,8 +1,11 @@
 .modalBody {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: auto auto;
   gap: 1rem;
-  margin-top: 1.5rem;
+}
+
+.inputDefault {
+  width: 100%;
 }
 
 .btnStack {
