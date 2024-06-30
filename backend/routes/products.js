@@ -97,7 +97,7 @@ const getFavoriteDate = async (req) => {
     return { success, redirect };
   }
 
- // user_id 暫設1
+  // user_id 暫設1
   const t_sql = `SELECT COUNT(1) totalRows FROM product_favorites WHERE \`user_id\`=1`;
 
   const [[{ totalRows }]] = await db.query(t_sql);
@@ -159,6 +159,34 @@ router.get("/details/:product_id", async (req, res) => {
 router.get("/favorite", async (req, res) => {
   const data = await getFavoriteDate(req);
   res.json(data);
+});
+
+// 新增
+router.post("/favorite/add/:product_id", async (req, res) => {
+  // body.created_at = new Date();
+
+  let body = {
+    user_id: 1, //暫時寫死
+    fav_product_id: req.params.product_id,
+    // created_at: new Date(),
+  };
+  const sql =
+    "INSERT INTO product_favorites SET ?";
+  const [result] = await db.query(sql, [body]);
+
+  res.json({ result, success: !!result.affectedRows });
+});
+
+// 刪除
+router.delete("/favorite/delete/:product_id", async (req, res) => {
+
+
+  const sql =
+    "DELETE FROM product_favorites WHERE user_id = 1 and fav_product_id = ?";
+    console.log(sql,req.params.product_id);
+  const [result] = await db.query(sql, req.params.product_id);
+
+  res.json({ result, success: !!result.affectedRows });
 });
 
 export default router;

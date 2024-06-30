@@ -1,17 +1,19 @@
 import Link from 'next/link'
+import API_SERVER from '@/configs/api-path'
 import Image from 'next/image'
 import BuyBtn from './buy-btn'
 import 'hover.css/css/hover-min.css'
 import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import myStyle from './card.module.css'
+import FavoriteIconBtn from './favorite-icon-btn'
 
 export default function Card({ dbData }) {
-  const btnStyle = {
-    position: 'absolute',
-    top: '6px',
-    right: '6px',
-  }
+  // const btnStyle = {
+  //   position: 'absolute',
+  //   top: '6px',
+  //   right: '6px',
+  // }
   return (
     <>
       <div
@@ -30,10 +32,19 @@ export default function Card({ dbData }) {
             className="card-img-top"
             alt="..."
           />
-          <IconButton aria-label="favorite" size="large" sx={btnStyle}>
-            <FavoriteIcon style={{ fill: '#fff' }} />
-          </IconButton>
         </Link>
+        {/* 收藏按鈕 */}
+        <FavoriteIconBtn product_id ={dbData.product_id}/>
+
+
+        {/* <IconButton
+          href={`${API_SERVER}/product/favorite/add/${dbData.product_id}`}
+          aria-label="favorite"
+          size="large"
+          sx={btnStyle}
+        >
+          <FavoriteIcon style={{ fill: '#fff' }} />
+        </IconButton> */}
 
         <div className="card-body text-center d-flex flex-column">
           <h5 className="card-title">{dbData.product_name}</h5>
