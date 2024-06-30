@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import API_SERVER from '@/configs/api-path'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import BuyBtn from './buy-btn'
 import 'hover.css/css/hover-min.css'
@@ -9,11 +9,8 @@ import myStyle from './card.module.css'
 import FavoriteIconBtn from './favorite-icon-btn'
 
 export default function Card({ dbData }) {
-  // const btnStyle = {
-  //   position: 'absolute',
-  //   top: '6px',
-  //   right: '6px',
-  // }
+
+
   return (
     <>
       <div

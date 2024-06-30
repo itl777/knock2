@@ -25,7 +25,14 @@ export default function FavoriteTab() {
     fetch(`http://127.0.0.1:3001/products/favorite`)
       .then((r) => r.json())
       .then((data) => {
-        console.log(data)
+        console.log('FavoriteTab', data)
+        //   {
+        //     "success": true,
+        //     "page": 1,
+        //     "totalRows": 5,
+        //     "totalPages": 1,
+        //     "rows": [ 每筆obj資料 ]
+        // }
         setData(data)
       })
   }, [page])
