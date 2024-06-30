@@ -88,49 +88,6 @@ router.get("/cart/", async (req, res) => {
   }
 });
 
-// PUT update member cart items
-// router.put("/cart/update/:cart_id", express.json(), async (req, res) => {
-//   const cartId = +req.params.cart_id || 0;
-//   const { cart_product_quantity } = req.body;
-
-//   if (!cartId) {
-//     return res
-//       .status(400)
-//       .json({ success: false, message: "Invalid cart ID", cartId });
-//   }
-
-//   if (typeof cart_product_quantity !== "number") {
-//     return res
-//       .status(400)
-//       .json({
-//         success: false,
-//         message: "Invalid quantity",
-//         cart_product_quantity,
-//       });
-//   }
-
-//   try {
-//     const sql = `
-//       UPDATE cart_member SET
-//         cart_product_quantity = ?,
-//         last_modified_at = NOW()
-//       WHERE id = ?
-//     `;
-
-//     const [cartResult] = await db.query(sql, [cart_product_quantity, cartId]);
-//     const success = !!(cartResult.affectedRows && cartResult.changedRows);
-
-//     res.json({
-//       success,
-//       cartId,
-//       cartResult,
-//     });
-//   } catch (error) {
-//     console.error("Error updating cart:", error);
-//     res.status(500).json({ success: false, error: "Failed to update cart" });
-//   }
-// });
-
 // PUT update & delete member cart items
 router.put("/cart/update/:cart_id", async (req, res) => {
   const cartId = +req.params.cart_id || 0;
@@ -193,7 +150,7 @@ router.put("/cart/update/:cart_id", async (req, res) => {
 });
 
 
-// POST insert data into orders and order details tables
+// POST insert data into orders and order details tables, delete member's cart_member data
 router.post("/api/checkout", async (req, res) => {
   const {
     memberId,
@@ -208,8 +165,8 @@ router.post("/api/checkout", async (req, res) => {
     orderItems,
   } = req.body;
 
-  // INSERT CHECKOUT DATA INTO order_details table
   try {
+    // order_table
     const orderSql = `
       INSERT INTO orders (
         order_date,
@@ -219,7 +176,7 @@ router.post("/api/checkout", async (req, res) => {
         order_district_id,
         order_address,
         payment_method,
-        member_carrier, 
+        member_carrier,
         recipient_invoice_carrier,
         recipient_tax_id,
         order_status_id,
@@ -243,10 +200,9 @@ router.post("/api/checkout", async (req, res) => {
 
     const [orderResult] = await db.query(orderSql, orderValues);
 
-    //console.log("Order Insert Result:", orderResult); // 後端列印結果
+    const orderId = orderResult.insertId; // 本此新增的 order_id
 
-    // INSERT ITEM INTO order_details table
-    const orderId = orderResult.insertId; // 取得本次的 order_id
+    // order_details table
     const orderDetailSql = `
       INSERT INTO order_details (
         order_id,
@@ -268,24 +224,23 @@ router.post("/api/checkout", async (req, res) => {
         ];
         return db
           .query(orderDetailSql, orderDetailValues)
-          .then(([result]) => result); // 只返回查詢結果（忽略 undefined）
+          .then(([result]) => result);
       }
     );
 
     const orderDetailResults = await Promise.all(orderDetailPromises);
 
-    // 後端列印結果
-    // orderDetailResults.forEach((v, i) =>
-    //   console.log(`Order Detail Insert Result ${i}:`, v)
-    // );
-
-    // 確認是否有成功 insert value
     const success =
       orderResult.affectedRows === 1 &&
       orderDetailResults.length > 0 &&
       orderDetailResults.every((result) => result.affectedRows === 1);
 
-    // 返回結果到前端
+    if (success) {
+      const deleteCartSql = `DELETE FROM cart_member WHERE cart_member_id = ?`;
+      await db.query(deleteCartSql, [memberId]);
+    }
+
+    // 返回结果到前端
     res.json({
       success,
       orderId,
@@ -297,6 +252,7 @@ router.post("/api/checkout", async (req, res) => {
       .json({ error: "An error occurred while processing checkout." });
   }
 });
+
 
 // GET member address
 router.get("/", async (req, res) => {
@@ -430,7 +386,15 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
 
 
 
-// 成立訂單後刪除購物車內容
+
+
+
+
+
+export default router;
+
+
+// POST insert data into orders and order details tables (original 無刪除購物車功能)
 // router.post("/api/checkout", async (req, res) => {
 //   const {
 //     memberId,
@@ -445,8 +409,8 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
 //     orderItems,
 //   } = req.body;
 
+//   // INSERT CHECKOUT DATA INTO order_details table
 //   try {
-//     // 插入订单信息到 orders 表
 //     const orderSql = `
 //       INSERT INTO orders (
 //         order_date,
@@ -456,7 +420,7 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
 //         order_district_id,
 //         order_address,
 //         payment_method,
-//         member_carrier,
+//         member_carrier, 
 //         recipient_invoice_carrier,
 //         recipient_tax_id,
 //         order_status_id,
@@ -480,7 +444,10 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
 
 //     const [orderResult] = await db.query(orderSql, orderValues);
 
-//     const orderId = orderResult.insertId; // 获取本次的 order_id
+//     //console.log("Order Insert Result:", orderResult); // 後端列印結果
+
+//     // INSERT ITEM INTO order_details table
+//     const orderId = orderResult.insertId; // 取得本次的 order_id
 //     const orderDetailSql = `
 //       INSERT INTO order_details (
 //         order_id,
@@ -502,24 +469,24 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
 //         ];
 //         return db
 //           .query(orderDetailSql, orderDetailValues)
-//           .then(([result]) => result);
+//           .then(([result]) => result); // 只返回查詢結果（忽略 undefined）
 //       }
 //     );
 
 //     const orderDetailResults = await Promise.all(orderDetailPromises);
 
+//     // 後端列印結果
+//     // orderDetailResults.forEach((v, i) =>
+//     //   console.log(`Order Detail Insert Result ${i}:`, v)
+//     // );
+
+//     // 確認是否有成功 insert value
 //     const success =
 //       orderResult.affectedRows === 1 &&
 //       orderDetailResults.length > 0 &&
 //       orderDetailResults.every((result) => result.affectedRows === 1);
 
-//     if (success) {
-//       // 删除购物车中的所有商品
-//       const deleteCartSql = `DELETE FROM cart_member WHERE member_id = ?`;
-//       await db.query(deleteCartSql, [memberId]);
-//     }
-
-//     // 返回结果到前端
+//     // 返回結果到前端
 //     res.json({
 //       success,
 //       orderId,
@@ -531,8 +498,3 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
 //       .json({ error: "An error occurred while processing checkout." });
 //   }
 // });
-
-
-
-
-export default router;

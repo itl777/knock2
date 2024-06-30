@@ -11,7 +11,11 @@ import HDivider from '../divider/horizontal-divider'
 import BlackBtn from '../black-btn'
 import NoData from '../no-data'
 import OrderItemCheckout from '@/components/page-components/orders/order-item-checkout'
-import { PRODUCT_IMG, CHECKOUT_GET_CART, CHECKOUT_UPDATE_CART } from '@/configs/api-path'
+import {
+  PRODUCT_IMG,
+  CHECKOUT_GET_CART,
+  CHECKOUT_UPDATE_CART,
+} from '@/configs/api-path'
 import { FaCartShopping } from 'react-icons/fa6'
 // import { IoAdd, IoHeartOutline } from 'react-icons/io5'
 // import { IoIosRemove } from 'react-icons/io'
@@ -29,29 +33,11 @@ export default function CheckoutOffcanvas() {
   const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
   const [show, setShow] = useState(false)
   const [checkoutItems, setCheckoutItems] = useState([])
+  const [checkoutTotal, setCheckoutTotal] = useState(0)
   const handleClose = () => setShow(false)
   const toggleShow = () => setShow((s) => !s)
 
-  // const initialCheckoutItems = [
-  //   {
-  //     order_id: 2,
-  //     product_id: 1,
-  //     product_name: '科學實驗室',
-  //     order_unit_price: 950,
-  //     order_quantity: 2,
-  //     product_img: 'p1-1.jpg',
-  //   },
-  //   {
-  //     order_id: 2,
-  //     product_id: 2,
-  //     product_name: '冒險之路',
-  //     order_unit_price: 650,
-  //     order_quantity: 1,
-  //     product_img: 'p2-1.jpg',
-  //   },
-  // ]
   // 取得會員購物車資料
-
   const fetchMemberCart = async () => {
     try {
       const response = await fetch(
@@ -71,15 +57,14 @@ export default function CheckoutOffcanvas() {
     }
   }
 
-  // const handleQuantityChange = (productId, newQuantity) => {
-  //   setCheckoutItems((prevItems) =>
-  //     prevItems.map((item) =>
-  //       item.product_id === productId
-  //         ? { ...item, order_quantity: newQuantity }
-  //         : item
-  //     )
-  //   )
-  // }
+  // 取得訂單總金額
+  useEffect(() => {
+    let newCheckTotal = 0
+    checkoutItems.forEach((item) => {
+      newCheckTotal += item.cart_product_quantity * item.price
+    })
+    setCheckoutTotal(newCheckTotal)
+  }, [checkoutItems])
 
   const handleQuantityChange = async (productId, newQuantity) => {
     const updatedItems = checkoutItems.map((item) =>
@@ -117,7 +102,6 @@ export default function CheckoutOffcanvas() {
   useEffect(() => {
     fetchMemberCart()
   }, [])
-
 
   return (
     <>
@@ -167,7 +151,7 @@ export default function CheckoutOffcanvas() {
 
             <div className={styles.total}>
               <small>合計</small>
-              <h5>$ 2100</h5>
+              <h5>$ {checkoutTotal}</h5>
             </div>
           </div>
 

@@ -26,6 +26,8 @@ export default function CheckOutPage() {
   const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
   const [checkoutItems, setCheckoutItems] = useState([])
   const [memberAddress, setMemberAddress] = useState([])
+  const [checkoutTotal, setCheckoutTotal] = useState(0)
+  const [deliverFee, setDeliverFee] = useState(120)
   // 送出的表單欄位 insert into orders and order_details table
   const [formData, setFormData] = useState({
     memberId: loginMemberId,
@@ -59,26 +61,6 @@ export default function CheckOutPage() {
       console.log('Error fetching member cart:', error)
     }
   }
-
-  // const initialCheckoutItems = [
-  //   {
-  //     order_id: 2,
-  //     product_id: 1,
-  //     product_name: '科學實驗室',
-  //     order_unit_price: 950,
-  //     order_quantity: 2,
-  //     product_img: 'p1-1.jpg',
-  //   },
-  //   {
-  //     order_id: 2,
-  //     product_id: 2,
-  //     product_name: '冒險之路',
-  //     order_unit_price: 650,
-  //     order_quantity: 1,
-  //     product_img: 'p2-1.jpg',
-  //   },
-  // ]
-  // const [checkoutItems, setCheckoutItems] = useState(initialCheckoutItems)
 
   // 接收商品數量變化 (inputStepper > orderItemCheckout > CheckoutPage )
   const handleQuantityChange = async (productId, newQuantity) => {
@@ -170,6 +152,15 @@ export default function CheckOutPage() {
     })
   }
 
+  // 取得訂單總金額
+  useEffect(() => {
+    let newCheckTotal = 0
+    checkoutItems.forEach((item) => {
+      newCheckTotal += item.cart_product_quantity * item.price
+    })
+    setCheckoutTotal(newCheckTotal)
+  }, [checkoutItems])
+
   // 送出表單
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -252,20 +243,20 @@ export default function CheckOutPage() {
           <div className={styles.totalBox}>
             <div className={styles.totalRow}>
               <p>小計</p>
-              <p>$1000</p>
+              <p>$ {checkoutTotal}</p>
             </div>
             <div className={styles.totalRow}>
               <p>折扣</p>
-              <p>$1000</p>
+              <p>$ 0</p>
             </div>
             <div className={styles.totalRow}>
               <p>運費</p>
-              <p>$1000</p>
+              <p>$ {deliverFee}</p>
             </div>
             <HDivider margin="1rem 0" />
             <div className={styles.totalRow}>
               <p>合計</p>
-              <p>$1000</p>
+              <p>$ {checkoutTotal + deliverFee}</p>
             </div>
           </div>
         </div>
