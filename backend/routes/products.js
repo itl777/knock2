@@ -161,6 +161,21 @@ router.get("/favorite", async (req, res) => {
   res.json(data);
 });
 
+router.get("/favorite/api", async (req, res) => {
+  let success = false;
+  let rows = [];
+
+  // user_id 暫設1
+  const sql = `SELECT * FROM \`product_favorites\` JOIN product_management ON \`fav_product_id\` = \`product_id\` WHERE \`user_id\`=1 ORDER BY \`favorite_id\`  DESC`;
+
+  [rows] = await db.query(sql);
+  success = true;
+  res.json({
+    success,
+    rows,
+  });
+});
+
 // 新增
 router.post("/favorite/add/:product_id", async (req, res) => {
   // body.created_at = new Date();
@@ -170,8 +185,7 @@ router.post("/favorite/add/:product_id", async (req, res) => {
     fav_product_id: req.params.product_id,
     // created_at: new Date(),
   };
-  const sql =
-    "INSERT INTO product_favorites SET ?";
+  const sql = "INSERT INTO product_favorites SET ?";
   const [result] = await db.query(sql, [body]);
 
   res.json({ result, success: !!result.affectedRows });
@@ -179,11 +193,8 @@ router.post("/favorite/add/:product_id", async (req, res) => {
 
 // 刪除
 router.delete("/favorite/delete/:product_id", async (req, res) => {
-
-
   const sql =
     "DELETE FROM product_favorites WHERE user_id = 1 and fav_product_id = ?";
-    console.log(sql,req.params.product_id);
   const [result] = await db.query(sql, req.params.product_id);
 
   res.json({ result, success: !!result.affectedRows });
