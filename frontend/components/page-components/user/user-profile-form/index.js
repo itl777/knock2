@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
 // context
 import { useAuth } from '@/context/auth-context'
 import { API_SERVER } from '@/configs/api-path'
@@ -8,19 +9,18 @@ import { API_SERVER } from '@/configs/api-path'
 import styles from './user-profile-form.module.scss'
 // components
 import UserProfileFormTitle from './user-profile-title'
-import UserProfileInput from './user-profile-input'
-import UserProfileRadio from './user-profile-radio'
-import UserProfileSelect from './user-profile-select'
+import UserProfileInput from './user-profile-item/UserProfileInput'
+import UserProfileRadio from './user-profile-item/UserProfileRadio'
+import UserProfileSelect from './user-profile-item/UserProfileSelect'
+// import UserProfileBirthday from './user-profile-item/birthday'
+import AvatarFormItem from './avatar'
 
 export default function UserProfileForm() {
-  const { getAuthHeader } = useAuth()
+  const { auth, getAuthHeader } = useAuth()
   const [profileForm, setProfileForm] = useState({})
-  const [addressForm, setAddressForm] = useState({})
-  const [fetchDataState, setFetchDataState] = useState(false)
-  const router = useRouter()
+  const [addressForm, setAddressForm] = useState([])
 
   const handleChange = (e) => {
-    console.log(e)
     const { name, value } = e.target
 
     // 做表單驗證
@@ -31,8 +31,14 @@ export default function UserProfileForm() {
     }
 
     const newForm = { ...profileForm, [name]: value }
-    console.log(newForm)
     setProfileForm(newForm)
+  }
+
+  const getAddressDefaultValue = (options) => {
+    if (Array.isArray(options)) {
+      const item = options.find((v) => v.type === '1')
+      return item?.value
+    }
   }
 
   const fetchData = async () => {
@@ -46,26 +52,38 @@ export default function UserProfileForm() {
     try {
       let response = await fetch(url, option)
       let data = await response?.json()
-
-      setProfileForm(data.users)
-      setAddressForm(data.address)
-      setFetchDataState(true)
+      if (data.success) {
+        setProfileForm(data.users)
+        const options = data.address.map((v) => {
+          return {
+            value: v.id,
+            type: v.type,
+            text: `${v.district_id} ${v.city_name}${v.district_name}${v.address} - ${v.recipient_name} / ${v.recipient_phone}`,
+          }
+        })
+        setAddressForm(options)
+      } else {
+        console.error(data.error)
+      }
     } catch (error) {
       console.error(`fetch-Error: ${error}`)
     }
   }
 
   useEffect(() => {
-    fetchData()
-  }, [router, fetchDataState])
+    if (auth.token) fetchData()
+  }, [auth])
 
   return (
     <>
-      {fetchDataState ? (
+      {JSON.stringify(profileForm) !== '{}' &&
+      JSON.stringify(addressForm) !== '[]' ? (
         <form className={styles['user-profile-form']}>
-          <div className={styles['account']}>
-            <div className={styles['avatar']}></div>
-            <div>
+          <div className={styles['box1']}>
+            {/* <div className={styles['avatar']}>
+            </div> */}
+            <AvatarFormItem avatar={profileForm.avatar} />
+            <div className={styles['account']}>
               <UserProfileFormTitle text={'帳號資訊'} />
               <UserProfileInput
                 label="帳號"
@@ -84,7 +102,7 @@ export default function UserProfileForm() {
               />
             </div>
           </div>
-          <div className={styles['box']}>
+          <div className={styles['box2']}>
             <div>
               <UserProfileFormTitle text={'個人資料'} />
               <UserProfileInput
@@ -108,7 +126,7 @@ export default function UserProfileForm() {
               />
               <UserProfileRadio
                 label="性別"
-                radio={[
+                radios={[
                   {
                     value: '0',
                     label: '男',
@@ -124,9 +142,15 @@ export default function UserProfileForm() {
                 errorText=""
                 onChange={handleChange}
               />
+              {/* <UserProfileBirthday
+                label="生日"
+                options={profileForm.birthday}
+                name="birthday"
+                errorText=""
+              /> */}
             </div>
           </div>
-          <div className={styles['box']}>
+          <div className={styles['box2']}>
             <div>
               <UserProfileFormTitle text={'聯絡資訊'} />
               <UserProfileInput
@@ -142,11 +166,13 @@ export default function UserProfileForm() {
                 label="常用地址"
                 options={addressForm}
                 name="address"
+                defaultValue={getAddressDefaultValue(addressForm)}
+                placeholder="請選擇常用地址"
                 errorText=""
               />
             </div>
           </div>
-          <div className={styles['box']}>
+          <div className={styles['box2']}>
             <div>
               <UserProfileFormTitle text={'其他資訊'} />
               <UserProfileInput
@@ -169,7 +195,7 @@ export default function UserProfileForm() {
               />
             </div>
           </div>
-          <div className={styles['box']}>
+          <div className={styles['box2']}>
             <button type="submit">送出</button>
           </div>
         </form>

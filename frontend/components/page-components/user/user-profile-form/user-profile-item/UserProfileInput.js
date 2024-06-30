@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import styles from './item.module.scss'
-import Input01 from '../../../../UI/form-item/input01'
+import Input01 from '@/components/UI/form-item/input01'
 
 export default function UserProfileInput({
   label = '',

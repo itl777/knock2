@@ -115,7 +115,7 @@ router.post("/api", async (req, res) => {
 
   if (!users.length) {
     //沒有該筆資料
-    output.error = "資料庫沒有該筆資料";
+    output.error = "資料庫沒有這筆用戶";
     return res.json(output);
   }
 
