@@ -6,10 +6,11 @@ import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import FormatAlignLeftRoundedIcon from '@mui/icons-material/FormatAlignLeftRounded'
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
-import AppsIcon from '@mui/icons-material/Apps'
 import ProductTabList from './product-tab-list'
 import myStyle from './favorite-tab.module.css'
+import AppsIcon from '@mui/icons-material/Apps'
 import { color } from 'framer-motion'
+import MyPagination from '../../pagination'
 
 export default function FavoriteTab() {
   const [value, setValue] = useState('1')
@@ -22,7 +23,7 @@ export default function FavoriteTab() {
   const [page, setPage] = useState(1)
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:3001/products/favorite`)
+    fetch(`http://127.0.0.1:3001/products/favorite?page=${page}`)
       .then((r) => r.json())
       .then((data) => {
         console.log('FavoriteTab', data)
@@ -34,6 +35,7 @@ export default function FavoriteTab() {
         //     "rows": [ 每筆obj資料 ]
         // }
         setData(data)
+        window.scrollTo({ top: 0, behavior: 'auto' })
       })
   }, [page])
 
@@ -62,6 +64,7 @@ export default function FavoriteTab() {
         <TabPanel value="1">
           {/* 一般卡片列表 */}
           <ProductTabList favData={data} />
+          <MyPagination totalPages={data.totalPages} setPage={setPage} />
         </TabPanel>
 
         <TabPanel value="2">
