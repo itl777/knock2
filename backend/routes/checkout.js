@@ -8,6 +8,50 @@ const router = express.Router();
 router.use(bodyParser.json());
 // const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
+
+// POST insert items into to cart_member
+router.post("/api/member_cart", async (req, res) => {
+  const data = { ...req.body };
+  console.log("member cart data", data);
+  try {
+    const sql = `
+      INSERT INTO cart_member (
+        cart_member_id, 
+        cart_product_id, 
+        cart_product_quantity, 
+        created_at, 
+        last_modified_at) 
+      VALUES (
+        ?,
+        ?,
+        ?,
+        now(),
+        now()
+        );
+    `;
+    const memberCartValues = [data.memberId, data.productId, data.cartQty];
+    const [memberCartResults] = await db.query(sql, memberCartValues);
+
+    // 確認是否有成功 insert value
+    const success = memberCartResults.affectedRows > 0;
+    
+
+    // 返回結果到前端
+    res.json({
+      success,
+    });
+
+  } catch (error) {
+    console.error("Error while processing add to member cart:", error);
+    res.status(500).json({
+      error: "An error occurred while processing add to member cart.",
+    });
+  }
+});
+
+
+
+
 // POST insert data into orders and order details tables
 router.post("/api/checkout", async (req, res) => {
   const {
@@ -53,7 +97,7 @@ router.post("/api/checkout", async (req, res) => {
       memberInvoice,
       mobileInvoice,
       recipientTaxId,
-      1, // order_status_id
+      5, // order_status_id
     ];
 
     const [orderResult] = await db.query(orderSql, orderValues);

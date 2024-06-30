@@ -24,7 +24,6 @@ export default function RecipientModalBody({
     console.log('modal body receive selected address array: ', address)
   }
 
-
   const openAddModal = () => {
     setIsAddModalOpen(true)
   }

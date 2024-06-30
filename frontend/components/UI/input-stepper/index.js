@@ -1,13 +1,14 @@
-import { IoIosAdd, IoIosRemove } from 'react-icons/io'
-import styles from './input-stepper.module.css'
-import { useState } from 'react'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
+import styles from './input-stepper.module.css'
+import { useState } from 'react'
+import { IoIosAdd, IoIosRemove } from 'react-icons/io'
 
 export default function InputStepper({
   minValue = 1,
   maxValue = 10,
   stepperValue = 1,
+  onQuantityChange, //通知父層更新
 }) {
   const [value, setValue] = useState(stepperValue)
 
@@ -17,6 +18,7 @@ export default function InputStepper({
     }
     const newStepperValue = +value + 1
     setValue(newStepperValue)
+    onQuantityChange(newStepperValue)
   }
 
   const handleDecrease = () => {
@@ -25,6 +27,7 @@ export default function InputStepper({
     }
     const newStepperValue = +value - 1
     setValue(newStepperValue)
+    onQuantityChange(newStepperValue)
   }
 
   const StepperButton = styled(IconButton)(({ theme }) => ({

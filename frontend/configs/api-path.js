@@ -18,6 +18,8 @@ export const PRODUCT_IMG = `${API_SERVER}/images`
 
 
 // order & checkout
+export const ORDER_LIST_GET = `${API_SERVER}/orders`
+export const CART_POST = `${API_SERVER}/api/member_cart`
 export const CHECKOUT_POST = `${API_SERVER}/checkout/api/checkout`
 export const CHECKOUT_ADD_ADDRESS_POST = `${API_SERVER}/checkout/api/add_address`
 export const CHECKOUT_GET = `${API_SERVER}/checkout/`

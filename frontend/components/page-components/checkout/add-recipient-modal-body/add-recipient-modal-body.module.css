@@ -4,11 +4,10 @@
   gap: 1rem;
 }
 
-.inputDefault {
-  width: 100%;
-}
 
 .btnStack {
+  display: flex;
+  gap: 1rem;
   position: absolute;
   bottom: 1.5rem;
   right: 1.5rem;
