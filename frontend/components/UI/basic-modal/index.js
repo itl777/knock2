@@ -3,28 +3,29 @@ import * as React from 'react'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import styles from './basic-modal.module.css'
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: '640px',
-  height: '640px',
-  bgcolor: 'background.paper',
-  borderRadius: '1rem',
-  boxShadow: ' var(--card-shadow)',
-  padding: '1.5rem',
-}
-
-
+import BlackBtn from '../black-btn'
 
 export default function BasicModal({
   modalTitle = 'Modal Title',
   modalBody,
   open,
   handleClose,
+  modalW = '640px',
+  modalH = '640px',
 }) {
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: modalW,
+    height: modalH,
+    bgcolor: 'background.paper',
+    borderRadius: '1rem',
+    boxShadow: ' var(--card-shadow)',
+    padding: '1.5rem',
+  }
+
   return (
     <div>
       <Modal open={open} onClose={handleClose}>

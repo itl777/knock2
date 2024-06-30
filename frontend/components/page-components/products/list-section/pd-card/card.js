@@ -6,6 +6,8 @@ import 'hover.css/css/hover-min.css'
 import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import myStyle from './card.module.css'
+import BuyBtn2 from './buy-btn2' // ******* Iris added *******
+import { CART_POST } from '@/configs/api-path' // ******* Iris added *******
 
 export default function Card({ dbData }) {
   const btnStyle = {
@@ -13,6 +15,35 @@ export default function Card({ dbData }) {
     top: '6px',
     right: '6px',
   }
+
+  // ******* Iris Added Start *******
+  const loginMemberId = 1 // 模擬登入暫時性資料
+  const handleBuyClick = async () => {
+    try {
+      const response = await fetch(CART_POST, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          memberId: loginMemberId,
+          productId: dbData.product_id,
+          cartQty: 1,
+        }),
+      })
+      const data = await response.json()
+
+      if (data.success) {
+        window.location.href = '/checkout'
+      } else {
+        console.error('Failed to add item to cart')
+      }
+    } catch (error) {
+      console.error('Error adding item to cart:', error)
+    }
+  }
+  // ******* Iris Added Start End *******
+
   return (
     <>
       <div
@@ -46,7 +77,13 @@ export default function Card({ dbData }) {
                   href={`product-details/${data.product_id}`}
                   className="buy-btn"
                 > */}
-                <BuyBtn product_id={dbData.product_id} />
+
+                {/* ******* Iris Added Start ******* */}
+                {/* <BuyBtn product_id={dbData.product_id} /> */}
+
+                <BuyBtn2 onClick={handleBuyClick} />
+
+                {/* ******* Iris Added End ******* */}
                 {/* </a> */}
               </div>
             </div>

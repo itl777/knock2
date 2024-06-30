@@ -12,11 +12,19 @@ import RecipientButtonSelected from '../recipient-button-selected'
 import BasicModal from '@/components/UI/basic-modal'
 import RecipientModalBody from '../recipient-modal-body'
 import OrderInputBox from '../../orders/order-input-box'
-import { PRODUCT_IMG, CHECKOUT_GET, CHECKOUT_POST } from '@/configs/api-path'
+import {
+  PRODUCT_IMG,
+  CHECKOUT_GET,
+  CHECKOUT_POST,
+  CHECKOUT_GET_CART,
+  CHECKOUT_UPDATE_CART,
+} from '@/configs/api-path'
+import NoData from '@/components/UI/no-data'
 
 export default function CheckOutPage() {
   const router = useRouter()
   const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
+  const [checkoutItems, setCheckoutItems] = useState([])
   const [memberAddress, setMemberAddress] = useState([])
   // 送出的表單欄位 insert into orders and order_details table
   const [formData, setFormData] = useState({
@@ -32,37 +40,84 @@ export default function CheckOutPage() {
     orderItems: [],
   })
 
-  // 初始購物車資料（暫時性假資料）
-  const initialCheckoutItems = [
-    {
-      order_id: 2,
-      product_id: 1,
-      product_name: '科學實驗室',
-      order_unit_price: 950,
-      order_quantity: 2,
-      product_img: 'p1-1.jpg',
-    },
-    {
-      order_id: 2,
-      product_id: 2,
-      product_name: '冒險之路',
-      order_unit_price: 650,
-      order_quantity: 1,
-      product_img: 'p2-1.jpg',
-    },
-  ]
-  const [checkoutItems, setCheckoutItems] = useState(initialCheckoutItems)
-
-  // 接收商品數量變化 (inputStepper > orderItemCheckout > CheckoutPage  )
-  const handleQuantityChange = (productId, newQuantity) => {
-    setCheckoutItems((prevItems) =>
-      prevItems.map((item) =>
-        item.product_id === productId
-          ? { ...item, order_quantity: newQuantity }
-          : item
+  // 取得會員購物車資料
+  const fetchMemberCart = async () => {
+    try {
+      const response = await fetch(
+        `${CHECKOUT_GET_CART}?member_id=${loginMemberId}`
       )
-    )
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch member cart')
+      }
+
+      const cartItems = await response.json()
+      setCheckoutItems(cartItems.memberCart)
+
+      console.log('fetch member cart', cartItems.memberCart)
+    } catch (error) {
+      console.log('Error fetching member cart:', error)
+    }
   }
+
+  // const initialCheckoutItems = [
+  //   {
+  //     order_id: 2,
+  //     product_id: 1,
+  //     product_name: '科學實驗室',
+  //     order_unit_price: 950,
+  //     order_quantity: 2,
+  //     product_img: 'p1-1.jpg',
+  //   },
+  //   {
+  //     order_id: 2,
+  //     product_id: 2,
+  //     product_name: '冒險之路',
+  //     order_unit_price: 650,
+  //     order_quantity: 1,
+  //     product_img: 'p2-1.jpg',
+  //   },
+  // ]
+  // const [checkoutItems, setCheckoutItems] = useState(initialCheckoutItems)
+
+  // 接收商品數量變化 (inputStepper > orderItemCheckout > CheckoutPage )
+  const handleQuantityChange = async (productId, newQuantity) => {
+    const updatedItems = checkoutItems.map((item) =>
+      item.product_id === productId
+        ? { ...item, cart_product_quantity: newQuantity }
+        : item
+    )
+    setCheckoutItems(updatedItems)
+    console.log(updatedItems)
+
+    const itemToUpdate = updatedItems.find(
+      (item) => item.product_id === productId
+    )
+
+    console.log('itemToUpdate', itemToUpdate)
+
+    try {
+      const response = await axios.put(
+        `${CHECKOUT_UPDATE_CART}/${itemToUpdate.cart_id}`,
+        {
+          cart_product_quantity: newQuantity,
+        }
+      )
+
+      if (!response.data.success) {
+        throw new Error('Failed to update cart item quantity')
+      }
+
+      fetchMemberCart()
+    } catch (error) {
+      console.log('Error updating cart item quantity:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchMemberCart()
+  }, [])
+
   // 取得會員地址
   const fetchMemberAddress = async () => {
     try {
@@ -98,7 +153,6 @@ export default function CheckOutPage() {
 
   useEffect(() => {
     fetchMemberAddress()
-    console.log('fetch member address', memberAddress)
   }, [loginMemberId])
 
   // 更新已經選擇的地址
@@ -126,8 +180,8 @@ export default function CheckOutPage() {
     // 將 checkoutItems 轉換為 orderItems 格式
     const orderItems = checkoutItems.map((item) => ({
       productId: item.product_id,
-      productOriginalPrice: item.order_unit_price,
-      orderQty: item.order_quantity,
+      productOriginalPrice: item.price,
+      orderQty: item.cart_product_quantity,
     }))
 
     const dataToSubmit = {
@@ -175,18 +229,23 @@ export default function CheckOutPage() {
           <h5>訂購資訊</h5>
           {/* OrderItemCheckout */}
           <div className={styles.itemList}>
-            {checkoutItems.map((v, i) => (
-              <OrderItemCheckout
-                key={v.product_id}
-                productId={v.product_id}
-                productName={v.product_name}
-                productOriginalPrice={v.order_unit_price}
-                productDiscountedPrice={v.order_unit_price}
-                productImg={`${PRODUCT_IMG}/${v.product_img}`}
-                orderQty={v.order_quantity}
-                onQuantityChange={handleQuantityChange}
-              />
-            ))}
+            {checkoutItems.length === 0 ? (
+              <NoData />
+            ) : (
+              checkoutItems.map((v, i) => (
+                <OrderItemCheckout
+                  key={v.product_id}
+                  cartId={v.cart_id}
+                  productId={v.product_id}
+                  productName={v.product_name}
+                  productOriginalPrice={v.price}
+                  productDiscountedPrice={v.price}
+                  productImg={`${PRODUCT_IMG}/${v.product_img}`}
+                  orderQty={v.cart_product_quantity}
+                  onQuantityChange={handleQuantityChange}
+                />
+              ))
+            )}
           </div>
 
           {/* 訂單金額 */}
@@ -225,7 +284,7 @@ export default function CheckOutPage() {
                 .filter((v) => v.selected === true)
                 .map((address) => (
                   <RecipientButtonSelected
-                    key={address.id} // 添加 key 属性
+                    key={address.id}
                     recipientName={address.recipient_name}
                     recipientMobile={address.mobile_phone}
                     address={address.address}
@@ -281,4 +340,3 @@ export default function CheckOutPage() {
     </section>
   )
 }
-

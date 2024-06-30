@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { IoIosAdd, IoIosRemove } from 'react-icons/io'
 
 export default function InputStepper({
-  minValue = 1,
+  minValue = 0,
   maxValue = 10,
   stepperValue = 1,
   onQuantityChange, //通知父層更新
