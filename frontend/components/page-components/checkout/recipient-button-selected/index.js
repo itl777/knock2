@@ -24,18 +24,18 @@ const RecipientBtnSelected = styled(Button)(({  }) => ({
 }))
 
 export default function RecipientButtonSelected({
-  name = '收件人',
-  phone = '0900000000',
-  address = '天堂市地獄路444號4樓',
+  recipientName = '',
+  recipientMobile = '',
+  address = '',
   onClick = () => {},
 }) {
   return (
     <RecipientBtnSelected onClick={onClick}>
       <div className={styles.infoBox}>
-        <p>{name}</p>
+        <p>{recipientName}</p>
         <div className={styles.iconTextRow}>
           <FaPhoneAlt />
-          <span>{phone}</span>
+          <span>{recipientMobile}</span>
         </div>
         <div className={styles.iconTextRow}>
           <FaLocationDot />

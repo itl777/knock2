@@ -31,27 +31,42 @@ const RecipientBtnEdit = styled('div')(({}) => ({
 }))
 
 export default function RecipientButtonEdit({
-  name = '收件人',
-  phone = '0900000000',
-  address = '天堂市地獄路444號4樓',
+  name = '無收件人',
+  phone = '無收件手機',
+  address = '無收件地址',
   href = '/',
-  onUpdate, // 更新成員地址列表的函數
-  key, // 接收父層資料
+  updateFetch, // 更新成員地址列表的函數
   addressId, // 接收父層資料
   memberId, // 接收父層資料
+  memberAddress, // 接收父層資料
+  updateSelectedAddress, // 傳至父層
+  closeRecipientModal, // 點擊使用自動關閉 modal
 }) {
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
-  const openModal = () => {
-    setIsModalOpen(true)
+  const openEditModal = () => {
+    setIsEditModalOpen(true)
   }
 
-  const closeModal = () => {
-    setIsModalOpen(false)
+  const closeEditModal = () => {
+    setIsEditModalOpen(false)
   }
 
   const selectAddress = () => {
-    closeModal()
+    const updatedSelectedAddresses = memberAddress.map((v) => ({
+      ...v,
+      selected: v.id === addressId, // 選中的 addressId = true, 其餘為 false
+    }))
+    updateSelectedAddress(updatedSelectedAddresses)
+    console.log(
+      'update selected selected address from use button',
+      addressId,
+      updatedSelectedAddresses
+    )
+
+    if (closeRecipientModal) {
+      closeRecipientModal();
+    }
   }
 
   const handleDelete = async () => {
@@ -62,7 +77,7 @@ export default function RecipientButtonEdit({
       })
       const data = await response.json()
       if (data.success) {
-        onUpdate() // 成功刪除後，執行 onUpdate 來更新成員地址列表
+        updateFetch() // 成功刪除後，執行 updateFetch 來更新成員地址列表
         console.log(`delete address is: ${addressId}`)
       } else {
         console.error('地址刪除失敗', data)
@@ -90,7 +105,7 @@ export default function RecipientButtonEdit({
             <TextButton
               btnText="編輯"
               type="sec"
-              onClick={openModal}
+              onClick={openEditModal}
               href={null}
             />
 
@@ -117,9 +132,9 @@ export default function RecipientButtonEdit({
 
       <BasicModal
         modalTitle="編輯收件人資料"
-        open={isModalOpen}
-        handleClose={closeModal}
-        modalBody={<EditRecipientModalBody handleClose={closeModal} />}
+        open={isEditModalOpen}
+        handleClose={closeEditModal}
+        modalBody={<EditRecipientModalBody handleClose={closeEditModal} />}
       />
     </div>
   )

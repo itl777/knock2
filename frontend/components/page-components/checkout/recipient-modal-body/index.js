@@ -7,32 +7,23 @@ import BlackBtn from '@/components/UI/black-btn'
 import RecipientButtonEdit from '../../checkout/recipient-button-edit'
 import RecipientButton from '../../checkout/recipient-button'
 import NoData from '@/components/UI/no-data'
-import { CHECKOUT_GET } from '@/configs/api-path'
 
-export default function RecipientModalBody({ handleClose, memberId }) {
-  const [memberAddress, setMemberAddress] = useState([])
+export default function RecipientModalBody({
+  handleClose,
+  memberId,
+  memberAddress,
+  fetchMemberAddress,
+  onSelectedAddress,
+}) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [selectedAddress, setSelectedAddress] = useState([])
 
-  const fetchMemberAddress = async () => {
-    try {
-      const response = await fetch(`${CHECKOUT_GET}?member_id=${memberId}`)
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch member address')
-      }
-
-      const data = await response.json()
-
-      console.log(data)
-      setMemberAddress(data.memberAddresses)
-    } catch (error) {
-      console.log('Error member address:', error)
-    }
+  const handleAddressSelected = (address) => {
+    setSelectedAddress(address)
+    onSelectedAddress(address) // 傳遞選中的地址給父層
+    console.log('modal body receive selected address array: ', address)
   }
 
-  useEffect(() => {
-    fetchMemberAddress()
-  }, [memberId])
 
   const openAddModal = () => {
     setIsAddModalOpen(true)
@@ -41,6 +32,10 @@ export default function RecipientModalBody({ handleClose, memberId }) {
   const handleUpdateAddresses = () => {
     fetchMemberAddress() // 重新加載成員地址列表
   }
+
+  const closeRecipientModal = () => {
+    handleClose();
+  };
 
   return (
     <div className={styles.modalBody}>
@@ -58,9 +53,12 @@ export default function RecipientModalBody({ handleClose, memberId }) {
             name={v.recipient_name}
             phone={v.mobile_phone}
             address={v.address}
-            href=""
+            href={null}
             memberId={memberId}
-            onUpdate={handleUpdateAddresses} // 傳遞更新函數
+            updateFetch={handleUpdateAddresses} // 傳遞更新函數(刪除後刷新 modal)
+            memberAddress={memberAddress}
+            updateSelectedAddress={handleAddressSelected}
+            closeRecipientModal={closeRecipientModal} // 傳遞關閉 modal 的函數
           />
         ))
       )}

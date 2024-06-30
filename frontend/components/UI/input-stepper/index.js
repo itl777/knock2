@@ -9,6 +9,24 @@ export default function InputStepper({
   maxValue = 10,
   stepperValue = 1,
 }) {
+  const [value, setValue] = useState(stepperValue)
+
+  const handleIncrease = () => {
+    if (+value >= maxValue) {
+      return
+    }
+    const newStepperValue = +value + 1
+    setValue(newStepperValue)
+  }
+
+  const handleDecrease = () => {
+    if (+value <= minValue) {
+      return
+    }
+    const newStepperValue = +value - 1
+    setValue(newStepperValue)
+  }
+
   const StepperButton = styled(IconButton)(({ theme }) => ({
     backgroundColor: 'white',
     width: '1.5rem',
@@ -19,27 +37,6 @@ export default function InputStepper({
       backgroundColor: 'var(--pri-3)',
     },
   }))
-
-  const [value, setValue] = useState(stepperValue)
-  console.log(value)
-
-  const handleIncrease = () => {
-    if (+value >= maxValue) {
-      return
-    } else {
-      const newStepperValue = +value + 1
-      setValue(newStepperValue)
-    }
-  }
-
-  const handleDecrease = () => {
-    if (+value <= minValue) {
-      return
-    } else {
-      const newStepperValue = +value - 1
-      setValue(newStepperValue)
-    }
-  }
 
   return (
     <div className={styles.stepperInputContainer}>

@@ -105,7 +105,6 @@ router.post("/api/checkout", async (req, res) => {
       success,
       orderId,
     });
-
   } catch (error) {
     console.error("Error while processing checkout:", error);
     res
@@ -156,10 +155,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 // POST insert data into address table
 router.post("/api/add_address", async (req, res) => {
   const data = { ...req.body };
+
   console.log(data);
 
   // INSERT CHECKOUT DATA INTO address table
@@ -167,19 +166,18 @@ router.post("/api/add_address", async (req, res) => {
     const sql = `
     INSERT INTO address( 
       user_id, 
-      district_id, 
-      address, 
       recipient_name,
       mobile_phone,
+      district_id, 
+      address, 
       type) VALUES (?, ?, ?, ?, ?, 0);
     `;
-    
+
     const addressValues = [
       data.memberId,
-      data.recipientDistrictId,
       data.recipientName,
-      data.recipientDistrictId,
       data.recipientMobile,
+      data.recipientDistrictId,
       data.recipientAddress,
     ];
     const [addressResults] = await db.query(sql, addressValues);
@@ -190,21 +188,20 @@ router.post("/api/add_address", async (req, res) => {
     const success = addressResults.affectedRows === 1;
     const addressId = addressResults.insertId;
 
-
     // 返回結果到前端
     res.json({
       success,
       addressId,
     });
-
   } catch (error) {
     console.error("Error while processing add address from checkout:", error);
     res
       .status(500)
-      .json({ error: "An error occurred while processing add address from checkout." });
+      .json({
+        error: "An error occurred while processing add address from checkout.",
+      });
   }
 });
-
 
 // DELETE data from address table
 router.delete("/api/delete_address/:addressId", async (req, res) => {
@@ -215,10 +212,10 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
   };
 
   const aid = +req.params.addressId || 0;
-  
+
   if (!aid) {
     output.code = 400;
-    output.message = 'Invalid address id';
+    output.message = "Invalid address id";
     return res.status(400).json(output);
   }
 
@@ -229,24 +226,21 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
     if (deleteAddressResult.affectedRows === 1) {
       output.success = true;
       output.code = 200; // 成功的請求
-      output.message = 'Address deleted successfully';
+      output.message = "Address deleted successfully";
       output.result = deleteAddressResult;
     } else {
       output.code = 404; // 找不到資源
-      output.message = 'Address id not found';
+      output.message = "Address id not found";
     }
 
-    console.log('delete address id:' + aid);
+    console.log("delete address id:" + aid);
     res.status(output.code).json(output);
-
   } catch (error) {
-    console.error('Error deleting address:', error);
+    console.error("Error deleting address:", error);
     output.code = 500; // 內部伺服器錯誤
-    output.message = 'An error occurred while deleting the address';
+    output.message = "An error occurred while deleting the address";
     res.status(500).json(output);
   }
 });
-
-
 
 export default router;

@@ -1,7 +1,8 @@
 // PAGE Checkout Page Body
-import React, { useState } from 'react'
-import axios from 'axios'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import axios from 'axios'
+import { CHECKOUT_GET } from '@/configs/api-path'
 import styles from './checkout-page.module.css'
 import FilterBtn from '@/components/UI/filter-btn'
 import OrderItemCheckout from '../../orders/order-item-checkout'
@@ -14,10 +15,18 @@ import BasicModal from '@/components/UI/basic-modal'
 import RecipientModalBody from '../recipient-modal-body'
 import OrderInputBox from '../../orders/order-input-box'
 import { PRODUCT_IMG, CHECKOUT_POST } from '@/configs/api-path'
+import { update } from 'lodash'
 
 export default function CheckOutPage() {
+  const loginMemberId = 1
+  const [memberAddress, setMemberAddress] = useState([])
   const router = useRouter()
-  
+
+  const handleAddressSelected = (address) => {
+    setMemberAddress(address)
+    console.log('CheckOutPage receive selected address array: ', address)
+  }
+
   const checkoutItems = [
     {
       order_id: 2,
@@ -38,18 +47,17 @@ export default function CheckOutPage() {
   ]
 
   const [formData, setFormData] = useState({
-    memberId: 1,
-    recipientName: '假資料測試',
-    recipientMobile: '0900000000',
+    memberId: loginMemberId,
+    recipientName: '',
+    recipientMobile: '',
     recipientDistrictId: 1,
-    recipientAddress: '自由路49號',
+    recipientAddress: '',
     paymentMethod: 'credit-card',
     memberInvoice: 0,
     mobileInvoice: '',
     recipientTaxId: '',
     orderItems: [],
   })
-
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -61,6 +69,9 @@ export default function CheckOutPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    // 取得收件人資料
+    const recipientData = memberAddress.filter((v)=> v.selected === true)
+    console.log('recipientData', recipientData);
 
     // 將 checkoutItems 轉換為 orderItems 格式
     const orderItems = checkoutItems.map((item) => ({
@@ -71,6 +82,10 @@ export default function CheckOutPage() {
 
     const dataToSubmit = {
       ...formData,
+      recipientName: recipientData[0].recipient_name, // 收件人姓名
+      recipientMobile: recipientData[0].mobile_phone, // 收件人手機號碼
+      recipientDistrictId: recipientData[0].district_id, // 收件人區域 ID
+      recipientAddress: recipientData[0].address, // 收件人地址
       orderItems, // 將 orderItems 加入到要提交的數據中
     }
 
@@ -93,6 +108,43 @@ export default function CheckOutPage() {
   const closeModal = () => {
     setIsModalOpen(false)
   }
+
+  const fetchMemberAddress = async () => {
+    try {
+      const response = await fetch(`${CHECKOUT_GET}?member_id=${loginMemberId}`)
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch member address')
+      }
+
+      const data = await response.json()
+      console.log(data)
+      const updatedMemberAddress = data.memberAddresses.map((v) => ({
+        ...v,
+        selected: false,
+      }))
+
+      // 取得預設地址（type='1'）
+      const defaultAddress =
+        updatedMemberAddress.find((v) => v.type == 1) || updatedMemberAddress[0]
+      defaultAddress.selected = true
+
+      const defaultIndex = updatedMemberAddress.findIndex(
+        (v, i) => v.type === 1
+      )
+
+      setMemberAddress(updatedMemberAddress)
+
+      console.log('updatedMemberAddress', updatedMemberAddress)
+    } catch (error) {
+      console.log('Error member address:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchMemberAddress()
+    console.log('fetch member address', memberAddress)
+  }, [loginMemberId])
 
   return (
     <section className={styles.sectionContainer}>
@@ -129,8 +181,21 @@ export default function CheckOutPage() {
           <h5>收件資料</h5>
 
           <div className={styles.checkoutRightMain}>
-            <RecipientButton onClick={openModal} />
-            <RecipientButtonSelected onClick={openModal} />
+            {memberAddress.length === 0 ? (
+              <RecipientButton onClick={openModal} />
+            ) : (
+              memberAddress
+                .filter((v) => v.selected === true)
+                .map((address) => (
+                  <RecipientButtonSelected
+                    key={address.id} // 添加 key 属性
+                    recipientName={address.recipient_name}
+                    recipientMobile={address.mobile_phone}
+                    address={address.address}
+                    onClick={openModal}
+                  />
+                ))
+            )}
 
             <OrderInputBox
               name="invoiceType"
@@ -168,14 +233,16 @@ export default function CheckOutPage() {
         modalBody={
           <RecipientModalBody
             handleClose={closeModal}
-            memberId={formData.memberId}
+            memberId={loginMemberId}
+            memberAddress={memberAddress}
+            fetchMemberAddress={fetchMemberAddress}
+            onSelectedAddress={handleAddressSelected} // 傳遞子層內容
           />
         }
       />
     </section>
   )
 }
-
 
 {
   /* <FilterBtn btnText="使用優惠券" margin="2rem 0" />
