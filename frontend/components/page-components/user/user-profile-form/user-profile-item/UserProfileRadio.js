@@ -25,11 +25,9 @@ export default function UserProfileRadio({
             checked={checked}
             onChange={onChange}
           />
-          {errorText !== '' ? (
-            <span className={styles.errorText}>{errorText}</span>
-          ) : (
-            ''
-          )}
+          <div className={styles.errorText}>
+            {errorText !== '' ? <span>{errorText}</span> : ''}
+          </div>
         </div>
       </div>
     </>

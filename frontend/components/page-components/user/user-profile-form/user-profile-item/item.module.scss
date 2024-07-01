@@ -30,7 +30,7 @@ $color: #1c2025;
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.3125rem;
+    gap: 2px;
 
     .birthday {
       width: 100%;
@@ -43,6 +43,7 @@ $color: #1c2025;
 
     .errorText {
       @include font-small;
+      height: 25px;
       padding-left: 1rem;
     }
   }

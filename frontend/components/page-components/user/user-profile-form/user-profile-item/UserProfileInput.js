@@ -26,11 +26,9 @@ export default function UserProfileInput({
             disabled={disabled}
             onChange={onChange}
           />
-          {errorText !== '' ? (
-            <span className={styles.errorText}>{errorText}</span>
-          ) : (
-            ''
-          )}
+          <div className={styles.errorText}>
+            {errorText !== '' ? <span>{errorText}</span> : ''}
+          </div>
         </div>
       </div>
     </>

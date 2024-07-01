@@ -19,10 +19,37 @@ import AvatarFormItem from './avatar'
 export default function UserProfileForm() {
   const { auth, getAuthHeader } = useAuth()
   const [profileForm, setProfileForm] = useState({})
+  const [addressValue, setAddressValue] = useState({})
   const [addressForm, setAddressForm] = useState([])
+  const [birthdayValue, setBirthdayValue] = useState({
+    year: '',
+    month: '',
+    date: '',
+  })
+  const [birthdayOptions, setBirthdayOptions] = useState({
+    years: [],
+    months: [],
+    dates: [],
+  })
 
   const handleChange = (e) => {
     const { name, value } = e.target
+    // 修改 address
+    if (name === 'address_id') {
+      setAddressValue({ [name]: value })
+      return
+    }
+    // 修改 birthday
+    if (name === 'year' || name === 'month' || name === 'date') {
+      const newBirthdayValue = { ...birthdayValue, [name]: value }
+      // 寫入 birthday value
+      setBirthdayValue(newBirthdayValue)
+      const { year, month } = newBirthdayValue
+      if (name === 'year' || name === 'month') {
+        getBirthdayOptions(year, month)
+      }
+      return
+    }
 
     // 做表單驗證
     const schemaEmail = z.string().email({ message: '請填寫正確Email格式' })
@@ -35,15 +62,85 @@ export default function UserProfileForm() {
     setProfileForm(newForm)
   }
 
-  const getAddressDefaultValue = (options) => {
-    if (Array.isArray(options)) {
-      const item = options.find((v) => v.type === '1')
-      return item?.value
+  const getBirthdayOptions = (defYear, defMonth) => {
+    if (
+      JSON.stringify(birthdayOptions.years) === '[]' ||
+      JSON.stringify(birthdayOptions.months) === '[]'
+    ) {
+      const today = new Date()
+      const year = today.getFullYear()
+
+      const years = Array(100)
+        .fill()
+        .map((v, i) => {
+          return { value: year - i, text: `${year - i} 年` }
+        })
+
+      const months = Array(12)
+        .fill()
+        .map((v, i) => {
+          return { value: i + 1, text: `${i + 1} 月` }
+        })
+      if (defYear && defMonth) {
+        const date = new Date(defYear, defMonth, 0).getDate()
+        const dates = Array(date)
+          .fill()
+          .map((v, i) => {
+            return { value: i + 1, text: `${i + 1} 日` }
+          })
+        setBirthdayOptions({ ...birthdayOptions, years, months, dates })
+      }
+    } else {
+      if (defYear && defMonth) {
+        const date = new Date(defYear, defMonth, 0).getDate()
+        const dates = Array(date)
+          .fill()
+          .map((v, i) => {
+            return { value: i + 1, text: `${i + 1} 日` }
+          })
+        setBirthdayOptions({ ...birthdayOptions, dates })
+      }
     }
   }
-  const onSelectChange = (event) => {
-    console.log(event)
-    setProfileForm({ ...profileForm, [event.name]: event.value })
+
+  const UserProfileFormSubmit = async (e) => {
+    e.preventDefault()
+    const url = `${API_SERVER}/users/api`
+
+    // 處理 birthdayValue
+    const { year, month, date } = birthdayValue
+    const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${date
+      .toString()
+      .padStart(2, '0')}`
+    let data = { ...profileForm, birthday: formattedDate }
+
+    //  處理 addressValue
+    if (addressValue.address_id) {
+      data = { users: data, address: addressValue }
+    } else {
+      data = { users: data }
+    }
+
+    // fetch
+    const option = {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers: {
+        ...getAuthHeader(),
+        'Content-type': 'application/json',
+      },
+    }
+    try {
+      let response = await fetch(url, option)
+      let data = await response?.json()
+      if (data.success) {
+        // TODO?
+      } else {
+        console.error(data.error)
+      }
+    } catch (error) {
+      console.error(`fetch-Error: ${error}`)
+    }
   }
 
   const fetchData = async () => {
@@ -58,15 +155,35 @@ export default function UserProfileForm() {
       let response = await fetch(url, option)
       let data = await response?.json()
       if (data.success) {
-        setProfileForm(data.users)
-        const options = data.address.map((v) => {
-          return {
-            value: v.id,
-            type: v.type,
-            text: `${v.district_id} ${v.city_name}${v.district_name}${v.address} - ${v.recipient_name} / ${v.recipient_phone}`,
+        if (data.users) {
+          // 寫入 user 表單資訊
+          setProfileForm(data.users)
+          if (data.users.birthday) {
+            // 寫入 birthday value 資訊
+            const birthday = new Date(data.users.birthday)
+            const newBirthday = {
+              year: birthday.getFullYear(),
+              month: birthday.getMonth() + 1,
+              date: birthday.getDate(),
+            }
+            setBirthdayValue(newBirthday)
+            getBirthdayOptions(newBirthday.year, newBirthday.month)
           }
-        })
-        setAddressForm(options)
+        }
+        // 寫入 address options 資訊
+        if (data.address) {
+          const options = data.address.map((v) => {
+            return {
+              value: v.id,
+              type: v.type,
+              text: `${v.postal_codes} ${v.city_name}${v.district_name}${v.address} - ${v.recipient_name} / ${v.recipient_phone}`,
+            }
+          })
+          setAddressForm(options)
+          // 寫入 address value 資訊
+          const values = data.address.find((v) => v.type === '1').id
+          setAddressValue({ address_id: values })
+        }
       } else {
         console.error(data.error)
       }
@@ -83,7 +200,10 @@ export default function UserProfileForm() {
     <>
       {JSON.stringify(profileForm) !== '{}' &&
       JSON.stringify(addressForm) !== '[]' ? (
-        <form className={styles['user-profile-form']}>
+        <form
+          className={styles['user-profile-form']}
+          onSubmit={UserProfileFormSubmit}
+        >
           <div className={styles['box1']}>
             {/* <div className={styles['avatar']}>
             </div> */}
@@ -117,7 +237,7 @@ export default function UserProfileForm() {
                 value={profileForm.name}
                 placeholder="請輸入姓名"
                 disabled={false}
-                errorText=""
+                errorText="1234567"
                 onChange={handleChange}
               />
               <UserProfileInput
@@ -148,11 +268,12 @@ export default function UserProfileForm() {
                 onChange={handleChange}
               />
               <UserProfileBirthday
+                options={birthdayOptions}
                 label="生日"
                 name="birthday"
-                defaultValue={profileForm.birthday}
+                value={birthdayValue}
                 errorText=""
-                onChange={onSelectChange}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -171,11 +292,11 @@ export default function UserProfileForm() {
               <UserProfileSelect
                 label="常用地址"
                 options={addressForm}
-                name="address"
-                defaultValue={getAddressDefaultValue(addressForm)}
+                name="address_id"
+                value={addressValue.address_id}
                 placeholder="請選擇常用地址"
                 errorText=""
-                onChange={onSelectChange}
+                onChange={handleChange}
               />
             </div>
           </div>

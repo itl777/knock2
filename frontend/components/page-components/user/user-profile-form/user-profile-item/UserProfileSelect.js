@@ -1,9 +1,9 @@
 import styles from './item.module.scss'
-import Select01 from '@/components/UI/form-item/select01'
+import Select02 from '@/components/UI/form-item/select02/index'
 
 export default function UserProfileSelect({
   name = '',
-  defaultValue = '',
+  value = '',
   placeholder = '',
   options = [],
   label = '',
@@ -17,18 +17,16 @@ export default function UserProfileSelect({
           {label}
         </label>
         <div className={styles.myDiv}>
-          <Select01
+          <Select02
             name={name}
             placeholder={placeholder}
-            defaultValue={defaultValue}
+            value={value}
             options={options}
             onChange={onChange}
           />
-          {errorText !== '' ? (
-            <span className={styles.errorText}>{errorText}</span>
-          ) : (
-            ''
-          )}
+          <div className={styles.errorText}>
+            {errorText !== '' ? <span>{errorText}</span> : ''}
+          </div>
         </div>
       </div>
     </>
