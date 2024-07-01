@@ -8,39 +8,55 @@ const router = express.Router();
 router.use(bodyParser.json());
 // const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
-
 // POST insert items into to cart_member
-router.post("/api/member_cart", async (req, res) => {
+router.post("/api/cart_member", async (req, res) => {
   const data = { ...req.body };
   console.log("member cart data", data);
   try {
-    const sql = `
+    // 確認會員購物車是否已經有該產品
+    const [existingCartItem] = await db.query(
+      "SELECT * FROM cart_member WHERE cart_member_id = ? AND cart_product_id = ?",
+      [data.memberId, data.productId]
+    );
+
+    const insertSql = `
       INSERT INTO cart_member (
         cart_member_id, 
         cart_product_id, 
         cart_product_quantity, 
         created_at, 
-        last_modified_at) 
-      VALUES (
-        ?,
-        ?,
-        ?,
-        now(),
-        now()
-        );
+        last_modified_at
+      ) VALUES (
+        ?, ?, ?, now(), now()
+      );
     `;
-    const memberCartValues = [data.memberId, data.productId, data.cartQty];
-    const [memberCartResults] = await db.query(sql, memberCartValues);
+
+    const updateSql = `
+      UPDATE cart_member
+      SET cart_product_quantity = cart_product_quantity + ?, 
+      last_modified_at = now()
+      WHERE cart_member_id = ? AND cart_product_id = ?
+    `;
+
+    let memberCartResults;
+
+    // 如果會員購物車已存在此商品，更新商品數量
+    if (existingCartItem.length > 0) {
+      const updateValues = [data.cartQty, data.memberId, data.productId];
+      [memberCartResults] = await db.query(updateSql, updateValues);
+    } else {
+      // 如果會員購物車「不」已存在此商品，更新商品數量
+      const insertValues = [data.memberId, data.productId, data.cartQty];
+      [memberCartResults] = await db.query(insertSql, insertValues);
+    }
 
     // 確認是否有成功 insert value
     const success = memberCartResults.affectedRows > 0;
-    
 
     // 返回結果到前端
     res.json({
       success,
     });
-
   } catch (error) {
     console.error("Error while processing add to member cart:", error);
     res.status(500).json({
@@ -81,7 +97,6 @@ router.get("/cart/", async (req, res) => {
       status: true,
       memberCart: memberCart,
     });
-
   } catch (error) {
     console.error("Error fetching member cart: ", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -148,7 +163,6 @@ router.put("/cart/update/:cart_id", async (req, res) => {
     }
   }
 });
-
 
 // POST insert data into orders and order details tables, delete member's cart_member data
 router.post("/api/checkout", async (req, res) => {
@@ -253,7 +267,6 @@ router.post("/api/checkout", async (req, res) => {
   }
 });
 
-
 // GET member address
 router.get("/", async (req, res) => {
   // 從 query 中取得 member_id, order_status_id
@@ -336,11 +349,9 @@ router.post("/api/add_address", async (req, res) => {
     });
   } catch (error) {
     console.error("Error while processing add address from checkout:", error);
-    res
-      .status(500)
-      .json({
-        error: "An error occurred while processing add address from checkout.",
-      });
+    res.status(500).json({
+      error: "An error occurred while processing add address from checkout.",
+    });
   }
 });
 
@@ -384,117 +395,4 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
 export default router;
-
-
-// POST insert data into orders and order details tables (original 無刪除購物車功能)
-// router.post("/api/checkout", async (req, res) => {
-//   const {
-//     memberId,
-//     recipientName,
-//     recipientMobile,
-//     recipientDistrictId,
-//     recipientAddress,
-//     paymentMethod,
-//     memberInvoice,
-//     mobileInvoice,
-//     recipientTaxId,
-//     orderItems,
-//   } = req.body;
-
-//   // INSERT CHECKOUT DATA INTO order_details table
-//   try {
-//     const orderSql = `
-//       INSERT INTO orders (
-//         order_date,
-//         member_id,
-//         recipient_name,
-//         recipient_mobile,
-//         order_district_id,
-//         order_address,
-//         payment_method,
-//         member_carrier, 
-//         recipient_invoice_carrier,
-//         recipient_tax_id,
-//         order_status_id,
-//         created_at,
-//         last_modified_at
-//       ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
-//     `;
-
-//     const orderValues = [
-//       memberId,
-//       recipientName,
-//       recipientMobile,
-//       recipientDistrictId,
-//       recipientAddress,
-//       paymentMethod,
-//       memberInvoice,
-//       mobileInvoice,
-//       recipientTaxId,
-//       5, // order_status_id
-//     ];
-
-//     const [orderResult] = await db.query(orderSql, orderValues);
-
-//     //console.log("Order Insert Result:", orderResult); // 後端列印結果
-
-//     // INSERT ITEM INTO order_details table
-//     const orderId = orderResult.insertId; // 取得本次的 order_id
-//     const orderDetailSql = `
-//       INSERT INTO order_details (
-//         order_id,
-//         order_product_id,
-//         order_quantity,
-//         order_unit_price,
-//         created_at,
-//         last_modified_at
-//       ) VALUES (?, ?, ?, ?, now(), now());
-//     `;
-
-//     const orderDetailPromises = orderItems.map(
-//       ({ productId, productOriginalPrice, orderQty }) => {
-//         const orderDetailValues = [
-//           orderId,
-//           productId,
-//           orderQty,
-//           productOriginalPrice,
-//         ];
-//         return db
-//           .query(orderDetailSql, orderDetailValues)
-//           .then(([result]) => result); // 只返回查詢結果（忽略 undefined）
-//       }
-//     );
-
-//     const orderDetailResults = await Promise.all(orderDetailPromises);
-
-//     // 後端列印結果
-//     // orderDetailResults.forEach((v, i) =>
-//     //   console.log(`Order Detail Insert Result ${i}:`, v)
-//     // );
-
-//     // 確認是否有成功 insert value
-//     const success =
-//       orderResult.affectedRows === 1 &&
-//       orderDetailResults.length > 0 &&
-//       orderDetailResults.every((result) => result.affectedRows === 1);
-
-//     // 返回結果到前端
-//     res.json({
-//       success,
-//       orderId,
-//     });
-//   } catch (error) {
-//     console.error("Error while processing checkout:", error);
-//     res
-//       .status(500)
-//       .json({ error: "An error occurred while processing checkout." });
-//   }
-// });
