@@ -13,10 +13,15 @@ export default function Select01({
       text: '',
     },
   ],
+  onChange = () => {},
   borderColor = '#d9d9d9',
   borderHoverColor = '#3399ff',
 }) {
   const [optionsArray, setOptionsArray] = useState(false)
+
+  const handleValueChange = (e, v) => {
+    onChange({ name: name, value: v })
+  }
 
   useEffect(() => {
     if (!Array.isArray(options)) {
@@ -30,12 +35,14 @@ export default function Select01({
     <>
       {optionsArray ? (
         <Select
-          name={name}
           placeholder={placeholder}
           defaultValue={defaultValue}
           indicator={<KeyboardArrowDown />}
+          onChange={handleValueChange}
+          input={<input name={name} />}
           sx={{
             height: 44,
+            width: '100%',
             fontFamily: 'Noto Serif JP',
             borderRadius: '8px',
             border: '2px solid #d9d9d9',

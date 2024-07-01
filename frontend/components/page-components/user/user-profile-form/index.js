@@ -1,18 +1,19 @@
 import { useEffect, useState } from 'react'
 import { z } from 'zod'
-import { useRouter } from 'next/router'
-import Image from 'next/image'
+
 // context
 import { useAuth } from '@/context/auth-context'
 import { API_SERVER } from '@/configs/api-path'
+
 // styles
 import styles from './user-profile-form.module.scss'
+
 // components
 import UserProfileFormTitle from './user-profile-title'
 import UserProfileInput from './user-profile-item/UserProfileInput'
 import UserProfileRadio from './user-profile-item/UserProfileRadio'
 import UserProfileSelect from './user-profile-item/UserProfileSelect'
-// import UserProfileBirthday from './user-profile-item/birthday'
+import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
 
 export default function UserProfileForm() {
@@ -39,6 +40,10 @@ export default function UserProfileForm() {
       const item = options.find((v) => v.type === '1')
       return item?.value
     }
+  }
+  const onSelectChange = (event) => {
+    console.log(event)
+    setProfileForm({ ...profileForm, [event.name]: event.value })
   }
 
   const fetchData = async () => {
@@ -142,12 +147,13 @@ export default function UserProfileForm() {
                 errorText=""
                 onChange={handleChange}
               />
-              {/* <UserProfileBirthday
+              <UserProfileBirthday
                 label="生日"
-                options={profileForm.birthday}
                 name="birthday"
+                defaultValue={profileForm.birthday}
                 errorText=""
-              /> */}
+                onChange={onSelectChange}
+              />
             </div>
           </div>
           <div className={styles['box2']}>
@@ -169,6 +175,7 @@ export default function UserProfileForm() {
                 defaultValue={getAddressDefaultValue(addressForm)}
                 placeholder="請選擇常用地址"
                 errorText=""
+                onChange={onSelectChange}
               />
             </div>
           </div>

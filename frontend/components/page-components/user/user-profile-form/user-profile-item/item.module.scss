@@ -28,13 +28,18 @@ $color: #1c2025;
   }
   .myDiv {
     width: 100%;
-    @media screen and (min-width: 1055px) {
-      width: 100%;
-    }
-    height: 5rem;
     display: flex;
     flex-direction: column;
     gap: 0.3125rem;
+
+    .birthday {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      @media screen and (max-width: 768px) {
+        flex-direction: column;
+      }
+    }
 
     .errorText {
       @include font-small;

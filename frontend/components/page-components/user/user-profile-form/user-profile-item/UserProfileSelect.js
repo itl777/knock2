@@ -8,6 +8,7 @@ export default function UserProfileSelect({
   options = [],
   label = '',
   errorText = '',
+  onChange = () => {},
 }) {
   return (
     <>
@@ -21,6 +22,7 @@ export default function UserProfileSelect({
             placeholder={placeholder}
             defaultValue={defaultValue}
             options={options}
+            onChange={onChange}
           />
           {errorText !== '' ? (
             <span className={styles.errorText}>{errorText}</span>
