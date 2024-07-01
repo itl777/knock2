@@ -11,7 +11,7 @@ export default function MyApp({ Component, pageProps }) {
 
   return getLayout(
     <AuthContextProvider>
-      <CartProvider loginMemberId={1}>
+      <CartProvider>
         <Component {...pageProps} />
       </CartProvider>
     </AuthContextProvider>

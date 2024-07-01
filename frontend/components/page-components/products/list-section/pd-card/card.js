@@ -7,7 +7,8 @@ import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import myStyle from './card.module.css'
 import BuyBtn2 from './buy-btn2' // ******* Iris added *******
-import { CART_POST } from '@/configs/api-path' // ******* Iris added *******
+import { useAddToCart, useLogin } from '@/hooks/useAddToCart' // ******* Iris added *******
+
 
 export default function Card({ dbData }) {
   const btnStyle = {
@@ -18,30 +19,8 @@ export default function Card({ dbData }) {
 
   // ******* Iris Added Start *******
   const loginMemberId = 1 // 模擬登入暫時性資料
-  const handleBuyClick = async () => {
-    try {
-      const response = await fetch(CART_POST, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          memberId: loginMemberId,
-          productId: dbData.product_id,
-          cartQty: 1,
-        }),
-      })
-      const data = await response.json()
-
-      if (data.success) {
-        window.location.href = '/checkout'
-      } else {
-        console.error('Failed to add item to cart')
-      }
-    } catch (error) {
-      console.error('Error adding item to cart:', error)
-    }
-  }
+  const { handleBuyClick } = useAddToCart(dbData, loginMemberId)
+  const { handleLogin } = useLogin() // 暫時用不到
   // ******* Iris Added Start End *******
 
   return (

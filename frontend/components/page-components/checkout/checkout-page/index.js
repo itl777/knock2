@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import styles from './checkout-page.module.css'
-import { useCart } from '@/context/cart-context'
+import { useCart, loginMemberId } from '@/context/cart-context'
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
 import HDivider from '@/components/UI/divider/horizontal-divider'
@@ -15,6 +15,7 @@ import RecipientModalBody from '../recipient-modal-body'
 import OrderInputBox from '../../orders/order-input-box'
 import NoData from '@/components/UI/no-data'
 import { PRODUCT_IMG, CHECKOUT_GET, CHECKOUT_POST } from '@/configs/api-path'
+
 
 export default function CheckOutPage() {
   const router = useRouter()
@@ -126,8 +127,10 @@ export default function CheckOutPage() {
   // 關閉 recipientModalBody
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const openModal = () => {
+  const openModal = async () => {
+    await fetchMemberAddress()
     setIsModalOpen(true)
+
   }
 
   const closeModal = () => {

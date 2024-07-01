@@ -3,7 +3,6 @@ import * as React from 'react'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import styles from './basic-modal.module.css'
-import BlackBtn from '../black-btn'
 
 export default function BasicModal({
   modalTitle = 'Modal Title',
