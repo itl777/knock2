@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import styles from './checkout-page.module.css'
+import { useCheckout } from '@/hooks/useCheckout'
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
 import HDivider from '@/components/UI/divider/horizontal-divider'
@@ -12,21 +13,18 @@ import RecipientButtonSelected from '../recipient-button-selected'
 import BasicModal from '@/components/UI/basic-modal'
 import RecipientModalBody from '../recipient-modal-body'
 import OrderInputBox from '../../orders/order-input-box'
+
 import {
   PRODUCT_IMG,
   CHECKOUT_GET,
   CHECKOUT_POST,
-  CHECKOUT_GET_CART,
-  CHECKOUT_UPDATE_CART,
 } from '@/configs/api-path'
 import NoData from '@/components/UI/no-data'
 
 export default function CheckOutPage() {
   const router = useRouter()
   const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
-  const [checkoutItems, setCheckoutItems] = useState([])
   const [memberAddress, setMemberAddress] = useState([])
-  const [checkoutTotal, setCheckoutTotal] = useState(0)
   const [deliverFee, setDeliverFee] = useState(120)
   // 送出的表單欄位 insert into orders and order_details table
   const [formData, setFormData] = useState({
@@ -42,63 +40,8 @@ export default function CheckOutPage() {
     orderItems: [],
   })
 
-  // 取得會員購物車資料
-  const fetchMemberCart = async () => {
-    try {
-      const response = await fetch(
-        `${CHECKOUT_GET_CART}?member_id=${loginMemberId}`
-      )
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch member cart')
-      }
-
-      const cartItems = await response.json()
-      setCheckoutItems(cartItems.memberCart)
-
-      console.log('fetch member cart', cartItems.memberCart)
-    } catch (error) {
-      console.log('Error fetching member cart:', error)
-    }
-  }
-
-  // 接收商品數量變化 (inputStepper > orderItemCheckout > CheckoutPage )
-  const handleQuantityChange = async (productId, newQuantity) => {
-    const updatedItems = checkoutItems.map((item) =>
-      item.product_id === productId
-        ? { ...item, cart_product_quantity: newQuantity }
-        : item
-    )
-    setCheckoutItems(updatedItems)
-    console.log(updatedItems)
-
-    const itemToUpdate = updatedItems.find(
-      (item) => item.product_id === productId
-    )
-
-    console.log('itemToUpdate', itemToUpdate)
-
-    try {
-      const response = await axios.put(
-        `${CHECKOUT_UPDATE_CART}/${itemToUpdate.cart_id}`,
-        {
-          cart_product_quantity: newQuantity,
-        }
-      )
-
-      if (!response.data.success) {
-        throw new Error('Failed to update cart item quantity')
-      }
-
-      fetchMemberCart()
-    } catch (error) {
-      console.log('Error updating cart item quantity:', error)
-    }
-  }
-
-  useEffect(() => {
-    fetchMemberCart()
-  }, [])
+  // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
+  const { checkoutItems, checkoutTotal, handleQuantityChange } = useCheckout(loginMemberId)
 
   // 取得會員地址
   const fetchMemberAddress = async () => {
@@ -151,15 +94,6 @@ export default function CheckOutPage() {
       [name]: value,
     })
   }
-
-  // 取得訂單總金額
-  useEffect(() => {
-    let newCheckTotal = 0
-    checkoutItems.forEach((item) => {
-      newCheckTotal += item.cart_product_quantity * item.price
-    })
-    setCheckoutTotal(newCheckTotal)
-  }, [checkoutItems])
 
   // 送出表單
   const handleSubmit = async (e) => {

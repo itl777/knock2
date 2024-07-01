@@ -7,15 +7,12 @@ import Badge from '@mui/material/Badge'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 // components
+import { useCheckout } from '@/hooks/useCheckout'
 import HDivider from '../divider/horizontal-divider'
 import BlackBtn from '../black-btn'
 import NoData from '../no-data'
 import OrderItemCheckout from '@/components/page-components/orders/order-item-checkout'
-import {
-  PRODUCT_IMG,
-  CHECKOUT_GET_CART,
-  CHECKOUT_UPDATE_CART,
-} from '@/configs/api-path'
+import { PRODUCT_IMG } from '@/configs/api-path'
 import { FaCartShopping } from 'react-icons/fa6'
 // import { IoAdd, IoHeartOutline } from 'react-icons/io5'
 // import { IoIosRemove } from 'react-icons/io'
@@ -32,76 +29,11 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 export default function CheckoutOffcanvas() {
   const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
   const [show, setShow] = useState(false)
-  const [checkoutItems, setCheckoutItems] = useState([])
-  const [checkoutTotal, setCheckoutTotal] = useState(0)
+  // const [checkoutItems, setCheckoutItems] = useState([])
+  // const [checkoutTotal, setCheckoutTotal] = useState(0)
   const handleClose = () => setShow(false)
   const toggleShow = () => setShow((s) => !s)
-
-  // 取得會員購物車資料
-  const fetchMemberCart = async () => {
-    try {
-      const response = await fetch(
-        `${CHECKOUT_GET_CART}?member_id=${loginMemberId}`
-      )
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch member cart')
-      }
-
-      const cartItems = await response.json()
-      setCheckoutItems(cartItems.memberCart)
-
-      console.log('fetch member cart', cartItems.memberCart)
-    } catch (error) {
-      console.log('Error fetching member cart:', error)
-    }
-  }
-
-  // 取得訂單總金額
-  useEffect(() => {
-    let newCheckTotal = 0
-    checkoutItems.forEach((item) => {
-      newCheckTotal += item.cart_product_quantity * item.price
-    })
-    setCheckoutTotal(newCheckTotal)
-  }, [checkoutItems])
-
-  const handleQuantityChange = async (productId, newQuantity) => {
-    const updatedItems = checkoutItems.map((item) =>
-      item.product_id === productId
-        ? { ...item, cart_product_quantity: newQuantity }
-        : item
-    )
-    setCheckoutItems(updatedItems)
-    console.log(updatedItems)
-
-    const itemToUpdate = updatedItems.find(
-      (item) => item.product_id === productId
-    )
-
-    console.log('itemToUpdate', itemToUpdate)
-
-    try {
-      const response = await axios.put(
-        `${CHECKOUT_UPDATE_CART}/${itemToUpdate.cart_id}`,
-        {
-          cart_product_quantity: newQuantity,
-        }
-      )
-
-      if (!response.data.success) {
-        throw new Error('Failed to update cart item quantity')
-      }
-
-      fetchMemberCart()
-    } catch (error) {
-      console.log('Error updating cart item quantity:', error)
-    }
-  }
-
-  useEffect(() => {
-    fetchMemberCart()
-  }, [])
+  const { checkoutItems, checkoutTotal, handleQuantityChange } = useCheckout(loginMemberId)
 
   return (
     <>
