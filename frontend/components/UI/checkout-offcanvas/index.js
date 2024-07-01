@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import axios from 'axios'
 import styles from './checkout-offcanvas.module.css'
 import Drawer from '@mui/joy/Drawer'
@@ -7,7 +7,7 @@ import Badge from '@mui/material/Badge'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 // components
-import { useCheckout } from '@/hooks/useCheckout'
+import { useCart } from '@/context/cart-context'
 import HDivider from '../divider/horizontal-divider'
 import BlackBtn from '../black-btn'
 import NoData from '../no-data'
@@ -15,7 +15,6 @@ import OrderItemCheckout from '@/components/page-components/orders/order-item-ch
 import { PRODUCT_IMG } from '@/configs/api-path'
 import { FaCartShopping } from 'react-icons/fa6'
 // import { IoAdd, IoHeartOutline } from 'react-icons/io5'
-// import { IoIosRemove } from 'react-icons/io'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -29,11 +28,11 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 export default function CheckoutOffcanvas() {
   const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
   const [show, setShow] = useState(false)
-  // const [checkoutItems, setCheckoutItems] = useState([])
-  // const [checkoutTotal, setCheckoutTotal] = useState(0)
   const handleClose = () => setShow(false)
   const toggleShow = () => setShow((s) => !s)
-  const { checkoutItems, checkoutTotal, handleQuantityChange } = useCheckout(loginMemberId)
+
+  // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
+  const { checkoutItems, checkoutTotal, handleQuantityChange } = useCart()
 
   return (
     <>

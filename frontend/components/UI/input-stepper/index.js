@@ -1,7 +1,7 @@
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 import styles from './input-stepper.module.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { IoIosAdd, IoIosRemove } from 'react-icons/io'
 
 export default function InputStepper({
@@ -11,6 +11,11 @@ export default function InputStepper({
   onQuantityChange, //通知父層更新
 }) {
   const [value, setValue] = useState(stepperValue)
+
+  // 通知 cart-context.js 更新
+  useEffect(()=> {
+    setValue(stepperValue)
+  }, [stepperValue])
 
   const handleIncrease = () => {
     if (+value >= maxValue) {

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import styles from './checkout-page.module.css'
-import { useCheckout } from '@/hooks/useCheckout'
+import { useCart } from '@/context/cart-context'
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
 import HDivider from '@/components/UI/divider/horizontal-divider'
@@ -13,20 +13,14 @@ import RecipientButtonSelected from '../recipient-button-selected'
 import BasicModal from '@/components/UI/basic-modal'
 import RecipientModalBody from '../recipient-modal-body'
 import OrderInputBox from '../../orders/order-input-box'
-
-import {
-  PRODUCT_IMG,
-  CHECKOUT_GET,
-  CHECKOUT_POST,
-} from '@/configs/api-path'
 import NoData from '@/components/UI/no-data'
+import { PRODUCT_IMG, CHECKOUT_GET, CHECKOUT_POST } from '@/configs/api-path'
 
 export default function CheckOutPage() {
   const router = useRouter()
   const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
   const [memberAddress, setMemberAddress] = useState([])
   const [deliverFee, setDeliverFee] = useState(120)
-  // 送出的表單欄位 insert into orders and order_details table
   const [formData, setFormData] = useState({
     memberId: loginMemberId,
     recipientName: '',
@@ -41,7 +35,7 @@ export default function CheckOutPage() {
   })
 
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
-  const { checkoutItems, checkoutTotal, handleQuantityChange } = useCheckout(loginMemberId)
+  const { checkoutItems, checkoutTotal, handleQuantityChange } = useCart()
 
   // 取得會員地址
   const fetchMemberAddress = async () => {
