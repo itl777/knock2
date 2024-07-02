@@ -16,7 +16,8 @@
 
 import styles from './cards.module.scss'
 import Image from 'next/image'
-import Link from 'next/link'
+import Link from '@mui/material/Link'
+import { useState } from 'react'
 
 import {
   AspectRatio,
@@ -51,7 +52,11 @@ export default function Card02({
         return '#222222' // 默認顏色
     }
   }
+  const [clicked, setClicked] = useState(false)
 
+  const handleClick = () => {
+    setClicked(!clicked)
+  }
   return (
     <Card
       variant="plain"
@@ -59,7 +64,7 @@ export default function Card02({
         '--Card-radius': '0px',
         p: 0,
       }}
-      className={styles['card-01']}
+      className={styles['card-02']}
     >
       {/* 圖片 */}
       <CardOverflow
@@ -163,11 +168,20 @@ export default function Card02({
               right: '16px',
             }}
           >
-            <Link
-              style={{ textDecoration: 'none', color: '#222222' }}
-              href={`?#`}
-            >
-              <span>立即預訂</span>
+            <Link href={`?#`} passHref>
+              <Typography
+                sx={{
+                  textDecoration: 'none',
+                  color: '#222222',
+                  fontWeight: clicked ? 'bold' : 'normal',
+                  '&:hover': {
+                    fontWeight: 'bold',
+                  },
+                }}
+                onClick={handleClick}
+              >
+                立即預訂
+              </Typography>
             </Link>
             <Image
               src="/components/arrow-special.svg"
