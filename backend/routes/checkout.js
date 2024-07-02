@@ -8,7 +8,7 @@ const router = express.Router();
 router.use(bodyParser.json());
 // const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
-// POST insert items into to cart_member
+// POST insert items into to cart_member table
 router.post("/api/cart_member", async (req, res) => {
   const data = { ...req.body };
   console.log("member cart data", data);
@@ -62,6 +62,94 @@ router.post("/api/cart_member", async (req, res) => {
     res.status(500).json({
       error: "An error occurred while processing add to member cart.",
     });
+  }
+});
+
+// POST insert items into guest_member table
+router.post("/api/cart_guest", async (req, res) => {
+  const { deviceId, productId, cartQty } = req.body;
+  console.log(deviceId, productId, cartQty);
+
+  const checkExitSql = `
+    SELECT * FROM cart_guest WHERE device_id = ? and cart_product_id = ?
+  `;
+
+  const updateSql = `
+  UPDATE cart_guest
+  SET cart_product_quantity = ?,
+  last_modified_at = now()
+  WHERE device_id = ? and cart_product_id = ?
+`;
+
+  const insertSql = `
+    INSERT INTO cart_guest (
+      device_id,
+      cart_product_id, 
+      cart_product_quantity, 
+      created_at, 
+      last_modified_at
+    ) VALUES (?, ?, ?, now(), now());
+  `;
+
+  try {
+    // 確認 guest cart device_id 下是否已經有此 cart_product_id
+    const [isExit] = await db.query(checkExitSql, [deviceId, productId]);
+
+    let guestCartResults;
+
+    // 如果 guest cart 已存在此商品，更新商品數量
+    if (isExit.length > 0) {
+      const updateValues = [cartQty, deviceId, productId];
+      [guestCartResults] = await db.query(updateSql, updateValues);
+    } else {
+      // 如果 guest cart「不」已存在此商品，更新商品數量
+      const insertValues = [deviceId, productId, cartQty];
+      [guestCartResults] = await db.query(insertSql, insertValues);
+    }
+
+    const success = guestCartResults.affectedRows > 0;
+
+    res.json({ success });
+  } catch (error) {
+    console.error("Error while processing add to guest cart:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing add to guest cart." });
+  }
+});
+
+// after login, inset items into cart_member table
+router.post("/api/cart/merge", async (req, res) => {
+  const { memberId, guestCart } = req.body;
+
+  try {
+    const insertPromises = guestCart.map(async (item) => {
+      const { productId, cartQty } = item;
+
+      const [existingCartItem] = await db.query(
+        "SELECT * FROM cart_member WHERE cart_member_id = ? AND cart_product_id = ?",
+        [memberId, productId]
+      );
+
+      if (existingCartItem.length > 0) {
+        await db.query(
+          "UPDATE cart_member SET cart_product_quantity = cart_product_quantity + ?, last_modified_at = now() WHERE cart_member_id = ? AND cart_product_id = ?",
+          [cartQty, memberId, productId]
+        );
+      } else {
+        await db.query(
+          "INSERT INTO cart_member (cart_member_id, cart_product_id, cart_product_quantity, created_at, last_modified_at) VALUES (?, ?, ?, now(), now())",
+          [memberId, productId, cartQty]
+        );
+      }
+    });
+
+    await Promise.all(insertPromises);
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("merge into cart_member failed:", error);
+    res.status(500).json({ error: "merge into cart_member failed" });
   }
 });
 

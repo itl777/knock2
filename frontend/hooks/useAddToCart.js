@@ -1,29 +1,48 @@
 import axios from 'axios'
 import { CART_POST, CART_GUEST_POST } from '@/configs/api-path'
 
+
+const getDeviceId = () => {
+  let deviceId = localStorage.getItem('kkDeviceId');
+  if (!deviceId) {
+    deviceId = Date.now() + parseInt(Math.random() * 9998 + 1);
+    localStorage.setItem('kkDeviceId', deviceId);
+  }
+  return deviceId;
+};
+
 const useAddToCart = (dbData, loginMemberId) => {
   const handleBuyClick = async () => {
     if (!loginMemberId) {
       console.log('未登入')
+      const kkDeviceId = localStorage.getItem('kkDeviceId')
       // 未登入時存入 localStorage
       const guestCart = JSON.parse(localStorage.getItem('kkCart')) || []
       const existingItemIndex = guestCart.findIndex(
-        (item) => item.productId === dbData.product_id
+        (i) => i.productId === dbData.product_id
       )
 
       if (existingItemIndex > -1) {
+        // 若 product_id 已存在，增加 cartQty
         guestCart[existingItemIndex].cartQty += 1
       } else {
-        guestCart.push({ productId: dbData.product_id, cartQty: 1 })
+        // 若 product_id 不存在，新增項目
+        guestCart.push({
+          deviceId: kkDeviceId,
+          productId: dbData.product_id,
+          cartQty: 1,
+        })
       }
 
       localStorage.setItem('kkCart', JSON.stringify(guestCart))
 
       // 未登入時存入 cart_guest table
       try {
+        const existingItem = guestCart.find(i => i.productId === dbData.product_id);
         const response = await axios.post(CART_GUEST_POST, {
-          productId: dbData.product_id,
-          cartQty: 1,
+          deviceId: kkDeviceId,
+          productId: existingItem.productId,
+          cartQty: existingItem.cartQty,
         })
         if (response.data.success) {
           console.log('Insert into cart_guest successfully')
@@ -57,6 +76,8 @@ const useAddToCart = (dbData, loginMemberId) => {
   return { handleBuyClick }
 }
 
+
+
 const useLogin = () => {
   const handleLogin = async (loginData) => {
     try {
@@ -86,4 +107,4 @@ const useLogin = () => {
   return { handleLogin }
 }
 
-export { useAddToCart, useLogin }
+export { useAddToCart, useLogin, getDeviceId }

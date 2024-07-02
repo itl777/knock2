@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import myStyle from './card.module.css'
 import BuyBtn2 from './buy-btn2' // ******* Iris added *******
-import { useAddToCart, useLogin } from '@/hooks/useAddToCart' // ******* Iris added *******
+import { useAddToCart, useLogin, getDeviceId } from '@/hooks/useAddToCart' // ******* Iris added *******
 
 
 export default function Card({ dbData }) {
@@ -18,7 +18,8 @@ export default function Card({ dbData }) {
   }
 
   // ******* Iris Added Start *******
-  const loginMemberId = 1 // 模擬登入暫時性資料
+  const loginMemberId = 0 // 模擬登入暫時性資料
+  getDeviceId()
   const { handleBuyClick } = useAddToCart(dbData, loginMemberId)
   const { handleLogin } = useLogin() // 暫時用不到
   // ******* Iris Added Start End *******
