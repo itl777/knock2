@@ -22,3 +22,6 @@ export const CHECKOUT_DELETE_ADDRESS = `${API_SERVER}/checkout/api/delete_addres
 
 //teams
 export const TEAM_ALL = `${API_SERVER}/teams/apiAll`
+
+//THEME
+export const THEME_LIST = `${API_SERVER}/themes`

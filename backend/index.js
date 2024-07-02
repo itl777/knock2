@@ -13,7 +13,6 @@ import orders from "./routes/orders.js";
 import orderDetails from "./routes/details.js";
 import checkout from "./routes/checkout.js";
 
-
 // 掛載 express
 const app = express();
 
@@ -119,7 +118,6 @@ app.use("/users", users);
 app.use("/orders", orders);
 app.use("/user/orders", orderDetails);
 app.use("/checkout", checkout);
-
 
 
 // 偵聽 port
