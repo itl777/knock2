@@ -14,7 +14,6 @@ export default function PdFilter() {
         <div id="frame">
           <CategoryBtn />
 
-
           {/* price range */}
           <div className="row mt-4">
             <div className="col-6 offset-1 d-flex">
@@ -27,8 +26,8 @@ export default function PdFilter() {
             </div>
 
             <div className="col-4 text-end">
-              <FilterBtn btnText={'最新上架'} />
-              <FilterBtn btnText={'價格排序'} />
+              <FilterBtn btnText={'最新上架'} href={'/'} />
+              <FilterBtn btnText={'價格排序'} href={'/'} />
             </div>
           </div>
         </div>
@@ -36,15 +35,16 @@ export default function PdFilter() {
       <style jsx>
         {`
           #frame {
-            border-left: 3px solid black;
-            border-right: 3px solid black;
-            border-bottom: 3px solid black;
+            border-left: 2px solid black;
+            border-right: 2px solid black;
+            border-bottom: 2px solid black;
 
             padding: 50px 0;
           }
           .container {
             max-width: 1200px;
             margin-bottom: 5rem;
+            padding:0;
           }
 
           .text {
