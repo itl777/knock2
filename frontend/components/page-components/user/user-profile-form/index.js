@@ -16,7 +16,6 @@ import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
 import schemaForm from './schemaForm'
-import AutohideSnackbar from '@/components/UI/snackbar'
 
 export default function UserProfileForm() {
   // state
@@ -239,7 +238,12 @@ export default function UserProfileForm() {
   // render form
   return (
     <>
-      <AutohideSnackbar text="成功訊息" vertical="top" horizontal="center" />
+      <AutohideSnackbar
+        open={true}
+        text="成功訊息"
+        vertical="top"
+        horizontal="center"
+      />
       {JSON.stringify(profileForm) !== '{}' &&
       JSON.stringify(addressForm) !== '[]' ? (
         <form

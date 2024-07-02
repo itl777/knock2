@@ -38,7 +38,7 @@ export default function Navbar({ pageName }) {
   }
 
   const handleMouseOver = () => {
-    login('user1@example.com', '123456')
+    login('test@test.com', '123456')
 
     clearTimeout(timeOutRef.current)
     clearTimeout(hideNavMenuRef.current)
