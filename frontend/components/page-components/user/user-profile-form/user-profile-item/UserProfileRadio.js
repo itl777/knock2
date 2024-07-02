@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import styles from './item.module.scss'
 import Radio01 from '@/components/UI/form-item/radio01'
 

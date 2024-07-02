@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import styles from './item.module.scss'
 import Input01 from '@/components/UI/form-item/input01'
 

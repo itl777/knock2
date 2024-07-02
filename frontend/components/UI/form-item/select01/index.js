@@ -29,7 +29,7 @@ export default function Select01({
       return
     }
     setOptionsArray(true)
-  }, [options])
+  }, [])
 
   return (
     <>

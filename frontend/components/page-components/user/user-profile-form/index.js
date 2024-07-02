@@ -15,8 +15,11 @@ import UserProfileRadio from './user-profile-item/UserProfileRadio'
 import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
+import schemaForm from './schemaForm'
+import AutohideSnackbar from '@/components/UI/snackbar'
 
 export default function UserProfileForm() {
+  // state
   const { auth, getAuthHeader } = useAuth()
   const [profileForm, setProfileForm] = useState({})
   const [addressValue, setAddressValue] = useState({})
@@ -32,6 +35,18 @@ export default function UserProfileForm() {
     dates: [],
   })
 
+  const [profileFormErrors, setProfileFormErrors] = useState({
+    name: '',
+    nick_name: '',
+    gender: '',
+    birthday: '',
+    mobile_phone: '',
+    address: '',
+    invoice_carrier_id: '',
+    tax_id: '',
+  })
+
+  // function
   const handleChange = (e) => {
     const { name, value } = e.target
     // 修改 address
@@ -105,7 +120,6 @@ export default function UserProfileForm() {
 
   const UserProfileFormSubmit = async (e) => {
     e.preventDefault()
-    const url = `${API_SERVER}/users/api`
 
     // 處理 birthdayValue
     const { year, month, date } = birthdayValue
@@ -121,7 +135,31 @@ export default function UserProfileForm() {
       data = { users: data }
     }
 
-    // fetch
+    // 表單驗證
+
+    const result = schemaForm.safeParse(data.users)
+
+    const newProfileFormErrors = {
+      name: '',
+      nick_name: '',
+      birthday: '',
+      mobile: '',
+      invoice_carrier_id: '',
+      tax_id: '',
+    }
+
+    if (!result.success) {
+      if (result.error?.issues?.length) {
+        for (let issue of result.error.issues) {
+          newProfileFormErrors[issue.path[0]] = issue.message
+        }
+        setProfileFormErrors(newProfileFormErrors)
+      }
+      return // 表單資料沒有驗證通過就直接返回
+    }
+
+    // 通過表單驗證 接著 fetch
+    const url = `${API_SERVER}/users/api`
     const option = {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -134,6 +172,8 @@ export default function UserProfileForm() {
       let response = await fetch(url, option)
       let data = await response?.json()
       if (data.success) {
+        // 清除 Error 文字
+        setProfileFormErrors(newProfileFormErrors)
         // TODO?
       } else {
         console.error(data.error)
@@ -156,10 +196,10 @@ export default function UserProfileForm() {
       let data = await response?.json()
       if (data.success) {
         if (data.users) {
-          // 寫入 user 表單資訊
+          // 寫入 user 表單
           setProfileForm(data.users)
           if (data.users.birthday) {
-            // 寫入 birthday value 資訊
+            // 寫入 birthday value
             const birthday = new Date(data.users.birthday)
             const newBirthday = {
               year: birthday.getFullYear(),
@@ -170,7 +210,7 @@ export default function UserProfileForm() {
             getBirthdayOptions(newBirthday.year, newBirthday.month)
           }
         }
-        // 寫入 address options 資訊
+        // 寫入 address options
         if (data.address) {
           const options = data.address.map((v) => {
             return {
@@ -180,7 +220,7 @@ export default function UserProfileForm() {
             }
           })
           setAddressForm(options)
-          // 寫入 address value 資訊
+          // 寫入 address value
           const values = data.address.find((v) => v.type === '1').id
           setAddressValue({ address_id: values })
         }
@@ -194,10 +234,12 @@ export default function UserProfileForm() {
 
   useEffect(() => {
     if (auth.token) fetchData()
-  }, [auth])
+  }, [auth.token])
 
+  // render form
   return (
     <>
+      <AutohideSnackbar text="成功訊息" vertical="top" horizontal="center" />
       {JSON.stringify(profileForm) !== '{}' &&
       JSON.stringify(addressForm) !== '[]' ? (
         <form
@@ -237,7 +279,7 @@ export default function UserProfileForm() {
                 value={profileForm.name}
                 placeholder="請輸入姓名"
                 disabled={false}
-                errorText="1234567"
+                errorText={profileFormErrors.name}
                 onChange={handleChange}
               />
               <UserProfileInput
@@ -246,7 +288,7 @@ export default function UserProfileForm() {
                 type="text"
                 value={profileForm.nick_name}
                 placeholder="請輸入暱稱"
-                errorText=""
+                errorText={profileFormErrors.nick_name}
                 onChange={handleChange}
               />
               <UserProfileRadio
@@ -264,7 +306,7 @@ export default function UserProfileForm() {
                 name="gender"
                 disabled={false}
                 checked={profileForm.gender}
-                errorText=""
+                errorText={profileFormErrors.gender}
                 onChange={handleChange}
               />
               <UserProfileBirthday
@@ -286,7 +328,7 @@ export default function UserProfileForm() {
                 type="text"
                 value={profileForm.mobile_phone}
                 placeholder="請輸入電話"
-                errorText=""
+                errorText={profileFormErrors.mobile_phone}
                 onChange={handleChange}
               />
               <UserProfileSelect
@@ -295,7 +337,7 @@ export default function UserProfileForm() {
                 name="address_id"
                 value={addressValue.address_id}
                 placeholder="請選擇常用地址"
-                errorText=""
+                errorText={profileFormErrors.address_id}
                 onChange={handleChange}
               />
             </div>
@@ -309,7 +351,7 @@ export default function UserProfileForm() {
                 type="text"
                 value={profileForm.invoice_carrier_id}
                 placeholder="請輸入常用載具"
-                errorText=""
+                errorText={profileFormErrors.invoice_carrier_id}
                 onChange={handleChange}
               />
               <UserProfileInput
@@ -318,7 +360,7 @@ export default function UserProfileForm() {
                 type="text"
                 value={profileForm.tax_id}
                 placeholder="請輸入常用統編"
-                errorText=""
+                errorText={profileFormErrors.tax_id}
                 onChange={handleChange}
               />
             </div>

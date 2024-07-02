@@ -45,6 +45,14 @@ const customTheme = createTheme({
         },
       },
     },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          maxHeight: '300px',
+          overflow: 'auto',
+        },
+      },
+    },
     MuiMenuItem: {
       styleOverrides: {
         root: {

@@ -15,9 +15,8 @@ export default function Radio01({
       console.error('提供的radios不是陣列，請確認 >>', radios)
       return
     }
-    console.log(radiosArray)
     setRadiosArray(true)
-  }, [radios])
+  }, [])
   return (
     <>
       {radiosArray ? (
