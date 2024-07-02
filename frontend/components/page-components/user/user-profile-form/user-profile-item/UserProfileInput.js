@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import styles from './input.module.scss'
+import styles from './item.module.scss'
 import Input01 from '@/components/UI/form-item/input01'
 
 export default function UserProfileInput({
@@ -16,8 +15,8 @@ export default function UserProfileInput({
   return (
     <>
       <div className={styles.formItem}>
-        <label htmlFor={name}>{label}</label>
-        <div>
+        <label htmlFor={name} className={styles.myLabel}>{label}</label>
+        <div className={styles.myDiv}>
           <Input01
             name={name}
             type={type}
@@ -26,11 +25,9 @@ export default function UserProfileInput({
             disabled={disabled}
             onChange={onChange}
           />
-          {errorText !== '' ? (
-            <span className={styles.errorText}>{errorText}</span>
-          ) : (
-            ''
-          )}
+          <div className={styles.errorText}>
+            {errorText !== '' ? <span>{errorText}</span> : ''}
+          </div>
         </div>
       </div>
     </>

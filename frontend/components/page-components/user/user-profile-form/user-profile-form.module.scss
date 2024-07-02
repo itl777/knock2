@@ -3,51 +3,53 @@
 .user-profile-form {
   display: flex;
   width: 100%;
-  padding: 40px;
+  padding: 20px;
   flex-direction: column;
   align-items: center;
   gap: 50px;
   border-radius: 16px;
   background: #fff;
   box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.25);
-  .account {
+  @media screen and (min-width: 768px) {
+    padding: 40px;
+  }
+  .box1 {
     display: flex;
-    padding: 0px 40px;
+    flex-direction: column;
+    padding: 0;
     justify-content: center;
     align-items: center;
-    gap: 80px;
     align-self: stretch;
-    .avatar {
-      width: 250px;
-      height: 250px;
-      max-width: 250px;
-      max-height: 250px;
-      border-radius: 125px;
-      background: url('/ghost/ghost_02.png') no-repeat, $pri-1;
-      background-size: contain;
-      background-position: center;
-      box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.25);
+    gap: 80px;
+
+    @media screen and (min-width: 768px) {
+      flex-direction: row;
+      padding: 0px 40px;
     }
-    > div {
+    .account {
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 30px;
-      flex: 1 0 0;
+      gap: 20px;
+      flex: 250px 1;
     }
   }
-  .box {
+  .box2 {
     display: flex;
-    padding: 0px 40px;
+    padding: 0px;
+    @media screen and (min-width: 768px) {
+      padding: 0px 40px;
+    }
     justify-content: center;
-    align-items: flex-start;
     gap: 80px;
-    align-self: stretch;
+    width: 100%;
     > div {
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 30px;
+      gap: 20px;
       flex: 1 0 0;
     }
   }

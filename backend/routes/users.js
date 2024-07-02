@@ -4,6 +4,7 @@ import moment from "moment-timezone";
 import upload from "../utils/upload-imgs.js";
 
 const dateFormat = "YYYY-MM-DD";
+const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 const router = express.Router();
 
 const getListData = async (req) => {
@@ -115,14 +116,14 @@ router.post("/api", async (req, res) => {
 
   if (!users.length) {
     //沒有該筆資料
-    output.error = "資料庫沒有該筆資料";
+    output.error = "資料庫沒有這筆用戶";
     return res.json(output);
   }
 
   const m = moment(users[0].birthday);
   users[0].birthday = m.isValid() ? m.format(dateFormat) : "";
 
-  const sql2 = `SELECT address.id,district_id,address,recipient_name,address.mobile_phone as recipient_phone,type,district_name,city_name 
+  const sql2 = `SELECT address.id,postal_codes,address,recipient_name,address.mobile_phone as recipient_phone,type,district_name,city_name 
   FROM address 
   LEFT JOIN district
   ON district_id = district.id 
@@ -138,27 +139,73 @@ router.post("/api", async (req, res) => {
 });
 
 // 處理編輯的api
-router.put("/api/:sid", upload.none(), async (req, res) => {
+router.put("/api", upload.none(), async (req, res) => {
   const output = {
     success: false,
     code: 0,
+    error: "",
     result: {},
   };
 
-  const sid = +req.params.sid || 0;
-  if (!sid) {
+  if (!req.my_jwt?.id) {
+    output.error = "沒登入";
     return res.json(output);
   }
 
-  let body = { ...req.body };
-  body.created_at = new Date();
+  const id = +req.my_jwt?.id || 0;
+  if (!id) {
+    output.error = "找不到這筆資料";
+    return res.json(output);
+  }
 
-  const m = moment(body.birthday); //用moment去驗證是否為空字串
-  body.birthday = m.isValid() ? m.format(dateFormat) : null;
+  // 更新地址
+  if (req.body.address) {
+    let address_id = req.body.address.address_id;
+    try {
+      // 第一次地址全部洗成 0
+      const sql_address_1 = "UPDATE `address` SET type = 0 WHERE user_id=? ";
+      const [result1] = await db.query(sql_address_1, id);
+      output.result_address_1 = result1;
 
+      // 第二次指定address_id洗成1
+      const sql_address_2 = "UPDATE `address` SET type = 1 WHERE id=? ";
+      const [result2] = await db.query(sql_address_2, address_id);
+
+      output.result_address_2 = result2;
+      output.address_success = !!(result2.affectedRows && result2.changedRows);
+
+      if (output.address_success) {
+        output.address_error = "地址更新成功";
+      } else {
+        output.code = 103;
+        output.address_error = "地址更新失敗2";
+      }
+    } catch (ex) {
+      output.code = 101;
+      output.address_error = ex;
+    }
+  }
+
+  // 更新 user
+  let users = { ...req.body.users };
+
+  // 加入更新時間
+  const last_modified_at = moment(new Date());
+  users.last_modified_at = last_modified_at.isValid()
+    ? last_modified_at.format(dateTimeFormat)
+    : null;
+
+  // 驗證 birthday 日期格式
+  const birthday = moment(users.birthday); //用moment去驗證是否為空字串
+  users.birthday = birthday.isValid() ? birthday.format(dateFormat) : null;
+
+  // 寫入修改人員 0 = 會員
+  users.last_modified_by = 0;
+
+  console.log(users);
   try {
-    const sql = "UPDATE `address_book` SET ? WHERE sid=? ";
-    const [result] = await db.query(sql, [body, sid]);
+    const sql = "UPDATE `users` SET ? WHERE user_id=? ";
+    const [result] = await db.query(sql, [users, id]);
     output.result = result;
     output.success = !!(result.affectedRows && result.changedRows);
   } catch (ex) {
