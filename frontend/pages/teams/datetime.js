@@ -56,7 +56,7 @@ export default function DateTime() {
                       <tr key={r.team_id}>
                         <td>{r.theme_name}</td>
                         <td>{r.nick_name}</td>
-                        <td>{r.reservation_date}+8</td>
+                        <td>{r.reservation_date}</td>
                         <td>{r.start_time}</td>
                         <td>{r.end_time}</td>
                       </tr>
