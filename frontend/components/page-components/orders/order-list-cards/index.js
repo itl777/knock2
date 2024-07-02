@@ -1,11 +1,13 @@
+// 我的訂單頁面
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import styles from './order-list-cards.module.css'
 import FilterBtn from '@/components/UI/filter-btn'
 import OrderStatusTag from '../order-status-tag'
 import NoData from '@/components/UI/no-data'
-import { FiShoppingBag, FiCreditCard, FiPackage } from 'react-icons/fi'
 import OrderProductImgBox from '../order-product-img-box'
+import { ORDER_LIST_GET, PRODUCT_IMG } from '@/configs/api-path'
+import { FiShoppingBag, FiCreditCard, FiPackage } from 'react-icons/fi'
 
 export default function OrderListCards({ orderStatusId }) {
   const [orderData, setOrderData] = useState([])
@@ -13,11 +15,12 @@ export default function OrderListCards({ orderStatusId }) {
   const memberId = 1 // 暫時設定會員 id
 
   const router = useRouter()
+  
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          `http://127.0.0.1:3001/orders?member_id=${memberId}&order_status_id=${orderStatusId}`
+          `${ORDER_LIST_GET}?member_id=${memberId}&order_status_id=${orderStatusId}`
         )
 
         if (!response.ok) {
@@ -37,17 +40,6 @@ export default function OrderListCards({ orderStatusId }) {
     fetchOrders()
   }, [memberId, orderStatusId])
 
-  /* const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${(
-      '0' + date.getDate()
-    ).slice(-2)}`
-  } */
-
-  // // 詳情按鈕
-  // const handleOrderDetail = (orderId) => {
-  //   router.push(`/user/orders/details/${orderId}`)
-  // }
 
   return (
     <>
@@ -95,7 +87,7 @@ export default function OrderListCards({ orderStatusId }) {
                       key={i}
                       imgSrc={
                         detail.product_img
-                          ? `/products/${detail.product_img}`
+                          ? `${PRODUCT_IMG}/${detail.product_img}`
                           : ''
                       }
                     />

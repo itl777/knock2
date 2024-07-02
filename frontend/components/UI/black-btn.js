@@ -1,29 +1,35 @@
 import { Button } from '@mui/material'
-import Link from 'next/link'
 
-export default function BlackBtn({ btnText = '確認購買', href = '/' }) {
+
+export default function BlackBtn({
+  btnText = 'button',
+  type = 'button',
+  href = '/',
+  onClick = () => {},
+  paddingType = '',
+}) {
   return (
-    <>
-      <Link href={href} passHref>
-        <Button
-          variant="outlined"
-          sx={{
-            color: 'white',
-            fontFamily: 'Noto Serif JP',
-            borderRadius: '100px',
-            borderColor: '#222',
-            background: '#222',
-            fontSize: '16px',
-            padding: '8px 16px',
-            ':hover': {
-              color: 'black',
-              borderColor: '#222',
-            },
-          }}
-        >
-          {btnText}
-        </Button>
-      </Link>
-    </>
+    <Button
+      type={type}
+      href={href}
+      variant="outlined"
+      onClick={onClick}
+      sx={{
+        color: 'white',
+        fontFamily: 'Noto Serif JP',
+        borderRadius: '100px',
+        borderColor: '#222',
+        background: '#222',
+        fontSize: '16px',
+        padding:
+          paddingType === 'medium' ? '8px 32px' : '8px 16px',
+        ':hover': {
+          color: 'black',
+          borderColor: '#222',
+        },
+      }}
+    >
+      {btnText}
+    </Button>
   )
 }

@@ -10,7 +10,7 @@ const getListDate = async (req) => {
   let success = false;
   let redirect = "";
 
-  const perPage = 9;
+  const perPage = 9; //每頁數量
   let page = parseInt(req.query.page) || 1;
 
   if (page < 1) {
@@ -19,13 +19,18 @@ const getListDate = async (req) => {
   }
   // 處裡搜尋欄位
   let userSearch = req.query.userSearch || "";
+  let idSearch = req.params.product_id || "";
   let category_id = req.query.category_id || "";
   let where = " WHERE 1 ";
 
   if (userSearch) {
-    console.log("userSearch:", userSearch);
     const userSearch_ = db.escape(`%${userSearch}%`);
-    where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_} ) `;
+    where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_} `;
+  }
+  if (idSearch) {
+    const idSearch_ = db.escape(`${idSearch}`);
+    where += `AND ( \`product_id\` LIKE ${idSearch_} ) `;
+    console.log("where:", where);
   }
 
   // 類別篩選
@@ -39,7 +44,7 @@ const getListDate = async (req) => {
   const [[{ totalRows }]] = await db.query(t_sql);
   let totalPages = 0;
   let rows = [];
-  let productImg='';
+  let productImg = "";
 
   // 查詢的db有無回傳值
   if (totalRows) {
@@ -62,17 +67,64 @@ const getListDate = async (req) => {
     },${perPage}`;
 
     [rows] = await db.query(sql);
-    
 
     success = true;
     return {
       success,
-      perPage,
+      // perPage,
       page,
       totalRows,
       totalPages,
       rows,
       // qs: req.query,
+    };
+  } else {
+    return { success, redirect };
+  }
+};
+
+const getFavoriteDate = async (req) => {
+  let success = false;
+  let redirect = "";
+  const perPage = 9; //每頁卡片數量
+
+  let where = " WHERE 1 ";
+
+  let page = parseInt(req.query.page) || 1;
+
+  if (page < 1) {
+    redirect = "?page=1";
+    return { success, redirect };
+  }
+
+  // user_id 暫設1
+  const t_sql = `SELECT COUNT(1) totalRows FROM product_favorites WHERE \`user_id\`=1`;
+
+  const [[{ totalRows }]] = await db.query(t_sql);
+
+  let totalPages = 0;
+  let rows = [];
+
+  if (totalRows) {
+    totalPages = Math.ceil(totalRows / perPage);
+    if (page > totalPages) {
+      redirect = `?page=${totalPages}`;
+      return { success, redirect };
+    }
+
+    // user_id 暫設1
+    const sql = `SELECT * FROM \`product_favorites\` JOIN product_management ON \`fav_product_id\` = \`product_id\` WHERE \`user_id\`=1 ORDER BY \`favorite_id\`  DESC LIMIT ${
+      (page - 1) * perPage
+    },${perPage}`;
+
+    [rows] = await db.query(sql);
+    success = true;
+    return {
+      success,
+      page,
+      totalRows,
+      totalPages,
+      rows,
     };
   } else {
     return { success, redirect };
@@ -99,9 +151,53 @@ router.get("/", async (req, res) => {
   }
 });
 
-// router.get("/api", async (req, res) => {
-//     const data = await getListDate(req);
-//     res.json(data)
-// })
+router.get("/details/:product_id", async (req, res) => {
+  const data = await getListDate(req);
+  res.json(data);
+});
+
+router.get("/favorite", async (req, res) => {
+  const data = await getFavoriteDate(req);
+  res.json(data);
+});
+
+router.get("/favorite/api", async (req, res) => {
+  let success = false;
+  let rows = [];
+
+  // user_id 暫設1
+  const sql = `SELECT * FROM \`product_favorites\` JOIN product_management ON \`fav_product_id\` = \`product_id\` WHERE \`user_id\`=1 ORDER BY \`favorite_id\`  DESC`;
+
+  [rows] = await db.query(sql);
+  success = true;
+  res.json({
+    success,
+    rows,
+  });
+});
+
+// 新增
+router.post("/favorite/add/:product_id", async (req, res) => {
+  // body.created_at = new Date();
+
+  let body = {
+    user_id: 1, //暫時寫死
+    fav_product_id: req.params.product_id,
+    // created_at: new Date(),
+  };
+  const sql = "INSERT INTO product_favorites SET ?";
+  const [result] = await db.query(sql, [body]);
+
+  res.json({ result, success: !!result.affectedRows });
+});
+
+// 刪除
+router.delete("/favorite/delete/:product_id", async (req, res) => {
+  const sql =
+    "DELETE FROM product_favorites WHERE user_id = 1 and fav_product_id = ?";
+  const [result] = await db.query(sql, req.params.product_id);
+
+  res.json({ result, success: !!result.affectedRows });
+});
 
 export default router;

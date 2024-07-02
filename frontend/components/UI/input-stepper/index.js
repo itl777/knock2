@@ -1,14 +1,40 @@
-import { IoIosAdd, IoIosRemove } from 'react-icons/io'
-import styles from './input-stepper.module.css'
-import { useState } from 'react'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
+import styles from './input-stepper.module.css'
+import { useEffect, useState } from 'react'
+import { IoIosAdd, IoIosRemove } from 'react-icons/io'
 
 export default function InputStepper({
-  minValue = 1,
+  minValue = 0,
   maxValue = 10,
   stepperValue = 1,
+  onQuantityChange, //通知父層更新
 }) {
+  const [value, setValue] = useState(stepperValue)
+
+  // 通知 cart-context.js 更新
+  useEffect(()=> {
+    setValue(stepperValue)
+  }, [stepperValue])
+
+  const handleIncrease = () => {
+    if (+value >= maxValue) {
+      return
+    }
+    const newStepperValue = +value + 1
+    setValue(newStepperValue)
+    onQuantityChange(newStepperValue)
+  }
+
+  const handleDecrease = () => {
+    if (+value <= minValue) {
+      return
+    }
+    const newStepperValue = +value - 1
+    setValue(newStepperValue)
+    onQuantityChange(newStepperValue)
+  }
+
   const StepperButton = styled(IconButton)(({ theme }) => ({
     backgroundColor: 'white',
     width: '1.5rem',
@@ -19,27 +45,6 @@ export default function InputStepper({
       backgroundColor: 'var(--pri-3)',
     },
   }))
-
-  const [value, setValue] = useState(stepperValue)
-  console.log(value)
-
-  const handleIncrease = () => {
-    if (+value >= maxValue) {
-      return
-    } else {
-      const newStepperValue = +value + 1
-      setValue(newStepperValue)
-    }
-  }
-
-  const handleDecrease = () => {
-    if (+value <= minValue) {
-      return
-    } else {
-      const newStepperValue = +value - 1
-      setValue(newStepperValue)
-    }
-  }
 
   return (
     <div className={styles.stepperInputContainer}>

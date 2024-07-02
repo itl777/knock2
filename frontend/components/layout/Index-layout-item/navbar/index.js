@@ -1,14 +1,16 @@
 import { useState, useRef } from 'react'
-import styles from './nav-styles.module.scss'
-import { FaCircleUser } from 'react-icons/fa6'
-import { TiThMenu } from 'react-icons/ti'
 import Link from 'next/link'
 import Image from 'next/image'
+
+import Avatar from '@mui/joy/Avatar'
 import NavMenu from './nav-menu'
 import CheckoutOffcanvas from '@/components/UI/checkout-offcanvas'
 import { useAuth } from '@/context/auth-context'
-import Avatar from '@mui/joy/Avatar'
 import { API_SERVER } from '@/configs/api-path'
+
+import styles from './nav-styles.module.scss'
+import { FaCircleUser } from 'react-icons/fa6'
+import { TiThMenu } from 'react-icons/ti'
 
 export default function Navbar({ pageName }) {
   const { login, auth } = useAuth()
@@ -36,6 +38,8 @@ export default function Navbar({ pageName }) {
   }
 
   const handleMouseOver = () => {
+    login('test@test.com', '123456')
+
     clearTimeout(timeOutRef.current)
     clearTimeout(hideNavMenuRef.current)
     if (showNavMenu === false) setShowNavMenu(true)
@@ -69,22 +73,22 @@ export default function Navbar({ pageName }) {
               </Link>
             </li>
             <li>
-              <Link
-                href="#/"
-                onMouseEnter={handleMouseOver}
-                onClick={() => {
-                  login('user1@example.com', '123456')
-                }}
-              >
+              <Link href="#/" onClick={handleMouseOver}>
                 {auth.id ? (
                   <Avatar
-                    size="sm"
-                    variant="plain"
+                    size="md"
+                    variant="solid"
                     alt={auth.nickname}
                     src={
                       auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''
                     }
-                    // sx={{ border: '5px sold' }}
+                    sx={
+                      {
+                        // border: '5px sold #fff',
+                        // width: 24,
+                        // height: 24,
+                      }
+                    }
                   />
                 ) : (
                   <FaCircleUser />

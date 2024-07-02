@@ -8,7 +8,6 @@ export default function Custom404() {
   useEffect(() => {
     const backToHome = setTimeout(() => {
       router.push('/')
-      console.log('回家了')
     }, 3000)
     return () => {
       clearTimeout(backToHome)

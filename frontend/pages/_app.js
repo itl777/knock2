@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/share-order.css'
 import '@/styles/globals.css'
+import { CartProvider } from '@/context/cart-context'
 
 import AuthContext, { AuthContextProvider } from '@/context/auth-context'
 
@@ -10,7 +11,10 @@ export default function MyApp({ Component, pageProps }) {
 
   return getLayout(
     <AuthContextProvider>
-      <Component {...pageProps} />
+      <CartProvider>
+        <Component {...pageProps} />
+      </CartProvider>
     </AuthContextProvider>
   )
 }
+

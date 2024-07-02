@@ -20,8 +20,8 @@ export default function LoginTest() {
             <input type="submit" defaultValue="登入" />
           </div>
           <div className={styles.links}>
-            <a href="#">Forget Password</a>
-            <a href="#">Signup</a>
+            <a href="#/">Forget Password</a>
+            <a href="#/">Signup</a>
           </div>
         </div>
       </div>
