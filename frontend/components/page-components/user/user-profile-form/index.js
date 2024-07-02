@@ -234,14 +234,18 @@ export default function UserProfileForm() {
 
   useEffect(() => {
     if (auth.token) fetchData()
-  }, [auth.token])
+  }, [auth.id])
 
   // render form
   return (
     <>
-      <AutohideSnackbar text="成功訊息" vertical="top" horizontal="center" />
-      {JSON.stringify(profileForm) !== '{}' &&
-      JSON.stringify(addressForm) !== '[]' ? (
+      <AutohideSnackbar
+        open={true}
+        text="成功訊息"
+        vertical="top"
+        horizontal="center"
+      />
+      {JSON.stringify(profileForm) !== '{}' ? (
         <form
           className={styles['user-profile-form']}
           onSubmit={UserProfileFormSubmit}
