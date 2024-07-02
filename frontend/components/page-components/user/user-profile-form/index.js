@@ -16,6 +16,7 @@ import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
 import schemaForm from './schemaForm'
+import AutohideSnackbar from '@/components/UI/snackbar'
 
 export default function UserProfileForm() {
   // state
@@ -233,7 +234,7 @@ export default function UserProfileForm() {
 
   useEffect(() => {
     if (auth.token) fetchData()
-  }, [auth.token])
+  }, [auth.id])
 
   // render form
   return (
@@ -244,8 +245,7 @@ export default function UserProfileForm() {
         vertical="top"
         horizontal="center"
       />
-      {JSON.stringify(profileForm) !== '{}' &&
-      JSON.stringify(addressForm) !== '[]' ? (
+      {JSON.stringify(profileForm) !== '{}' ? (
         <form
           className={styles['user-profile-form']}
           onSubmit={UserProfileFormSubmit}
