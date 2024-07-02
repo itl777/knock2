@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import 'bootstrap/dist/css/bootstrap.css'
+import IndexLayout from '@/components/layout'
+import ListSection from '@/components/page-components/products/list-section'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import PdFilter from '@/components/page-components/products/list-section/pd-filter'
 import PdCard from '@/components/page-components/products/list-section/pd-card'
-import IndexLayout from '@/components/layout'
 
 export default function ProductList() {
   const [data, setData] = useState([])
@@ -13,8 +13,6 @@ export default function ProductList() {
     fetch(`http://127.0.0.1:3001/products?page=${page}`)
       .then((r) => r.json())
       .then((data) => {
-        // console.log(data.data.rows)
-        // setData(data.data.rows)
         console.log(data.data)
         setData(data.data)
       })
@@ -23,21 +21,14 @@ export default function ProductList() {
 
   return (
     <>
-      <IndexLayout pageName="product">
-        <Breadcrumb />
-
-        <PdFilter />
-
-        <PdCard data={data} setPage={setPage} />
-
-        <style jsx global>
-          {`
-            .container {
-              max-width: 1200px;
-              margin-bottom: 5rem;
-            }
-          `}
-        </style>
+      <IndexLayout pageName="product" background="light">
+        <ListSection
+          data={data}
+          setPage={setPage}
+          top={<Breadcrumb />}
+          filter={<PdFilter />}
+          card={<PdCard data={data} setPage={setPage} />}
+        />
       </IndexLayout>
     </>
   )

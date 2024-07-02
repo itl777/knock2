@@ -1,0 +1,25 @@
+.grid{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    justify-content: space-around;
+
+}
+.pd-card {
+    width: 260px;
+    background-color: white;
+    border-radius: 12px;
+    border: 1px solid #D9D9D9;
+  }
+  .img-div {
+    width: 100%;
+    position: relative;
+  }
+  .card-text {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .gap{
+    gap: 10px;
+padding: 10px 0;
+  }

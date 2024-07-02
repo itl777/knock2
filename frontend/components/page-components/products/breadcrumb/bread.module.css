@@ -1,0 +1,11 @@
+.font {
+  font-family: 'Noto Serif JP';
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2.16px;
+}
+
+.bread {
+  gap: 8px;
+  padding: 20px 80px;
+}

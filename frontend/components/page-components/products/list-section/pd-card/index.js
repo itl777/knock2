@@ -26,17 +26,9 @@ export default function PdCard({ data, setPage }) {
         {`
           .d-grid {
             grid-template-columns: auto auto auto;
-          }
-          .card-btn {
-            border: 2px solid black;
-            width: 270px;
-          }
-
-          .buy-btn-outer:first-child {
-            border-right: 2px solid black;
-          }
-          .card {
-            margin: 2.2rem;
+            max-width:1200px;
+            padding:0;
+            margin:auto;
           }
         `}
       </style>

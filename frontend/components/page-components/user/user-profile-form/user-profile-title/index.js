@@ -6,6 +6,7 @@ export default function UserProfileFormTitle({ text = '' }) {
         .title {
           width: 100%;
           padding-bottom: 10px;
+          margin-bottom: 20px;
           border-bottom: 1px solid #d9d9d9;
         }
       `}</style>

@@ -1,0 +1,51 @@
+@import '@/styles/variables.scss';
+
+$box-shadow: #80bfff;
+$border-color: #3399ff;
+$border: #dae2ed;
+$color: #1c2025;
+
+.formItem {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  @media screen and (min-width: 768px) {
+    flex-direction: row;
+    gap: 0px;
+  }
+  justify-content: center;
+  align-items: flex-start;
+  align-self: stretch;
+
+  .myLabel {
+    width: 100%;
+    @include font-p;
+    width: 7.5rem;
+    height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .myDiv {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .birthday {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      @media screen and (max-width: 768px) {
+        flex-direction: column;
+      }
+    }
+
+    .errorText {
+      @include font-small;
+      height: 25px;
+      padding-left: 1rem;
+      color: #a43131;
+    }
+  }
+}

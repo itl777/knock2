@@ -46,7 +46,11 @@ export function AuthContextProvider({ children }) {
     if (auth.token) {
       return { Authorization: 'Bearer ' + auth.token }
     } else {
-      return {}
+      // 用戶如果在需要檢核登入狀態的地方重刷頁面，先檢查 localStorage
+      const str = localStorage.getItem(storageKey)
+      if (!str) return {} // 如果還是沒登入狀態就返回空值
+      const { token } = JSON.parse(str)
+      return { Authorization: 'Bearer ' + token }
     }
   }
 
@@ -73,10 +77,10 @@ export function AuthContextProvider({ children }) {
         })
       if (data?.id && data?.token) {
         setAuth(data)
-        setAuthState(false);
+        setAuthState(false)
       }
     } catch (ex) {
-      console.log(ex)
+      console.error(ex)
     }
   }, [])
 
