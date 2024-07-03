@@ -7,11 +7,16 @@ import Image from 'next/image'
 // 改顏色
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '@/context/theme'
+import { useProduct } from '@/context/product-context'
 
-export default function MyPagination({ totalPages, setPage }) {
+export default function MyPagination({ totalPages }) {
+  const { router } = useProduct()
+
   const handlePageChange = (event, value) => {
-    // console.log('MyPagination', value)
-    setPage(value)
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, page: value },
+    })
   }
 
   const CustomPrevious = () => (

@@ -9,35 +9,19 @@ import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import ProductTabList from './product-tab-list'
 import myStyle from './favorite-tab.module.css'
 import AppsIcon from '@mui/icons-material/Apps'
-import { color } from 'framer-motion'
 import MyPagination from '../../pagination'
+import { useProduct } from '@/context/product-context'
 
 export default function FavoriteTab() {
+  // ----MUI
   const [value, setValue] = useState('1')
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
   }
+  // ----MUI
 
-  const [data, setData] = useState([])
-  const [page, setPage] = useState(1)
-
-  useEffect(() => {
-    fetch(`http://127.0.0.1:3001/products/favorite?page=${page}`)
-      .then((r) => r.json())
-      .then((data) => {
-        console.log('FavoriteTab', data)
-        //   {
-        //     "success": true,
-        //     "page": 1,
-        //     "totalRows": 5,
-        //     "totalPages": 1,
-        //     "rows": [ 每筆obj資料 ]
-        // }
-        setData(data)
-        window.scrollTo({ top: 0, behavior: 'auto' })
-      })
-  }, [page])
+  const { data } = useProduct()
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -64,7 +48,7 @@ export default function FavoriteTab() {
         <TabPanel value="1">
           {/* 一般卡片列表 */}
           <ProductTabList favData={data} />
-          <MyPagination totalPages={data.totalPages} setPage={setPage} />
+          <MyPagination totalPages={data.totalPages} />
         </TabPanel>
 
         <TabPanel value="2">
