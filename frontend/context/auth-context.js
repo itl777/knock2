@@ -12,9 +12,12 @@ const emptyAuth = {
 // component
 export function AuthContextProvider({ children }) {
   const [auth, setAuth] = useState({ ...emptyAuth })
-  const [authState, setAuthState] = useState(true)
 
   const login = async (account, password) => {
+    const output = {
+      success: false,
+      error: '',
+    }
     try {
       const r = await fetch(JWT_LOGIN_POST, {
         method: 'POST',
@@ -27,11 +30,17 @@ export function AuthContextProvider({ children }) {
       if (result.success) {
         // token 和用戶的相關資料存到 localStorage
         localStorage.setItem(storageKey, JSON.stringify(result.data))
-
         // 變更狀態
         setAuth(result.data)
+
+        // 回傳給登入視窗
+        output.success = true
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
       }
-      return result.success
     } catch (ex) {
       return false
     }
@@ -77,7 +86,6 @@ export function AuthContextProvider({ children }) {
         })
       if (data?.id && data?.token) {
         setAuth(data)
-        setAuthState(false)
       }
     } catch (ex) {
       console.error(ex)
@@ -85,9 +93,7 @@ export function AuthContextProvider({ children }) {
   }, [])
 
   return (
-    <AuthContext.Provider
-      value={{ login, logout, auth, authState, getAuthHeader }}
-    >
+    <AuthContext.Provider value={{ login, logout, auth, getAuthHeader }}>
       {children}
     </AuthContext.Provider>
   )

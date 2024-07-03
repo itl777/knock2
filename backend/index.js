@@ -49,11 +49,11 @@ app.post("/login-jwt", upload.none(), async (req, res) => {
   const output = {
     success: false,
     code: 0,
-    body: req.body,
+    error: "",
     data: {
       id: 0,
-      account: "",
       nickname: "",
+      avatar: "",
       token: "",
     },
   };
@@ -64,6 +64,7 @@ app.post("/login-jwt", upload.none(), async (req, res) => {
   if (!rows.length) {
     // 帳號是錯的
     output.code = 400;
+    output.error = "帳號或密碼錯誤";
     return res.json(output);
   }
 
@@ -71,7 +72,8 @@ app.post("/login-jwt", upload.none(), async (req, res) => {
   if (!result) {
     // 密碼是錯的
     output.code = 420;
-    return res, json(output);
+    output.error = "帳號或密碼錯誤";
+    return res.json(output);
   }
 
   output.success = true;
@@ -85,7 +87,6 @@ app.post("/login-jwt", upload.none(), async (req, res) => {
 
   output.data = {
     id: rows[0].user_id,
-    account: rows[0].account,
     nickname: rows[0].nick_name,
     avatar: rows[0].avatar,
     token,

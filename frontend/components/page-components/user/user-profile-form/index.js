@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 // context
 import { useAuth } from '@/context/auth-context'
 import { API_SERVER } from '@/configs/api-path'
-
+import { useSnackbar } from '@/context/snackbar-context'
 // styles
 import styles from './user-profile-form.module.scss'
 
@@ -15,11 +15,12 @@ import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
 import schemaForm from './schemaForm'
-import AutohideSnackbar from '@/components/UI/snackbar'
 
 export default function UserProfileForm() {
-  // state
+  // useContext
   const { auth, getAuthHeader } = useAuth()
+  const { openSnackbar } = useSnackbar()
+  // state
   const [profileForm, setProfileForm] = useState({})
   const [addressValue, setAddressValue] = useState({})
   const [addressForm, setAddressForm] = useState([])
@@ -33,7 +34,6 @@ export default function UserProfileForm() {
     months: [],
     dates: [],
   })
-
   const [profileFormErrors, setProfileFormErrors] = useState({
     name: '',
     nick_name: '',
@@ -166,7 +166,8 @@ export default function UserProfileForm() {
       if (data.success) {
         // 清除 Error 文字
         setProfileFormErrors(newProfileFormErrors)
-        // TODO?
+        // TODO
+        openSnackbar('編輯成功！', 'success')
       } else {
         console.error(data.error)
       }
@@ -216,8 +217,6 @@ export default function UserProfileForm() {
           const values = data.address.find((v) => v.type === '1').id
           setAddressValue({ address_id: values })
         }
-      } else {
-        console.error(data.error)
       }
     } catch (error) {
       console.error(`fetch-Error: ${error}`)
@@ -226,17 +225,13 @@ export default function UserProfileForm() {
 
   useEffect(() => {
     if (auth.id) fetchData()
+    // 下面這行 讓eslint略過一行檢查
+    // eslint-disable-next-line
   }, [auth.id])
 
   // render form
   return (
     <>
-      <AutohideSnackbar
-        open={true}
-        text="成功訊息"
-        vertical="top"
-        horizontal="center"
-      />
       {JSON.stringify(profileForm) !== '{}' ? (
         <form
           className={styles['user-profile-form']}

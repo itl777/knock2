@@ -6,23 +6,36 @@ import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownR
 
 export default function Select02({
   name = '',
-  value = '',
+  value = 'placeholder',
   placeholder = '',
   options = [],
   onChange = () => {},
 }) {
+  if (!Array.isArray(options)) {
+    console.error('options不是陣列，請確認', options)
+    return
+  }
+  if (options.length === 0) {
+    value = 'placeholder'
+  }
   return (
     <>
       <ThemeProvider theme={customTheme}>
         <Select
           name={name}
           value={value}
-          placeholder={placeholder}
           onChange={onChange}
           IconComponent={KeyboardArrowDownRoundedIcon}
         >
+          {value === 'placeholder' && placeholder ? (
+            <MenuItem value="placeholder" disabled>
+              {placeholder}
+            </MenuItem>
+          ) : (
+            ''
+          )}
           {options.map((v, i) => (
-            <MenuItem key={i} value={v.value}>
+            <MenuItem key={i} value={v.value} disabled={v.disabled}>
               {v.text}
             </MenuItem>
           ))}

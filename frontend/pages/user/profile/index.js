@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/auth-context'
+import { SnackbarContextProvider } from '@/context/snackbar-context'
 
 import IndexLayout from '@/components/layout'
 import UserTab from '@/components/UI/user-tab'
@@ -9,18 +10,18 @@ import UserProfileForm from '@/components/page-components/user/user-profile-form
 
 export default function Profile() {
   const router = useRouter()
-  const { auth, authState } = useAuth()
+  const { auth } = useAuth()
 
   useEffect(() => {
-    if (authState || !router.isReady) return
+    if (!router.isReady) return
     if (!auth.id) {
       router.push('/')
     }
-  }, [auth, router])
+  }, [auth.id, router.isReady])
 
   return (
     <>
-      <IndexLayout title="商品訂單" background="light">
+      <IndexLayout title="會員中心" background="light">
         <UserLayout userTab={<UserTab />} sectionRight={<UserProfileForm />} />
       </IndexLayout>
     </>

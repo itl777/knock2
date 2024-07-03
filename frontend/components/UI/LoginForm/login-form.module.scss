@@ -1,0 +1,71 @@
+@import '@/styles/variables.scss';
+
+.login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  width: 450px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 1.875rem;
+  border-radius: 1rem;
+  border: 1px solid #000;
+  background-color: #343434;
+  padding: 50px;
+  z-index: 10;
+  color: #ffffff;
+  @include font-small;
+  .title {
+    width: 100%;
+    h3 {
+      @include font-h3;
+    }
+  }
+  a {
+    color: #ffffff;
+    text-decoration: none;
+  }
+
+  .inputBx {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    span {
+      padding: 0px 15px;
+    }
+    .errorText {
+      color: #f54747;
+    }
+
+    input {
+      width: 100%;
+
+      background: transparent;
+
+      &[type='submit'] {
+        width: 100%;
+        border-radius: 20px;
+        padding: 10px 53px;
+        background: #bcbcbc;
+        border: none;
+        cursor: pointer;
+      }
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+
+  .links {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
