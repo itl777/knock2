@@ -16,7 +16,8 @@ export default function Profile() {
     if (!auth.id) {
       router.push('/')
     }
-  }, [])
+  }, [auth, router])
+
   return (
     <>
       <IndexLayout title="商品訂單" background="light">

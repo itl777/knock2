@@ -37,7 +37,8 @@ export default function Navbar({ pageName }) {
     }, 1000)
   }
 
-  const handleMouseOver = () => {
+  const handleMouseOver = (event) => {
+    event.preventDefault()
     login('test@test.com', '123456')
 
     clearTimeout(timeOutRef.current)
@@ -73,7 +74,7 @@ export default function Navbar({ pageName }) {
               </Link>
             </li>
             <li>
-              <Link href="#/" onClick={handleMouseOver}>
+              <Link href="" onClick={handleMouseOver}>
                 {auth.id ? (
                   <Avatar
                     size="md"
@@ -81,13 +82,6 @@ export default function Navbar({ pageName }) {
                     alt={auth.nickname}
                     src={
                       auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''
-                    }
-                    sx={
-                      {
-                        // border: '5px sold #fff',
-                        // width: 24,
-                        // height: 24,
-                      }
                     }
                   />
                 ) : (

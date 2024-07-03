@@ -38,7 +38,7 @@ app.use((req, res, next) => {
     try {
       req.my_jwt = jwt.verify(token, process.env.JWT_KEY);
     } catch (ex) {
-      console.log(ex);
+      console.error(ex);
     }
   }
   next();
@@ -118,7 +118,6 @@ app.use("/users", users);
 app.use("/orders", orders);
 app.use("/user/orders", orderDetails);
 app.use("/checkout", checkout);
-
 
 // 偵聽 port
 app.listen(3001, function () {

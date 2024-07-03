@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { z } from 'zod'
 
 // context
 import { useAuth } from '@/context/auth-context'
@@ -64,13 +63,6 @@ export default function UserProfileForm() {
         getBirthdayOptions(year, month)
       }
       return
-    }
-
-    // 做表單驗證
-    const schemaEmail = z.string().email({ message: '請填寫正確Email格式' })
-
-    if (e.target.name === 'account') {
-      const result = schemaEmail.safeParse()
     }
 
     const newForm = { ...profileForm, [name]: value }
@@ -233,7 +225,7 @@ export default function UserProfileForm() {
   }
 
   useEffect(() => {
-    if (auth.token) fetchData()
+    if (auth.id) fetchData()
   }, [auth.id])
 
   // render form

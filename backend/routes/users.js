@@ -96,7 +96,6 @@ router.post("/api", async (req, res) => {
     success: false,
     error: 0,
     users: {},
-    address: {},
   };
 
   if (!req.my_jwt?.id) {
@@ -134,7 +133,9 @@ router.post("/api", async (req, res) => {
 
   output.success = true;
   output.users = users[0];
-  output.address = address;
+  if (address.length !== 0) {
+    output.address = address;
+  }
   res.json(output);
 });
 

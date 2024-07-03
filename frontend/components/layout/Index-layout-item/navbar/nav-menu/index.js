@@ -30,7 +30,7 @@ export default function NavMenu({ show = '' }) {
             <span>{auth.nickname}</span>
           </li>
           <li>
-            <Link href="#/" onClick={logout}>
+            <Link href="" onClick={logout}>
               <MdLogout />
               <span>登出</span>
             </Link>
