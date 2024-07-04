@@ -48,7 +48,7 @@ export default function FavoriteTab() {
         <TabPanel value="1">
           {/* 一般卡片列表 */}
           <ProductTabList favData={data} />
-          <MyPagination totalPages={data.totalPages} />
+          <MyPagination />
         </TabPanel>
 
         <TabPanel value="2">
