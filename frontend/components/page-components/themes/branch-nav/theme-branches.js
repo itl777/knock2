@@ -48,7 +48,7 @@ export default function ThemeBranches() {
   }, [selectedBranch])
 
   const handleChange = (event, newValue) => {
-    setSelectedBranch(newValue) // 更新选中的分店
+    setSelectedBranch(newValue) // 更新分店
   }
 
   return (
@@ -184,7 +184,7 @@ export default function ThemeBranches() {
           </div>
           <div>
             {data2.branches
-              .filter((branch) => branch.branch_id === 3)
+              .filter((branch) => branch.branch_id === 1)
               .map((branch) => (
                 <GoogleMap
                   key={branch.branch_id}
@@ -248,20 +248,19 @@ export default function ThemeBranches() {
               />
             ))}
           </div>
-          <div>
-            {data2.branches
-              .filter((branch) => branch.branch_id === 1)
-              .map((branch) => (
-                <GoogleMap
-                  key={branch.branch_id}
-                  branchName={branch.branch_name}
-                  openTime={branch.open_time}
-                  closeTime={branch.close_time}
-                  branchPhone={branch.branch_phone}
-                  branchAddress={branch.branch_address}
-                />
-              ))}
-          </div>
+
+          {data2.branches
+            .filter((branch) => branch.branch_id === 3)
+            .map((branch) => (
+              <GoogleMap
+                key={branch.branch_id}
+                branchName={branch.branch_name}
+                openTime={branch.open_time}
+                closeTime={branch.close_time}
+                branchPhone={branch.branch_phone}
+                branchAddress={branch.branch_address}
+              />
+            ))}
         </TabPanel>
       </Tabs>
     </div>

@@ -169,14 +169,15 @@ export default function Card02({
               }
             >
               <span>立即預訂</span>
+
+              <Image
+                src="/components/arrow-special.svg"
+                alt=""
+                width={49}
+                height={16}
+                className={styles['arrow']}
+              />
             </Link>
-            <Image
-              src="/components/arrow-special.svg"
-              alt=""
-              width={49}
-              height={16}
-              className={styles['arrow']}
-            />
           </Typography>
         </CardContent>
       </CardOverflow>
