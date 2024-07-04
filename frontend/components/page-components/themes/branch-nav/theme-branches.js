@@ -13,6 +13,10 @@ export default function ThemeBranches() {
     success: false,
     themes: [],
   })
+  const [data2, setData2] = useState({
+    success: false,
+    branches: [],
+  })
   const [selectedBranch, setSelectedBranch] = useState(1) // 默认选择第一个分店
 
   useEffect(() => {
@@ -28,14 +32,7 @@ export default function ThemeBranches() {
       .catch((error) => {
         console.error('Error fetching themes:', error)
       })
-  }, [selectedBranch])
 
-  const [data2, setData2] = useState({
-    success: false,
-    branches: [],
-  })
-
-  useEffect(() => {
     fetch(BRANCH_LIST)
       .then((response) => response.json())
       .then((data) => {
@@ -48,7 +45,7 @@ export default function ThemeBranches() {
       .catch((error) => {
         console.error('Error fetching branches:', error)
       })
-  }, [])
+  }, [selectedBranch])
 
   const handleChange = (event, newValue) => {
     setSelectedBranch(newValue) // 更新选中的分店
@@ -185,6 +182,20 @@ export default function ThemeBranches() {
               />
             ))}
           </div>
+          <div>
+            {data2.branches
+              .filter((branch) => branch.branch_id === 3)
+              .map((branch) => (
+                <GoogleMap
+                  key={branch.branch_id}
+                  branchName={branch.branch_name}
+                  openTime={branch.open_time}
+                  closeTime={branch.close_time}
+                  branchPhone={branch.branch_phone}
+                  branchAddress={branch.branch_address}
+                />
+              ))}
+          </div>
         </TabPanel>
 
         {/* TabPanel for 台中店 */}
@@ -204,6 +215,20 @@ export default function ThemeBranches() {
               />
             ))}
           </div>
+          <div>
+            {data2.branches
+              .filter((branch) => branch.branch_id === 2)
+              .map((branch) => (
+                <GoogleMap
+                  key={branch.branch_id}
+                  branchName={branch.branch_name}
+                  openTime={branch.open_time}
+                  closeTime={branch.close_time}
+                  branchPhone={branch.branch_phone}
+                  branchAddress={branch.branch_address}
+                />
+              ))}
+          </div>
         </TabPanel>
 
         {/* TabPanel for 台北店 */}
@@ -222,16 +247,20 @@ export default function ThemeBranches() {
                 themeTime={theme.theme_time}
               />
             ))}
-            {data2.branches.map((branch) => (
-              <GoogleMap
-                key={branch.branch_id}
-                branchName={branch.branch_name}
-                openTime={branch.open_time}
-                closeTime={branch.close_time}
-                branchPhone={branch.branch_phone}
-                branchAddress={branch.branch_address}
-              />
-            ))}
+          </div>
+          <div>
+            {data2.branches
+              .filter((branch) => branch.branch_id === 1)
+              .map((branch) => (
+                <GoogleMap
+                  key={branch.branch_id}
+                  branchName={branch.branch_name}
+                  openTime={branch.open_time}
+                  closeTime={branch.close_time}
+                  branchPhone={branch.branch_phone}
+                  branchAddress={branch.branch_address}
+                />
+              ))}
           </div>
         </TabPanel>
       </Tabs>

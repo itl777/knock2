@@ -45,7 +45,7 @@ export default function GoogleMap({
               color: '#D9D9D9',
             }}
           >
-            營業時間 {openTime}-{closeTime}（預約洽詢時間）
+            營業時間&nbsp; {openTime}-{closeTime}（預約洽詢時間）
           </li>
           <li
             style={{
@@ -53,9 +53,11 @@ export default function GoogleMap({
               color: '#D9D9D9',
             }}
           >
-            電話: {branchPhone}
+            電話 &nbsp;&ensp;&ensp;&ensp; {branchPhone}
           </li>
-          <li style={{ color: '#D9D9D9' }}>地址: {branchAddress}</li>
+          <li style={{ color: '#D9D9D9' }}>
+            地址 &nbsp;&ensp;&ensp;&ensp; {branchAddress}
+          </li>
         </ul>
       </div>
       <iframe

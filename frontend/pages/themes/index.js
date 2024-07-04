@@ -5,25 +5,25 @@ import IndexLayout from '@/components/layout'
 import { BRANCH_LIST } from '@/configs/api-path'
 
 export default function ThemeList() {
-  const [data, setData] = useState({
-    success: false,
-    branches: [],
-  })
+  // const [data, setData] = useState({
+  //   success: false,
+  //   branches: [],
+  // })
 
-  useEffect(() => {
-    fetch(BRANCH_LIST)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Branch Data:', data)
-        setData({
-          success: true,
-          branches: data.branches,
-        })
-      })
-      .catch((error) => {
-        console.error('Error fetching branches:', error)
-      })
-  }, [])
+  // useEffect(() => {
+  //   fetch(BRANCH_LIST)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log('Branch Data:', data)
+  //       setData({
+  //         success: true,
+  //         branches: data.branches,
+  //       })
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error fetching branches:', error)
+  //     })
+  // }, [])
 
   return (
     <>
@@ -34,7 +34,7 @@ export default function ThemeList() {
         </div>
         <div className="container">
           <div className="row">
-            {data.branches.map((branch) => (
+            {/* {data.branches.map((branch) => (
               <div key={branch.branch_id} className="col-lg-4 col-md-6 mb-4">
                 <GoogleMap
                   branchName={branch.branch_name}
@@ -44,7 +44,7 @@ export default function ThemeList() {
                   branchAddress={branch.branch_address}
                 />
               </div>
-            ))}
+            ))} */}
           </div>
         </div>
       </IndexLayout>
