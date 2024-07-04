@@ -3,7 +3,14 @@
     margin:auto;
     border: 1px solid #B99755;
     color:#B99755;
-    background-color: #000;
+    /* background-color: #000; */
+    background: url('/bg-dark.png') no-repeat;
+    background-size: cover;
+}
+
+.pageTitle{
+    text-align: center;
+    padding: 36px 0;
 }
 
 .borderbox{
