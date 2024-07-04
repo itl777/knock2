@@ -11,6 +11,7 @@ export const PRODUCT_IMG = `${API_SERVER}/images`
 
 // order & checkout
 export const ORDER_LIST_GET = `${API_SERVER}/orders`
+export const ORDER_DETAILS_GET = `${API_SERVER}/orders`
 export const CART_POST = `${API_SERVER}/checkout/api/cart_member`
 // export const CART_GUEST_POST = `${API_SERVER}/checkout/api/cart_guest`
 export const CART_GUEST_GET = `${API_SERVER}/checkout//api/product`

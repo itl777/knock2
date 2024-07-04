@@ -112,7 +112,8 @@ export default function CheckOutPage() {
     try {
       const response = await axios.post(CHECKOUT_POST, dataToSubmit)
       if (response.data.success) {
-        router.push('/checkout/success') // 跳轉至付款成功畫面
+        const orderId = response.data.orderId // 取得後端返回的 order_id
+        router.push(`/checkout/success?order_id=${orderId}`) // 跳轉至付款成功畫面，並將 order_id 傳遞
         clearCart()
       }
     } catch (error) {

@@ -14,8 +14,8 @@ export default function OrderListCards({ orderStatusId }) {
   const [orderData, setOrderData] = useState([])
   const [orderDetailData, setOrderDetailData] = useState([])
   const { auth } = useAuth()
-  const router = useRouter()
-  
+  // const router = useRouter()
+
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -39,7 +39,6 @@ export default function OrderListCards({ orderStatusId }) {
 
     fetchOrders()
   }, [auth.id, orderStatusId])
-
 
   return (
     <>
