@@ -30,7 +30,7 @@ const getListDate = async (req) => {
   if (idSearch) {
     const idSearch_ = db.escape(`${idSearch}`);
     where += `AND ( \`product_id\` LIKE ${idSearch_} ) `;
-    console.log("where:", where);
+    // console.log("where:", where);
   }
 
   // 類別篩選

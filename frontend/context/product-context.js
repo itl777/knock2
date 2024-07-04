@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { PRODUCT_FAVORITE, PRODUCT_LIST } from '@/configs/api-path'
 
 const ProductContext = createContext()
 
@@ -20,7 +21,7 @@ export const ProductProvider = ({ children }) => {
 
   const getFavorite = async (page) => {
     page = page || 1
-    const url = `http://127.0.0.1:3001/products/favorite?page=${page}`
+    const url = `${PRODUCT_FAVORITE}?page=${page}`
     try {
       const res = await fetch(url)
       const resData = await res.json()
@@ -40,7 +41,7 @@ export const ProductProvider = ({ children }) => {
     //   })
     // }
     page = page || 1
-    const url = `http://127.0.0.1:3001/products?page=${page}`
+    const url = `${PRODUCT_LIST}?page=${page}`
     try {
       const res = await fetch(url)
       const resData = await res.json()
