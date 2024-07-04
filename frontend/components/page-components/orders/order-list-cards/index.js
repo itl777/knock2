@@ -1,6 +1,7 @@
 // 我的訂單頁面
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { useAuth } from '@/context/auth-context'
 import styles from './order-list-cards.module.css'
 import FilterBtn from '@/components/UI/filter-btn'
 import OrderStatusTag from '../order-status-tag'
@@ -12,15 +13,14 @@ import { FiShoppingBag, FiCreditCard, FiPackage } from 'react-icons/fi'
 export default function OrderListCards({ orderStatusId }) {
   const [orderData, setOrderData] = useState([])
   const [orderDetailData, setOrderDetailData] = useState([])
-  const memberId = 1 // 暫時設定會員 id
-
+  const { auth } = useAuth()
   const router = useRouter()
   
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          `${ORDER_LIST_GET}?member_id=${memberId}&order_status_id=${orderStatusId}`
+          `${ORDER_LIST_GET}?member_id=${auth.id}&order_status_id=${orderStatusId}`
         )
 
         if (!response.ok) {
@@ -38,7 +38,7 @@ export default function OrderListCards({ orderStatusId }) {
     }
 
     fetchOrders()
-  }, [memberId, orderStatusId])
+  }, [auth.id, orderStatusId])
 
 
   return (

@@ -1,9 +1,10 @@
-// PAGE Checkout Page Body
+// checkout page
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import styles from './checkout-page.module.css'
-import { useCart, loginMemberId } from '@/context/cart-context'
+import { useCart } from '@/context/cart-context'
+import { useAuth } from '@/context/auth-context'
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
 import HDivider from '@/components/UI/divider/horizontal-divider'
@@ -16,14 +17,13 @@ import OrderInputBox from '../../orders/order-input-box'
 import NoData from '@/components/UI/no-data'
 import { PRODUCT_IMG, CHECKOUT_GET, CHECKOUT_POST } from '@/configs/api-path'
 
-
 export default function CheckOutPage() {
   const router = useRouter()
-  const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
+  const { auth } = useAuth() // 取得 auth.id
   const [memberAddress, setMemberAddress] = useState([])
   const [deliverFee, setDeliverFee] = useState(120)
   const [formData, setFormData] = useState({
-    memberId: loginMemberId,
+    memberId: 0,
     recipientName: '',
     recipientMobile: '',
     recipientDistrictId: 1,
@@ -36,19 +36,19 @@ export default function CheckOutPage() {
   })
 
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
-  const { checkoutItems, checkoutTotal, handleQuantityChange } = useCart()
+  const { checkoutItems, checkoutTotal, handleQuantityChange, clearCart } =
+    useCart()
 
   // 取得會員地址
   const fetchMemberAddress = async () => {
     try {
-      const response = await fetch(`${CHECKOUT_GET}?member_id=${loginMemberId}`)
+      const response = await fetch(`${CHECKOUT_GET}?member_id=${auth.id}`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch member address')
       }
 
       const data = await response.json()
-      console.log(data)
       const updatedMemberAddress = data.memberAddresses.map((v) => ({
         ...v,
         selected: false,
@@ -59,26 +59,21 @@ export default function CheckOutPage() {
         updatedMemberAddress.find((v) => v.type == 1) || updatedMemberAddress[0]
       defaultAddress.selected = true
 
-      const defaultIndex = updatedMemberAddress.findIndex(
-        (v, i) => v.type === 1
-      )
-
       setMemberAddress(updatedMemberAddress)
-
-      console.log('updatedMemberAddress', updatedMemberAddress)
     } catch (error) {
       console.log('Error member address:', error)
     }
   }
 
   useEffect(() => {
-    fetchMemberAddress()
-  }, [loginMemberId])
+    if (auth.id) {
+      fetchMemberAddress()
+    }
+  }, [auth.id])
 
   // 更新已經選擇的地址
   const handleAddressSelected = (address) => {
     setMemberAddress(address)
-    console.log('CheckOutPage receive selected address array: ', address)
   }
 
   // 控制表單輸入欄位，更新 formData
@@ -93,9 +88,9 @@ export default function CheckOutPage() {
   // 送出表單
   const handleSubmit = async (e) => {
     e.preventDefault()
+
     // 取得收件人資料
     const recipientData = memberAddress.filter((v) => v.selected === true)
-    console.log('recipientData', recipientData)
 
     // 將 checkoutItems 轉換為 orderItems 格式
     const orderItems = checkoutItems.map((item) => ({
@@ -106,6 +101,7 @@ export default function CheckOutPage() {
 
     const dataToSubmit = {
       ...formData,
+      memberId: auth.id,
       recipientName: recipientData[0].recipient_name, // 收件人姓名
       recipientMobile: recipientData[0].mobile_phone, // 收件人手機號碼
       recipientDistrictId: recipientData[0].district_id, // 收件人區域 ID
@@ -115,9 +111,9 @@ export default function CheckOutPage() {
 
     try {
       const response = await axios.post(CHECKOUT_POST, dataToSubmit)
-      console.log(response.data)
       if (response.data.success) {
         router.push('/checkout/success') // 跳轉至付款成功畫面
+        clearCart()
       }
     } catch (error) {
       console.error('提交表單時出錯', error)
@@ -130,7 +126,6 @@ export default function CheckOutPage() {
   const openModal = async () => {
     await fetchMemberAddress()
     setIsModalOpen(true)
-
   }
 
   const closeModal = () => {
@@ -252,7 +247,7 @@ export default function CheckOutPage() {
         modalBody={
           <RecipientModalBody
             handleClose={closeModal}
-            memberId={loginMemberId}
+            memberId={auth.id}
             memberAddress={memberAddress}
             fetchMemberAddress={fetchMemberAddress}
             onSelectedAddress={handleAddressSelected}
