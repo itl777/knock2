@@ -1,5 +1,6 @@
 .vscode/
 frontend/.env
+frontend/dev.env
 backend/package-lock.json
 _trash/
 *.bak
