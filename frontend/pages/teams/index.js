@@ -72,10 +72,10 @@ export default function TeamListTest() {
   return (
     <>
       <IndexLayout title="糾團">
-        <div>
-          <h2>糾團頁面</h2>
-        </div>
         <div className={styles.teamsPage}>
+          <div className={styles.pageTitle}>
+            <h2>糾團頁面</h2>
+          </div>
           <div className="container">
             <div className="row">
               <h4>團隊一覽</h4>
@@ -119,8 +119,10 @@ export default function TeamListTest() {
                             狀態：招募中
                           </div>
                         </div>
-                        <div style={{ textAlign: 'center' }}>
-                          <Link href={`/teamNo/${r.team_id}`}>
+                        <div
+                          style={{ textAlign: 'center', paddingTop: '10px' }}
+                        >
+                          <Link href={`/teams/teamNo/${r.team_id}`}>
                             <PdBtnContained btnText="查看詳情" color="black" />
                           </Link>
                         </div>
