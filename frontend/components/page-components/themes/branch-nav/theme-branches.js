@@ -1,4 +1,4 @@
-import { THEME_LIST } from '@/configs/api-path'
+import { THEME_LIST, BRANCH_LIST } from '@/configs/api-path'
 import { useEffect, useState } from 'react'
 
 import Tabs from '@mui/joy/Tabs'
@@ -6,32 +6,59 @@ import TabList from '@mui/joy/TabList'
 import Tab, { tabClasses } from '@mui/joy/Tab'
 import TabPanel from '@mui/joy/TabPanel'
 import Card02 from '@/components/UI/cards-themes'
+import GoogleMap from '@/components/UI/google-map'
 
 export default function ThemeBranches() {
   const [data, setData] = useState({
     success: false,
     themes: [],
   })
-  const [selectedBranch, setSelectedBranch] = useState(1) // 默認選擇第一個分店
+  const [selectedBranch, setSelectedBranch] = useState(1) // 默认选择第一个分店
 
   useEffect(() => {
     fetch(`${THEME_LIST}?branch_id=${selectedBranch}`)
-      .then((r) => r.json())
+      .then((response) => response.json())
       .then((myData) => {
-        console.log(myData)
-        setData(myData)
+        console.log('Theme Data:', myData)
+        setData({
+          success: true,
+          themes: myData.themes,
+        })
+      })
+      .catch((error) => {
+        console.error('Error fetching themes:', error)
       })
   }, [selectedBranch])
 
-  const handleChange = (e, newValue) => {
-    setSelectedBranch(newValue) // 更新選中的分店
+  const [data2, setData2] = useState({
+    success: false,
+    branches: [],
+  })
+
+  useEffect(() => {
+    fetch(BRANCH_LIST)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Branch Data:', data)
+        setData2({
+          success: true,
+          branches: data.branches,
+        })
+      })
+      .catch((error) => {
+        console.error('Error fetching branches:', error)
+      })
+  }, [])
+
+  const handleChange = (event, newValue) => {
+    setSelectedBranch(newValue) // 更新选中的分店
   }
 
   return (
     <div
       style={{
         display: 'flex',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
       }}
     >
       <Tabs
@@ -48,7 +75,7 @@ export default function ThemeBranches() {
             p: 0.5,
             gap: 6,
             display: 'flex',
-            justifyContent: 'center', // 居中 TabList
+            justifyContent: 'space-evenly', // 居中 TabList
           }}
         >
           <hr
@@ -120,7 +147,7 @@ export default function ThemeBranches() {
               color: '#D9D9D9',
               '&:hover': {
                 backgroundColor: '#D9D9D9 !important',
-                color: '#676767 !重要',
+                color: '#676767 !important',
               },
               [`&.${tabClasses.selected}`]: {
                 color: '#676767',
@@ -140,53 +167,69 @@ export default function ThemeBranches() {
             }}
           />
         </TabList>
+
+        {/* TabPanel for 高雄店 */}
         <TabPanel value={1}>
           <div className="col-12 d-flex flex-row flex-wrap justify-content-center">
-            {data.themes.map((v) => (
+            {data.themes.map((theme) => (
               <Card02
-                key={v['theme_id']}
-                branchName={v['branch_name']}
-                themeImg={v['theme_img']}
-                themeName={v['theme_name']}
-                difficulty={v['difficulty']}
-                introduction={v['introduction']}
-                min_players={v['min_players']}
-                max_players={v['max_players']}
-                themeTime={v['theme_time']}
+                key={theme.theme_id}
+                branchName={theme.branch_name}
+                themeImg={theme.theme_img}
+                themeName={theme.theme_name}
+                difficulty={theme.difficulty}
+                introduction={theme.introduction}
+                min_players={theme.min_players}
+                max_players={theme.max_players}
+                themeTime={theme.theme_time}
               />
             ))}
           </div>
         </TabPanel>
+
+        {/* TabPanel for 台中店 */}
         <TabPanel value={2}>
           <div className="col-12 d-flex flex-row flex-wrap justify-content-center">
-            {data.themes.map((v) => (
+            {data.themes.map((theme) => (
               <Card02
-                key={v['theme_id']}
-                branchName={v['branch_name']}
-                themeImg={v['theme_img']}
-                themeName={v['theme_name']}
-                difficulty={v['difficulty']}
-                introduction={v['introduction']}
-                min_players={v['min_players']}
-                max_players={v['max_players']}
-                themeTime={v['theme_time']}
+                key={theme.theme_id}
+                branchName={theme.branch_name}
+                themeImg={theme.theme_img}
+                themeName={theme.theme_name}
+                difficulty={theme.difficulty}
+                introduction={theme.introduction}
+                min_players={theme.min_players}
+                max_players={theme.max_players}
+                themeTime={theme.theme_time}
               />
             ))}
           </div>
         </TabPanel>
+
+        {/* TabPanel for 台北店 */}
         <TabPanel value={3}>
           <div className="col-12 d-flex flex-row flex-wrap justify-content-center">
-            {data.themes.map((v) => (
+            {data.themes.map((theme) => (
               <Card02
-                key={v['theme_id']}
-                branchName={v['branch_name']}
-                themeImg={v['theme_img']}
-                themeName={v['theme_name']}
-                difficulty={v['difficulty']}
-                introduction={v['introduction']}
-                min_players={v['min_players']}
-                max_players={v['max_players']}
-                themeTime={v['theme_time']}
+                key={theme.theme_id}
+                branchName={theme.branch_name}
+                themeImg={theme.theme_img}
+                themeName={theme.theme_name}
+                difficulty={theme.difficulty}
+                introduction={theme.introduction}
+                min_players={theme.min_players}
+                max_players={theme.max_players}
+                themeTime={theme.theme_time}
+              />
+            ))}
+            {data2.branches.map((branch) => (
+              <GoogleMap
+                key={branch.branch_id}
+                branchName={branch.branch_name}
+                openTime={branch.open_time}
+                closeTime={branch.close_time}
+                branchPhone={branch.branch_phone}
+                branchAddress={branch.branch_address}
               />
             ))}
           </div>

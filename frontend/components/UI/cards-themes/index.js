@@ -1,24 +1,7 @@
-// 用法
-// {data.map((v, i) => {
-//   return (
-//     <Card01
-//       key={v["theme_id"]}
-//       branchName={v["branch_name"]}
-//       themeImg={v["theme_img"]}
-//       themeName={v["theme_name"]}
-//       difficulty={v["difficulty"]}
-//       description={v["description"]}
-//       suitablePlayers={v["suitable_players"]}
-//       themeTime={v["theme_time"]}
-//     />
-//   );
-// })}
-
-import styles from './cards.module.scss'
+import React, { useState } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
-import Link from '@mui/material/Link'
-import { useState } from 'react'
-
+import styles from './cards.module.scss'
 import {
   AspectRatio,
   Card,
@@ -27,7 +10,6 @@ import {
   Typography,
   Box,
 } from '@mui/joy'
-
 import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
 
 export default function Card02({
@@ -52,11 +34,20 @@ export default function Card02({
         return '#222222' // 默認顏色
     }
   }
+
   const [clicked, setClicked] = useState(false)
 
-  const handleClick = () => {
+  const handleClick = (e) => {
+    e.preventDefault()
     setClicked(!clicked)
   }
+
+  const style = {
+    textDecoration: 'none',
+    color: 'black',
+    fontWeight: clicked ? 'bolder' : 'normal',
+  }
+
   return (
     <Card
       variant="plain"
@@ -168,20 +159,16 @@ export default function Card02({
               right: '16px',
             }}
           >
-            <Link href={`?#`} passHref>
-              <Typography
-                sx={{
-                  textDecoration: 'none',
-                  color: '#222222',
-                  fontWeight: clicked ? 'bold' : 'normal',
-                  '&:hover': {
-                    fontWeight: 'bold',
-                  },
-                }}
-                onClick={handleClick}
-              >
-                立即預訂
-              </Typography>
+            <Link
+              href={`?#`}
+              onClick={handleClick}
+              style={style}
+              onMouseEnter={(e) => (e.target.style.fontWeight = 'bold')}
+              onMouseLeave={(e) =>
+                (e.target.style.fontWeight = clicked ? 'bold' : 'normal')
+              }
+            >
+              <span>立即預訂</span>
             </Link>
             <Image
               src="/components/arrow-special.svg"
