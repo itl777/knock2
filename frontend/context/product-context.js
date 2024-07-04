@@ -32,17 +32,48 @@ export const ProductProvider = ({ children }) => {
     }
   }
 
+  const getProductRows = async (page) => {
+    // if (!page) {
+    //   router.push({
+    //     pathname: router.pathname,
+    //     query: { ...router.query, page: 1 },
+    //   })
+    // }
+    page = page || 1
+    const url = `http://127.0.0.1:3001/products?page=${page}`
+    try {
+      const res = await fetch(url)
+      const resData = await res.json()
+      if (resData.success) {
+        setData(resData)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   useEffect(() => {
+    let { page } = router.query
+    if (!page) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, page: 1 },
+      })
+    }
     if (router.isReady) {
-      console.log('router.isReady', router.query)
-      const { page } = router.query
-      getFavorite(page)
+      if (router.asPath.includes('/product/product-favorite')) {
+        getFavorite(page)
+      } else if (router.asPath.includes('/product')) {
+        getProductRows(page)
+      }
     }
     // window.scrollTo({ top: 0, behavior: 'auto' })
   }, [router.query])
 
   return (
-    <ProductContext.Provider value={{ getFavorite, data, router }}>
+    <ProductContext.Provider
+      value={{ getFavorite, getProductRows, data, router }}
+    >
       {children}
     </ProductContext.Provider>
   )

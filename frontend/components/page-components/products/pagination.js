@@ -10,7 +10,7 @@ import theme from '@/context/theme'
 import { useProduct } from '@/context/product-context'
 
 export default function MyPagination({ totalPages }) {
-  const { router } = useProduct()
+  const { router, data } = useProduct()
 
   const handlePageChange = (event, value) => {
     router.push({
@@ -34,7 +34,7 @@ export default function MyPagination({ totalPages }) {
           <Pagination
             onChange={handlePageChange}
             size="large"
-            count={totalPages}
+            count={data.totalPages}
             defaultPage={1}
             color="primary"
             renderItem={(item) => (

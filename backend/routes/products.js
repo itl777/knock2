@@ -144,10 +144,7 @@ router.get("/", async (req, res) => {
     const [category_result] = await db.query(category_sql);
     data.category_result = category_result;
 
-    return res.json({
-      status: "success",
-      data: data,
-    });
+    return res.json(data);
   }
 });
 
