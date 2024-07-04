@@ -14,7 +14,7 @@ export default function Card({ dbData }) {
   // ******* Iris Added Start *******
   // getDeviceId()
   // const { handleBuyClick } = useAddToCart(dbData, loginMemberId)
-  const { handleBuyClick } = useCart()
+  const { handleAddToCart } = useCart()
   // const { handleLogin } = useLogin() // 暫時用不到
   // ******* Iris Added Start End *******
 
@@ -65,8 +65,7 @@ export default function Card({ dbData }) {
 
                 {/* ******* Iris Added Start ******* */}
                 {/* <BuyBtn product_id={dbData.product_id} /> */}
-
-                <BuyBtn2 onClick={() => handleBuyClick(dbData.product_id)} />
+                <BuyBtn2 onClick={() => handleAddToCart(dbData.product_id, 1)} />
 
                 {/* ******* Iris Added End ******* */}
                 {/* </a> */}

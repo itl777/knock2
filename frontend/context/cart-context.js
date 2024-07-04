@@ -81,7 +81,6 @@ export const CartProvider = ({ children }) => {
         }
 
         fetchMemberCart()
-
       } catch (error) {
         console.log('Error updating cart item quantity:', error)
       }
@@ -196,6 +195,80 @@ export const CartProvider = ({ children }) => {
     }
   }
 
+  // 點擊「加入購物車」
+  const handleAddToCart = async (selectedProductId, cartProductQuantity) => {
+    if (auth.id) {
+      try {
+        const response = await axios.post(CART_POST, {
+          memberId: auth.id,
+          productId: selectedProductId,
+          cartQty: cartProductQuantity,
+        })
+
+        if (response.data.success) {
+          fetchMemberCart()
+          alert(
+            `成功加入購物車！！商品：${selectedProductId}，數量：${cartProductQuantity}`
+          )
+        } else {
+          console.error('Failed to add item to cart')
+        }
+      } catch (error) {
+        console.error('Error adding item to cart:', error)
+      }
+    } else {
+      // 「沒」有登入
+      let guestCart = JSON.parse(localStorage.getItem('kkCart')) || []
+      const existingItemIndex = guestCart.findIndex(
+        (v) => v.product_id === selectedProductId
+      )
+
+      // local storage 已存在此商品
+      if (existingItemIndex > -1) {
+        guestCart[existingItemIndex].cart_product_quantity += 1
+      } else {
+        // local storage 「不」存在此商品
+        guestCart.push({
+          // deviceId: kkDeviceId,
+          product_id: selectedProductId,
+          cart_product_quantity: 1,
+        })
+      }
+
+      // 更新 localStorage
+      localStorage.setItem('kkCart', JSON.stringify(guestCart))
+
+      // 取得商品完整訊息並更新 checkoutItems
+      const productDetails = await fetchProductDetails(selectedProductId)
+      if (productDetails) {
+        if (existingItemIndex > -1) {
+          const updatedCheckoutItems = checkoutItems.map((item) =>
+            item.product_id === selectedProductId
+              ? {
+                  ...item,
+                  cart_product_quantity: item.cart_product_quantity + 1,
+                }
+              : item
+          )
+          setCheckoutItems(updatedCheckoutItems)
+          calculateTotal(updatedCheckoutItems)
+        } else {
+          const newProductItem = {
+            product_id: productDetails.product_id,
+            product_name: productDetails.product_name,
+            price: productDetails.price,
+            product_img: productDetails.product_img,
+            cart_product_quantity: 1,
+          }
+
+          const updatedCheckoutItems = [...checkoutItems, newProductItem]
+          setCheckoutItems(updatedCheckoutItems)
+          calculateTotal(updatedCheckoutItems)
+        }
+      }
+    }
+  }
+
   // 初始化購物車
   const clearCart = () => {
     setCheckoutItems([])
@@ -220,6 +293,7 @@ export const CartProvider = ({ children }) => {
         setCheckoutItems,
         checkoutTotal,
         handleBuyClick,
+        handleAddToCart,
         handleQuantityChange,
         clearCart,
       }}
