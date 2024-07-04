@@ -1,86 +1,14 @@
 import express from "express";
-import db from "./../utils/connect.js";
 import moment from "moment-timezone";
-import upload from "../utils/upload-imgs.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import db from "../../utils/connect.js";
+import upload from "../../utils/upload-imgs.js";
+import schemaForm from "./schema-profile.js";
 
 const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 const router = express.Router();
-
-const getListData = async (req) => {
-  let success = false;
-  let redirect = "";
-
-  const perPage = 25; // 每頁最多有幾筆資料
-  let page = parseInt(req.query.page) || 1; // 從 query string 最得 page 的值
-  if (page < 1) {
-    redirect = "?page=1";
-    return { success, redirect }; // 跳轉頁面
-  }
-
-  let search = req.query.search || "";
-  let birth_start = req.query.birth_start || "";
-  let birth_end = req.query.birth_end || "";
-
-  let where = " WHERE 1 "; // 1是true的意思，其實有下跟沒下一樣
-  if (search) {
-    //where += ` AND \`name\` LIKE '%${search}%' `; //沒有處理SQL injection
-
-    where += ` AND (\`name\` LIKE ${db.escape(`%${search}%`)} `; // 這個方法會自動標單引號
-    /* const search_ = `%${search}%`;
-    where+=` AND \`name\` LIKE ${db.escape(search_)} `; */
-
-    where += ` OR \`mobile\` LIKE ${db.escape(`%${search}%`)}) `; // 同一input搜尋多欄
-  }
-
-  if (birth_start) {
-    const m = moment(birth_start);
-    if (m.isValid()) {
-      where += ` AND birthday >= '${m.format(dateFormat)}' `;
-    }
-  }
-
-  if (birth_end) {
-    const m = moment(birth_end);
-    if (m.isValid()) {
-      where += ` AND birthday <= '${m.format(dateFormat)}' `;
-    }
-  }
-
-  const t_sql = `SELECT COUNT(1) totalRows FROM address_book ${where}`;
-  const [[{ totalRows }]] = await db.query(t_sql);
-  let totalPages = 0; // 總頁數, 預設值
-  let rows = []; // 分頁資料
-  if (totalRows) {
-    totalPages = Math.ceil(totalRows / perPage);
-    if (page > totalPages) {
-      redirect = `?page=${totalPages}`;
-      return { success, redirect }; // 跳轉頁面
-    }
-    // 取得分頁資料
-    const sql = `SELECT * FROM \`address_book\` ${where} ORDER BY sid DESC LIMIT ${
-      (page - 1) * perPage
-    },${perPage}`;
-
-    [rows] = await db.query(sql);
-    rows.forEach((item) => {
-      const m = moment(item.birthday);
-      item.birthday = m.isValid() ? m.format(dateFormat) : "";
-    });
-  }
-
-  // res.json({ success, perPage, page, totalRows, totalPages, rows });
-  success = true;
-  return {
-    success,
-    perPage,
-    page,
-    totalRows,
-    totalPages,
-    rows,
-    qs: req.query,
-  };
-};
 
 // // 模擬網路延遲的狀況 middleware
 // router.use((req, res, next) => {
@@ -90,7 +18,72 @@ const getListData = async (req) => {
 //   }, ms);
 // });
 
-// 讀取資料的api
+// 登入功能
+router.post("/login-jwt", upload.none(), async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    data: {
+      id: 0,
+      nickname: "",
+      avatar: "",
+      token: "",
+    },
+  };
+
+  const sql = "SELECT * FROM users WHERE account=?";
+  const [rows] = await db.query(sql, [req.body.account]);
+
+  if (!rows.length) {
+    // 帳號是錯的
+    output.code = 400;
+    output.error = "帳號或密碼錯誤";
+    return res.json(output);
+  }
+
+  const result = await bcrypt.compare(req.body.password, rows[0].password);
+  if (!result) {
+    // 密碼是錯的
+    output.code = 420;
+    output.error = "帳號或密碼錯誤";
+    return res.json(output);
+  }
+
+  output.success = true;
+
+  // 沒有要紀錄session狀態，改jwt
+  const payload = {
+    id: rows[0].user_id,
+    account: rows[0].account,
+  };
+  const token = jwt.sign(payload, process.env.JWT_KEY);
+
+  output.data = {
+    id: rows[0].user_id,
+    nickname: rows[0].nick_name,
+    avatar: rows[0].avatar,
+    token,
+  };
+
+  res.json(output);
+});
+
+// 驗證 jwt token
+router.post("/verify-token", (req, res) => {
+  const output = { success: true, payload: {} };
+  try {
+    output.payload = jwt.verify(req.body.token, process.env.JWT_KEY);
+  } catch (ex) {
+    // 如果 token 是無效的
+    output.payload = req.body.token;
+    output.success = false;
+  }
+
+  res.json(output);
+});
+
+// 讀取profile-form資料的api
 router.post("/api", async (req, res) => {
   const output = {
     success: false,
@@ -139,7 +132,7 @@ router.post("/api", async (req, res) => {
   res.json(output);
 });
 
-// 處理編輯的api
+// 處理profile-form編輯的api
 router.put("/api", upload.none(), async (req, res) => {
   const output = {
     success: false,
@@ -157,6 +150,28 @@ router.put("/api", upload.none(), async (req, res) => {
   if (!id) {
     output.error = "找不到這筆資料";
     return res.json(output);
+  }
+
+  // 表單驗證
+  const result = schemaForm.safeParse(req.body.users);
+
+  const newProfileFormErrors = {
+    name: "",
+    nick_name: "",
+    birthday: "",
+    mobile: "",
+    invoice_carrier_id: "",
+    tax_id: "",
+  };
+
+  if (!result.success) {
+    if (result.error?.issues?.length) {
+      for (let issue of result.error.issues) {
+        newProfileFormErrors[issue.path[0]] = issue.message;
+      }
+      setProfileFormErrors(newProfileFormErrors);
+    }
+    return; // 表單資料沒有驗證通過就直接返回
   }
 
   // 更新地址
@@ -216,64 +231,62 @@ router.put("/api", upload.none(), async (req, res) => {
   res.json(output);
 });
 
-// 處理新增的api
-router.post("/add", upload.none(), async (req, res) => {
-  // TODO 欄位資料的檢查
-
-  /*
-  const sql = "INSERT INTO address_book (`name`,`email`,`mobile`,`birthday`,`address`,`created_at`) VALUES ( ?, ?, ?, ?, ?, NOW())";
-  const [ result ] = await db.query(sql,[
-    req.body.name,
-    req.body.email,
-    req.body.mobile,
-    req.body.birthday,
-    req.body.address,
-  ])
-  */
-
-  let body = { ...req.body };
-  body.created_at = new Date();
-
-  const m = moment(body.birthday); //用moment去驗證是否為空字串
-  body.birthday = m.isValid() ? m.format(dateFormat) : null;
-
-  const sql = "INSERT INTO address_book SET ?";
-  const [result] = await db.query(sql, [body]);
-
-  res.json({
-    result,
-    success: !!result.affectedRows,
-  });
-});
-
-// 處理刪除的api
-router.delete("/api/:sid", async (req, res) => {
+// 處理 register 註冊的api
+router.post("/register", upload.none(), async (req, res) => {
   const output = {
     success: false,
     code: 0,
+    error: "",
     result: {},
   };
 
-  if (!req.my_jwt?.id) {
-    output.code = 470;
-    return res.json(output);
-  }
+  // TODO 欄位資料的檢查
 
-  const sid = +req.params.sid || 0;
-  if (!sid) {
-    output.code = 480;
-    return res.json(output);
-  }
+  let body = { ...req.body };
+  body.password = await bcrypt.hash(body.password, 12);
 
-  const sql = `DELETE FROM address_book WHERE sid=${sid}`;
-  const [result] = await db.query(sql);
-  output.result = result;
-  output.success = !!result.affectedRows;
+  try {
+    const sql = "INSERT INTO users SET ?";
+    const [result] = await db.query(sql, [body]);
+    output.success = true;
+    output.result = result;
+  } catch (ex) {
+    output.code = 440;
+    output.error = ex;
+    console.error(ex);
+  }
 
   res.json(output);
 });
 
-// 上傳的api
+// 處理刪除的api
+// router.delete("/api/:sid", async (req, res) => {
+//   const output = {
+//     success: false,
+//     code: 0,
+//     result: {},
+//   };
+
+//   if (!req.my_jwt?.id) {
+//     output.code = 470;
+//     return res.json(output);
+//   }
+
+//   const sid = +req.params.sid || 0;
+//   if (!sid) {
+//     output.code = 480;
+//     return res.json(output);
+//   }
+
+//   const sql = `DELETE FROM address_book WHERE sid=${sid}`;
+//   const [result] = await db.query(sql);
+//   output.result = result;
+//   output.success = !!result.affectedRows;
+
+//   res.json(output);
+// });
+
+// 上傳 avatar 的api
 router.post("/upload-avatar", upload.single("avatar"), (req, res) => {
   res.json({
     body: req.body,

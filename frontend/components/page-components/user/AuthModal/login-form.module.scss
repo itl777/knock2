@@ -1,11 +1,6 @@
 @import '@/styles/variables.scss';
 
-.login {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
+.forms {
   width: 450px;
   display: flex;
   justify-content: center;
@@ -30,15 +25,18 @@
     text-decoration: none;
   }
 
-  .inputBx {
+  .box {
     width: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
 
     span {
       padding: 0px 15px;
     }
     .errorText {
+      height: 1.875rem;
+      line-height: 1.875rem;
       color: #f54747;
     }
 
@@ -60,6 +58,13 @@
         color: rgba(255, 255, 255, 0.5);
       }
     }
+  }
+  .box2 {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .links {

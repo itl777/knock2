@@ -1,5 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { API_SERVER, JWT_LOGIN_POST } from '@/configs/api-path'
+import {
+  JWT_LOGIN_POST,
+  VERIFY_TOKEN_POST,
+  REGISTER_POST,
+} from '@/configs/api-path'
 
 const AuthContext = createContext()
 const storageKey = 'knock-knock-auth'
@@ -51,6 +55,36 @@ export function AuthContextProvider({ children }) {
     setAuth(emptyAuth)
   }
 
+  const register = async (account, password, name, nick_name) => {
+    const output = {
+      success: false,
+      error: '',
+    }
+    try {
+      const r = await fetch(REGISTER_POST, {
+        method: 'POST',
+        body: JSON.stringify({ account, password, name, nick_name }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const result = await r.json()
+      if (result.success) {
+        // 回傳給登入視窗
+        output.success = true
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
+      }
+    } catch (ex) {
+      console.error(ex)
+      output.error = ex
+      return output
+    }
+  }
+
   const getAuthHeader = () => {
     if (auth.token) {
       return { Authorization: 'Bearer ' + auth.token }
@@ -71,7 +105,7 @@ export function AuthContextProvider({ children }) {
       const data = JSON.parse(str)
       const { token } = data
 
-      fetch(`${API_SERVER}/verify-token`, {
+      fetch(VERIFY_TOKEN_POST, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -93,7 +127,9 @@ export function AuthContextProvider({ children }) {
   }, [])
 
   return (
-    <AuthContext.Provider value={{ login, logout, auth, getAuthHeader }}>
+    <AuthContext.Provider
+      value={{ login, logout, register, auth, getAuthHeader }}
+    >
       {children}
     </AuthContext.Provider>
   )

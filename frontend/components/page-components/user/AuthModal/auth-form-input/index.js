@@ -1,6 +1,6 @@
 import styles from './input.module.scss'
 
-export default function LoginFormInput({
+export default function AuthFormInput({
   name = '',
   type = '',
   value = '',

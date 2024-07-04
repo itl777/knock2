@@ -4,7 +4,9 @@ export const API_SERVER = 'http://localhost:3001'
 export const AB_LIST = `${API_SERVER}/teams/api`
 
 // JWT 登入, 方法: POST, 欄位: account, password
-export const JWT_LOGIN_POST = `${API_SERVER}/login-jwt`
+export const JWT_LOGIN_POST = `${API_SERVER}/users/login-jwt`
+export const REGISTER_POST = `${API_SERVER}/users/register`
+export const VERIFY_TOKEN_POST = `${API_SERVER}/users/verify-token`
 
 // product image path
 export const PRODUCT_IMG = `${API_SERVER}/images`

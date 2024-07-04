@@ -15,7 +15,7 @@ export default function Select02({
     console.error('options不是陣列，請確認', options)
     return
   }
-  if (options.length === 0) {
+  if (options.length === 0 || value === null || value === '') {
     value = 'placeholder'
   }
   return (

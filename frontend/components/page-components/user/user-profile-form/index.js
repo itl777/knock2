@@ -14,7 +14,7 @@ import UserProfileRadio from './user-profile-item/UserProfileRadio'
 import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
-import schemaForm from './schemaForm'
+import schemaForm from './schema-form'
 
 export default function UserProfileForm() {
   // useContext
@@ -60,6 +60,15 @@ export default function UserProfileForm() {
       setBirthdayValue(newBirthdayValue)
       const { year, month } = newBirthdayValue
       if (name === 'year' || name === 'month') {
+        // 如果選擇的月份最大日期小於目前的日期，將日期欄位清空
+        const dates = new Date(year, month, 0).getDate() // 選擇的年月最大的日期
+        const date = birthdayValue.date > dates ? '' : birthdayValue.date // 判斷
+        const newBirthdayValue = {
+          ...birthdayValue,
+          [name]: value,
+          date: date,
+        }
+        setBirthdayValue(newBirthdayValue)
         getBirthdayOptions(year, month)
       }
       return
@@ -70,9 +79,12 @@ export default function UserProfileForm() {
   }
 
   const getBirthdayOptions = (defYear, defMonth) => {
+    console.log(
+      birthdayOptions.years.length === 0 || birthdayOptions.months.length === 0
+    )
     if (
-      JSON.stringify(birthdayOptions.years) === '[]' ||
-      JSON.stringify(birthdayOptions.months) === '[]'
+      birthdayOptions.years.length === 0 ||
+      birthdayOptions.months.length === 0
     ) {
       const today = new Date()
       const year = today.getFullYear()
@@ -97,6 +109,7 @@ export default function UserProfileForm() {
           })
         setBirthdayOptions({ ...birthdayOptions, years, months, dates })
       }
+      setBirthdayOptions({ ...birthdayOptions, years, months })
     } else {
       if (defYear && defMonth) {
         const date = new Date(defYear, defMonth, 0).getDate()
@@ -128,7 +141,6 @@ export default function UserProfileForm() {
     }
 
     // 表單驗證
-
     const result = schemaForm.safeParse(data.users)
 
     const newProfileFormErrors = {
@@ -191,6 +203,7 @@ export default function UserProfileForm() {
         if (data.users) {
           // 寫入 user 表單
           setProfileForm(data.users)
+          getBirthdayOptions()
           if (data.users.birthday) {
             // 寫入 birthday value
             const birthday = new Date(data.users.birthday)
@@ -305,7 +318,7 @@ export default function UserProfileForm() {
                 label="生日"
                 name="birthday"
                 value={birthdayValue}
-                errorText=""
+                errorText={profileFormErrors.birthday}
                 onChange={handleChange}
               />
             </div>

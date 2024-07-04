@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/auth-context'
-import { SnackbarContextProvider } from '@/context/snackbar-context'
 
 import IndexLayout from '@/components/layout'
 import UserTab from '@/components/UI/user-tab'
@@ -14,9 +13,9 @@ export default function Profile() {
 
   useEffect(() => {
     if (!router.isReady) return
-    if (!auth.id) {
-      router.push('/')
-    }
+    // if (!auth.id) {
+    //   router.push('/')
+    // }
   }, [auth.id, router.isReady])
 
   return (
