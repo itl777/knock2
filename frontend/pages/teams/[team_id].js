@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import IndexLayout from '@/components/layout'
-import styles from '../teams.module.css'
+import styles from './teams.module.css'
 
 import { TEAM_ONE } from '@/configs/team-api-path'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
 
-export default function teamInfo() {
+export default function TeamInfo() {
   const router = useRouter()
 
   const [oneTeam, setOneTeam] = useState({
     team_id: 0,
-    teamTitle: '',
     theme_name: '',
     team_title: '',
     nick_name: '',
@@ -19,7 +18,7 @@ export default function teamInfo() {
   })
 
   const getTeam = async (team_id) => {
-    const url = 'http://localhost:3001/teams/' + team_id
+    const url = 'http://localhost:3001/teams/api/' + team_id
 
     try {
       const res = await fetch(url)
@@ -41,6 +40,7 @@ export default function teamInfo() {
       console.log(router.query)
       const { team_id } = router.query
       getTeam(team_id)
+      console.log(oneTeam)
     }
   }, [router.isReady])
 

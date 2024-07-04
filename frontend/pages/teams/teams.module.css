@@ -5,6 +5,7 @@
     color:#B99755;
     /* background-color: #000; */
     background: url('/bg-dark.png') no-repeat;
+    background-size: cover;
 }
 
 .pageTitle{
