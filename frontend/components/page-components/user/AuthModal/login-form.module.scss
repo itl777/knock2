@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 1.875rem;
+  gap: 1.5rem;
   border-radius: 1rem;
   border: 1px solid #000;
   background-color: #343434;
@@ -35,8 +35,8 @@
       padding: 0px 15px;
     }
     .errorText {
-      height: 1.875rem;
-      line-height: 1.875rem;
+      height: 2rem;
+      line-height: 1.5rem;
       color: #f54747;
     }
 
@@ -72,5 +72,35 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+}
+
+.ghost {
+  position: absolute;
+  top: -13%;
+  right: 40%;
+  z-index: 1301;
+
+  & :first-child {
+    position: absolute;
+    inset: 0;
+    opacity: 1;
+    transition: 200ms;
+  }
+  & :last-child {
+    position: absolute;
+    top: 12px;
+    left: 8px;
+    opacity: 0;
+    transition: 200ms;
+  }
+
+  &:hover {
+    & :first-child {
+      opacity: 0;
+    }
+    & :last-child {
+      opacity: 1;
+    }
   }
 }

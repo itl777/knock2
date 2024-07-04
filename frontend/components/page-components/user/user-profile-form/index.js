@@ -79,9 +79,6 @@ export default function UserProfileForm() {
   }
 
   const getBirthdayOptions = (defYear, defMonth) => {
-    console.log(
-      birthdayOptions.years.length === 0 || birthdayOptions.months.length === 0
-    )
     if (
       birthdayOptions.years.length === 0 ||
       birthdayOptions.months.length === 0
@@ -100,7 +97,9 @@ export default function UserProfileForm() {
         .map((v, i) => {
           return { value: i + 1, text: `${i + 1} 月` }
         })
+      console.log('111')
       if (defYear && defMonth) {
+        console.log('222')
         const date = new Date(defYear, defMonth, 0).getDate()
         const dates = Array(date)
           .fill()
@@ -108,8 +107,9 @@ export default function UserProfileForm() {
             return { value: i + 1, text: `${i + 1} 日` }
           })
         setBirthdayOptions({ ...birthdayOptions, years, months, dates })
+      } else {
+        setBirthdayOptions({ ...birthdayOptions, years, months })
       }
-      setBirthdayOptions({ ...birthdayOptions, years, months })
     } else {
       if (defYear && defMonth) {
         const date = new Date(defYear, defMonth, 0).getDate()

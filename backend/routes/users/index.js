@@ -252,8 +252,11 @@ router.post("/register", upload.none(), async (req, res) => {
     output.result = result;
   } catch (ex) {
     output.code = 440;
-    output.error = ex;
     console.error(ex);
+    if (ex.errno === 1062) {
+      output.code = 450;
+      output.error = "Email已被註冊，請試試其他Email";
+    }
   }
 
   res.json(output);

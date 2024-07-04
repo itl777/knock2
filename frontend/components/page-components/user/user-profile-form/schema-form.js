@@ -23,17 +23,11 @@ const schemaForm = z.object({
     }),
   birthday: z
     .string()
+    .date({
+      message: '請填寫正確日期格式',
+    })
     .transform((val) => val || '')
-    .nullable()
-    .refine(
-      (val) => {
-        const datePattern = /^\d{4}-\d{2}-\d{2}$/
-        return datePattern.test(val)
-      },
-      {
-        message: '請填寫正確日期格式',
-      }
-    ),
+    .nullable(),
   mobile_phone: z
     .string({
       message: '請填寫正確電話號碼',

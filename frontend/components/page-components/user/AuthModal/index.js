@@ -93,7 +93,6 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
 
     // 資料驗證
     // password 要等於 reenter_password
-    console.log(registerData)
     const RegisterValidationResult = schemaRegisterForm.safeParse(registerData)
     const newRegisterErrors = {
       account: '',
@@ -113,10 +112,8 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
       return // 表單資料沒有驗證通過就直接返回
     }
 
-    // return
     // 包裝
     const newRegisterData = { ...registerData, nick_name: registerData.name }
-    console.log(newRegisterData)
 
     const result = await register(
       newRegisterData.account,
@@ -130,8 +127,8 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
       openSnackbar('註冊成功！返回登入', 'success')
       handleFormSwitch('Login')
     } else {
-      // 如果登入失敗
-      setLoginErrors(result.error)
+      // 如果註冊失敗
+      setRegisterErrors({ result: 'Email已被註冊，請試試其他Email' })
     }
   }
 
@@ -154,7 +151,33 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
   const forgotPasswordSubmit = async (e) => {
     // form submit
     e.preventDefault()
+    // 資料驗證
+    // password 要等於 reenter_password
+    const fpValidationResult =
+      schemaForgetPasswordForm.safeParse(forgotPasswordData)
+    const newForgotPasswordErrors = {
+      account: '',
+      result: '',
+    }
 
+    if (!fpValidationResult.success) {
+      if (fpValidationResult.error?.issues?.length) {
+        for (let issue of fpValidationResult.error.issues) {
+          newForgotPasswordErrors[issue.path[0]] = issue.message
+        }
+
+        setForgotPasswordErrors(newForgotPasswordErrors)
+      }
+
+      return // 表單資料沒有驗證通過就直接返回
+    }
+
+    // 驗證成功，包裝送後端 OTP
+    setForgotPasswordErrors({
+      account: '',
+      result: '',
+    })
+    return
     // if (result.success) {
     //   // 如果登入成功
 
