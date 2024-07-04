@@ -92,7 +92,7 @@ export default function OrderDetailCards({ orderId }) {
                 <br />
                 請留下您大大的讚賞！
               </p>
-              <FilterBtn btnText="評價" href="https://mui.com/" />
+              <FilterBtn btnText="評價" href={`/user/orders/details/reviews/${orderIdNumber}`} />
             </div>
           </div>
         </div>
