@@ -1,16 +1,47 @@
+// variables.scss
+$mediumDuration: 0.3s;
+
+@mixin hacks() {
+  // 定义hacks的具体样式
+}
+
+@mixin prefixed($property, $value) {
+  -webkit-#{$property}: $value;
+  -moz-#{$property}: $value;
+  -ms-#{$property}: $value;
+  #{$property}: $value;
+}
 @import '@/styles/variables.scss';
 
 .card-02 {
   margin: auto;
   margin-bottom: 76px;
   width: 315px;
-  @media screen and (min-width: 450px)  {
+
+  /* Grow effect */
+  @mixin grow {
+    @include hacks();
+    @include prefixed(transition-duration, $mediumDuration);
+    @include prefixed(transition-property, transform);
+
+    &:hover,
+    &:focus,
+    &:active {
+      @include prefixed(transform, scale(1.05));
+    }
+  }
+
+  @include grow;
+
+  @media screen and (min-width: 450px) {
     width: 375px;
     height: 422px;
   }
+
   p {
     @include font-small;
   }
+
   span {
     @include font-small;
     text-align: start;
@@ -21,5 +52,4 @@
     bottom: 3px;
     right: -50px;
   }
-  
 }
