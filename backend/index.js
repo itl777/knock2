@@ -8,7 +8,7 @@ import teams from "./routes/teams.js";
 import products from "./routes/products.js";
 import users from "./routes/users/index.js";
 import orders from "./routes/orders.js";
-import orderDetails from "./routes/details.js";
+// import orderDetails from "./routes/details.js";
 import checkout from "./routes/checkout.js";
 
 // 掛載 express
@@ -51,7 +51,7 @@ app.use("/teams", teams);
 app.use("/products", products);
 app.use("/users", users);
 app.use("/orders", orders);
-app.use("/user/orders", orderDetails);
+// app.use("/user/orders", orderDetails);
 app.use("/checkout", checkout);
 
 // 偵聽 port
