@@ -7,6 +7,7 @@ import Badge from '@mui/material/Badge'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 // components
+import {useAuth} from '@/context/auth-context'
 import { useCart } from '@/context/cart-context'
 import HDivider from '../divider/horizontal-divider'
 import BlackBtn from '../black-btn'
@@ -26,7 +27,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }))
 
 export default function CheckoutOffcanvas() {
-  const loginMemberId = 1 // 暫時性假資料，等登入功能做好再設定
+  const { auth } = useAuth()
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const toggleShow = () => setShow((s) => !s)

@@ -14,8 +14,10 @@ export const PRODUCT_FAVORITE = `${API_SERVER}/products/favorite`
 
 // order & checkout
 export const ORDER_LIST_GET = `${API_SERVER}/orders`
+export const ORDER_DETAILS_GET = `${API_SERVER}/orders`
 export const CART_POST = `${API_SERVER}/checkout/api/cart_member`
-export const CART_GUEST_POST = `${API_SERVER}/checkout/api/cart_guest`
+// export const CART_GUEST_POST = `${API_SERVER}/checkout/api/cart_guest`
+export const CART_GUEST_GET = `${API_SERVER}/checkout//api/product`
 export const CHECKOUT_POST = `${API_SERVER}/checkout/api/checkout`
 export const CHECKOUT_ADD_ADDRESS_POST = `${API_SERVER}/checkout/api/add_address`
 export const CHECKOUT_GET = `${API_SERVER}/checkout/`
