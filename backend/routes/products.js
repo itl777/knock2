@@ -21,6 +21,10 @@ const getListDate = async (req) => {
   let userSearch = req.query.userSearch || "";
   let idSearch = req.params.product_id || "";
   let category_id = req.query.category_id || "";
+  // 排序用
+  const sort = req.query.sort || "product_id";
+  const order = req.query.order || "DESC";
+  let orderBy = `ORDER BY ${sort} ${order}`;
   let where = " WHERE 1 ";
 
   if (userSearch) {
@@ -30,7 +34,6 @@ const getListDate = async (req) => {
   if (idSearch) {
     const idSearch_ = db.escape(`${idSearch}`);
     where += `AND ( \`product_id\` LIKE ${idSearch_} ) `;
-    // console.log("where:", where);
   }
 
   // 類別篩選
@@ -55,14 +58,10 @@ const getListDate = async (req) => {
       redirect = `?page=${totalPages}`;
       return { success, redirect };
     }
-    // 文字
-    // const sql = `SELECT * FROM \`product_management\` ${where} ORDER BY product_id  DESC LIMIT ${
-    //   (page - 1) * perPage
-    // },${perPage}`;
 
-    // 圖片
+    // JOIN圖片
     const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\`
-    on \`product_id\` = \`img_product_id\` ${where} ORDER BY product_id  DESC LIMIT ${
+    on \`product_id\` = \`img_product_id\` ${where} ${orderBy} LIMIT ${
       (page - 1) * perPage
     },${perPage}`;
 

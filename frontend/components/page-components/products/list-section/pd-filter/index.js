@@ -5,6 +5,7 @@ import FilterBtn from '@/components/UI/filter-btn'
 import 'hover.css/css/hover-min.css'
 import CategoryBtn from './category-btn'
 import SearchInput from './search-input'
+import FilterBtnArea from './filter-btn-area'
 
 export default function PdFilter() {
   return (
@@ -26,13 +27,14 @@ export default function PdFilter() {
               </div>
             </div>
 
-            <div className="col-4 d-flex justify-content-center">
+            <div className="col-4 d-flex justify-content-center ">
               <SearchInput />
             </div>
 
             <div className="col-2 text-end d-flex align-items-end">
-              <FilterBtn btnText={'最新上架'} href={'/'} />
-              <FilterBtn btnText={'價格排序'} href={'/'} />
+              <FilterBtnArea />
+              {/* <FilterBtn btnText={'最新上架'} href={'/'} />
+              <FilterBtn btnText={'價格排序'} href={'/'} /> */}
             </div>
           </div>
         </div>
