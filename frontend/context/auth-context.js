@@ -3,6 +3,7 @@ import {
   JWT_LOGIN_POST,
   VERIFY_TOKEN_POST,
   REGISTER_POST,
+  FORGET_PASSWORD_POST,
 } from '@/configs/api-path'
 
 const AuthContext = createContext()
@@ -85,6 +86,37 @@ export function AuthContextProvider({ children }) {
     }
   }
 
+  const forgotPassword = async (account) => {
+    const output = {
+      success: false,
+      error: '',
+    }
+    try {
+      const r = await fetch(FORGET_PASSWORD_POST, {
+        method: 'POST',
+        body: JSON.stringify({ account }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const result = await r.json()
+      if (result.success) {
+        // 回傳給視窗
+        output.success = true
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
+      }
+    } catch (ex) {
+      console.error(ex)
+      output.success = false
+      output.error = ex
+      return output
+    }
+  }
+
   const getAuthHeader = () => {
     if (auth.token) {
       return { Authorization: 'Bearer ' + auth.token }
@@ -128,7 +160,7 @@ export function AuthContextProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, register, auth, getAuthHeader }}
+      value={{ auth, login, logout, register, forgotPassword, getAuthHeader }}
     >
       {children}
     </AuthContext.Provider>

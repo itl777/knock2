@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import db from "../../utils/connect.js";
 import upload from "../../utils/upload-imgs.js";
 import schemaForm from "./schema-profile.js";
+import transporter from "../../configs/mail.js";
 
 const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
@@ -133,7 +134,7 @@ router.post("/api", async (req, res) => {
 });
 
 // 處理profile-form編輯的api
-router.put("/api", upload.none(), async (req, res) => {
+router.put("/api", async (req, res) => {
   const output = {
     success: false,
     code: 0,
@@ -231,7 +232,7 @@ router.put("/api", upload.none(), async (req, res) => {
 });
 
 // 處理 register 註冊的api
-router.post("/register", upload.none(), async (req, res) => {
+router.post("/register", async (req, res) => {
   const output = {
     success: false,
     code: 0,
@@ -259,6 +260,43 @@ router.post("/register", upload.none(), async (req, res) => {
   }
 
   res.json(output);
+});
+
+// forgot-password
+router.post("/forgot-password", async (req, res) => {
+  const { account } = req.body;
+  if (!account) return res.json({ success: false, error: "缺少必要資料" });
+
+  // 建立 OTP
+
+  // 寄送 email
+  const mailOptions = {
+    from: `"support"<${process.env.SMTP_TO_EMAIL}>`,
+    to: email,
+    subject: "重置您的密碼 - OTP 認證碼",
+    text: `
+      親愛的用戶，
+
+      您收到這封郵件是因為您請求了密碼重置。請使用以下一次性密碼 (OTP) 完成您的密碼重置流程：
+
+      OTP 認證碼：${otpCode}
+
+      此認證碼將在 10 分鐘內有效。請勿將此認證碼告訴他人。如非您本人操作，請忽略此郵件，您的帳號仍然是安全的。
+
+      感謝您的使用！
+
+      祝您順利，
+      悄瞧 團隊
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (err, response) => {
+    if (err) {
+      return res.status(400).json({ success: false, error: err });
+    } else {
+      return res.json({ success: true });
+    }
+  });
 });
 
 // 處理刪除的api

@@ -5,6 +5,7 @@ export const API_SERVER = 'http://localhost:3001'
 // JWT 登入, 方法: POST, 欄位: account, password
 export const JWT_LOGIN_POST = `${API_SERVER}/users/login-jwt`
 export const REGISTER_POST = `${API_SERVER}/users/register`
+export const FORGET_PASSWORD_POST = `${API_SERVER}/users/forgot-password`
 export const VERIFY_TOKEN_POST = `${API_SERVER}/users/verify-token`
 
 // product image path

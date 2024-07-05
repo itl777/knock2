@@ -14,7 +14,7 @@ import {
 
 export default function AuthModal({ loginModalState, setLoginModalState }) {
   // context
-  const { login, register } = useAuth()
+  const { login, register, forgotPassword } = useAuth()
   const { openSnackbar } = useSnackbar()
 
   // Login
@@ -24,15 +24,13 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
     account: '',
     password: '',
     result: '',
-  }) // error text
+  })
   const handleLoginChange = (e) => {
-    // form data change
     const { name, value } = e.target
     const newLoginData = { ...loginData, [name]: value }
     setLoginData(newLoginData)
   }
   const loginSubmit = async (e) => {
-    // form submit
     e.preventDefault()
 
     // 資料驗證
@@ -68,7 +66,6 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
   // Register
   const [registerState, setRegisterState] = useState(false) // open close
   const [registerData, setRegisterData] = useState({
-    // form data
     account: '',
     password: '',
     reenter_password: '',
@@ -80,19 +77,16 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
     reenter_password: '',
     name: '',
     result: '',
-  }) // error text
+  })
   const handleRegisterChange = (e) => {
-    // form data change
     const { name, value } = e.target
     const newRegisterData = { ...registerData, [name]: value }
     setRegisterData(newRegisterData)
   }
   const registerSubmit = async (e) => {
-    // form submit
     e.preventDefault()
 
     // 資料驗證
-    // password 要等於 reenter_password
     const RegisterValidationResult = schemaRegisterForm.safeParse(registerData)
     const newRegisterErrors = {
       account: '',
@@ -135,24 +129,20 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
   // ForgotPassword
   const [forgotPasswordState, setForgotPasswordState] = useState(false) // open close
   const [forgotPasswordData, setForgotPasswordData] = useState({
-    // form data
     account: '',
   })
   const [forgotForgotPasswordErrors, setForgotPasswordErrors] = useState({
     account: '',
     result: '',
-  }) // error text
+  })
   const handleForgotPasswordChange = (e) => {
-    // form data change
     const { name, value } = e.target
     const newPasswordData = { ...forgotPasswordState, [name]: value }
     setForgotPasswordData(newPasswordData)
   }
   const forgotPasswordSubmit = async (e) => {
-    // form submit
     e.preventDefault()
     // 資料驗證
-    // password 要等於 reenter_password
     const fpValidationResult =
       schemaForgetPasswordForm.safeParse(forgotPasswordData)
     const newForgotPasswordErrors = {
@@ -173,19 +163,18 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
     }
 
     // 驗證成功，包裝送後端 OTP
-    setForgotPasswordErrors({
-      account: '',
-      result: '',
-    })
-    return
-    // if (result.success) {
-    //   // 如果登入成功
 
-    //   openSnackbar('註冊成功！請返回登入', 'success')
-    // } else {
-    //   // 如果登入失敗
-    //   setLoginError(result.error)
-    // }
+    let result = forgotPassword(forgotPasswordData.account)
+    if (result.success) {
+      // 如果發送成功
+      setForgotPasswordData({ account: '' })
+      setForgotPasswordErrors({ account: '', result: '' })
+      openSnackbar('發送成功', 'success')
+    } else {
+      // 如果發送失敗
+      console.error(result.error)
+      openSnackbar('發送失敗', 'error')
+    }
   }
 
   // FormSwitch
