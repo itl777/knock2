@@ -5,7 +5,8 @@ import BtnGroup from './btn-group'
 import CategoryGroup from './category-group'
 import myStyle from './features.module.css'
 import { useEffect, useState } from 'react'
-import Breadcrumb from '@/components/page-components/products/breadcrumb'
+
+
 export default function PdFeatures({ data }) {
   const [productData, setProductData] = useState({
     product_name: '',

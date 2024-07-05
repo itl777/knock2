@@ -68,7 +68,7 @@ export const ProductProvider = ({ children }) => {
     //   })
     // }
     if (router.isReady) {
-      console.log(router.asPath)
+      // console.log(router.asPath)
       const url = router.asPath.split('?')
       if (url[0] === '/product/product-favorite') {
         getFavorite(page)
