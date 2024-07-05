@@ -11,11 +11,12 @@ export default function UserProfileInput({
   errorText = '',
   onChange = () => {},
 }) {
-
   return (
     <>
       <div className={styles.formItem}>
-        <label htmlFor={name} className={styles.myLabel}>{label}</label>
+        <label htmlFor={name} className={styles.myLabel}>
+          {label}
+        </label>
         <div className={styles.myDiv}>
           <Input01
             name={name}

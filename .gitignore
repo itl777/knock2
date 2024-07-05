@@ -5,5 +5,3 @@ _trash/
 *.bak
 .DS_Store
 config/
-frontend/pages/teams/test.js
-frontend/pages/teams/index_copy.js

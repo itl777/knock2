@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
-import { z } from 'zod'
 
 // context
 import { useAuth } from '@/context/auth-context'
 import { API_SERVER } from '@/configs/api-path'
-
+import { useSnackbar } from '@/context/snackbar-context'
 // styles
 import styles from './user-profile-form.module.scss'
 
@@ -15,11 +14,13 @@ import UserProfileRadio from './user-profile-item/UserProfileRadio'
 import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
-import schemaForm from './schemaForm'
+import schemaForm from './schema-form'
 
 export default function UserProfileForm() {
-  // state
+  // useContext
   const { auth, getAuthHeader } = useAuth()
+  const { openSnackbar } = useSnackbar()
+  // state
   const [profileForm, setProfileForm] = useState({})
   const [addressValue, setAddressValue] = useState({})
   const [addressForm, setAddressForm] = useState([])
@@ -33,7 +34,6 @@ export default function UserProfileForm() {
     months: [],
     dates: [],
   })
-
   const [profileFormErrors, setProfileFormErrors] = useState({
     name: '',
     nick_name: '',
@@ -60,16 +60,18 @@ export default function UserProfileForm() {
       setBirthdayValue(newBirthdayValue)
       const { year, month } = newBirthdayValue
       if (name === 'year' || name === 'month') {
+        // 如果選擇的月份最大日期小於目前的日期，將日期欄位清空
+        const dates = new Date(year, month, 0).getDate() // 選擇的年月最大的日期
+        const date = birthdayValue.date > dates ? '' : birthdayValue.date // 判斷
+        const newBirthdayValue = {
+          ...birthdayValue,
+          [name]: value,
+          date: date,
+        }
+        setBirthdayValue(newBirthdayValue)
         getBirthdayOptions(year, month)
       }
       return
-    }
-
-    // 做表單驗證
-    const schemaEmail = z.string().email({ message: '請填寫正確Email格式' })
-
-    if (e.target.name === 'account') {
-      const result = schemaEmail.safeParse()
     }
 
     const newForm = { ...profileForm, [name]: value }
@@ -78,8 +80,8 @@ export default function UserProfileForm() {
 
   const getBirthdayOptions = (defYear, defMonth) => {
     if (
-      JSON.stringify(birthdayOptions.years) === '[]' ||
-      JSON.stringify(birthdayOptions.months) === '[]'
+      birthdayOptions.years.length === 0 ||
+      birthdayOptions.months.length === 0
     ) {
       const today = new Date()
       const year = today.getFullYear()
@@ -95,7 +97,9 @@ export default function UserProfileForm() {
         .map((v, i) => {
           return { value: i + 1, text: `${i + 1} 月` }
         })
+      console.log('111')
       if (defYear && defMonth) {
+        console.log('222')
         const date = new Date(defYear, defMonth, 0).getDate()
         const dates = Array(date)
           .fill()
@@ -103,6 +107,8 @@ export default function UserProfileForm() {
             return { value: i + 1, text: `${i + 1} 日` }
           })
         setBirthdayOptions({ ...birthdayOptions, years, months, dates })
+      } else {
+        setBirthdayOptions({ ...birthdayOptions, years, months })
       }
     } else {
       if (defYear && defMonth) {
@@ -135,7 +141,6 @@ export default function UserProfileForm() {
     }
 
     // 表單驗證
-
     const result = schemaForm.safeParse(data.users)
 
     const newProfileFormErrors = {
@@ -173,7 +178,8 @@ export default function UserProfileForm() {
       if (data.success) {
         // 清除 Error 文字
         setProfileFormErrors(newProfileFormErrors)
-        // TODO?
+        // TODO
+        openSnackbar('編輯成功！', 'success')
       } else {
         console.error(data.error)
       }
@@ -197,6 +203,7 @@ export default function UserProfileForm() {
         if (data.users) {
           // 寫入 user 表單
           setProfileForm(data.users)
+          getBirthdayOptions()
           if (data.users.birthday) {
             // 寫入 birthday value
             const birthday = new Date(data.users.birthday)
@@ -223,8 +230,6 @@ export default function UserProfileForm() {
           const values = data.address.find((v) => v.type === '1').id
           setAddressValue({ address_id: values })
         }
-      } else {
-        console.error(data.error)
       }
     } catch (error) {
       console.error(`fetch-Error: ${error}`)
@@ -232,20 +237,15 @@ export default function UserProfileForm() {
   }
 
   useEffect(() => {
-    if (auth.token) fetchData()
-  }, [auth.token])
+    if (auth.id) fetchData()
+    // 下面這行 讓eslint略過一行檢查
+    // eslint-disable-next-line
+  }, [auth.id])
 
   // render form
   return (
     <>
-      <AutohideSnackbar
-        open={true}
-        text="成功訊息"
-        vertical="top"
-        horizontal="center"
-      />
-      {JSON.stringify(profileForm) !== '{}' &&
-      JSON.stringify(addressForm) !== '[]' ? (
+      {JSON.stringify(profileForm) !== '{}' ? (
         <form
           className={styles['user-profile-form']}
           onSubmit={UserProfileFormSubmit}
@@ -318,7 +318,7 @@ export default function UserProfileForm() {
                 label="生日"
                 name="birthday"
                 value={birthdayValue}
-                errorText=""
+                errorText={profileFormErrors.birthday}
                 onChange={handleChange}
               />
             </div>

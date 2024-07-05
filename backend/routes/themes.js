@@ -3,6 +3,7 @@ import db from "./../utils/connect.js";
 
 const router = express.Router();
 
+// 獲取主题列表的函數
 const getThemesList = async (branchId) => {
   let success = false;
 
@@ -39,8 +40,34 @@ const getThemesList = async (branchId) => {
   }
 };
 
+// 獲取分店列表的函數
+const getBranchesList = async () => {
+  let success = false;
+
+  const sql = `
+    SELECT *
+    FROM branches
+    ORDER BY branch_id DESC
+  `;
+
+  try {
+    console.log("Executing SQL:", sql);
+    const [rows] = await db.query(sql);
+    console.log("SQL Result:", rows);
+    success = true;
+    return {
+      success,
+      branches: rows,
+    };
+  } catch (err) {
+    console.error("Error fetching branches:", err);
+    return { success };
+  }
+};
+
+// 主题列表的路由
 router.get("/", async (req, res) => {
-  const branchId = req.query.branch_id; // 从查询参数中获取分店ID
+  const branchId = req.query.branch_id; // 從查詢參數中獲取分店ID
   const data = await getThemesList(branchId);
   if (!data.success) {
     return res.json({
@@ -52,6 +79,22 @@ router.get("/", async (req, res) => {
   return res.json({
     status: "success",
     themes: data.themes,
+  });
+});
+
+// 分店列表的路由
+router.get("/branches", async (req, res) => {
+  const data = await getBranchesList();
+  if (!data.success) {
+    return res.status(500).json({
+      status: "error",
+      message: "無法查詢到分店資料",
+    });
+  }
+
+  return res.json({
+    status: "success",
+    branches: data.branches,
   });
 });
 
