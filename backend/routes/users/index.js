@@ -218,7 +218,6 @@ router.put("/api", upload.none(), async (req, res) => {
   // 寫入修改人員 0 = 會員
   users.last_modified_by = 0;
 
-  console.log(users);
   try {
     const sql = "UPDATE `users` SET ? WHERE user_id=? ";
     const [result] = await db.query(sql, [users, id]);

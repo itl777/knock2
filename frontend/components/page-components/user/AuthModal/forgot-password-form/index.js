@@ -9,9 +9,9 @@ import AuthFormInput from '../auth-form-input'
 
 const dialogTheme = createTheme({
   components: {
-    MuiPaper: {
+    MuiDialog: {
       styleOverrides: {
-        root: {
+        paper: {
           borderRadius: '1rem',
           backgroundColor: '#343434',
         },
