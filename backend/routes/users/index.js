@@ -6,6 +6,7 @@ import db from "../../utils/connect.js";
 import upload from "../../utils/upload-imgs.js";
 import schemaForm from "./schema-profile.js";
 import transporter from "../../configs/mail.js";
+import { createOtp } from "./creatOtp.js";
 
 const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
@@ -262,39 +263,55 @@ router.post("/register", async (req, res) => {
   res.json(output);
 });
 
-// forgot-password
+// forgot-password 忘記密碼的api
 router.post("/forgot-password", async (req, res) => {
-  const { account } = req.body;
-  if (!account) return res.json({ success: false, error: "缺少必要資料" });
+  const output = {
+    success: false,
+    error: "",
+    data: {},
+  };
 
-  // 建立 OTP
+  const { account } = req.body;
+
+  const otpCode = await createOtp(account);
+
+  if (!otpCode.success) {
+    return res.json(otpCode);
+  }
 
   // 寄送 email
   const mailOptions = {
     from: `"support"<${process.env.SMTP_TO_EMAIL}>`,
-    to: email,
+    to: account,
     subject: "重置您的密碼 - OTP 認證碼",
     text: `
       親愛的用戶，
 
       您收到這封郵件是因為您請求了密碼重置。請使用以下一次性密碼 (OTP) 完成您的密碼重置流程：
 
-      OTP 認證碼：${otpCode}
+      OTP 認證碼：${otpCode.data}
 
       此認證碼將在 10 分鐘內有效。請勿將此認證碼告訴他人。如非您本人操作，請忽略此郵件，您的帳號仍然是安全的。
 
       感謝您的使用！
 
       祝您順利，
-      悄瞧 團隊
+
+
+      悄瞧 knock knock   團隊
     `,
   };
 
   transporter.sendMail(mailOptions, (err, response) => {
     if (err) {
-      return res.status(400).json({ success: false, error: err });
+      output.success = false;
+      output.error = err;
+      console.log(output, "false");
+      return res.status(400).json(output);
     } else {
-      return res.json({ success: true });
+      output.success = true;
+      console.log(output, "true");
+      return res.json(output);
     }
   });
 });

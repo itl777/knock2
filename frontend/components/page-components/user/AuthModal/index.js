@@ -164,7 +164,7 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
 
     // 驗證成功，包裝送後端 OTP
 
-    let result = forgotPassword(forgotPasswordData.account)
+    let result = await forgotPassword(forgotPasswordData.account)
     if (result.success) {
       // 如果發送成功
       setForgotPasswordData({ account: '' })
@@ -173,7 +173,7 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
     } else {
       // 如果發送失敗
       console.error(result.error)
-      openSnackbar('發送失敗', 'error')
+      openSnackbar(result.error, 'error')
     }
   }
 
