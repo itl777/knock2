@@ -56,7 +56,6 @@ export const ProductProvider = ({ children }) => {
 
   useEffect(() => {
     let { page, category_id } = router.query
-    console.log(page, category_id)
     if (!page) {
       router.push({
         pathname: router.pathname,
