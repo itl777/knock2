@@ -65,12 +65,6 @@ export default function CheckOutPage() {
     }
   }
 
-  useEffect(() => {
-    if (auth.id) {
-      fetchMemberAddress()
-    }
-  }, [auth.id])
-
   // 更新已經選擇的地址
   const handleAddressSelected = (address) => {
     setMemberAddress(address)
@@ -110,10 +104,34 @@ export default function CheckOutPage() {
     }
 
     try {
+      // Step 1: 提交訂單和商品資料到後端
       const response = await axios.post(CHECKOUT_POST, dataToSubmit)
       if (response.data.success) {
         const orderId = response.data.orderId // 取得後端返回的 order_id
-        router.push(`/checkout/success?order_id=${orderId}`) // 跳轉至付款成功畫面，並將 order_id 傳遞
+
+        // Step 2: 送 orderId, checkoutTotal 給後端
+
+        const ecpayResponse = await axios.get(
+          'http://localhost:3001/payments',
+          {
+            params: {
+              orderId,
+              checkoutTotal,
+            },
+          }
+        )
+
+        if (ecpayResponse.data.success) {
+          // Step 3: 導向新的支付頁面
+          router.push({
+            pathname: '/ecpay-checkout',
+            query: {
+              html: encodeURIComponent(ecpayResponse.data.html),
+            },
+          })
+          console.log('ECPay URL: ', ecpayResponse.data.html)
+        }
+  
         clearCart()
       }
     } catch (error) {
@@ -133,11 +151,20 @@ export default function CheckOutPage() {
     setIsModalOpen(false)
   }
 
+
+  useEffect(() => {
+    if (auth.id) {
+      fetchMemberAddress()
+    }
+  }, [auth.id])
+
   return (
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
 
       <form
+        id="_form_aiochk"
+        method="post"
         name="checkoutForm"
         onSubmit={handleSubmit}
         className={styles.contentContainer}
