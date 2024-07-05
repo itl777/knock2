@@ -160,7 +160,8 @@ export default function Card02({
             }}
           >
             <Link
-              href={`?#`}
+              // href={`themes/themes-details/${theme_id}`}
+              href={`#?`}
               onClick={handleClick}
               style={style}
               onMouseEnter={(e) => (e.target.style.fontWeight = 'bold')}
