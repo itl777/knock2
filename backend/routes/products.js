@@ -140,9 +140,9 @@ router.get("/", async (req, res) => {
     });
   }
   if (data.success) {
-    const category_sql = "SELECT * FROM product_category";
-    const [category_result] = await db.query(category_sql);
-    data.category_result = category_result;
+    // const category_sql = "SELECT * FROM product_category";
+    // const [category_result] = await db.query(category_sql);
+    // data.category_result = category_result;
 
     return res.json(data);
   }
