@@ -30,7 +30,7 @@ const getListDate = async (req) => {
   if (idSearch) {
     const idSearch_ = db.escape(`${idSearch}`);
     where += `AND ( \`product_id\` LIKE ${idSearch_} ) `;
-    console.log("where:", where);
+    // console.log("where:", where);
   }
 
   // 類別篩選
@@ -86,7 +86,7 @@ const getListDate = async (req) => {
 const getFavoriteDate = async (req) => {
   let success = false;
   let redirect = "";
-  const perPage = 9; //每頁卡片數量
+  const perPage = 6; //每頁卡片數量
 
   let where = " WHERE 1 ";
 
@@ -144,10 +144,7 @@ router.get("/", async (req, res) => {
     const [category_result] = await db.query(category_sql);
     data.category_result = category_result;
 
-    return res.json({
-      status: "success",
-      data: data,
-    });
+    return res.json(data);
   }
 });
 

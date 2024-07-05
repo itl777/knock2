@@ -8,13 +8,19 @@ import UserLayout from '@/components/layout/user-layout'
 import UserTab from '@/components/UI/user-tab'
 import OrderListCards from '@/components/page-components/orders/order-list-cards'
 import FavoriteSection from '@/components/page-components/products/favorite-section/index'
+import { ProductProvider } from '@/context/product-context'
 
 export default function ProductFavorite() {
   return (
     <>
-      <IndexLayout title="結帳" background="light">
-        <UserLayout userTab={<UserTab />} sectionRight={<FavoriteSection />} />
-      </IndexLayout>
+      <ProductProvider>
+        <IndexLayout title="結帳" background="light">
+          <UserLayout
+            userTab={<UserTab />}
+            sectionRight={<FavoriteSection />}
+          />
+        </IndexLayout>
+      </ProductProvider>
     </>
   )
 }

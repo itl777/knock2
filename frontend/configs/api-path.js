@@ -8,6 +8,9 @@ export const JWT_LOGIN_POST = `${API_SERVER}/login-jwt`
 
 // product image path
 export const PRODUCT_IMG = `${API_SERVER}/images`
+export const PRODUCT_LIST = `${API_SERVER}/products`
+export const PRODUCT_DETAILS = `${API_SERVER}/products/details`
+export const PRODUCT_FAVORITE = `${API_SERVER}/products/favorite`
 
 // order & checkout
 export const ORDER_LIST_GET = `${API_SERVER}/orders`

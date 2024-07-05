@@ -1,7 +1,6 @@
-
 import myStyle from './list.module.css'
 
-export default function ListSection({ data, setPage, top, filter, card }) {
+export default function ListSection({ top, filter, card }) {
   return (
     <div className={myStyle.section}>
       {top}
