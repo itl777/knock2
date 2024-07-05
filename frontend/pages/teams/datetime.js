@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import moment from 'moment-timezone'
+
 import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
 
@@ -19,8 +21,17 @@ export default function DateTime() {
         return r.json()
       })
       .then((myData) => {
+        const updatedData = {
+          ...myData,
+          rows: myData.rows.map((row) => ({
+            ...row,
+            reservation_date: moment
+              .tz(row.reservation_date, 'Asia/Taipei')
+              .format('YYYY-MM-DD'),
+          })),
+        }
         console.log(data)
-        setData(myData)
+        setData(updatedData)
       })
       .catch((error) => {
         console.error('Fetch error:', error)
@@ -29,7 +40,7 @@ export default function DateTime() {
 
   return (
     <>
-      <IndexLayout title="糾團">
+      <IndexLayout title="糾團" background="dark">
         <div>
           <h2>糾團頁面</h2>
         </div>
@@ -39,7 +50,10 @@ export default function DateTime() {
               <h4>團隊一覽</h4>
               <hr></hr>
             </div>
-            <div className={`${styles.teamsSection} row`}>
+            <div
+              className={`${styles.teamsSection} row`}
+              style={{ backgroundColor: 'black' }}
+            >
               <table>
                 <thead>
                   <tr>

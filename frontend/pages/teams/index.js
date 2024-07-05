@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react'
+import moment from 'moment-timezone'
+
 import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
 import Link from 'next/link'
@@ -60,8 +62,17 @@ export default function TeamListTest() {
         return r.json()
       })
       .then((myData) => {
-        console.log(data)
-        setData(myData)
+        const updatedData = {
+          ...myData,
+          rows: myData.rows.map((row) => ({
+            ...row,
+            reservation_date: moment
+              .tz(row.reservation_date, 'Asia/Taipei')
+              .format('YYYY-MM-DD'),
+          })),
+        }
+        console.log(updatedData)
+        setData(updatedData)
       })
       .catch((error) => {
         console.error('Fetch error:', error)
@@ -71,7 +82,7 @@ export default function TeamListTest() {
 
   return (
     <>
-      <IndexLayout title="糾團">
+      <IndexLayout title="糾團" background="dark">
         <div className={styles.teamsPage}>
           <div className={styles.pageTitle}>
             <h2>糾團頁面</h2>

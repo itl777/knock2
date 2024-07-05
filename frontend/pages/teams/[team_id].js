@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import moment from 'moment-timezone'
 import IndexLayout from '@/components/layout'
+
+import ChatDisplay from '@/pages/teams/chat'
+
+import { CHAT_GET } from '@/configs/api-path'
 
 import styles from './teams.module.css'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
@@ -48,6 +53,7 @@ export default function TeamInfo() {
             team_id: teamData.team_id || 0,
             team_title: teamData.team_title || '',
             theme_name: teamData.theme_name || '',
+            themeImg: teamData.theme_img || '',
           })
           console.log('Team data set successfully', teamData)
         }
@@ -115,8 +121,8 @@ export default function TeamInfo() {
                         <div className="teamPhoto">
                           {/* <img src={catImage} alt="cat" /> */}
                           <img
-                            src="/teams/collage-maker-02.jpg"
-                            alt="cat"
+                            src={`/themes-main/${oneTeam.themeImg}`}
+                            alt=""
                             width={'100%'}
                           />
                         </div>
@@ -129,24 +135,11 @@ export default function TeamInfo() {
                       </div>
                     </div>
                   </div>
-                  <div className={styles.borderbox}>
-                    <h4>留言給團長</h4>
-                    <inputarea></inputarea>
-
-                    <div style={{ textAlign: 'center' }}>
-                      <PdBtnContained btnText="送出留言" color="grey" />
-                    </div>
-                  </div>
-
-                  <div className={styles.borderbox}>
-                    <div>
-                      <h4>留言區</h4>
-                    </div>
-                    <div>圖 名 時間 留言內容</div>
-                    <hr />
-                  </div>
                 </div>
               </div>
+            </div>
+            <div className="row">
+              <ChatDisplay />
             </div>
           </div>
         </div>
