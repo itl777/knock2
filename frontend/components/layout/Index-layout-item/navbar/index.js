@@ -1,26 +1,27 @@
 import { useState, useRef } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-
-import Avatar from '@mui/joy/Avatar'
-import NavMenu from './nav-menu'
-import CheckoutOffcanvas from '@/components/UI/checkout-offcanvas'
+// context
 import { useAuth } from '@/context/auth-context'
-import { API_SERVER } from '@/configs/api-path'
-
+// styles
 import styles from './nav-styles.module.scss'
-import { FaCircleUser } from 'react-icons/fa6'
-import { TiThMenu } from 'react-icons/ti'
+// components
+import NavbarIcon from './navbar-icon'
+import NavbarLinks from './navbar-links'
+import NavMenu from './nav-menu'
+import AuthModal from '@/components/page-components/user/AuthModal'
 
 export default function Navbar({ pageName }) {
-  const { login, auth } = useAuth()
+  // context && Ref
+  const { auth } = useAuth()
+  const timeOutRef = useRef(null)
+  const hideNavMenuRef = useRef(null)
+  // state
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
   const [showNavMenu, setShowNavMenu] = useState(false)
   const [navMenuAnimate, setNavMenuAnimate] = useState('')
-  const timeOutRef = useRef(null)
-  const hideNavMenuRef = useRef(null)
+  const [authModalState, setAuthModalState] = useState(false)
 
-  const openMenu = () => {
+  // function
+  const handleMobileMenu = () => {
     const newMenu =
       menuState === 'animate__bounceInDown'
         ? 'animate__bounceOutUp'
@@ -28,7 +29,7 @@ export default function Navbar({ pageName }) {
     setMenuState(newMenu)
   }
 
-  const handleMouseOut = () => {
+  const handleNavMenuClose = () => {
     timeOutRef.current = setTimeout(() => {
       setNavMenuAnimate('animate__bounceOutUp')
       hideNavMenuRef.current = setTimeout(() => {
@@ -37,16 +38,20 @@ export default function Navbar({ pageName }) {
     }, 1000)
   }
 
-  const handleMouseOver = () => {
-    login('test@test.com', '123456')
-
-    clearTimeout(timeOutRef.current)
-    clearTimeout(hideNavMenuRef.current)
-    if (showNavMenu === false) setShowNavMenu(true)
-    setNavMenuAnimate('animate__bounceInDown')
+  const handleNavMenuOpen = (event) => {
+    event.preventDefault()
+    if (!auth.id) {
+      setAuthModalState(true)
+      // login('test@test.com', '123456')
+    } else {
+      clearTimeout(timeOutRef.current)
+      clearTimeout(hideNavMenuRef.current)
+      if (showNavMenu === false) setShowNavMenu(true)
+      setNavMenuAnimate('animate__bounceInDown')
+    }
   }
 
-  const handleNavMenuMouseOver = () => {
+  const handleNavMenuTimeOut = () => {
     clearTimeout(timeOutRef.current)
     clearTimeout(hideNavMenuRef.current)
   }
@@ -55,104 +60,20 @@ export default function Navbar({ pageName }) {
     <>
       <header
         className={styles['navbar']}
-        onMouseLeave={handleMouseOut}
-        onMouseEnter={handleNavMenuMouseOver}
+        onMouseLeave={handleNavMenuClose}
+        onMouseEnter={handleNavMenuTimeOut}
       >
         {showNavMenu && auth.id ? <NavMenu show={navMenuAnimate} /> : ''}
+        <AuthModal
+          loginModalState={authModalState}
+          setLoginModalState={setAuthModalState}
+        />
         <nav>
-          <ul className={styles['navbar-icon']}>
-            <li>
-              <Link href="/">
-                <Image
-                  src="/home/ghost-logo.svg"
-                  alt="LOGO"
-                  width={50}
-                  height={50}
-                  className={styles['logo-mobile']}
-                />
-              </Link>
-            </li>
-            <li>
-              <Link href="#/" onClick={handleMouseOver}>
-                {auth.id ? (
-                  <Avatar
-                    size="md"
-                    variant="solid"
-                    alt={auth.nickname}
-                    src={
-                      auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''
-                    }
-                    sx={
-                      {
-                        // border: '5px sold #fff',
-                        // width: 24,
-                        // height: 24,
-                      }
-                    }
-                  />
-                ) : (
-                  <FaCircleUser />
-                )}
-              </Link>
-              <a>
-                <CheckoutOffcanvas />
-              </a>
-              <a>
-                <TiThMenu onClick={openMenu} className={styles['menu']} />
-              </a>
-            </li>
-          </ul>
-          <ul
-            className={`${styles['navbar-links']} animate__animated ${menuState}`}
-          >
-            <li>
-              <Link href="/">
-                <span
-                  className={styles[pageName === 'index' ? 'page-name' : '']}
-                >
-                  首頁
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/themes">
-                <span
-                  className={styles[pageName === 'themes' ? 'page-name' : '']}
-                >
-                  密室逃脫
-                </span>
-              </Link>
-            </li>
-            <li className="logo">
-              <Link href="/">
-                <Image
-                  src="/home/LOGO.svg"
-                  alt="LOGO"
-                  width={134.96}
-                  height={61.26}
-                  className={styles['logo-screen']}
-                />
-              </Link>
-            </li>
-            <li>
-              <Link href="/teams">
-                <span
-                  className={styles[pageName === 'teams' ? 'page-name' : '']}
-                >
-                  揪團
-                </span>
-              </Link>
-            </li>
-            <li>
-              <Link href="/product">
-                <span
-                  className={styles[pageName === 'product' ? 'page-name' : '']}
-                >
-                  桌遊商城
-                </span>
-              </Link>
-            </li>
-          </ul>
+          <NavbarIcon
+            handleNavMenuOpen={handleNavMenuOpen}
+            handleMobileMenu={handleMobileMenu}
+          />
+          <NavbarLinks pageName={pageName} menuState={menuState} />
         </nav>
       </header>
     </>

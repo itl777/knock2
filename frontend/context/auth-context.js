@@ -1,5 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { API_SERVER, JWT_LOGIN_POST } from '@/configs/api-path'
+import {
+  JWT_LOGIN_POST,
+  VERIFY_TOKEN_POST,
+  REGISTER_POST,
+} from '@/configs/api-path'
 
 const AuthContext = createContext()
 const storageKey = 'knock-knock-auth'
@@ -12,9 +16,12 @@ const emptyAuth = {
 // component
 export function AuthContextProvider({ children }) {
   const [auth, setAuth] = useState({ ...emptyAuth })
-  const [authState, setAuthState] = useState(true)
 
   const login = async (account, password) => {
+    const output = {
+      success: false,
+      error: '',
+    }
     try {
       const r = await fetch(JWT_LOGIN_POST, {
         method: 'POST',
@@ -27,11 +34,17 @@ export function AuthContextProvider({ children }) {
       if (result.success) {
         // token 和用戶的相關資料存到 localStorage
         localStorage.setItem(storageKey, JSON.stringify(result.data))
-
         // 變更狀態
         setAuth(result.data)
+
+        // 回傳給登入視窗
+        output.success = true
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
       }
-      return result.success
     } catch (ex) {
       return false
     }
@@ -40,6 +53,36 @@ export function AuthContextProvider({ children }) {
   const logout = () => {
     localStorage.removeItem(storageKey)
     setAuth(emptyAuth)
+  }
+
+  const register = async (account, password, name, nick_name) => {
+    const output = {
+      success: false,
+      error: '',
+    }
+    try {
+      const r = await fetch(REGISTER_POST, {
+        method: 'POST',
+        body: JSON.stringify({ account, password, name, nick_name }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const result = await r.json()
+      if (result.success) {
+        // 回傳給登入視窗
+        output.success = true
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
+      }
+    } catch (ex) {
+      console.error(ex)
+      output.error = ex
+      return output
+    }
   }
 
   const getAuthHeader = () => {
@@ -62,7 +105,7 @@ export function AuthContextProvider({ children }) {
       const data = JSON.parse(str)
       const { token } = data
 
-      fetch(`${API_SERVER}/verify-token`, {
+      fetch(VERIFY_TOKEN_POST, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +120,6 @@ export function AuthContextProvider({ children }) {
         })
       if (data?.id && data?.token) {
         setAuth(data)
-        setAuthState(false)
       }
     } catch (ex) {
       console.error(ex)
@@ -86,7 +128,7 @@ export function AuthContextProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, auth, authState, getAuthHeader }}
+      value={{ login, logout, register, auth, getAuthHeader }}
     >
       {children}
     </AuthContext.Provider>

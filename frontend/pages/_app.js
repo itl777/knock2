@@ -1,9 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/styles/share-order.css'
 import '@/styles/globals.css'
+// Context
 import { CartProvider } from '@/context/cart-context'
-
-import AuthContext, { AuthContextProvider } from '@/context/auth-context'
+import { AuthContextProvider } from '@/context/auth-context'
+import { SnackbarContextProvider } from '@/context/snackbar-context'
 
 export default function MyApp({ Component, pageProps }) {
   // 使用自訂在頁面層級的版面(layout)
@@ -11,10 +12,11 @@ export default function MyApp({ Component, pageProps }) {
 
   return getLayout(
     <AuthContextProvider>
-      <CartProvider>
-        <Component {...pageProps} />
-      </CartProvider>
+      <SnackbarContextProvider>
+        <CartProvider>
+          <Component {...pageProps} />
+        </CartProvider>
+      </SnackbarContextProvider>
     </AuthContextProvider>
   )
 }
-

@@ -16,34 +16,27 @@ const schemaForm = z.object({
   nick_name: z
     .string()
     .min(1, {
-      message: '請勿超過 50 字元',
+      message: '請填寫暱稱，長度勿超過 50 字元',
     })
     .max(50, {
-      message: '請勿超過 50 字元',
-    })
-    .optional(),
+      message: '請填寫暱稱，長度勿超過 50 字元',
+    }),
   birthday: z
     .string()
-    .optional()
-    .refine(
-      (val) => {
-        const datePattern = /^\d{4}-\d{2}-\d{2}$/
-        return datePattern.test(val)
-      },
-      {
-        message: '請填寫正確日期格式',
-      }
-    ),
+    .date({
+      message: '請填寫正確日期格式',
+    })
+    .transform((val) => val || '')
+    .nullable(),
   mobile_phone: z
     .string({
       message: '請填寫正確電話號碼',
     })
-    .optional()
-    .transform(sanitizeMobile, {
-      message: '請填寫正確電話號碼',
-    })
+    .nullable()
+    .transform((val) => sanitizeMobile(val || ''))
     .refine(
       (val) => {
+        if (val === '') return true
         const mobilePattern = /^09\d{2}\d{3}\d{3}$/
         return mobilePattern.test(val)
       },
@@ -51,22 +44,21 @@ const schemaForm = z.object({
         message: '請填寫正確電話號碼',
       }
     ),
+
   invoice_carrier_id: z
-    .string()
-    .optional()
-    .refine(
-      (val) => {
-        const carrierIdPattern = /^\/[A-Z0-9]{7}$/
-        return carrierIdPattern.test(val)
-      },
-      {
-        message: '請填寫正確載具號碼',
-      }
-    ),
+    .string({
+      required_error: '請填寫正確載具號碼',
+    })
+    .nullable()
+    .transform((val) => val || '')
+    .refine((val) => val === '' || /^\/[A-Z0-9]{7}$/.test(val), {
+      message: '請填寫正確載具號碼',
+    }),
   tax_id: z
     .string()
-    .optional()
-    .refine((val) => /^\d{8}$/.test(val), {
+    .nullable()
+    .transform((val) => val || '')
+    .refine((val) => val === '' || /^\d{8}$/.test(val), {
       message: '請填寫正確統編號碼',
     }),
 })

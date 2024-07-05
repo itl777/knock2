@@ -1,6 +1,6 @@
-import styles from './input01.module.scss'
+import styles from './input.module.scss'
 
-export default function Input01({
+export default function AuthFormInput({
   name = '',
   type = '',
   value = '',
@@ -8,7 +8,6 @@ export default function Input01({
   disabled = false,
   onChange = () => {},
 }) {
-  value === null ? (value = '') : value
   return (
     <>
       <input
