@@ -3,6 +3,7 @@ import { Unstable_NumberInput as BaseNumberInput } from '@mui/base/Unstable_Numb
 import { styled } from '@mui/system'
 import RemoveIcon from '@mui/icons-material/Remove'
 import AddIcon from '@mui/icons-material/Add'
+import { useProduct } from '@/context/product-context'
 
 const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
   return (
@@ -29,6 +30,15 @@ const NumberInput = React.forwardRef(function CustomNumberInput(props, ref) {
 })
 
 export default function NumInput() {
+  // buyQuantity的state我放在context，再傳進來
+  const { buyQuantity, setBuyQuantity } = useProduct()
+  console.log('buyQuantity:',buyQuantity)
+
+  const handleChange = (e) => {
+  console.log('handleChange:',e.target.value)
+    setBuyQuantity(Number(e.target.value))
+  }
+
   return (
     <>
       <div
@@ -39,7 +49,13 @@ export default function NumInput() {
           marginLeft: '20px',
         }}
       >
-        <NumberInput aria-label="Quantity Input" min={1} max={99} />{' '}
+        <NumberInput
+          value={buyQuantity}
+          onChange={handleChange}
+          aria-label="Quantity Input"
+          min={1}
+          max={99}
+        />{' '}
       </div>
     </>
   )
