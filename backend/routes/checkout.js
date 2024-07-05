@@ -65,60 +65,45 @@ router.post("/api/cart_member", async (req, res) => {
   }
 });
 
-// POST insert items into guest_member table
-router.post("/api/cart_guest", async (req, res) => {
-  const { deviceId, productId, cartQty } = req.body;
-  console.log(deviceId, productId, cartQty);
-
-  const checkExitSql = `
-    SELECT * FROM cart_guest WHERE device_id = ? and cart_product_id = ?
-  `;
-
-  const updateSql = `
-  UPDATE cart_guest
-  SET cart_product_quantity = ?,
-  last_modified_at = now()
-  WHERE device_id = ? and cart_product_id = ?
-`;
-
-  const insertSql = `
-    INSERT INTO cart_guest (
-      device_id,
-      cart_product_id, 
-      cart_product_quantity, 
-      created_at, 
-      last_modified_at
-    ) VALUES (?, ?, ?, now(), now());
-  `;
+// GET member cart items
+router.get("/cart/", async (req, res) => {
+  // 從 query 中取得 member_id
+  const { member_id } = req.query;
 
   try {
-    // 確認 guest cart device_id 下是否已經有此 cart_product_id
-    const [isExit] = await db.query(checkExitSql, [deviceId, productId]);
+    // 取得產品資料
+    const sql = `
+      SELECT
+        cm.id as cart_id,
+        pm.product_id,
+        pm.product_name,
+        pm.price,
+        pi.product_img,
+        cm.cart_product_quantity
+      FROM cart_member AS cm
+      JOIN product_management AS pm
+      ON pm.product_id = cm.cart_product_id
+      JOIN product_img AS pi
+      ON pi.img_product_id = cm.cart_product_id
+      WHERE cm.cart_member_id = ?;
+    `;
 
-    let guestCartResults;
+    const [rows] = await db.query(sql, [member_id]);
 
-    // 如果 guest cart 已存在此商品，更新商品數量
-    if (isExit.length > 0) {
-      const updateValues = [cartQty, deviceId, productId];
-      [guestCartResults] = await db.query(updateSql, updateValues);
-    } else {
-      // 如果 guest cart「不」已存在此商品，更新商品數量
-      const insertValues = [deviceId, productId, cartQty];
-      [guestCartResults] = await db.query(insertSql, insertValues);
-    }
+    console.log("member address: ", rows);
 
-    const success = guestCartResults.affectedRows > 0;
-
-    res.json({ success });
+    // 將查詢結果傳送到前端
+    res.json({
+      status: true,
+      rows,
+    });
   } catch (error) {
-    console.error("Error while processing add to guest cart:", error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while processing add to guest cart." });
+    console.error("Error fetching member cart: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// after login, inset items into cart_member table
+// after login, insert items into cart_member table
 router.post("/api/cart/merge", async (req, res) => {
   const { memberId, guestCart } = req.body;
 
@@ -153,40 +138,35 @@ router.post("/api/cart/merge", async (req, res) => {
   }
 });
 
-// GET member cart items
-router.get("/cart/", async (req, res) => {
-  // 從 query 中取得 member_id
-  const { member_id } = req.query;
+// GET guest cart items
+router.get("/api/product", async (req, res) => {
+  const { product_id } = req.query;
 
   try {
     // 取得產品資料
     const sql = `
-      SELECT
-        cm.id as cart_id,
-        pm.product_id,
+      SELECT  
+        pm.product_id, 
         pm.product_name,
         pm.price,
-        pi.product_img,
-        cm.cart_product_quantity
-      FROM cart_member AS cm
-      JOIN product_management AS pm
-      ON pm.product_id = cm.cart_product_id
-      JOIN product_img AS pi
-      ON pi.img_product_id = cm.cart_product_id
-      WHERE cm.cart_member_id = ?;
+        pi.product_img
+      FROM product_management as pm
+      JOIN product_img as pi
+      ON pi.img_product_id = pm.product_id
+      WHERE product_id = ?;
     `;
 
-    const [memberCart] = await db.query(sql, [member_id]);
+    const [rows] = await db.query(sql, [product_id]);
 
-    console.log("member address: ", memberCart);
+    console.log("guest cart items: ", rows);
 
     // 將查詢結果傳送到前端
     res.json({
       status: true,
-      memberCart: memberCart,
+      rows,
     });
   } catch (error) {
-    console.error("Error fetching member cart: ", error);
+    console.error("Error fetching guest cart: ", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });

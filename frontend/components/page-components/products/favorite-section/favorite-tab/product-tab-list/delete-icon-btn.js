@@ -1,7 +1,8 @@
 import IconButton from '@mui/material/IconButton'
 import DeleteIcon from '@mui/icons-material/Delete'
+import { PRODUCT_FAVORITE } from '@/configs/api-path'
 
-export default function DeleteIconBtn({product_id,setCardChange}) {
+export default function DeleteIconBtn({ product_id, setCardChange }) {
   const trashStyle = {
     position: 'absolute',
     top: '6px',
@@ -11,14 +12,10 @@ export default function DeleteIconBtn({product_id,setCardChange}) {
 
   const handleDelete = async () => {
     try {
-      const r = await fetch(
-        `http://localhost:3001/products/favorite/delete/${product_id}`,
-        {
-          method: 'DELETE',
-        }
-      )
+      const r = await fetch(`${PRODUCT_FAVORITE}/delete/${product_id}`, {
+        method: 'DELETE',
+      })
       const result = await r.json()
-      console.log('result',result)
       setCardChange(!result.success)
     } catch (ex) {
       console.log('DELETE', ex)

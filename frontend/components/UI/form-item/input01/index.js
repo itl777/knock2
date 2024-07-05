@@ -8,6 +8,7 @@ export default function Input01({
   disabled = false,
   onChange = () => {},
 }) {
+  value === null ? (value = '') : value
   return (
     <>
       <input

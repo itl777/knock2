@@ -1,16 +1,17 @@
 import { createTheme } from '@mui/material/styles'
 import { FaCheckCircle } from 'react-icons/fa'
+import { FaExclamationCircle } from 'react-icons/fa'
 
 export const alertIcons = {
   success: <FaCheckCircle />,
   // info: <InfoIcon />,
   // warning: <WarningIcon />,
-  // error: <ErrorIcon />,
+  error: <FaExclamationCircle />,
 }
 
 const backgroundColor = '#ffffff'
 const iconColorSuccess = '#61DCB0'
-
+const iconColorError = '#A43131'
 
 const customTheme = createTheme({
   components: {
@@ -41,38 +42,19 @@ const customTheme = createTheme({
             color: iconColorSuccess,
           },
         },
-        standardInfo: {
-          // color: '#0c5460',
-        },
-        standardWarning: {
-          // color: '#856404',
-        },
+        // standardInfo: {
+        //   color: '#0c5460',
+        // },
+        // standardWarning: {
+        //   color: '#856404',
+        // },
         standardError: {
-          // color: '#721c24',
+          '& .MuiAlert-icon': {
+            color: iconColorError,
+          },
         },
       },
     },
-    // MuiList: {
-    //   styleOverrides: {
-    //     root: {
-    //       maxHeight: '300px',
-    //       overflow: 'auto',
-    //     },
-    //   },
-    // },
-    // MuiMenuItem: {
-    //   styleOverrides: {
-    //     root: {
-    //       fontFamily: 'Noto Serif JP, serif',
-    //       '&.Mui-selected': {
-    //         backgroundColor: selectedBackgroundColor,
-    //       },
-    //       '&.Mui-selected:hover': {
-    //         backgroundColor: selectedBackgroundColorHover,
-    //       },
-    //     },
-    //   },
-    // },
   },
 })
 

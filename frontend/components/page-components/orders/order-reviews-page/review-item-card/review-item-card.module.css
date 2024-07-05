@@ -1,0 +1,12 @@
+.orderItemBox {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.orderItemBoxRight {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}

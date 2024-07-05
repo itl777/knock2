@@ -6,6 +6,7 @@ import IndexLayout from '@/components/layout'
 import { useRouter } from 'next/router'
 import DetailsSection from '@/components/page-components/products/details-section'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
+import { PRODUCT_DETAILS } from '@/configs/api-path'
 
 export default function ProductDetails() {
   const router = useRouter()
@@ -21,10 +22,9 @@ export default function ProductDetails() {
 
   useEffect(() => {
     console.log(router.query.product_id)
-    fetch(`http://127.0.0.1:3001/products/details/${router.query.product_id}`)
+    fetch(`${PRODUCT_DETAILS}/${router.query.product_id}`)
       .then((r) => r.json())
       .then((dbData) => {
-        console.log('routerData', dbData.rows)
         setData(dbData.rows)
       })
   }, [router])
@@ -32,7 +32,6 @@ export default function ProductDetails() {
   useEffect(() => {
     if (data && data.length > 0) {
       const newData = { ...data[0] }
-      // console.log('newData', newData)
       setProductData(newData)
     }
   }, [data])
@@ -45,9 +44,6 @@ export default function ProductDetails() {
           features={<PdFeatures data={data} />}
           tab={<PdTabs data={data} />}
         />
-
-        {/* <PdFeatures data={data} />
-        <PdTabs data={data} /> */}
       </IndexLayout>
     </>
   )
