@@ -62,7 +62,6 @@ export default function FavoriteIconBtn({ product_id }) {
         const r = await fetch(`${PRODUCT_FAVORITE}/add/${product_id}`, {
           method: 'POST',
         })
-        // const result = await r.json()
         dataChange(product_id) //改顯示狀態
         openSnackbar('成功加入收藏')
       } catch (ex) {
@@ -73,13 +72,12 @@ export default function FavoriteIconBtn({ product_id }) {
         const r = await fetch(`${PRODUCT_FAVORITE}/delete/${product_id}`, {
           method: 'DELETE',
         })
-        // const result = await r.json()
         dataChange(product_id) //改顯示狀態
         openSnackbar('已取消收藏', 'error')
         setAnimate(true)
         setTimeout(() => {
-          setAnimate(false);
-        }, 2000);
+          setAnimate(false)
+        }, 2000)
       } catch (ex) {
         console.log('DELETE', ex)
       }
@@ -96,7 +94,6 @@ export default function FavoriteIconBtn({ product_id }) {
         size="large"
         sx={btnStyle}
         className={animate ? myStyle.likeBefore : ''}
-      
       >
         {data.includes(product_id) ? (
           <Image
@@ -104,13 +101,10 @@ export default function FavoriteIconBtn({ product_id }) {
             src="/ghost/ghost_10.png"
             width={103}
             height={88}
-             alt="Picture"
+            alt="Picture"
           />
         ) : (
-          <FavoriteIcon
-            // style={data.includes(product_id) ? { fill: 'red' } : { fill: '#fff' }}
-            style={{ fill: '#fff' }}
-          />
+          <FavoriteIcon style={{ fill: '#fff' }} />
         )}
       </IconButton>
     </>

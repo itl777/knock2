@@ -5,8 +5,6 @@ import { useProduct } from '@/context/product-context'
 export default function PdCard() {
   const { data } = useProduct()
 
-  // const cardData = data['rows'] || []
-
   return (
     <>
       <div className="container">

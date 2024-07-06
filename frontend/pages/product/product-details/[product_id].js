@@ -22,13 +22,12 @@ export default function ProductDetails() {
   })
 
   useEffect(() => {
-    // console.log(router.query.product_id)
     fetch(`${PRODUCT_DETAILS}/${router.query.product_id}`)
       .then((r) => r.json())
       .then((dbData) => {
         setData(dbData.rows)
       })
-  }, [router])
+  }, [router.isReady])
 
   useEffect(() => {
     if (data && data.length > 0) {

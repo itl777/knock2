@@ -11,6 +11,9 @@ export function useProduct() {
 
 export const ProductProvider = ({ children }) => {
   const router = useRouter()
+
+  const [cardChange, setCardChange] = useState(true)
+
   // 數量在這裡
   const [buyQuantity, setBuyQuantity] = useState(1)
 
@@ -81,7 +84,7 @@ export const ProductProvider = ({ children }) => {
       }
     }
     // window.scrollTo({ top: 0, behavior: 'auto' })
-  }, [router.query])
+  }, [router.query, cardChange])
 
   return (
     <ProductContext.Provider
@@ -93,6 +96,8 @@ export const ProductProvider = ({ children }) => {
         buyQuantity,
         showIcon,
         userSearch,
+        cardChange,
+        setCardChange,
         setUserSearch,
         setShowIcon,
         setBuyQuantity,

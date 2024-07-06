@@ -10,7 +10,6 @@ export default function FilterBtnArea() {
   const { showIcon, setShowIcon } = useProduct()
 
   const [priceToggle, setPriceToggle] = useState(false)
-  // const [showIcon, setShowIcon] = useState(false)
 
   const handleFilterCreated = (sort, order) => {
     router.push({
@@ -18,7 +17,6 @@ export default function FilterBtnArea() {
       query: { ...router.query, sort: sort, order: order },
     })
     setShowIcon(false)
-
   }
 
   const handleFilterPrice = (sort, order) => {
