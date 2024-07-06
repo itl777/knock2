@@ -65,7 +65,7 @@ export default function Card({ dbData }) {
 
                 {/* ******* Iris Added Start ******* */}
                 {/* <BuyBtn product_id={dbData.product_id} /> */}
-                <BuyBtn2 onClick={() => handleAddToCart(dbData.product_id, 1)} />
+                <BuyBtn2 onClick={() => handleAddToCart(dbData.product_id, 1, "add")} />
 
                 {/* ******* Iris Added End ******* */}
                 {/* </a> */}

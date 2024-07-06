@@ -123,7 +123,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // 點擊「直接購買」
+  // 點擊「直接購買」（不使用）
   const handleBuyClick = async (selectedProductId) => {
     // 有登入
     if (auth.id) {
@@ -195,8 +195,18 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // 點擊「加入購物車」
-  const handleAddToCart = async (selectedProductId, cartProductQuantity) => {
+  // 點擊「加入購物車」（actionType = buy 直接購買 or add 加入購物車）
+  const handleAddToCart = async (
+    selectedProductId,
+    cartProductQuantity,
+    actionType
+  ) => {
+    if (!cartProductQuantity || cartProductQuantity < 0) {
+      alert('請選擇商品數量')
+      return
+    }
+
+    // 有登入
     if (auth.id) {
       try {
         const response = await axios.post(CART_POST, {
@@ -207,17 +217,17 @@ export const CartProvider = ({ children }) => {
 
         if (response.data.success) {
           fetchMemberCart()
-          alert(
-            `成功加入購物車！！商品：${selectedProductId}，數量：${cartProductQuantity}`
-          )
+          alert(`成功加入購物車！！商品：${selectedProductId}，數量：${cartProductQuantity}`)
         } else {
           console.error('Failed to add item to cart')
         }
       } catch (error) {
         console.error('Error adding item to cart:', error)
       }
-    } else {
-      // 「沒」有登入
+    }
+    
+    // 「沒」有登入
+    if (!auth.id) {
       let guestCart = JSON.parse(localStorage.getItem('kkCart')) || []
       const existingItemIndex = guestCart.findIndex(
         (v) => v.product_id === selectedProductId
@@ -265,6 +275,15 @@ export const CartProvider = ({ children }) => {
           setCheckoutItems(updatedCheckoutItems)
           calculateTotal(updatedCheckoutItems)
         }
+      }
+    }
+
+
+    if(actionType === 'buy') {
+      if(auth.id){
+        window.location.href = '/checkout'
+      } else {
+        alert('請先登入')
       }
     }
   }

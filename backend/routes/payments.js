@@ -69,8 +69,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post('/return', async (req, res) => {
-  console.log('req.body:', req.body);
+router.post("/return", async (req, res) => {
+  console.log("req.body:", req.body);
   const data = { ...req.body };
   const { CheckMacValue } = req.body;
   delete data.CheckMacValue; // 此段不驗證
@@ -79,24 +79,75 @@ router.post('/return', async (req, res) => {
   const checkValue = create.payment_client.helper.gen_chk_mac_value(data);
 
   console.log(
-    '確認交易正確性：',
+    "確認交易正確性：",
     CheckMacValue === checkValue,
     CheckMacValue,
-    checkValue,
+    checkValue
   );
 
   // 交易成功後，需要回傳 1|OK 給綠界
-  if(CheckMacValue === checkValue) {
-    res.send('1|OK');
+  if (CheckMacValue === checkValue) {
+    res.send("1|OK");
   } else {
-    console.log('比對失敗');
+    console.log("比對失敗");
   }
-  
 });
 
 export default router;
 
-
 // ReturnURL為付款結果通知回傳網址，為特店server或主機的URL，用來接收綠界後端回傳的付款結果通知。
 // ClientBackURL 消費者點選此按鈕後，會將頁面導回到此設定的網址
 // OrderResultURL 有別於ReturnURL (server端的網址)，OrderResultURL為特店的client端(前端)網址。消費者付款完成後，綠界會將付款結果參數以POST方式回傳到到該網址
+// 綠界回傳範例
+/*
+req.body: {
+  TotalSuccessTimes: '',
+  PaymentNo: '',
+  PaymentTypeChargeFee: '0',
+  red_dan: '',
+  red_yet: '',
+  gwsr: '',
+  red_ok_amt: '',
+  PeriodType: '',
+  SimulatePaid: '1',
+  AlipayTradeNo: '',
+  MerchantID: '3002607',
+  TenpayTradeNo: '',
+  WebATMAccNo: '',
+  TradeDate: '2024/07/06 13:07:22',
+  TWQRTradeNo: 'OPAY20240706130735',
+  RtnMsg: '付款成功',
+  CustomField4: '',
+  PayFrom: '',
+  ATMAccBank: '',
+  PaymentType: 'TWQR_OPAY',
+  TotalSuccessAmount: '',
+  MerchantTradeNo: 'test1720242438974',
+  StoreID: '',
+  stage: '',
+  WebATMAccBank: '',
+  CustomField1: '',
+  PeriodAmount: '',
+  TradeNo: '2407061307225373',
+  card4no: '',
+  card6no: '',
+  auth_code: '',
+  stast: '',
+  PaymentDate: '2024/07/06 13:08:18',
+  CheckMacValue: '0C3D8E0873B3B43E97CCF843BAAF5AC031F4A02DED778268E597F3E028E64A70',
+  RtnCode: '1',
+  eci: '',
+  TradeAmt: '1363',
+  Frequency: '',
+  red_de_amt: '',
+  process_date: '',
+  amount: '',
+  CustomField2: '',
+  ATMAccNo: '',
+  ExecTimes: '',
+  CustomField3: '',
+  staed: '',
+  WebATMBankName: '',
+  AlipayID: ''
+}
+ */
