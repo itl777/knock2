@@ -20,7 +20,7 @@ export default function PdFilter() {
           <div className="row mt-4">
             <div className="col-4 offset-1 d-flex align-items-end">
               <div className="text">
-                <h6>Price range:</h6>
+                <div>Price range:</div>
               </div>
               <div>
                 <input type="range" className="form-range" id="customRange1" />

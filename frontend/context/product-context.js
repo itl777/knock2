@@ -23,6 +23,7 @@ export const ProductProvider = ({ children }) => {
   })
   // 排序箭頭狀態
   const [showIcon, setShowIcon] = useState(false)
+  const [userSearch, setUserSearch] = useState('')
 
   const getFavorite = async (page) => {
     page = page || 1
@@ -38,7 +39,7 @@ export const ProductProvider = ({ children }) => {
     }
   }
 
-  const getProductRows = async (page, category_id, sort, order) => {
+  const getProductRows = async (page, category_id, sort, order, userSearch) => {
     // if (!page) {
     //   router.push({
     //     pathname: router.pathname,
@@ -49,7 +50,8 @@ export const ProductProvider = ({ children }) => {
     category_id = category_id || ''
     sort = sort || ''
     order = order || ''
-    const url = `${PRODUCT_LIST}?page=${page}&category_id=${category_id}&sort=${sort}&order=${order}`
+    userSearch = userSearch || ''
+    const url = `${PRODUCT_LIST}?page=${page}&category_id=${category_id}&sort=${sort}&order=${order}&userSearch=${userSearch}`
     try {
       const res = await fetch(url)
       const resData = await res.json()
@@ -62,7 +64,7 @@ export const ProductProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    let { page, category_id, sort, order } = router.query
+    let { page, category_id, sort, order, userSearch } = router.query
     // if (!page) {
     //   router.push({
     //     pathname: router.pathname,
@@ -75,7 +77,7 @@ export const ProductProvider = ({ children }) => {
       if (url[0] === '/product/product-favorite') {
         getFavorite(page)
       } else if (url[0] === '/product') {
-        getProductRows(page, category_id, sort, order)
+        getProductRows(page, category_id, sort, order, userSearch)
       }
     }
     // window.scrollTo({ top: 0, behavior: 'auto' })
@@ -90,6 +92,8 @@ export const ProductProvider = ({ children }) => {
         router,
         buyQuantity,
         showIcon,
+        userSearch,
+        setUserSearch,
         setShowIcon,
         setBuyQuantity,
       }}

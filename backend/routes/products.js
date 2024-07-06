@@ -29,7 +29,7 @@ const getListDate = async (req) => {
 
   if (userSearch) {
     const userSearch_ = db.escape(`%${userSearch}%`);
-    where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_} `;
+    where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_}) `;
   }
   if (idSearch) {
     const idSearch_ = db.escape(`${idSearch}`);
