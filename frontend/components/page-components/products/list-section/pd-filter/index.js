@@ -31,10 +31,8 @@ export default function PdFilter() {
               <SearchInput />
             </div>
 
-            <div className="col-2 text-end d-flex align-items-end">
+            <div className="col-3 text-end d-flex align-items-end">
               <FilterBtnArea />
-              {/* <FilterBtn btnText={'最新上架'} href={'/'} />
-              <FilterBtn btnText={'價格排序'} href={'/'} /> */}
             </div>
           </div>
         </div>
