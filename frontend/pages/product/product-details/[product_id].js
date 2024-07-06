@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import DetailsSection from '@/components/page-components/products/details-section'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import { PRODUCT_DETAILS } from '@/configs/api-path'
+import { ProductProvider } from '@/context/product-context'
 
 export default function ProductDetails() {
   const router = useRouter()
@@ -21,7 +22,7 @@ export default function ProductDetails() {
   })
 
   useEffect(() => {
-    console.log(router.query.product_id)
+    // console.log(router.query.product_id)
     fetch(`${PRODUCT_DETAILS}/${router.query.product_id}`)
       .then((r) => r.json())
       .then((dbData) => {
@@ -38,13 +39,15 @@ export default function ProductDetails() {
 
   return (
     <>
-      <IndexLayout pageName="productDetails" background="light">
-        <DetailsSection
-          breadcrumb={<Breadcrumb productName={productData.product_name} />}
-          features={<PdFeatures data={data} />}
-          tab={<PdTabs data={data} />}
-        />
-      </IndexLayout>
+      <ProductProvider>
+        <IndexLayout pageName="productDetails" background="light">
+          <DetailsSection
+            breadcrumb={<Breadcrumb productName={productData.product_name} />}
+            features={<PdFeatures data={data} />}
+            tab={<PdTabs data={data} />}
+          />
+        </IndexLayout>
+      </ProductProvider>
     </>
   )
 }

@@ -4,6 +4,8 @@ import frameSvg from '@/public/products/frame.svg'
 import FilterBtn from '@/components/UI/filter-btn'
 import 'hover.css/css/hover-min.css'
 import CategoryBtn from './category-btn'
+import SearchInput from './search-input'
+import FilterBtnArea from './filter-btn-area'
 
 export default function PdFilter() {
   return (
@@ -16,7 +18,7 @@ export default function PdFilter() {
 
           {/* price range */}
           <div className="row mt-4">
-            <div className="col-6 offset-1 d-flex">
+            <div className="col-4 offset-1 d-flex align-items-end">
               <div className="text">
                 <h6>Price range:</h6>
               </div>
@@ -25,9 +27,12 @@ export default function PdFilter() {
               </div>
             </div>
 
-            <div className="col-4 text-end">
-              <FilterBtn btnText={'最新上架'} href={'/'} />
-              <FilterBtn btnText={'價格排序'} href={'/'} />
+            <div className="col-4 d-flex justify-content-center ">
+              <SearchInput />
+            </div>
+
+            <div className="col-3 text-end d-flex align-items-end">
+              <FilterBtnArea />
             </div>
           </div>
         </div>
@@ -44,7 +49,7 @@ export default function PdFilter() {
           .container {
             max-width: 1200px;
             margin-bottom: 5rem;
-            padding:0;
+            padding: 0;
           }
 
           .text {

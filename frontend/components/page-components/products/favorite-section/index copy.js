@@ -12,7 +12,7 @@ export default function FavoriteSection() {
   const inpRef3 = useRef(null)
 
   function handleClick(index) {
-    console.log('handleClick', index)
+    // console.log('handleClick', index)
     const input = document.createElement('input')
     input.type = 'text'
     input.value = title[index]

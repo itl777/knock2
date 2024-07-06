@@ -3,8 +3,11 @@ import myStyle from './favorite-icon.module.css'
 import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { PRODUCT_FAVORITE } from '@/configs/api-path'
+import { useSnackbar } from '@/context/snackbar-context'
 
 export default function FavoriteIconBtn({ product_id }) {
+  const { openSnackbar } = useSnackbar()
+
   const [data, setData] = useState([])
   const [likeMe, setLikeMe] = useState(false)
   const btnStyle = {
@@ -58,6 +61,7 @@ export default function FavoriteIconBtn({ product_id }) {
         })
         // const result = await r.json()
         dataChange(product_id) //改顯示狀態
+        openSnackbar('成功加入收藏')
       } catch (ex) {
         console.log(ex)
       }
@@ -68,6 +72,7 @@ export default function FavoriteIconBtn({ product_id }) {
         })
         // const result = await r.json()
         dataChange(product_id) //改顯示狀態
+        openSnackbar('已取消收藏', 'error')
       } catch (ex) {
         console.log('DELETE', ex)
       }

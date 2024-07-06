@@ -19,7 +19,7 @@
   text-decoration: none;
   color: black;
 }
-.li-line a:hover{
+.li-line a:hover {
   color: #676767;
 }
 .li-line a:hover::before {
@@ -37,6 +37,22 @@
 }
 
 @keyframes ghost {
-  from {transform: translateY(30px) rotate(-20deg)}
-  to {transform: translateY(0px)}
+  from {
+    transform: translateY(30px) rotate(-20deg);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+
+.active::before {
+  content: '';
+  position: absolute;
+  bottom: 22px;
+  left: 33px;
+  width: 50px;
+  height: 50px;
+  background-image: url('/ghost/ghost_11.png');
+  background-size: contain;
+  background-repeat: no-repeat;
 }
