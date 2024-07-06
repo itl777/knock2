@@ -56,3 +56,17 @@
   background-size: contain;
   background-repeat: no-repeat;
 }
+.frame{
+  position:relative
+}
+.ghostRight{
+position: absolute;
+top: -40px;
+right: 100px;
+}
+
+.ghostLeft{
+  position: absolute;
+  top: -39px;
+  left: 100px;
+}

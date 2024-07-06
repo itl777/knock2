@@ -39,7 +39,7 @@ const getListDate = async (req) => {
   // 類別篩選
   if (category_id) {
     const category_id_ = db.escape(`${category_id}`);
-    where = `JOIN \`product_category\` ON product_management.category_id = product_category.category_id where product_management.category_id=${category_id_} `;
+    where += `AND product_management.category_id=${category_id_} `;
   }
   // order by排序
   if(sort==='created_at'){
@@ -78,7 +78,6 @@ const getListDate = async (req) => {
     },${perPage}`;
 
     [rows] = await db.query(sql);
-
     success = true;
     return {
       success,
