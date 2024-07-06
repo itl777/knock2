@@ -21,6 +21,8 @@ export const ProductProvider = ({ children }) => {
     totalPages: 0,
     rows: [],
   })
+  // 排序箭頭狀態
+  const [showIcon, setShowIcon] = useState(false)
 
   const getFavorite = async (page) => {
     page = page || 1
@@ -87,6 +89,8 @@ export const ProductProvider = ({ children }) => {
         data,
         router,
         buyQuantity,
+        showIcon,
+        setShowIcon,
         setBuyQuantity,
       }}
     >

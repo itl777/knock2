@@ -22,9 +22,9 @@ const getListDate = async (req) => {
   let idSearch = req.params.product_id || "";
   let category_id = req.query.category_id || "";
   // 排序用
-  const sort = req.query.sort || "product_id";
+  let sort = req.query.sort || "product_id";
   const order = req.query.order || "DESC";
-  let orderBy = `ORDER BY ${sort} ${order}`;
+ 
   let where = " WHERE 1 ";
 
   if (userSearch) {
@@ -40,6 +40,10 @@ const getListDate = async (req) => {
   if (category_id) {
     const category_id_ = db.escape(`${category_id}`);
     where = `JOIN \`product_category\` ON product_management.category_id = product_category.category_id where product_management.category_id=${category_id_} `;
+  }
+  // order by排序
+  if(sort==='created_at'){
+    sort='product_management.created_at'
   }
 
   const t_sql = `SELECT COUNT(1) totalRows FROM product_management ${where}`;
@@ -59,9 +63,11 @@ const getListDate = async (req) => {
       return { success, redirect };
     }
 
+
+    let orderBy = `ORDER BY ${sort} ${order}`;
+
     // JOIN圖片
-    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\`
-    on \`product_id\` = \`img_product_id\` ${where} ${orderBy} LIMIT ${
+    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` on \`product_id\` = \`img_product_id\` ${where} ${orderBy} LIMIT ${
       (page - 1) * perPage
     },${perPage}`;
 

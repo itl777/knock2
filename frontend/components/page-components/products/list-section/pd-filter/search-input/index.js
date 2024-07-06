@@ -1,7 +1,7 @@
 import * as React from 'react'
 import TextField from '@mui/material/TextField'
-import { outlinedInputClasses } from '@mui/material/OutlinedInput'
 import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles'
+import { useProduct } from '@/context/product-context'
 
 const customTheme = (outerTheme) =>
   createTheme({
