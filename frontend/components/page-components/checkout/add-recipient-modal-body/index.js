@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import styles from './add-recipient-modal-body.module.css'
 import BlackBtn from '@/components/UI/black-btn'
-import OrderInputBox from '../../orders/order-input-box'
+import OrderInputBox from '../order-input-box'
 import { CHECKOUT_ADD_ADDRESS_POST } from '@/configs/api-path'
 
 export default function AddRecipientModalBody({ handleClose, memberId }) {

@@ -7,33 +7,42 @@ import { useCart } from '@/context/cart-context'
 import { useAuth } from '@/context/auth-context'
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
-import HDivider from '@/components/UI/divider/horizontal-divider'
 import VDivider from '@/components/UI/divider/vertical-divider'
 import RecipientButton from '../recipient-button'
 import RecipientButtonSelected from '../recipient-button-selected'
 import BasicModal from '@/components/UI/basic-modal'
 import RecipientModalBody from '../recipient-modal-body'
-import OrderInputBox from '../../orders/order-input-box'
+import OrderInputBox from '../order-input-box'
+import OrderSelectBox from '../order-select-box'
 import NoData from '@/components/UI/no-data'
-import { PRODUCT_IMG, CHECKOUT_GET, CHECKOUT_POST } from '@/configs/api-path'
+import CheckoutTotalTable from './checkout-total-table'
+import { PRODUCT_IMG, CHECKOUT_GET, CHECKOUT_POST, ECPAY_GET } from '@/configs/api-path'
 
 export default function CheckOutPage() {
   const router = useRouter()
   const { auth } = useAuth() // 取得 auth.id
   const [memberAddress, setMemberAddress] = useState([])
   const [deliverFee, setDeliverFee] = useState(120)
+  const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
   const [formData, setFormData] = useState({
     memberId: 0,
     recipientName: '',
     recipientMobile: '',
     recipientDistrictId: 1,
     recipientAddress: '',
-    paymentMethod: 'credit-card',
+    // invoice_type: '',
     memberInvoice: 0,
     mobileInvoice: '',
     recipientTaxId: '',
     orderItems: [],
   })
+
+  // 發票形式
+  const invoiceTypeOption = [
+    { value: 'member', text: '會員載具' },
+    { value: 'mobile', text: '手機載具' },
+    { value: 'tax', text: '統一編號' },
+  ]
 
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
   const { checkoutItems, checkoutTotal, handleQuantityChange, clearCart } =
@@ -73,10 +82,45 @@ export default function CheckOutPage() {
   // 控制表單輸入欄位，更新 formData
   const handleInputChange = (e) => {
     const { name, value } = e.target
+
     setFormData({
       ...formData,
       [name]: value,
     })
+  }
+
+  const handleInvoiceTypeChange = (e) => {
+    const value = e.target.value
+    console.log(value)
+    setInvoiceTypeValue(value)
+
+    // 根據不同的 invoice_type 更新 formData 中的相應欄位
+    switch (value) {
+      case 'member':
+        setFormData({
+          ...formData,
+          memberInvoice: 1,
+          mobileInvoice: '',
+          recipientTaxId: '',
+        })
+        break
+      case 'mobile':
+        setFormData({
+          ...formData,
+          memberInvoice: 0,
+          recipientTaxId: '',
+        })
+        break
+      case 'tax':
+        setFormData({
+          ...formData,
+          memberInvoice: 0,
+          mobileInvoice: '',
+        })
+        break
+      default:
+        break
+    }
   }
 
   // 送出表單
@@ -110,16 +154,12 @@ export default function CheckOutPage() {
         const orderId = response.data.orderId // 取得後端返回的 order_id
 
         // Step 2: 送 orderId, checkoutTotal 給後端
-
-        const ecpayResponse = await axios.get(
-          'http://localhost:3001/payments',
-          {
-            params: {
-              orderId,
-              checkoutTotal,
-            },
-          }
-        )
+        const ecpayResponse = await axios.get(ECPAY_GET, {
+          params: {
+            orderId,
+            checkoutTotal,
+          },
+        })
 
         if (ecpayResponse.data.success) {
           // Step 3: 導向新的支付頁面
@@ -131,7 +171,6 @@ export default function CheckOutPage() {
           })
           console.log('ECPay URL: ', ecpayResponse.data.html)
         }
-  
         clearCart()
       }
     } catch (error) {
@@ -150,7 +189,6 @@ export default function CheckOutPage() {
   const closeModal = () => {
     setIsModalOpen(false)
   }
-
 
   useEffect(() => {
     if (auth.id) {
@@ -194,25 +232,11 @@ export default function CheckOutPage() {
           </div>
 
           {/* 訂單金額 */}
-          <div className={styles.totalBox}>
-            <div className={styles.totalRow}>
-              <p>小計</p>
-              <p>$ {checkoutTotal}</p>
-            </div>
-            <div className={styles.totalRow}>
-              <p>折扣</p>
-              <p>$ 0</p>
-            </div>
-            <div className={styles.totalRow}>
-              <p>運費</p>
-              <p>$ {deliverFee}</p>
-            </div>
-            <HDivider margin="1rem 0" />
-            <div className={styles.totalRow}>
-              <p>合計</p>
-              <p>$ {checkoutTotal + deliverFee}</p>
-            </div>
-          </div>
+          <CheckoutTotalTable 
+            subtotal={checkoutTotal}
+            deliverFee={deliverFee}
+            totalDiscount={0}
+          />
         </div>
 
         <VDivider margin="2rem 0" />
@@ -238,24 +262,33 @@ export default function CheckOutPage() {
                 ))
             )}
 
-            <OrderInputBox
-              name="invoiceType"
+            <OrderSelectBox
+              name="invoice_type"
               label="發票形式"
-              value={formData.invoiceType}
-              onChange={handleInputChange}
+              placeholder="請選擇"
+              value={invoiceTypeValue}
+              options={invoiceTypeOption}
+              errorText=""
+              onChange={handleInvoiceTypeChange}
             />
-            <OrderInputBox
-              name="mobileInvoice"
-              label="手機載具"
-              value={formData.mobileInvoice}
-              onChange={handleInputChange}
-            />
-            <OrderInputBox
-              name="paymentMethod"
-              label="付款方式"
-              value={formData.paymentMethod}
-              onChange={handleInputChange}
-            />
+
+            {invoiceTypeValue === 'mobile' && (
+              <OrderInputBox
+                name="mobileInvoice"
+                label="手機載具"
+                value={formData.mobileInvoice}
+                onChange={handleInputChange}
+              />
+            )}
+
+            {invoiceTypeValue === 'tax' && (
+              <OrderInputBox
+                name="recipientTaxId"
+                label="統一編號"
+                value={formData.recipientTaxId}
+                onChange={handleInputChange}
+              />
+            )}
           </div>
 
           <BlackBtn

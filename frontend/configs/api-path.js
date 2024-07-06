@@ -25,6 +25,7 @@ export const CHECKOUT_GET = `${API_SERVER}/checkout/`
 export const CHECKOUT_GET_CART = `${API_SERVER}/checkout/cart`
 export const CHECKOUT_UPDATE_CART = `${API_SERVER}/checkout/cart/update`
 export const CHECKOUT_DELETE_ADDRESS = `${API_SERVER}/checkout/api/delete_address`
+export const ECPAY_GET = `${API_SERVER}/payments`
 
 //teams
 export const TEAM_ALL = `${API_SERVER}/teams/apiAll`
