@@ -4,9 +4,12 @@ import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { PRODUCT_FAVORITE } from '@/configs/api-path'
 import { useSnackbar } from '@/context/snackbar-context'
+import Image from 'next/image'
 
 export default function FavoriteIconBtn({ product_id }) {
   const { openSnackbar } = useSnackbar()
+
+  const [animate, setAnimate] = useState(false)
 
   const [data, setData] = useState([])
   const [likeMe, setLikeMe] = useState(false)
@@ -73,6 +76,10 @@ export default function FavoriteIconBtn({ product_id }) {
         // const result = await r.json()
         dataChange(product_id) //改顯示狀態
         openSnackbar('已取消收藏', 'error')
+        setAnimate(true)
+        setTimeout(() => {
+          setAnimate(false);
+        }, 2000);
       } catch (ex) {
         console.log('DELETE', ex)
       }
@@ -88,10 +95,23 @@ export default function FavoriteIconBtn({ product_id }) {
         aria-label="favorite"
         size="large"
         sx={btnStyle}
+        className={animate ? myStyle.likeBefore : ''}
+      
       >
-        <FavoriteIcon
-          style={data.includes(product_id) ? { fill: 'red' } : { fill: '#fff' }}
-        />
+        {data.includes(product_id) ? (
+          <Image
+            className={`${myStyle.likeStyle}`}
+            src="/ghost/ghost_10.png"
+            width={103}
+            height={88}
+             alt="Picture"
+          />
+        ) : (
+          <FavoriteIcon
+            // style={data.includes(product_id) ? { fill: 'red' } : { fill: '#fff' }}
+            style={{ fill: '#fff' }}
+          />
+        )}
       </IconButton>
     </>
   )

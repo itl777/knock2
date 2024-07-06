@@ -1,6 +1,5 @@
 import React from 'react'
 import Image from 'next/image'
-import frameSvg from '@/public/products/frame.svg'
 import 'hover.css/css/hover-min.css'
 import CategoryBtn from './category-btn'
 import SearchInput from './search-input'
@@ -27,7 +26,13 @@ export default function PdFilter() {
             alt="Picture of the author"
           />
 
-          <Image id="frame-head" layout="responsive" src={frameSvg} alt="" />
+          <Image
+            id="frame-head"
+            src="/products/frame.svg"
+            width={1200}
+            height={58}
+            alt="frame"
+          />
         </div>
 
         <div id="frame">
