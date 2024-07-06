@@ -67,7 +67,13 @@ const getListDate = async (req) => {
     let orderBy = `ORDER BY ${sort} ${order}`;
 
     // JOIN圖片
-    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` on \`product_id\` = \`img_product_id\` ${where} ${orderBy} LIMIT ${
+    // const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` on \`product_id\` = \`img_product_id\` ${where} ${orderBy} LIMIT ${
+    //   (page - 1) * perPage
+    // },${perPage}`;
+
+// JOIN分類
+    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` 
+    ON \`product_id\` = \`img_product_id\` JOIN \`product_category\` ON product_management.category_id = product_category.category_id ${where} ${orderBy}  LIMIT ${
       (page - 1) * perPage
     },${perPage}`;
 

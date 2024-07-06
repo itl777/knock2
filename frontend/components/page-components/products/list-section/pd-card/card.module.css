@@ -1,0 +1,20 @@
+.tag {
+  position: absolute;
+  top: 0px;
+  display: flex;
+  width: 100px;
+  height: 38px;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  background: #b99755;
+
+  color: #fff;
+  text-align: center;
+  font-family: 'Noto Serif JP';
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  letter-spacing: 0.32px;
+}
