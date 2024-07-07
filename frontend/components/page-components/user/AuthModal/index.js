@@ -127,6 +127,7 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
   }
 
   // ForgotPassword
+  const [otp, setOtp] = useState('')
   const [forgotPasswordState, setForgotPasswordState] = useState(false) // open close
   const [forgotPasswordData, setForgotPasswordData] = useState({
     account: '',
@@ -244,9 +245,11 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
       <ForgotPasswordForm
         open={forgotPasswordState}
         close={() => setForgotPasswordState(false)}
-        value={forgotPasswordData}
-        onChange={handleForgotPasswordChange}
+        inputValue={forgotPasswordData}
+        onInputChange={handleForgotPasswordChange}
         onSubmit={forgotPasswordSubmit}
+        otpValue={otp}
+        onOtpChange={setOtp}
         errorText={forgotForgotPasswordErrors}
         formChange={handleFormSwitch}
       />

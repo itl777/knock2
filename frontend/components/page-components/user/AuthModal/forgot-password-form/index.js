@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import OTPInput from '@/components/UI/form-item/otp-input'
 
 // styles
 import styles from '../login-form.module.scss'
@@ -23,9 +24,11 @@ const dialogTheme = createTheme({
 export default function ForgotPasswordForm({
   open,
   close,
-  value,
-  onChange,
+  inputValue,
+  onInputChange,
   onSubmit,
+  otpValue,
+  onOtpChange,
   errorText,
   formChange,
 }) {
@@ -53,14 +56,15 @@ export default function ForgotPasswordForm({
               <AuthFormInput
                 name="account"
                 type="text"
-                value={value.account}
+                value={inputValue.account}
                 placeholder="請輸入註冊時填寫的 Email 帳號"
-                onChange={onChange}
+                onChange={onInputChange}
               />
               <span className={styles.errorText}>
                 {errorText.account}
                 {errorText.result}
               </span>
+              <OTPInput value={otpValue} onChange={onOtpChange} />
             </div>
             <div className={styles.box}>
               <input type="submit" value="送出" />
