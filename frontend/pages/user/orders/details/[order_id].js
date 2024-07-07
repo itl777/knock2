@@ -9,9 +9,7 @@ export default function OrderDetailsPage() {
   // 取得 order id
   const router = useRouter()
   const orderId = router.query
-  console.log('order id: ', orderId);
-
-
+  
   return (
     <>
       <IndexLayout title="訂單詳情" background="light">

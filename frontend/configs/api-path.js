@@ -28,6 +28,8 @@ export const CHECKOUT_DELETE_ADDRESS = `${API_SERVER}/checkout/api/delete_addres
 export const ECPAY_GET = `${API_SERVER}/payments`
 export const CHECKOUT_CITY_GET = `${API_SERVER}/checkout/api/city`
 export const CHECKOUT_DISTRICT_GET = `${API_SERVER}/checkout/api/district`
+export const ORDER_REVIEW_POST = `${API_SERVER}/orders/api/add-reviews`
+export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
 
 
 //teams
