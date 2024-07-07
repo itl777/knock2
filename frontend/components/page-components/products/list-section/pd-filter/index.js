@@ -5,6 +5,7 @@ import CategoryBtn from './category-btn'
 import SearchInput from './search-input'
 import FilterBtnArea from './filter-btn-area'
 import myStyle from './filter.module.css'
+import PriceSlider from './price-slider'
 
 export default function PdFilter() {
   return (
@@ -39,13 +40,13 @@ export default function PdFilter() {
           <CategoryBtn />
 
           {/* price range */}
-          <div className="row mt-4">
-            <div className="col-4 offset-1 d-flex align-items-end">
+          <div className="row mt-5">
+            <div className="col-4 offset-1 d-flex justify-content-between align-items-center">
               <div className="text">
-                <div>Price range:</div>
+                <div className={myStyle.text}>Price range:</div>
               </div>
               <div>
-                <input type="range" className="form-range" id="customRange1" />
+                <PriceSlider />
               </div>
             </div>
 
@@ -53,7 +54,7 @@ export default function PdFilter() {
               <SearchInput />
             </div>
 
-            <div className="col-3 text-end d-flex align-items-end">
+            <div className="col-3 text-end d-flex align-items-center">
               <FilterBtnArea />
             </div>
           </div>
@@ -76,10 +77,6 @@ export default function PdFilter() {
 
           .text {
             display: fit-content;
-          }
-          .text h6 {
-            font-weight: 600;
-            font-family: 'Noto Serif JP', 'Noto Sans TC';
           }
         `}
       </style>

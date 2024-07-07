@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { PRODUCT_FAVORITE } from '@/configs/api-path'
 import { useSnackbar } from '@/context/snackbar-context'
+import 'hover.css/css/hover-min.css'
 import Image from 'next/image'
 
 export default function FavoriteIconBtn({ product_id }) {
@@ -97,7 +98,7 @@ export default function FavoriteIconBtn({ product_id }) {
       >
         {data.includes(product_id) ? (
           <Image
-            className={`${myStyle.likeStyle}`}
+            className={`${myStyle.likeStyle} hvr-buzz-out`}
             src="/ghost/ghost_10.png"
             width={103}
             height={88}

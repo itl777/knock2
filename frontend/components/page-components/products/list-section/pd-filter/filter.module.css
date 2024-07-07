@@ -57,7 +57,8 @@
   background-repeat: no-repeat;
 }
 .frame{
-  position:relative
+  position:relative;
+  margin-top: 82px;
 }
 .ghostRight{
 position: absolute;
@@ -69,4 +70,8 @@ right: 100px;
   position: absolute;
   top: -39px;
   left: 100px;
+}
+.text{
+  font-size: 16px;
+  font-weight: 600;
 }
