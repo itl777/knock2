@@ -1,9 +1,8 @@
-import * as React from 'react'
-import PropTypes from 'prop-types'
+import { useState } from 'react'
 import Slider, { SliderThumb } from '@mui/material/Slider'
 import { styled } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
+import { useRouter } from 'next/router'
 
 const AirbnbSlider = styled(Slider)(({ theme }) => ({
   color: 'rgba(0, 0, 0, 1)',
@@ -35,7 +34,6 @@ const AirbnbSlider = styled(Slider)(({ theme }) => ({
     },
   },
   '& .Mui-focusVisible': {
-    // boxShadow: '0px 0px 0px 8px rgba(185, 151, 85, 0.3)',
     boxShadow: '0 0 20px 20px rgba(185, 151, 85, 0.3)',
   },
   '& .MuiSlider-track': {
@@ -59,6 +57,22 @@ const AirbnbSlider = styled(Slider)(({ theme }) => ({
 }))
 
 export default function PriceSlider() {
+  const router = useRouter()
+  const [price, setPrice] = useState([500, 1500])
+
+  const handlePriceChange = (e) => {
+    const newPrice = e.target.value
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        price_start: newPrice[0],
+        price_end: newPrice[1],
+      },
+    })
+    setPrice(newPrice)
+  }
+
   return (
     <Box sx={{ width: 270, alignItems: 'end', display: 'flex' }}>
       <AirbnbSlider
@@ -70,6 +84,8 @@ export default function PriceSlider() {
           index === 0 ? 'Minimum price' : 'Maximum price'
         }
         defaultValue={[500, 1500]}
+        value={price}
+        onChange={handlePriceChange}
       />
     </Box>
   )

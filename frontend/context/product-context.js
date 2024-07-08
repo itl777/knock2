@@ -42,7 +42,15 @@ export const ProductProvider = ({ children }) => {
     }
   }
 
-  const getProductRows = async (page, category_id, sort, order, userSearch) => {
+  const getProductRows = async (
+    page,
+    category_id,
+    sort,
+    order,
+    userSearch,
+    price_start,
+    price_end
+  ) => {
     // if (!page) {
     //   router.push({
     //     pathname: router.pathname,
@@ -54,7 +62,9 @@ export const ProductProvider = ({ children }) => {
     sort = sort || ''
     order = order || ''
     userSearch = userSearch || ''
-    const url = `${PRODUCT_LIST}?page=${page}&category_id=${category_id}&sort=${sort}&order=${order}&userSearch=${userSearch}`
+    price_start = price_start || ''
+    price_end = price_end || ''
+    const url = `${PRODUCT_LIST}?page=${page}&category_id=${category_id}&sort=${sort}&order=${order}&userSearch=${userSearch}&price_start=${price_start}&price_end=${price_end}`
     try {
       const res = await fetch(url)
       const resData = await res.json()
@@ -67,7 +77,8 @@ export const ProductProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    let { page, category_id, sort, order, userSearch } = router.query
+    let { page, category_id, sort, order, userSearch, price_start, price_end } =
+      router.query
     // if (!page) {
     //   router.push({
     //     pathname: router.pathname,
@@ -80,7 +91,15 @@ export const ProductProvider = ({ children }) => {
       if (url[0] === '/product/product-favorite') {
         getFavorite(page)
       } else if (url[0] === '/product') {
-        getProductRows(page, category_id, sort, order, userSearch)
+        getProductRows(
+          page,
+          category_id,
+          sort,
+          order,
+          userSearch,
+          price_start,
+          price_end
+        )
       }
     }
     // window.scrollTo({ top: 0, behavior: 'auto' })
