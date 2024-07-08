@@ -20,6 +20,7 @@ const emptyAuth = {
 export function AuthContextProvider({ children }) {
   const { logoutFirebase } = useFirebase()
   const [auth, setAuth] = useState({ ...emptyAuth })
+  const [authIsReady, setAuthIsReady] = useState(false)
 
   const login = async (account, password) => {
     const output = {
@@ -189,6 +190,7 @@ export function AuthContextProvider({ children }) {
         })
       if (data?.id && data?.token) {
         setAuth(data)
+        setAuthIsReady(true)
       }
     } catch (ex) {
       console.error(ex)
@@ -199,6 +201,7 @@ export function AuthContextProvider({ children }) {
     <AuthContext.Provider
       value={{
         auth,
+        authIsReady,
         login,
         googleLogin,
         logout,

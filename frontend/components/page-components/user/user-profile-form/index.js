@@ -14,6 +14,7 @@ import UserProfileRadio from './user-profile-item/UserProfileRadio'
 import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
+import AvatarFormDialogs from './user-avatar-form'
 import schemaForm from './schema-form'
 
 export default function UserProfileForm() {
@@ -44,6 +45,7 @@ export default function UserProfileForm() {
     invoice_carrier_id: '',
     tax_id: '',
   })
+  const [openAvatarModal, setOpenAvatarModal] = useState(false)
 
   // function
   const handleChange = (e) => {
@@ -253,7 +255,14 @@ export default function UserProfileForm() {
           <div className={styles['box1']}>
             {/* <div className={styles['avatar']}>
             </div> */}
-            <AvatarFormItem avatar={profileForm.avatar} />
+            <AvatarFormDialogs
+              open={openAvatarModal}
+              close={() => setOpenAvatarModal(false)}
+            />
+            <AvatarFormItem
+              avatar={profileForm.avatar}
+              open={() => setOpenAvatarModal(true)}
+            />
             <div className={styles['account']}>
               <UserProfileFormTitle text={'帳號資訊'} />
               <UserProfileInput

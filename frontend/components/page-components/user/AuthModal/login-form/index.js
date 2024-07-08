@@ -31,7 +31,6 @@ export default function LoginForm({
   onSubmit,
   errorText,
   formChange,
-  thirdPartyLogin,
 }) {
   return (
     <>

@@ -229,7 +229,6 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
   }
 
   const callbackGoogleLogin = async (providerData) => {
-    console.log(providerData)
     // 如果已經登入中，不需要再作登入動作
     if (auth.id) return
 

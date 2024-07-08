@@ -43,7 +43,6 @@ const getOAuth = async (callbackFunction) => {
       if (user) {
         callbackFunction(user.providerData[0])
       }
-      console.log(user, 'onAuthStateChanged')
     })
   } catch (ex) {
     console.error(ex, 'onAuthStateChangedError')

@@ -15,7 +15,6 @@ export default function ThirdPartyLoginButton() {
           root: {
             border: '2px solid #fff',
             color: '#fff',
-            // backgroundColor: '#000',
           },
         },
       },
