@@ -65,6 +65,31 @@ const getBranchesList = async () => {
   }
 };
 
+// 獲取分店列表的函數
+const getBranchThemesList = async () => {
+  let success = false;
+
+  const btsql = `
+    SELECT *
+    FROM branch_themes
+    ORDER BY branch_themes_id DESC
+  `;
+
+  try {
+    console.log("Executing SQL:", btsql);
+    const [rows] = await db.query(btsql);
+    console.log("SQL Result:", rows);
+    success = true;
+    return {
+      success,
+      branches: rows,
+    };
+  } catch (err) {
+    console.error("Error fetching branches:", err);
+    return { success };
+  }
+};
+
 // 主题列表的路由
 router.get("/", async (req, res) => {
   const branchId = req.query.branch_id; // 從查詢參數中獲取分店ID
@@ -95,6 +120,22 @@ router.get("/branches", async (req, res) => {
   return res.json({
     status: "success",
     branches: data.branches,
+  });
+});
+
+// 分店主題列表的路由
+router.get("/branch-themes", async (req, res) => {
+  const data = await getBranchThemesList();
+  if (!data.success) {
+    return res.status(500).json({
+      status: "error",
+      message: "無法查詢到分店資料",
+    });
+  }
+
+  return res.json({
+    status: "success",
+    branch_themes: data.branch_themes,
   });
 });
 

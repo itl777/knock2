@@ -2,7 +2,7 @@
 $mediumDuration: 0.3s;
 
 @mixin hacks() {
-  // 定义hacks的具体样式
+  // 定義具體樣式
 }
 
 @mixin prefixed($property, $value) {
@@ -27,7 +27,7 @@ $mediumDuration: 0.3s;
     &:hover,
     &:focus,
     &:active {
-      @include prefixed(transform, scale(1.05));
+      @include prefixed(transform, scale(1.03));
     }
   }
 
