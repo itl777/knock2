@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import OTPInput from '@/components/UI/form-item/otp-input'
+import ThirdPartyLoginButton from '../third-party-login-button'
 
 // styles
 import styles from '../login-form.module.scss'
@@ -82,7 +83,9 @@ export default function ForgotPasswordForm({
             <div className={styles.links}>
               <span>——— 或選擇其他方式登入 ———</span>
             </div>
-            <div className={styles.links}>{/* 第三方登入 */}</div>
+            <div className={styles.links}>
+              <ThirdPartyLoginButton />
+            </div>
           </form>
         </Dialog>
       </ThemeProvider>

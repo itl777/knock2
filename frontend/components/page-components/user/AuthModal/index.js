@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
 // context
 import { useAuth } from '@/context/auth-context'
 import { useSnackbar } from '@/context/snackbar-context'
+import useFirebase from '@/hooks/useFirebase'
+
 // components
 import LoginForm from './login-form'
 import RegisterForm from './register-form'
@@ -14,8 +17,9 @@ import {
 
 export default function AuthModal({ loginModalState, setLoginModalState }) {
   // context
-  const { login, register, forgotPassword } = useAuth()
+  const { auth, login, googleLogin, register, forgotPassword } = useAuth()
   const { openSnackbar } = useSnackbar()
+  const { getOAuth } = useFirebase()
 
   // Login
   // 父元件傳的 loginModalState setLoginModalState  // open close
@@ -213,12 +217,38 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
       setLoginModalState(false)
       setRegisterState(true)
       setForgotPasswordState(false)
-    } else {
+    } else if (formName === 'ForgotPassword') {
       setLoginModalState(false)
       setRegisterState(false)
       setForgotPasswordState(true)
+    } else {
+      setLoginModalState(false)
+      setRegisterState(false)
+      setForgotPasswordState(false)
     }
   }
+
+  const callbackGoogleLogin = async (providerData) => {
+    console.log(providerData)
+    // 如果已經登入中，不需要再作登入動作
+    if (auth.id) return
+
+    // 向伺服器進行登入動作
+    const result = await googleLogin(providerData)
+    if (result.success) {
+      // 如果登入成功
+      handleFormSwitch()
+      // openSnackbar('登入成功！', 'success')
+    } else {
+      // 如果登入失敗
+      console.error(result.error)
+      openSnackbar('登入失敗，請洽管理員！', 'error')
+    }
+  }
+
+  useEffect(() => {
+    getOAuth(callbackGoogleLogin)
+  }, [])
 
   return (
     <>

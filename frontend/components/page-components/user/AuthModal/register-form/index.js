@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import ThirdPartyLoginButton from '../third-party-login-button'
 
 // styles
 import styles from '../login-form.module.scss'
@@ -105,7 +106,9 @@ export default function RegisterForm({
             <div className={styles.links}>
               <span>——— 或選擇其他方式註冊 ———</span>
             </div>
-            <div className={styles.links}>{/* 第三方登入 */}</div>
+            <div className={styles.links}>
+              <ThirdPartyLoginButton />
+            </div>
           </form>
         </Dialog>
       </ThemeProvider>

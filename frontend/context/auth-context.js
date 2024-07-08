@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import useFirebase from '@/hooks/useFirebase'
 import {
   JWT_LOGIN_POST,
+  GOOGLE_LOGIN_POST,
   VERIFY_TOKEN_POST,
   REGISTER_POST,
   FORGET_PASSWORD_POST,
@@ -16,6 +18,7 @@ const emptyAuth = {
 }
 // component
 export function AuthContextProvider({ children }) {
+  const { logoutFirebase } = useFirebase()
   const [auth, setAuth] = useState({ ...emptyAuth })
 
   const login = async (account, password) => {
@@ -51,8 +54,42 @@ export function AuthContextProvider({ children }) {
     }
   }
 
+  const googleLogin = async (providerData) => {
+    const output = {
+      success: false,
+      error: '',
+    }
+    try {
+      const r = await fetch(GOOGLE_LOGIN_POST, {
+        method: 'POST',
+        body: JSON.stringify(providerData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const result = await r.json()
+      if (result.success) {
+        // token 和用戶的相關資料存到 localStorage
+        localStorage.setItem(storageKey, JSON.stringify(result.data))
+        // 變更狀態
+        setAuth(result.data)
+
+        // 回傳給登入視窗
+        output.success = true
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
+      }
+    } catch (ex) {
+      return false
+    }
+  }
+
   const logout = () => {
     localStorage.removeItem(storageKey)
+    logoutFirebase()
     setAuth(emptyAuth)
   }
 
@@ -160,7 +197,15 @@ export function AuthContextProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ auth, login, logout, register, forgotPassword, getAuthHeader }}
+      value={{
+        auth,
+        login,
+        googleLogin,
+        logout,
+        register,
+        forgotPassword,
+        getAuthHeader,
+      }}
     >
       {children}
     </AuthContext.Provider>

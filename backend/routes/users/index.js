@@ -6,7 +6,7 @@ import db from "../../utils/connect.js";
 import upload from "../../utils/upload-imgs.js";
 import schemaForm from "./schema-profile.js";
 import transporter from "../../configs/mail.js";
-import { createOtp } from "./creatOtp.js";
+import { createOtp } from "./createOtp.js";
 
 const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
@@ -34,6 +34,7 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
     },
   };
 
+  
   const sql = "SELECT * FROM users WHERE account=?";
   const [rows] = await db.query(sql, [req.body.account]);
 
@@ -314,6 +315,94 @@ router.post("/forgot-password", async (req, res) => {
       return res.json(output);
     }
   });
+});
+
+router.post("/google-login", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    data: {
+      id: 0,
+      nickname: "",
+      avatar: "",
+      token: "",
+    },
+  };
+
+  // 沒有google登入資料
+  if (!req.body.providerId || !req.body.uid) {
+    output.success = false;
+    output.code = 400;
+    output.error = "缺少google登入資料";
+    return res.json(output);
+  }
+
+  const { displayName, email, uid, phoneNumber } = req.body;
+
+  // 1. 先查詢資料庫是否有同google_uid的資料
+  try {
+    const sql_google_uid = "SELECT * FROM users WHERE google_uid=?";
+    const [rows] = await db.query(sql_google_uid, [uid]);
+
+    if (!rows.length) {
+      //  2-1.不存在 -> 建立一個新會員資料(無帳號與密碼)，只有google來的資料 -> 執行登入工作
+      const data = {
+        account: email,
+        name: displayName,
+        nick_name: displayName,
+        mobile_phone: phoneNumber,
+        google_uid: uid,
+      };
+      try {
+        const sql = "INSERT INTO users SET ?";
+        const [result] = await db.query(sql, [data]);
+        if (!result.affectedRows) {
+          output.code = 441;
+          output.error = "預期外的錯誤，請聯絡管理員";
+          return res.json(output);
+        }
+      } catch (ex) {
+        output.code = 440;
+        output.error = "預期外的錯誤，請聯絡管理員";
+        console.error(ex);
+        if (ex.errno === 1062) {
+          output.code = 450;
+          output.error = "Email已被註冊，請試試其他Email";
+        }
+        return res.json(output);
+      }
+    }
+  } catch (ex) {
+    output.error = ex;
+  }
+
+  try {
+    const sql_google_uid = "SELECT * FROM users WHERE google_uid=?";
+    const [rows] = await db.query(sql_google_uid, [uid]);
+
+    //  有存在 -> 執行登入工作
+    output.success = true;
+    const payload = {
+      id: rows[0].user_id,
+      account: rows[0].account,
+    };
+    const token = jwt.sign(payload, process.env.JWT_KEY);
+
+    output.data = {
+      id: rows[0].user_id,
+      nickname: rows[0].nick_name,
+      avatar: rows[0].avatar,
+      token,
+    };
+  } catch (ex) {
+    output.code = 460;
+    output.error = "預期外的錯誤，請聯絡管理員";
+    console.error(ex);
+    return res.json(output);
+  }
+
+  return res.json(output);
 });
 
 // 處理刪除的api
