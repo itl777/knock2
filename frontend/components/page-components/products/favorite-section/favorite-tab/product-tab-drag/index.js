@@ -2,10 +2,10 @@ import Image from 'next/image'
 import lineImg from '@/public/products/line.svg'
 import FavCard from '@/components/page-components/products/favorite-section/favorite-tab/product-tab-drag/fav-card'
 import { useEffect, useState, useRef } from 'react'
+import { FaMarker } from 'react-icons/fa6'
+import myStyle from './drag.module.css'
 
-export default function FavoriteSection() {
-  // const localTitle = ['測試', '測試', '測試']
-  //變更各區名稱
+export default function ProductTabDrag() {
   const [title, setTitle] = useState(['馬上買', '考慮中', '禮物區'])
   const inpRef1 = useRef(null)
   const inpRef2 = useRef(null)
@@ -24,11 +24,9 @@ export default function FavoriteSection() {
       setTitle(newTitle)
       if (index === 0) {
         inpRef1.current.innerHTML = input.value
-      }
-      if (index === 1) {
+      } else if (index === 1) {
         inpRef2.current.innerHTML = input.value
-      }
-      if (index === 2) {
+      } else if (index === 2) {
         inpRef3.current.innerHTML = input.value
       }
     })
@@ -36,12 +34,10 @@ export default function FavoriteSection() {
     if (index === 0) {
       inpRef1.current.innerHTML = ''
       inpRef1.current.appendChild(input)
-    }
-    if (index === 1) {
+    } else if (index === 1) {
       inpRef2.current.innerHTML = ''
       inpRef2.current.appendChild(input)
-    }
-    if (index === 2) {
+    } else if (index === 2) {
       inpRef3.current.innerHTML = ''
       inpRef3.current.appendChild(input)
     }
@@ -96,55 +92,60 @@ export default function FavoriteSection() {
   return (
     <div>
       <div className="container p-4">
-        <div className="d-flex justify-content-between">
-          <h3>我的收藏</h3>
-          <div className="d-flex align-items-end">
-            <i className="fa-solid fa-align-left" />
-            <i className="fa-solid fa-table-cells-large ms-3" />
-          </div>
-        </div>
-
-        {/* 線 */}
-        <div className="py-4">
-          <Image src={lineImg} alt="" />
-        </div>
+        <div className="d-flex justify-content-between"></div>
 
         {/* 卡片區 最外層*/}
         <div className="d-grid gap-4">
           {/* 欄 */}
           <div className="text-center bg-gray d-flex align-items-center flex-column">
-            <h4
-              className="title"
-              onDoubleClick={() => handleClick(0)}
-              ref={inpRef1}
-            >
-              {title[0]}
-            </h4>
+            <div className="d-flex position-relative">
+              <h4
+                className={myStyle.title}
+                onDoubleClick={() => handleClick(0)}
+                ref={inpRef1}
+              >
+                {title[0]}
+              </h4>
+
+              <div className={myStyle.pen}>
+                <FaMarker />
+              </div>
+            </div>
             <FavCard pdId={1} />
           </div>
 
           {/* 欄 */}
           <div className="text-center bg-gray d-flex align-items-center flex-column">
-            <h4
-              className="title"
-              onDoubleClick={() => handleClick(1)}
-              ref={inpRef2}
-            >
-              {title[1]}
-            </h4>
+            <div className="d-flex position-relative">
+              <h4
+                className={myStyle.title}
+                onDoubleClick={() => handleClick(1)}
+                ref={inpRef2}
+              >
+                {title[1]}
+              </h4>
+              <div className={myStyle.pen}>
+                <FaMarker />
+              </div>
+            </div>
             {/* 卡片 */}
             <FavCard pdId={2} />
           </div>
 
           {/* 欄 */}
           <div className="text-center bg-gray d-flex align-items-center flex-column">
-            <h4
-              className="title"
-              onDoubleClick={() => handleClick(2)}
-              ref={inpRef3}
-            >
-              {title[2]}
-            </h4>
+            <div className="d-flex position-relative">
+              <h4
+                className={myStyle.title}
+                onDoubleClick={() => handleClick(2)}
+                ref={inpRef3}
+              >
+                {title[2]}
+              </h4>
+              <div className={myStyle.pen}>
+                <FaMarker />
+              </div>
+            </div>
             {/* 卡片 */}
             <FavCard pdId={3} />
             <FavCard pdId={4} />

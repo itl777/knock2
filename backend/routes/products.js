@@ -33,11 +33,9 @@ const getListDate = async (req) => {
     where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_}) `;
   }
 
-
   if (Number(price_start) || Number(price_end)) {
     Number(price_start) ? price_start : (price_start = 0);
     Number(price_end) ? price_end : (price_end = 2000);
-
 
     // const price_start_ = db.escape(`${price_start}`);
     // const price_end_ = db.escape(`${price_end}`);
@@ -96,14 +94,13 @@ const getListDate = async (req) => {
     };
   }
 
-  return { success, message:"無法查詢到資料，查詢字串可能有誤" };
-
+  return { success, message: "無法查詢到資料，查詢字串可能有誤" };
 };
 
 const getFavoriteDate = async (req) => {
   let success = false;
   let redirect = "";
-  const perPage = 6; //每頁卡片數量
+  const perPage = 8; //每頁卡片數量
 
   let where = " WHERE 1 ";
 
@@ -149,16 +146,16 @@ const getFavoriteDate = async (req) => {
 };
 
 router.get("/", async (req, res) => {
-  const data = await getListDate(req);  
+  const data = await getListDate(req);
   if (data.success) {
     return res.json(data);
   }
   if (data.redirect) {
     return res.redirect(data.redirect);
   }
-  if(data.message){
+  if (data.message) {
     return res.json({
-      success:data.success,
+      success: data.success,
       message: data.message,
     });
   }
