@@ -1,6 +1,7 @@
 import MyPagination from '../../pagination'
 import Card from './card'
 import { useProduct } from '@/context/product-context'
+import myStyle from './card.module.css'
 
 export default function PdCard() {
   const { data } = useProduct()
@@ -9,7 +10,7 @@ export default function PdCard() {
     <>
       <div className="container">
         <div className="row">
-          <div className="col-12 d-grid">
+          <div className={`${myStyle.grid} col-12 d-grid`}>
             {/* 商品卡片 */}
 
             {data.rows.map((r) => {
