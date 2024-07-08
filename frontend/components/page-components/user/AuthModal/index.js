@@ -230,8 +230,7 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
 
   const callbackGoogleLogin = async (providerData) => {
     // 如果已經登入中，不需要再作登入動作
-    if (auth.id) return
-
+    if (auth.id !== 0) return
     // 向伺服器進行登入動作
     const result = await googleLogin(providerData)
     if (result.success) {
@@ -246,7 +245,9 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
   }
 
   useEffect(() => {
+    handleFormSwitch()
     getOAuth(callbackGoogleLogin)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

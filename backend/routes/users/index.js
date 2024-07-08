@@ -3,7 +3,7 @@ import moment from "moment-timezone";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../../utils/connect.js";
-import upload from "../../utils/upload-imgs.js";
+import upload from "../../utils/upload-avatar.js";
 import schemaForm from "./schema-profile.js";
 import transporter from "../../configs/mail.js";
 import { createOtp } from "./createOtp.js";
@@ -34,7 +34,6 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
     },
   };
 
-  
   const sql = "SELECT * FROM users WHERE account=?";
   const [rows] = await db.query(sql, [req.body.account]);
 
@@ -433,11 +432,32 @@ router.post("/google-login", async (req, res) => {
 // });
 
 // 上傳 avatar 的api
-router.post("/upload-avatar", upload.single("avatar"), (req, res) => {
-  res.json({
-    body: req.body,
+router.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
+  const output = {
+    success: false,
+    error: "",
     file: req.file,
-  });
+  };
+  console.log(req.body, req.file);
+  if (!req.file) {
+    output.error = "上傳失敗";
+    return res.json(output);
+  }
+
+  try {
+    const sql = "UPDATE users SET avatar=? WHERE user_id=?";
+    const [result] = await db.query(sql, [req.file.filename, req.body.user_id]);
+    output.success = !!result.affectedRows;
+    if (!output.success) {
+      output.error = "更新失敗";
+      return res.json(output);
+    }
+  } catch (ex) {
+    output.error = ex;
+  }
+
+  output.file = req.file;
+  return res.json(output);
 });
 
 export default router;

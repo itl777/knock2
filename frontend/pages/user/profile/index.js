@@ -12,7 +12,6 @@ export default function Profile() {
   const { auth, authIsReady } = useAuth()
 
   useEffect(() => {
-    console.count('user profile')
     if (!router.isReady) return
     if (!auth.id && authIsReady) {
       router.push('/')

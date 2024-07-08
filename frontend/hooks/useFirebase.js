@@ -32,7 +32,6 @@ const getOAuth = async (callbackFunction) => {
         callbackFunction(user.providerData[0])
       }
     } else {
-      console.log('No redirect result')
     }
   } catch (ex) {
     console.error(ex, 'getOAuthError')
@@ -67,8 +66,7 @@ const loginWithGooglePopup = async () => {
   const auth = getAuth()
 
   try {
-    const result = await signInWithPopup(auth, provider)
-    console.log(result, 'result')
+    await signInWithPopup(auth, provider)
   } catch (ex) {
     console.error(ex)
   }

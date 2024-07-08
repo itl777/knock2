@@ -99,9 +99,7 @@ export default function UserProfileForm() {
         .map((v, i) => {
           return { value: i + 1, text: `${i + 1} 月` }
         })
-      console.log('111')
       if (defYear && defMonth) {
-        console.log('222')
         const date = new Date(defYear, defMonth, 0).getDate()
         const dates = Array(date)
           .fill()
@@ -242,7 +240,7 @@ export default function UserProfileForm() {
     if (auth.id) fetchData()
     // 下面這行 讓eslint略過一行檢查
     // eslint-disable-next-line
-  }, [auth.id])
+  }, [auth.id, openAvatarModal])
 
   // render form
   return (

@@ -36,7 +36,7 @@
   .userTab {
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    justify-content: flex-start;
     flex-wrap: wrap;
     padding: 0.75rem 0;
     border-bottom: 2px solid var(--sec-1);
