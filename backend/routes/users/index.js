@@ -167,13 +167,8 @@ router.put("/api", async (req, res) => {
   };
 
   if (!result.success) {
-    if (result.error?.issues?.length) {
-      for (let issue of result.error.issues) {
-        newProfileFormErrors[issue.path[0]] = issue.message;
-      }
-      setProfileFormErrors(newProfileFormErrors);
-    }
-    return; // 表單資料沒有驗證通過就直接返回
+    output.error = "驗證未通過";
+    return res.json(output); // 表單資料沒有驗證通過就直接返回
   }
 
   // 更新地址
@@ -197,10 +192,12 @@ router.put("/api", async (req, res) => {
       } else {
         output.code = 103;
         output.address_error = "地址更新失敗2";
+        return res.json(output);
       }
     } catch (ex) {
       output.code = 101;
       output.address_error = ex;
+      return res.json(output);
     }
   }
 
@@ -229,7 +226,7 @@ router.put("/api", async (req, res) => {
     output.error = ex;
   }
 
-  res.json(output);
+  return res.json(output);
 });
 
 // 處理 register 註冊的api

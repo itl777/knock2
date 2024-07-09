@@ -126,12 +126,16 @@ export default function UserProfileForm() {
   const UserProfileFormSubmit = async (e) => {
     e.preventDefault()
 
+    let data = { ...profileForm }
+
     // 處理 birthdayValue
     const { year, month, date } = birthdayValue
-    const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${date
-      .toString()
-      .padStart(2, '0')}`
-    let data = { ...profileForm, birthday: formattedDate }
+    if (year || month || date) {
+      const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${date
+        .toString()
+        .padStart(2, '0')}`
+      data = { ...profileForm, birthday: formattedDate }
+    }
 
     //  處理 addressValue
     if (addressValue.address_id) {
@@ -142,7 +146,7 @@ export default function UserProfileForm() {
 
     // 表單驗證
     const result = schemaForm.safeParse(data.users)
-
+    console.log(result)
     const newProfileFormErrors = {
       name: '',
       nick_name: '',
