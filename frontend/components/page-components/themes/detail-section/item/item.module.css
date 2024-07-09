@@ -1,8 +1,18 @@
 .item{
     background-color: white;
     height: 280px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 .price{
     height: 338px;
     background-color: var(--pri-1);
+}
+.group{
+    font-size: 77px;
+    color:  var(--pri-1);
+}
+.p{
+    font-size: 1.75rem;
 }
