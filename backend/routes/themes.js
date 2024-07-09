@@ -3,8 +3,8 @@ import db from "./../utils/connect.js";
 
 const router = express.Router();
 
-// 獲取主题列表的函數
-const getThemesList = async (branchId) => {
+// 獲取所有分店主題列表的函數
+const getThemesList = async () => {
   let success = false;
 
   const sql = `
@@ -21,14 +21,11 @@ const getThemesList = async (branchId) => {
     FROM themes t
     LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
     LEFT JOIN branches b ON bt.branch_id = b.branch_id
-    WHERE b.branch_id = ?
     ORDER BY t.theme_id DESC
   `;
 
   try {
-    console.log("Executing SQL:", sql);
-    const [rows] = await db.query(sql, [branchId]);
-    console.log("SQL Result:", rows);
+    const [rows] = await db.query(sql);
     success = true;
     return {
       success,
@@ -40,6 +37,21 @@ const getThemesList = async (branchId) => {
   }
 };
 
+// 主题列表的路由
+router.get("/", async (req, res) => {
+  const data = await getThemesList();
+  if (!data.success) {
+    return res.json({
+      status: "error",
+      message: "無法查詢到主題資料",
+    });
+  }
+
+  return res.json({
+    status: "success",
+    themes: data.themes,
+  });
+});
 // 獲取分店列表的函數
 const getBranchesList = async () => {
   let success = false;

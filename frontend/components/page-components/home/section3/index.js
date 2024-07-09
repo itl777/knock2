@@ -1,74 +1,43 @@
+import { THEME_LIST } from '@/configs/api-path'
+import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
-import Card01 from '@/components/UI/cards'
+import Card02 from '@/components/UI/cards-themes'
 import { Box } from '@mui/joy'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styles from './section3.module.scss'
 import HomeBtn from '@/components/UI/home-btn'
 
+// Fisher-Yates 洗牌算法
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
+
 export default function HomeSection3() {
-  const data = [
-    {
-      theme_id: 1,
-      branch_name: '台北館',
-      theme_img: 'themes-3.jpg',
-      theme_name: '尋找失落的寶藏',
-      difficulty: 'MEDIUM',
-      description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
-      suitable_players: '2-6',
-      theme_time: 60,
-    },
-    {
-      theme_id: 2,
-      branch_name: '台北館',
-      theme_img: 'themes-3.jpg',
-      theme_name: '尋找失落的寶藏',
-      difficulty: 'EASY',
-      description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
-      suitable_players: '2-6',
-      theme_time: 60,
-    },
-    {
-      theme_id: 3,
-      branch_name: '台北館',
-      theme_img: 'themes-3.jpg',
-      theme_name: '尋找失落的寶藏',
-      difficulty: 'HARD',
-      description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
-      suitable_players: '2-6',
-      theme_time: 60,
-    },
-    {
-      theme_id: 4,
-      branch_name: '台北館',
-      theme_img: 'themes-3.jpg',
-      theme_name: '尋找失落的寶藏',
-      difficulty: 'MEDIUM',
-      description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
-      suitable_players: '2-6',
-      theme_time: 60,
-    },
-    {
-      theme_id: 5,
-      branch_name: '台北館',
-      theme_img: 'themes-3.jpg',
-      theme_name: '尋找失落的寶藏',
-      difficulty: 'MEDIUM',
-      description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
-      suitable_players: '2-6',
-      theme_time: 60,
-    },
-    {
-      theme_id: 6,
-      branch_name: '台北館',
-      theme_img: 'themes-3.jpg',
-      theme_name: '尋找失落的寶藏',
-      difficulty: 'MEDIUM',
-      description: '尋找失落寶藏的冒險，需要找到所有隱藏的線索才能成功',
-      suitable_players: '2-6',
-      theme_time: 60,
-    },
-  ]
+  const [data, setData] = useState({
+    success: false,
+    themes: [],
+  })
+  const [selectedBranch, setSelectedBranch] = useState(1) // 默認選擇的第一個分店
+
+  useEffect(() => {
+    fetch(`${THEME_LIST}?branch_id=${selectedBranch}`)
+      .then((response) => response.json())
+      .then((myData) => {
+        const shuffledThemes = shuffleArray(myData.themes)
+        setData({
+          success: true,
+          themes: shuffledThemes,
+        })
+      })
+      .catch((error) => {
+        console.error('Error fetching themes:', error)
+      })
+  }, [selectedBranch]) // 添加依賴數組
 
   const settings = {
     className: 'center',
@@ -119,6 +88,7 @@ export default function HomeSection3() {
       },
     ],
   }
+
   return (
     <>
       <Box className={styles['home-section3']}>
@@ -128,20 +98,19 @@ export default function HomeSection3() {
 
         <div className="slider-container">
           <Slider {...settings}>
-            {data.map((v) => {
-              return (
-                <Card01
-                  key={v['theme_id']}
-                  branchName={v['branch_name']}
-                  themeImg={v['theme_img']}
-                  themeName={v['theme_name']}
-                  difficulty={v['difficulty']}
-                  description={v['description']}
-                  suitablePlayers={v['suitable_players']}
-                  themeTime={v['theme_time']}
-                />
-              )
-            })}
+            {data.themes.map((theme) => (
+              <Card02
+                key={theme.theme_id}
+                branchName={theme.branch_name}
+                themeImg={theme.theme_img}
+                themeName={theme.theme_name}
+                difficulty={theme.difficulty}
+                introduction={theme.introduction}
+                min_players={theme.min_players}
+                max_players={theme.max_players}
+                themeTime={theme.theme_time}
+              />
+            ))}
           </Slider>
         </div>
 
