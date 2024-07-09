@@ -18,8 +18,8 @@ import BasicModal from '@/components/UI/basic-modal'
 import RecipientModalBody from '../recipient-modal-body'
 import OrderInputBox from '../order-input-box'
 import OrderSelectBox from '../order-select-box'
-import NoData from '@/components/UI/no-data'
 import CheckoutTotalTable from './checkout-total-table'
+import EmptyCart from '@/components/page-components/checkout/empty-cart'
 // api path
 import {
   PRODUCT_IMG,
@@ -265,16 +265,7 @@ export default function CheckOutPage() {
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
 
-      {cartBadgeQty <= 0 && (
-        <div className={styles.noCheckoutItemsContainer}>
-          <h6>購物車尚無商品</h6>
-          <BlackBtn
-            btnText="前往桌遊商城"
-            href="/product"
-            paddingType="medium"
-          />
-        </div>
-      )}
+      {cartBadgeQty <= 0 && <EmptyCart />}
 
       {cartBadgeQty > 0 && (
         <form
@@ -368,7 +359,7 @@ export default function CheckOutPage() {
             </div>
 
             <BlackBtn
-              btnText="前往結帳"
+              btnText="前往付款"
               type="submit"
               href={null}
               paddingType="medium"

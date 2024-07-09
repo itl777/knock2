@@ -1,18 +1,21 @@
 import React, { useState } from 'react'
 import styles from './checkout-offcanvas.module.css'
+// mui
 import Drawer from '@mui/joy/Drawer'
-// for badge
 import Badge from '@mui/material/Badge'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
-// components
+// context
 import { useCart } from '@/context/cart-context'
+// components
 import HDivider from '../divider/horizontal-divider'
 import BlackBtn from '../black-btn'
-import NoData from '../no-data'
 import OrderItemCheckout from '@/components/page-components/orders/order-item-checkout'
-import { PRODUCT_IMG } from '@/configs/api-path'
+import EmptyCart from '@/components/page-components/checkout/empty-cart'
+// icons
 import { FaCartShopping } from 'react-icons/fa6'
+// api path
+import { PRODUCT_IMG } from '@/configs/api-path'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -29,13 +32,8 @@ export default function CheckoutOffcanvas() {
   const toggleShow = () => setShow((s) => !s)
 
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
-  const {
-    checkoutItems,
-    checkoutTotal,
-    cartBadgeQty,
-    handleQuantityChange,
-    handleCheckoutRedirect,
-  } = useCart()
+  const { checkoutItems, checkoutTotal, cartBadgeQty, handleQuantityChange } =
+    useCart()
 
   return (
     <>
@@ -58,8 +56,8 @@ export default function CheckoutOffcanvas() {
             </div>
 
             {/* checkout item list */}
-            {cartBadgeQty === 0 ? (
-              <NoData />
+            {cartBadgeQty <= 0 ? (
+              <EmptyCart />
             ) : (
               checkoutItems.map((v, i) => (
                 <OrderItemCheckout
@@ -77,21 +75,25 @@ export default function CheckoutOffcanvas() {
               ))
             )}
 
-            <HDivider />
+            {cartBadgeQty > 0 && <HDivider />}
 
-            <div className={styles.total}>
-              <small>合計</small>
-              <h5>$ {checkoutTotal}</h5>
+            {cartBadgeQty > 0 && (
+              <div className={styles.total}>
+                <small>合計</small>
+                <h5>$ {checkoutTotal}</h5>
+              </div>
+            )}
+          </div>
+
+          {cartBadgeQty > 0 && (
+            <div className={styles.alignEnd}>
+              <BlackBtn
+                btnText="前往結帳"
+                href="/checkout"
+                paddingType="medium"
+              />
             </div>
-          </div>
-
-          <div className={styles.alignEnd}>
-            <BlackBtn
-              btnText="前往結帳"
-              href="/checkout"
-              paddingType="medium"
-            />
-          </div>
+          )}
         </div>
       </Drawer>
     </>
