@@ -9,19 +9,22 @@ import UserProfileForm from '@/components/page-components/user/user-profile-form
 
 export default function Profile() {
   const router = useRouter()
-  const { auth } = useAuth()
+  const { auth, authIsReady } = useAuth()
 
   useEffect(() => {
     if (!router.isReady) return
-    // if (!auth.id) {
-    //   router.push('/')
-    // }
-  }, [auth.id, router.isReady])
+    if (!auth.id && authIsReady) {
+      router.push('/')
+    }
+  }, [auth.id, router.isReady, authIsReady])
 
   return (
     <>
       <IndexLayout title="會員中心" background="light">
-        <UserLayout userTab={<UserTab />} sectionRight={<UserProfileForm />} />
+        <UserLayout
+          userTab={<UserTab />}
+          sectionRight={auth.id ? <UserProfileForm /> : ''}
+        />
       </IndexLayout>
     </>
   )

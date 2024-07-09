@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+
 // context
 import { useAuth } from '@/context/auth-context'
 import { useSnackbar } from '@/context/snackbar-context'
+import useFirebase from '@/hooks/useFirebase'
+
 // components
 import LoginForm from './login-form'
 import RegisterForm from './register-form'
@@ -14,8 +17,9 @@ import {
 
 export default function AuthModal({ loginModalState, setLoginModalState }) {
   // context
-  const { login, register } = useAuth()
+  const { auth, login, googleLogin, register, forgotPassword } = useAuth()
   const { openSnackbar } = useSnackbar()
+  const { getOAuth } = useFirebase()
 
   // Login
   // 父元件傳的 loginModalState setLoginModalState  // open close
@@ -24,15 +28,13 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
     account: '',
     password: '',
     result: '',
-  }) // error text
+  })
   const handleLoginChange = (e) => {
-    // form data change
     const { name, value } = e.target
     const newLoginData = { ...loginData, [name]: value }
     setLoginData(newLoginData)
   }
   const loginSubmit = async (e) => {
-    // form submit
     e.preventDefault()
 
     // 資料驗證
@@ -68,7 +70,6 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
   // Register
   const [registerState, setRegisterState] = useState(false) // open close
   const [registerData, setRegisterData] = useState({
-    // form data
     account: '',
     password: '',
     reenter_password: '',
@@ -80,19 +81,16 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
     reenter_password: '',
     name: '',
     result: '',
-  }) // error text
+  })
   const handleRegisterChange = (e) => {
-    // form data change
     const { name, value } = e.target
     const newRegisterData = { ...registerData, [name]: value }
     setRegisterData(newRegisterData)
   }
   const registerSubmit = async (e) => {
-    // form submit
     e.preventDefault()
 
     // 資料驗證
-    // password 要等於 reenter_password
     const RegisterValidationResult = schemaRegisterForm.safeParse(registerData)
     const newRegisterErrors = {
       account: '',
@@ -133,26 +131,23 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
   }
 
   // ForgotPassword
+  const [otp, setOtp] = useState('')
   const [forgotPasswordState, setForgotPasswordState] = useState(false) // open close
   const [forgotPasswordData, setForgotPasswordData] = useState({
-    // form data
     account: '',
   })
   const [forgotForgotPasswordErrors, setForgotPasswordErrors] = useState({
     account: '',
     result: '',
-  }) // error text
+  })
   const handleForgotPasswordChange = (e) => {
-    // form data change
     const { name, value } = e.target
     const newPasswordData = { ...forgotPasswordState, [name]: value }
     setForgotPasswordData(newPasswordData)
   }
   const forgotPasswordSubmit = async (e) => {
-    // form submit
     e.preventDefault()
     // 資料驗證
-    // password 要等於 reenter_password
     const fpValidationResult =
       schemaForgetPasswordForm.safeParse(forgotPasswordData)
     const newForgotPasswordErrors = {
@@ -173,19 +168,18 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
     }
 
     // 驗證成功，包裝送後端 OTP
-    setForgotPasswordErrors({
-      account: '',
-      result: '',
-    })
-    return
-    // if (result.success) {
-    //   // 如果登入成功
 
-    //   openSnackbar('註冊成功！請返回登入', 'success')
-    // } else {
-    //   // 如果登入失敗
-    //   setLoginError(result.error)
-    // }
+    let result = await forgotPassword(forgotPasswordData.account)
+    if (result.success) {
+      // 如果發送成功
+      setForgotPasswordData({ account: '' })
+      setForgotPasswordErrors({ account: '', result: '' })
+      openSnackbar('發送成功', 'success')
+    } else {
+      // 如果發送失敗
+      console.error(result.error)
+      openSnackbar(result.error, 'error')
+    }
   }
 
   // FormSwitch
@@ -223,12 +217,38 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
       setLoginModalState(false)
       setRegisterState(true)
       setForgotPasswordState(false)
-    } else {
+    } else if (formName === 'ForgotPassword') {
       setLoginModalState(false)
       setRegisterState(false)
       setForgotPasswordState(true)
+    } else {
+      setLoginModalState(false)
+      setRegisterState(false)
+      setForgotPasswordState(false)
     }
   }
+
+  const callbackGoogleLogin = async (providerData) => {
+    // 如果已經登入中，不需要再作登入動作
+    if (auth.id !== 0) return
+    // 向伺服器進行登入動作
+    const result = await googleLogin(providerData)
+    if (result.success) {
+      // 如果登入成功
+      handleFormSwitch()
+      // openSnackbar('登入成功！', 'success')
+    } else {
+      // 如果登入失敗
+      console.error(result.error)
+      openSnackbar('登入失敗，請洽管理員！', 'error')
+    }
+  }
+
+  useEffect(() => {
+    handleFormSwitch()
+    getOAuth(callbackGoogleLogin)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <>
@@ -255,9 +275,11 @@ export default function AuthModal({ loginModalState, setLoginModalState }) {
       <ForgotPasswordForm
         open={forgotPasswordState}
         close={() => setForgotPasswordState(false)}
-        value={forgotPasswordData}
-        onChange={handleForgotPasswordChange}
+        inputValue={forgotPasswordData}
+        onInputChange={handleForgotPasswordChange}
         onSubmit={forgotPasswordSubmit}
+        otpValue={otp}
+        onOtpChange={setOtp}
         errorText={forgotForgotPasswordErrors}
         formChange={handleFormSwitch}
       />
