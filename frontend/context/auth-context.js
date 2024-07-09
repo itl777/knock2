@@ -1,8 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import useFirebase from '@/hooks/useFirebase'
 import {
   JWT_LOGIN_POST,
+  GOOGLE_LOGIN_POST,
   VERIFY_TOKEN_POST,
   REGISTER_POST,
+  FORGET_PASSWORD_POST,
 } from '@/configs/api-path'
 
 const AuthContext = createContext()
@@ -15,7 +18,9 @@ const emptyAuth = {
 }
 // component
 export function AuthContextProvider({ children }) {
+  const { logoutFirebase } = useFirebase()
   const [auth, setAuth] = useState({ ...emptyAuth })
+  const [authIsReady, setAuthIsReady] = useState(false)
 
   const login = async (account, password) => {
     const output = {
@@ -50,8 +55,42 @@ export function AuthContextProvider({ children }) {
     }
   }
 
+  const googleLogin = async (providerData) => {
+    const output = {
+      success: false,
+      error: '',
+    }
+    try {
+      const r = await fetch(GOOGLE_LOGIN_POST, {
+        method: 'POST',
+        body: JSON.stringify(providerData),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const result = await r.json()
+      if (result.success) {
+        // token 和用戶的相關資料存到 localStorage
+        localStorage.setItem(storageKey, JSON.stringify(result.data))
+        // 變更狀態
+        setAuth(result.data)
+
+        // 回傳給登入視窗
+        output.success = true
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
+      }
+    } catch (ex) {
+      return false
+    }
+  }
+
   const logout = () => {
     localStorage.removeItem(storageKey)
+    logoutFirebase()
     setAuth(emptyAuth)
   }
 
@@ -80,6 +119,37 @@ export function AuthContextProvider({ children }) {
       }
     } catch (ex) {
       console.error(ex)
+      output.error = ex
+      return output
+    }
+  }
+
+  const forgotPassword = async (account) => {
+    const output = {
+      success: false,
+      error: '',
+    }
+    try {
+      const r = await fetch(FORGET_PASSWORD_POST, {
+        method: 'POST',
+        body: JSON.stringify({ account }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const result = await r.json()
+      if (result.success) {
+        // 回傳給視窗
+        output.success = true
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
+      }
+    } catch (ex) {
+      console.error(ex)
+      output.success = false
       output.error = ex
       return output
     }
@@ -120,6 +190,7 @@ export function AuthContextProvider({ children }) {
         })
       if (data?.id && data?.token) {
         setAuth(data)
+        setAuthIsReady(true)
       }
     } catch (ex) {
       console.error(ex)
@@ -128,7 +199,16 @@ export function AuthContextProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ login, logout, register, auth, getAuthHeader }}
+      value={{
+        auth,
+        authIsReady,
+        login,
+        googleLogin,
+        logout,
+        register,
+        forgotPassword,
+        getAuthHeader,
+      }}
     >
       {children}
     </AuthContext.Provider>

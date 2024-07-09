@@ -3,13 +3,14 @@ import { Button } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '@/context/theme'
 
-export default function PdBtnContained({ btnText = '沒設定', color = 'grey' }) {
+export default function PdBtnContained({ btnText = '沒設定', color = 'grey', onClick}) {
   return (
     <>
       <ThemeProvider theme={theme}>
         <Button
           variant="contained"
           color={color}
+          onClick={onClick} // ****** Iris Added
           sx={{
             fontFamily: 'Noto Serif JP',
             borderRadius: '16px',

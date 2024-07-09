@@ -240,7 +240,6 @@ router.post("/api/checkout", async (req, res) => {
     recipientMobile,
     recipientDistrictId,
     recipientAddress,
-    paymentMethod,
     memberInvoice,
     mobileInvoice,
     recipientTaxId,
@@ -257,14 +256,13 @@ router.post("/api/checkout", async (req, res) => {
         recipient_mobile,
         order_district_id,
         order_address,
-        payment_method,
         member_carrier,
         recipient_invoice_carrier,
         recipient_tax_id,
         order_status_id,
         created_at,
         last_modified_at
-      ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
+      ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
     `;
 
     const orderValues = [
@@ -273,7 +271,6 @@ router.post("/api/checkout", async (req, res) => {
       recipientMobile,
       recipientDistrictId,
       recipientAddress,
-      paymentMethod,
       memberInvoice,
       mobileInvoice,
       recipientTaxId,
@@ -462,5 +459,46 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
     res.status(500).json(output);
   }
 });
+
+// GET city data from cities
+router.get("/api/city", async (req, res) => {
+  try {
+    const sql = `SELECT * FROM city`;
+    const [rows] = await db.query(sql);
+
+    res.json({
+      success: true,
+      rows,
+    });
+  } catch (error) {
+    console.error("Error fetching city: ", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching city data",
+    });
+  }
+});
+
+
+// GET district data from cities
+router.get("/api/district", async (req, res) => {
+  try {
+    const sql = `SELECT * FROM district`;
+    const [rows] = await db.query(sql);
+    const success = rows.affectedRows > 0;
+
+    res.json({
+      success: true,
+      rows,
+    });
+  } catch (error) {
+    console.error("Error fetching district: ", error);
+    res.status(500).json({
+      success: false,
+      message: "Error fetching city data",
+    });
+  }
+});
+
 
 export default router;

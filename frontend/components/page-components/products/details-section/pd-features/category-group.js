@@ -1,13 +1,21 @@
+import { useState, useEffect } from 'react'
 import ProductTag from './product-tag'
 
-export default function CategoryGroup() {
+export default function CategoryGroup({ productData }) {
+  const [data, setData] = useState({})
+
+  useEffect(() => {
+    console.log('productData', productData)
+    setData(productData)
+  }, [productData])
+
   return (
     <>
       <div className="d-flex">
-        <ProductTag tag={'派對遊戲'} />
+        <ProductTag tag={data.category_name} />
         <ProductTag tag={'奇幻、可愛'} />
-        <ProductTag tag={'8歲'} />
-        <ProductTag tag={'2-5人'} />
+        <ProductTag tag={data.age} />
+        <ProductTag tag={data.players + '人'} />
       </div>
     </>
   )

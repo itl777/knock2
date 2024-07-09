@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
+import morgan from "morgan";
 
 // 路由模組
 import themes from "./routes/themes.js";
@@ -8,8 +9,8 @@ import teams from "./routes/teams.js";
 import products from "./routes/products.js";
 import users from "./routes/users/index.js";
 import orders from "./routes/orders.js";
-// import orderDetails from "./routes/details.js";
 import checkout from "./routes/checkout.js";
+import payments from "./routes/payments.js";
 
 // 掛載 express
 const app = express();
@@ -26,6 +27,10 @@ const corsOptions = {
   },
 };
 app.use(cors(corsOptions));
+
+
+// 使用套件紀錄 http 請求 **** added by iris
+app.use(morgan('dev'));
 
 // 自訂頂層的 middleware
 app.use((req, res, next) => {
@@ -51,8 +56,8 @@ app.use("/teams", teams);
 app.use("/products", products);
 app.use("/users", users);
 app.use("/orders", orders);
-// app.use("/user/orders", orderDetails);
 app.use("/checkout", checkout);
+app.use("/payments", payments)
 
 // 偵聽 port
 app.listen(3001, function () {

@@ -152,4 +152,148 @@ router.get("/:orderId", async (req, res) => {
   }
 });
 
+// GET order_reviews data
+router.get("/api/reviews/:orderId", async (req, res) => {
+  const orderId = req.params.orderId;
+
+  try {
+    // 取得評價資料
+    const sql = `
+    SELECT
+      o.id order_id,
+      u.name,
+      u.nick_name,
+      od.order_product_id,
+      pm.product_name,
+      (
+          SELECT pi.product_img
+          FROM product_img pi
+          WHERE pi.img_product_id = od.order_product_id
+          LIMIT 1
+      ) product_img,
+      od.review,
+      od.rate,
+      od.review_status,
+      od.review_date
+    FROM order_details od
+    LEFT JOIN orders o ON o.id = od.order_id
+    LEFT JOIN users u ON u.user_id = o.member_id
+    LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
+    WHERE o.id = ?
+    `;
+
+    const [rows] = await db.query(sql, [orderId]);
+
+    rows.forEach((r) => {
+      const m = moment(r.created_at);
+      if (m.isValid()) {
+        r.created_at = m.format(dateFormat);
+      } else {
+        r.created_at = "無訂單日期";
+      }
+    });
+
+    console.log("orders reviews: ", rows);
+
+    const success = !!rows.length;
+
+    // 將查詢結果傳送到前端
+    res.json({
+      success,
+      rows,
+    });
+  } catch (error) {
+    console.error("Error fetching order reviews: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// POST order_reviews data
+router.post("/api/add-reviews", async (req, res) => {
+  const reviews = req.body;
+
+  if (!Array.isArray(reviews)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid data format.",
+    });
+  }
+
+  try {
+    const sql = `
+      UPDATE order_details SET 
+        review = ?, 
+        rate = ?, 
+        review_status = 1,
+        review_date = now()
+      WHERE order_id = ? AND order_product_id = ?;
+    `;
+
+    const reviewPromises = reviews.map(
+      ({ review, rate, order_id, order_product_id }) => {
+        return db.query(sql, [
+          review,
+          rate,
+          order_id,
+          order_product_id,
+        ]);
+      }
+    );
+
+    const results = await Promise.all(reviewPromises);
+
+    const allSuccess = results.every(([result]) => result.affectedRows === 1);
+
+    res.json({
+      success: allSuccess,
+    });
+  } catch (error) {
+    console.error("Error while processing add reviews", error);
+    res.status(500).json({
+      error: "An error occurred while processing add reviews.",
+    });
+  }
+});
+
+// router.post("/api/add-reviews", async (req, res) => {
+//   // const { review, rate, content, order_id, order_product_id } = req.body;
+//   const body = {...req.body}
+
+//   try {
+//     const sql = `
+//       UPDATE order_details SET
+//         review = ?,
+//         rate = ?,
+//         content = ?,
+//         review_status = 1,
+//       WHERE order_id = ? and order_product_id;
+//     `;
+
+//     const reviewPromises = body.map(({review, rate, content, order_id, order_product_id})=>{
+//       const rows = [
+//         review, rate, content, order_id, order_product_id
+//       ]
+//     }
+
+//     )
+//     const [results] = await db.query(sql, [review, rate, content, order_id, order_product_id]);
+
+//     // 確認是否有成功 insert value
+//     const success = results.affectedRows === 1;
+//     const id = results.insertId;
+
+//     // 返回結果到前端
+//     res.json({
+//       success,
+//       id,
+//     });
+
+//   } catch (error) {
+//     console.error("Error while processing add reviews", error);
+//     res.status(500).json({
+//       error: "An error occurred while processing add reviews.",
+//     });
+//   }
+// });
+
 export default router;

@@ -6,9 +6,22 @@ export default function Input01({
   value = '',
   placeholder = '',
   disabled = false,
+  inputStyles = 'def',
   onChange = () => {},
 }) {
   value === null ? (value = '') : value
+
+  let className
+
+  if (inputStyles === 'def') {
+    className = disabled === false ? styles.inputDefault : styles.inputDisabled
+  }
+
+  if (inputStyles === 'line') {
+    className =
+      disabled === false ? styles.inputDefaultLine : styles.inputDisabledLine
+  }
+
   return (
     <>
       <input
@@ -17,9 +30,7 @@ export default function Input01({
         value={value}
         placeholder={placeholder}
         disabled={disabled === true ? 'disabled' : ''}
-        className={
-          disabled === true ? styles.inputDisabled : styles.inputDefault
-        }
+        className={className}
         onChange={onChange}
       />
     </>

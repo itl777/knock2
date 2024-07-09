@@ -1,0 +1,10 @@
+.inputBox {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.errorText {
+  font-size: 1rem;
+  color: #a43131;
+}

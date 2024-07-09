@@ -11,6 +11,7 @@ import myStyle from './favorite-tab.module.css'
 import AppsIcon from '@mui/icons-material/Apps'
 import MyPagination from '../../pagination'
 import { useProduct } from '@/context/product-context'
+import ProductTabDrag from './product-tab-drag'
 
 export default function FavoriteTab() {
   // ----MUI
@@ -53,7 +54,7 @@ export default function FavoriteTab() {
 
         <TabPanel value="2">
           {/* 有分類的卡片列表 */}
-          Item Two
+          <ProductTabDrag />
         </TabPanel>
       </TabContext>
     </Box>

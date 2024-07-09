@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer'
 // 定義所有email的寄送伺服器位置
 let transport = {
   host: 'smtp.gmail.com',
-  port: 587,
+  port: 465,
   secure: true, // use TLS
   // env 變數
   auth: {

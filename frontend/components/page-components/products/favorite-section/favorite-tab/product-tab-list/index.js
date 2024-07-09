@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import myStyle from './list.module.css'
 import FavCardLarge from './fav-card-large'
 

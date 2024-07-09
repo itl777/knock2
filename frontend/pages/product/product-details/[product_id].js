@@ -7,10 +7,11 @@ import { useRouter } from 'next/router'
 import DetailsSection from '@/components/page-components/products/details-section'
 import Breadcrumb from '@/components/page-components/products/breadcrumb'
 import { PRODUCT_DETAILS } from '@/configs/api-path'
+import { ProductProvider } from '@/context/product-context'
 
 export default function ProductDetails() {
   const router = useRouter()
-  const [data, setData] = useState([])
+  const [productName, setProductName] = useState('')
   const [productData, setProductData] = useState({
     product_name: '',
     price: 0,
@@ -21,30 +22,31 @@ export default function ProductDetails() {
   })
 
   useEffect(() => {
-    console.log(router.query.product_id)
     fetch(`${PRODUCT_DETAILS}/${router.query.product_id}`)
       .then((r) => r.json())
       .then((dbData) => {
-        setData(dbData.rows)
+        setProductData(dbData.rows)
       })
-  }, [router])
+  }, [router.isReady])
 
   useEffect(() => {
-    if (data && data.length > 0) {
-      const newData = { ...data[0] }
-      setProductData(newData)
+    if (productData && productData.length > 0) {
+      const newData = { ...productData }
+      setProductName(newData[0])
     }
-  }, [data])
+  }, [productData])
 
   return (
     <>
-      <IndexLayout pageName="productDetails" background="light">
-        <DetailsSection
-          breadcrumb={<Breadcrumb productName={productData.product_name} />}
-          features={<PdFeatures data={data} />}
-          tab={<PdTabs data={data} />}
-        />
-      </IndexLayout>
+      <ProductProvider>
+        <IndexLayout pageName="productDetails" background="light">
+          <DetailsSection
+            breadcrumb={<Breadcrumb productName={productName.product_name} />}
+            features={<PdFeatures data={productData} />}
+            tab={<PdTabs data={productData} />}
+          />
+        </IndexLayout>
+      </ProductProvider>
     </>
   )
 }

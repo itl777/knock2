@@ -1,10 +1,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import BuyBtn from './buy-btn'
 import 'hover.css/css/hover-min.css'
-import IconButton from '@mui/material/IconButton'
-import FavoriteIcon from '@mui/icons-material/Favorite'
 import myStyle from './card.module.css'
 import FavoriteIconBtn from './favorite-icon-btn'
 import BuyBtn2 from './buy-btn2' // ******* Iris added *******
@@ -40,15 +37,8 @@ export default function Card({ dbData }) {
         {/* 收藏按鈕 */}
         <FavoriteIconBtn product_id={dbData.product_id} />
 
-        {/* <IconButton
-          href={`${API_SERVER}/product/favorite/add/${dbData.product_id}`}
-          aria-label="favorite"
-          size="large"
-          sx={btnStyle}
-        >
-          <FavoriteIcon style={{ fill: '#fff' }} />
-        </IconButton> */}
-
+        <div className={myStyle.tag}>{dbData.category_name}</div>
+    
         <div className="card-body text-center d-flex flex-column">
           <h5 className="card-title">{dbData.product_name}</h5>
 
@@ -58,17 +48,14 @@ export default function Card({ dbData }) {
                 <div className="buy-btn">${dbData.price}</div>
               </div>
               <div className="buy-btn-outer w-100">
-                {/* <a
-                  href={`product-details/${data.product_id}`}
-                  className="buy-btn"
-                > */}
+       
 
                 {/* ******* Iris Added Start ******* */}
                 {/* <BuyBtn product_id={dbData.product_id} /> */}
-                <BuyBtn2 onClick={() => handleAddToCart(dbData.product_id, 1)} />
+                <BuyBtn2 onClick={() => handleAddToCart(dbData.product_id, 1, "add")} />
 
                 {/* ******* Iris Added End ******* */}
-                {/* </a> */}
+             
               </div>
             </div>
           </div>

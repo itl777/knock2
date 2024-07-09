@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import lineImg from '@/public/products/line.svg'
-import FavCard from '@/components/page-components/products/favorite-section/favorite-tab/tab-drag/fav-card'
+import FavCard from '@/components/page-components/products/favorite-section/favorite-tab/product-tab-drag/fav-card'
 import { useEffect, useState, useRef } from 'react'
 
 export default function FavoriteSection() {
@@ -12,7 +12,7 @@ export default function FavoriteSection() {
   const inpRef3 = useRef(null)
 
   function handleClick(index) {
-    console.log('handleClick', index)
+    // console.log('handleClick', index)
     const input = document.createElement('input')
     input.type = 'text'
     input.value = title[index]

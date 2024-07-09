@@ -14,6 +14,7 @@ import UserProfileRadio from './user-profile-item/UserProfileRadio'
 import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
+import AvatarFormDialogs from './user-avatar-form'
 import schemaForm from './schema-form'
 
 export default function UserProfileForm() {
@@ -44,6 +45,7 @@ export default function UserProfileForm() {
     invoice_carrier_id: '',
     tax_id: '',
   })
+  const [openAvatarModal, setOpenAvatarModal] = useState(false)
 
   // function
   const handleChange = (e) => {
@@ -97,9 +99,7 @@ export default function UserProfileForm() {
         .map((v, i) => {
           return { value: i + 1, text: `${i + 1} 月` }
         })
-      console.log('111')
       if (defYear && defMonth) {
-        console.log('222')
         const date = new Date(defYear, defMonth, 0).getDate()
         const dates = Array(date)
           .fill()
@@ -126,12 +126,16 @@ export default function UserProfileForm() {
   const UserProfileFormSubmit = async (e) => {
     e.preventDefault()
 
+    let data = { ...profileForm }
+
     // 處理 birthdayValue
     const { year, month, date } = birthdayValue
-    const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${date
-      .toString()
-      .padStart(2, '0')}`
-    let data = { ...profileForm, birthday: formattedDate }
+    if (year || month || date) {
+      const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${date
+        .toString()
+        .padStart(2, '0')}`
+      data = { ...profileForm, birthday: formattedDate }
+    }
 
     //  處理 addressValue
     if (addressValue.address_id) {
@@ -142,7 +146,7 @@ export default function UserProfileForm() {
 
     // 表單驗證
     const result = schemaForm.safeParse(data.users)
-
+    console.log(result)
     const newProfileFormErrors = {
       name: '',
       nick_name: '',
@@ -240,7 +244,7 @@ export default function UserProfileForm() {
     if (auth.id) fetchData()
     // 下面這行 讓eslint略過一行檢查
     // eslint-disable-next-line
-  }, [auth.id])
+  }, [auth.id, openAvatarModal])
 
   // render form
   return (
@@ -253,7 +257,14 @@ export default function UserProfileForm() {
           <div className={styles['box1']}>
             {/* <div className={styles['avatar']}>
             </div> */}
-            <AvatarFormItem avatar={profileForm.avatar} />
+            <AvatarFormDialogs
+              open={openAvatarModal}
+              close={() => setOpenAvatarModal(false)}
+            />
+            <AvatarFormItem
+              avatar={profileForm.avatar}
+              open={() => setOpenAvatarModal(true)}
+            />
             <div className={styles['account']}>
               <UserProfileFormTitle text={'帳號資訊'} />
               <UserProfileInput
