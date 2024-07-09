@@ -33,7 +33,6 @@ export const CHECKOUT_DISTRICT_GET = `${API_SERVER}/checkout/api/district`
 export const ORDER_REVIEW_POST = `${API_SERVER}/orders/api/add-reviews`
 export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
 
-
 //teams
 export const TEAM_ALL = `${API_SERVER}/teams/apiAll`
 export const CHAT_GET = `${API_SERVER}/teams/api/chat`
@@ -42,4 +41,4 @@ export const CHAT_GET = `${API_SERVER}/teams/api/chat`
 export const THEME_LIST = `${API_SERVER}/themes`
 export const BRANCH_LIST = `${API_SERVER}/themes/branches`
 export const THEME_DETAIL = `${API_SERVER}/themes/`
-export const BRANCH_THEMES = `${API_SERVER}/themes/branch-themes`
+export const BRANCH_THEMES = `${API_SERVER}/themes/second`

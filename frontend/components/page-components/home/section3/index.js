@@ -1,4 +1,4 @@
-import { THEME_LIST } from '@/configs/api-path'
+import { THEME_LIST, BRANCH_THEMES } from '@/configs/api-path'
 import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
 import Card02 from '@/components/UI/cards-themes'
@@ -25,7 +25,7 @@ export default function HomeSection3() {
   const [selectedBranch, setSelectedBranch] = useState(1) // 默認選擇的第一個分店
 
   useEffect(() => {
-    fetch(`${THEME_LIST}?branch_id=${selectedBranch}`)
+    fetch(`${BRANCH_THEMES}?branch_id=${selectedBranch}`)
       .then((response) => response.json())
       .then((myData) => {
         const shuffledThemes = shuffleArray(myData.themes)
