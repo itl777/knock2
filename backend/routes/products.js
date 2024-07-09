@@ -21,12 +21,18 @@ const getListDate = async (req) => {
   let userSearch = req.query.userSearch || "";
   let price_start = req.query.price_start || 0;
   let price_end = req.query.price_end || 0;
+  let idSearch = req.params.product_id || "";
   let category_id = req.query.category_id || "";
   // 排序用
   let sort = req.query.sort || "product_id";
   const order = req.query.order || "DESC";
 
   let where = " WHERE 1 ";
+
+  if (idSearch) {
+    const idSearch_ = db.escape(`${idSearch}`);
+    where += `AND ( \`product_id\` LIKE ${idSearch_} ) `;
+  }
 
   if (userSearch) {
     const userSearch_ = db.escape(`%${userSearch}%`);

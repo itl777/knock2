@@ -11,7 +11,7 @@ import { ProductProvider } from '@/context/product-context'
 
 export default function ProductDetails() {
   const router = useRouter()
-  const [data, setData] = useState([])
+  const [productName, setProductName] = useState('')
   const [productData, setProductData] = useState({
     product_name: '',
     price: 0,
@@ -25,25 +25,25 @@ export default function ProductDetails() {
     fetch(`${PRODUCT_DETAILS}/${router.query.product_id}`)
       .then((r) => r.json())
       .then((dbData) => {
-        setData(dbData.rows)
+        setProductData(dbData.rows)
       })
   }, [router.isReady])
 
   useEffect(() => {
-    if (data && data.length > 0) {
-      const newData = { ...data[0] }
-      setProductData(newData)
+    if (productData && productData.length > 0) {
+      const newData = { ...productData }
+      setProductName(newData[0])
     }
-  }, [data])
+  }, [productData])
 
   return (
     <>
       <ProductProvider>
         <IndexLayout pageName="productDetails" background="light">
           <DetailsSection
-            breadcrumb={<Breadcrumb productName={productData.product_name} />}
-            features={<PdFeatures data={data} />}
-            tab={<PdTabs data={data} />}
+            breadcrumb={<Breadcrumb productName={productName.product_name} />}
+            features={<PdFeatures data={productData} />}
+            tab={<PdTabs data={productData} />}
           />
         </IndexLayout>
       </ProductProvider>
