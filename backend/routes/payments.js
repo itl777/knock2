@@ -50,8 +50,8 @@ router.get("/", async (req, res) => {
     ReturnURL: `https://4ed4-223-139-24-45.ngrok-free.app/payments/return`,
     ChoosePayment: "Credit",
     EncryptType: 1,
-    ClientBackURL: `http://127.0.0.1:3000/product?page=1`,
-    OrderResultURL: `http://127.0.0.1:3000/user/orders/details/${orderId}`,
+    ClientBackURL: `http://localhost:3000/product?page=1`,
+    OrderResultURL: `http://localhost:3000/user/orders/details/${orderId}`,
     NeedExtraPaidInfo: "Y",
   };
   try {

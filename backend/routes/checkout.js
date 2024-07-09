@@ -8,7 +8,7 @@ const router = express.Router();
 router.use(bodyParser.json());
 // const dateFormat = "YYYY-MM-DD HH:mm:ss";
 
-// POST insert items into to cart_member table
+// CART_POST insert items into to cart_member table
 router.post("/api/cart_member", async (req, res) => {
   const data = { ...req.body };
   console.log("member cart data", data);
@@ -61,62 +61,6 @@ router.post("/api/cart_member", async (req, res) => {
     console.error("Error while processing add to member cart:", error);
     res.status(500).json({
       error: "An error occurred while processing add to member cart.",
-    });
-  }
-});
-
-// POST insert local storage items into to cart_member table
-router.post("/api/cart_member/merge", async (req, res) => {
-  const { memberId, guestCart } = req.body;
-
-  try {
-    for (const item of guestCart) {
-      const [existingCartItem] = await db.query(
-        "SELECT * FROM cart_member WHERE cart_member_id = ? AND cart_product_id = ?",
-        [memberId, item.product_id]
-      );
-
-      const insertSql = `
-        INSERT INTO cart_member (
-          cart_member_id, 
-          cart_product_id, 
-          cart_product_quantity, 
-          created_at, 
-          last_modified_at
-        ) VALUES (
-          ?, ?, ?, now(), now()
-        );
-      `;
-
-      const updateSql = `
-        UPDATE cart_member
-        SET cart_product_quantity = cart_product_quantity + ?, 
-        last_modified_at = now()
-        WHERE cart_member_id = ? AND cart_product_id = ?
-      `;
-
-      if (existingCartItem.length > 0) {
-        const updateValues = [
-          item.cart_product_quantity,
-          memberId,
-          item.product_id,
-        ];
-        await db.query(updateSql, updateValues);
-      } else {
-        const insertValues = [
-          memberId,
-          item.product_id,
-          item.cart_product_quantity,
-        ];
-        await db.query(insertSql, insertValues);
-      }
-    }
-
-    res.json({ success: true });
-  } catch (error) {
-    console.error("Error while merging guest cart to member cart:", error);
-    res.status(500).json({
-      error: "An error occurred while merging guest cart to member cart.",
     });
   }
 });
@@ -195,8 +139,8 @@ router.post("/api/update_member", async (req, res) => {
   }
 });
 
-// GET member cart items
-router.get("/cart/", async (req, res) => {
+// CHECKOUT_GET_CART member cart items
+router.get("/api/cart", async (req, res) => {
   // 從 query 中取得 member_id
   const { member_id } = req.query;
 
@@ -233,76 +177,8 @@ router.get("/cart/", async (req, res) => {
   }
 });
 
-// after login, insert items into cart_member table
-router.post("/api/cart/merge", async (req, res) => {
-  const { memberId, guestCart } = req.body;
-
-  try {
-    const insertPromises = guestCart.map(async (item) => {
-      const { productId, cartQty } = item;
-
-      const [existingCartItem] = await db.query(
-        "SELECT * FROM cart_member WHERE cart_member_id = ? AND cart_product_id = ?",
-        [memberId, productId]
-      );
-
-      if (existingCartItem.length > 0) {
-        await db.query(
-          "UPDATE cart_member SET cart_product_quantity = cart_product_quantity + ?, last_modified_at = now() WHERE cart_member_id = ? AND cart_product_id = ?",
-          [cartQty, memberId, productId]
-        );
-      } else {
-        await db.query(
-          "INSERT INTO cart_member (cart_member_id, cart_product_id, cart_product_quantity, created_at, last_modified_at) VALUES (?, ?, ?, now(), now())",
-          [memberId, productId, cartQty]
-        );
-      }
-    });
-
-    await Promise.all(insertPromises);
-
-    res.json({ success: true });
-  } catch (error) {
-    console.error("merge into cart_member failed:", error);
-    res.status(500).json({ error: "merge into cart_member failed" });
-  }
-});
-
-// GET guest cart items
-router.get("/api/product", async (req, res) => {
-  const { product_id } = req.query;
-
-  try {
-    // 取得產品資料
-    const sql = `
-      SELECT  
-        pm.product_id, 
-        pm.product_name,
-        pm.price,
-        pi.product_img
-      FROM product_management as pm
-      JOIN product_img as pi
-      ON pi.img_product_id = pm.product_id
-      WHERE product_id = ?;
-    `;
-
-    const [rows] = await db.query(sql, [product_id]);
-
-    console.log("guest cart items: ", rows);
-
-    // 將查詢結果傳送到前端
-    res.json({
-      status: true,
-      rows,
-    });
-  } catch (error) {
-    console.error("Error fetching guest cart: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// PUT update & delete member cart items
-router.put("/cart/update/:cart_id", async (req, res) => {
+// CHECKOUT_UPDATE_CART update & delete member cart items
+router.put("/api/cart/update/:cart_id", async (req, res) => {
   const cartId = +req.params.cart_id || 0;
   const { cart_product_quantity } = req.body;
 
@@ -362,7 +238,7 @@ router.put("/cart/update/:cart_id", async (req, res) => {
   }
 });
 
-// POST insert data into orders and order details tables, delete member's cart_member data
+// CHECKOUT_POST insert data into orders and order details tables, delete member's cart_member data
 router.post("/api/checkout", async (req, res) => {
   const {
     memberId,
@@ -462,8 +338,8 @@ router.post("/api/checkout", async (req, res) => {
   }
 });
 
-// GET member address
-router.get("/", async (req, res) => {
+// CHECKOUT_GET_ADDRESS member address
+router.get("/api/member_address", async (req, res) => {
   // 從 query 中取得 member_id, order_status_id
   const { member_id } = req.query;
 
@@ -504,7 +380,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST insert data into address table
+// CHECKOUT_ADD_ADDRESS POST insert data into address table
 router.post("/api/add_address", async (req, res) => {
   const data = { ...req.body };
 
@@ -550,7 +426,7 @@ router.post("/api/add_address", async (req, res) => {
   }
 });
 
-// DELETE data from address table
+// CHECKOUT_DELETE_ADDRESS data from address table
 router.delete("/api/delete_address/:addressId", async (req, res) => {
   const output = {
     success: false,
@@ -590,7 +466,7 @@ router.delete("/api/delete_address/:addressId", async (req, res) => {
   }
 });
 
-// GET city data from cities
+// CHECKOUT_CITY_GET city data from cities
 router.get("/api/city", async (req, res) => {
   try {
     const sql = `SELECT * FROM city`;
@@ -609,7 +485,7 @@ router.get("/api/city", async (req, res) => {
   }
 });
 
-// GET district data from cities
+// CHECKOUT_DISTRICT_GET district data from cities
 router.get("/api/district", async (req, res) => {
   try {
     const sql = `SELECT * FROM district`;
