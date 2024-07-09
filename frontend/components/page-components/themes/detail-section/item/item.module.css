@@ -1,0 +1,8 @@
+.item{
+    background-color: white;
+    height: 280px;
+}
+.price{
+    height: 338px;
+    background-color: var(--pri-1);
+}
