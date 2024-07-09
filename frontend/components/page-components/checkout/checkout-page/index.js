@@ -1,11 +1,14 @@
-// checkout page
+// checkout page body
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import axios from 'axios'
 import styles from './checkout-page.module.css'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+// context
 import { useCart } from '@/context/cart-context'
 import { useAuth } from '@/context/auth-context'
 import { useLoginModal } from '@/context/login-context'
+import { useOrderValidation } from '@/hooks/orderValidation'
+// components
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
 import VDivider from '@/components/UI/divider/vertical-divider'
@@ -17,6 +20,7 @@ import OrderInputBox from '../order-input-box'
 import OrderSelectBox from '../order-select-box'
 import NoData from '@/components/UI/no-data'
 import CheckoutTotalTable from './checkout-total-table'
+// api path
 import {
   PRODUCT_IMG,
   CHECKOUT_GET_PROFILE,
@@ -29,9 +33,11 @@ export default function CheckOutPage() {
   const router = useRouter()
   const { auth, authIsReady } = useAuth() // 取得 auth.id, authIsReady
   const { loginFormSwitch } = useLoginModal() // 取得登入視窗開關
-  const [memberProfile, setMemberProfile] = useState([])
-  const [memberAddress, setMemberAddress] = useState([])
+  const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
+  const [memberAddress, setMemberAddress] = useState([]) // 取得會員地址
+  const { errors, validateInvoice, clearError } = useOrderValidation() // 訂單驗證
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
+  // order submit form 內容
   const [formData, setFormData] = useState({
     memberId: 0,
     recipientName: '',
@@ -48,6 +54,7 @@ export default function CheckOutPage() {
   const {
     checkoutItems,
     checkoutTotal,
+    cartBadgeQty,
     handleQuantityChange,
     clearCart,
     deliverFee,
@@ -129,6 +136,11 @@ export default function CheckOutPage() {
     setInvoiceTypeValue(value)
   }
 
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+    validateInvoice(name, value)
+  }
+
   // 送出表單
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -160,6 +172,7 @@ export default function CheckOutPage() {
         mobileInvoice: formData.mobileInvoice,
         recipientTaxId: '',
       }
+      errors.recipientTaxId = ''
     } else if (invoiceTypeValue === 'tax') {
       updatedFormData = {
         ...updatedFormData,
@@ -167,9 +180,17 @@ export default function CheckOutPage() {
         mobileInvoice: '',
         recipientTaxId: formData.recipientTaxId,
       }
+      errors.mobileInvoice = ''
     }
 
+    // 驗證手機載具、統一編號
+    validateInvoice('mobileInvoice', formData.mobileInvoice)
+    validateInvoice('recipientTaxId', formData.recipientTaxId)
 
+    if (errors.mobileInvoice || errors.recipientTaxId) {
+      alert('請確認欄位')
+      return
+    }
     const dataToSubmit = {
       ...updatedFormData,
       memberId: auth.id,
@@ -244,22 +265,31 @@ export default function CheckOutPage() {
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
 
-      <form
-        id="_form_aiochk"
-        method="post"
-        name="checkoutForm"
-        onSubmit={handleSubmit}
-        className={styles.contentContainer}
-      >
-        {/* LEFT ORDER INFO START */}
-        <div className={styles.checkoutLeft}>
-          <h5>訂購資訊</h5>
-          {/* OrderItemCheckout */}
-          <div className={styles.itemList}>
-            {checkoutItems.length === 0 ? (
-              <NoData />
-            ) : (
-              checkoutItems.map((v, i) => (
+      {cartBadgeQty <= 0 && (
+        <div className={styles.noCheckoutItemsContainer}>
+          <h6>購物車尚無商品</h6>
+          <BlackBtn
+            btnText="前往桌遊商城"
+            href="/product"
+            paddingType="medium"
+          />
+        </div>
+      )}
+
+      {cartBadgeQty > 0 && (
+        <form
+          id="_form_aiochk"
+          method="post"
+          name="checkoutForm"
+          onSubmit={handleSubmit}
+          className={styles.contentContainer}
+        >
+          {/* LEFT ORDER INFO START */}
+          <div className={styles.checkoutLeft}>
+            <h5>訂購資訊</h5>
+            {/* OrderItemCheckout */}
+            <div className={styles.itemList}>
+              {checkoutItems.map((v, i) => (
                 <OrderItemCheckout
                   key={v.product_id}
                   cartId={v.cart_id}
@@ -271,80 +301,81 @@ export default function CheckOutPage() {
                   orderQty={v.cart_product_quantity}
                   onQuantityChange={handleQuantityChange}
                 />
-              ))
-            )}
-          </div>
+              ))}
+            </div>
 
-          {/* 訂單金額 */}
-          <CheckoutTotalTable
-            subtotal={checkoutTotal}
-            deliverFee={deliverFee}
-            totalDiscount={0}
-          />
-        </div>
-
-        <VDivider margin="2rem 0" />
-        {/* RIGHT RECIPIENT INFO START */}
-        <div className={styles.checkoutRight}>
-          <h5>收件資料</h5>
-
-          {/* RecipientButton */}
-          <div className={styles.checkoutRightMain}>
-            {memberAddress.length === 0 ? (
-              <RecipientButton onClick={openModal} />
-            ) : (
-              memberAddress
-                .filter((v) => v.selected === true)
-                .map((address) => (
-                  <RecipientButtonSelected
-                    key={address.id}
-                    recipientName={address.recipient_name}
-                    recipientMobile={address.mobile_phone}
-                    address={address.address}
-                    onClick={openModal}
-                  />
-                ))
-            )}
-
-            <OrderSelectBox
-              name="invoice_type"
-              label="發票形式"
-              placeholder="請選擇"
-              value={invoiceTypeValue}
-              options={invoiceTypeOption}
-              errorText=""
-              onChange={handleInvoiceTypeChange}
+            {/* 訂單金額 */}
+            <CheckoutTotalTable
+              subtotal={checkoutTotal}
+              deliverFee={deliverFee}
+              totalDiscount={0}
             />
-
-            {invoiceTypeValue === 'mobile' && (
-              <OrderInputBox
-                name="mobileInvoice"
-                label="手機載具"
-                value={formData.mobileInvoice}
-                // value={memberProfile.invoice_carrier_id}
-                onChange={handleInputChange}
-              />
-            )}
-
-            {invoiceTypeValue === 'tax' && (
-              <OrderInputBox
-                name="recipientTaxId"
-                label="統一編號"
-                value={formData.recipientTaxId}
-                // value={memberProfile.tax_id}
-                onChange={handleInputChange}
-              />
-            )}
           </div>
 
-          <BlackBtn
-            btnText="前往結帳"
-            type="submit"
-            href={null}
-            paddingType="medium"
-          />
-        </div>
-      </form>
+          <VDivider margin="2rem 0" />
+          {/* RIGHT RECIPIENT INFO START */}
+          <div className={styles.checkoutRight}>
+            <h5>收件資料</h5>
+
+            {/* RecipientButton */}
+            <div className={styles.checkoutRightMain}>
+              {memberAddress.length === 0 ? (
+                <RecipientButton onClick={openModal} />
+              ) : (
+                memberAddress
+                  .filter((v) => v.selected === true)
+                  .map((address) => (
+                    <RecipientButtonSelected
+                      key={address.id}
+                      recipientName={address.recipient_name}
+                      recipientMobile={address.mobile_phone}
+                      address={address.address}
+                      onClick={openModal}
+                    />
+                  ))
+              )}
+
+              <OrderSelectBox
+                name="invoice_type"
+                label="發票形式"
+                placeholder="請選擇"
+                value={invoiceTypeValue}
+                options={invoiceTypeOption}
+                onChange={handleInvoiceTypeChange}
+              />
+
+              {invoiceTypeValue === 'mobile' && (
+                <OrderInputBox
+                  name="mobileInvoice"
+                  label="手機載具"
+                  value={formData.mobileInvoice}
+                  errorText={errors.mobileInvoice || ''}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                />
+              )}
+
+              {invoiceTypeValue === 'tax' && (
+                <OrderInputBox
+                  name="recipientTaxId"
+                  label="統一編號"
+                  value={formData.recipientTaxId}
+                  errorText={errors.recipientTaxId || ''}
+                  onChange={handleInputChange}
+                  onBlur={handleBlur}
+                />
+              )}
+            </div>
+
+            <BlackBtn
+              btnText="前往結帳"
+              type="submit"
+              href={null}
+              paddingType="medium"
+            />
+          </div>
+        </form>
+      )}
 
       {/* RecipientModalBody */}
       <BasicModal

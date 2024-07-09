@@ -3,6 +3,17 @@
   margin-bottom: 2rem;
 }
 
+.noCheckoutItemsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  height: 320px;
+  border-radius: var(--content-radius);
+  background-color: white;
+}
 .sectionContainer {
   width: 100%;
   height: auto;
