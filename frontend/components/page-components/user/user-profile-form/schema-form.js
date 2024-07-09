@@ -23,9 +23,6 @@ const schemaForm = z.object({
     }),
   birthday: z
     .string()
-    .date({
-      message: '請填寫正確日期格式',
-    })
     .transform((val) => val || '')
     .nullable(),
   mobile_phone: z

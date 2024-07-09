@@ -9,6 +9,9 @@ $box-shadow: #80bfff;
 // hover focus
 $border-color: #3399ff;
 
+// disabled
+$disabled-field-line: #eaeaea;
+
 
 .inputDefault {
   @include font-small;
@@ -20,6 +23,7 @@ $border-color: #3399ff;
   border-radius: 8px;
   border: 2px solid $pri-3;
   transition: all 200ms;
+
   &:hover {
     border-color: $border-color;
   }
@@ -27,6 +31,31 @@ $border-color: #3399ff;
   &:focus {
     border-color: $border-color;
     box-shadow: 0 0 0 3px $box-shadow;
+  }
+
+  // firefox
+  &:focus-visible {
+    outline: 0;
+  }
+}
+
+.inputDefaultLine {
+  @include font-small;
+  width: 100%;
+  height: 32px;
+  padding: 0.5rem 1rem;
+  color: $color;
+  background: #fff;
+  border: none;
+  border-bottom: 2px solid $pri-3;
+  transition: all 200ms;
+
+  &:hover {
+    border-color: $border-color;
+  }
+
+  &:focus {
+    border-color: royalblue;
   }
 
   // firefox
@@ -44,4 +73,30 @@ $border-color: #3399ff;
   background: #fff;
   border-radius: 8px;
   border: unset;
+}
+
+.inputDisabledLine {
+  @include font-small;
+  width: 100%;
+  height: 32px;
+  padding: 0.5rem 1rem;
+  color: $color;
+  background: #fff;
+  border: none;
+  border-bottom: 2px solid $disabled-field-line;
+  transition: all 200ms;
+
+  &:hover {
+    border-color: $disabled-field-line;
+  }
+
+  &:focus {
+    border-color: $disabled-field-line;
+  }
+
+  // firefox
+  &:focus-visible {
+    outline: 0;
+  }
+
 }

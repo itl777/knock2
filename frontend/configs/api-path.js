@@ -2,9 +2,11 @@
 export const API_SERVER = 'http://localhost:3001'
 //↑後端的ip port
 
-// JWT 登入, 方法: POST, 欄位: account, password
+// users
 export const JWT_LOGIN_POST = `${API_SERVER}/users/login-jwt`
+export const GOOGLE_LOGIN_POST = `${API_SERVER}/users/google-login`
 export const REGISTER_POST = `${API_SERVER}/users/register`
+export const FORGET_PASSWORD_POST = `${API_SERVER}/users/forgot-password`
 export const VERIFY_TOKEN_POST = `${API_SERVER}/users/verify-token`
 
 // product image path
@@ -25,6 +27,12 @@ export const CHECKOUT_GET = `${API_SERVER}/checkout/`
 export const CHECKOUT_GET_CART = `${API_SERVER}/checkout/cart`
 export const CHECKOUT_UPDATE_CART = `${API_SERVER}/checkout/cart/update`
 export const CHECKOUT_DELETE_ADDRESS = `${API_SERVER}/checkout/api/delete_address`
+export const ECPAY_GET = `${API_SERVER}/payments`
+export const CHECKOUT_CITY_GET = `${API_SERVER}/checkout/api/city`
+export const CHECKOUT_DISTRICT_GET = `${API_SERVER}/checkout/api/district`
+export const ORDER_REVIEW_POST = `${API_SERVER}/orders/api/add-reviews`
+export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
+
 
 //teams
 export const TEAM_ALL = `${API_SERVER}/teams/apiAll`
@@ -33,3 +41,5 @@ export const CHAT_GET = `${API_SERVER}/teams/api/chat`
 //THEME
 export const THEME_LIST = `${API_SERVER}/themes`
 export const BRANCH_LIST = `${API_SERVER}/themes/branches`
+export const THEME_DETAIL = `${API_SERVER}/themes/`
+export const BRANCH_THEMES = `${API_SERVER}/themes/branch-themes`

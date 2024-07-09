@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from '@mui/material'
 
-export default function BuyBtn2({ btnText = '直接購買', onClick }) {
+export default function BuyBtn2({ btnText = '加入購物車', onClick }) {
   return (
     <Button
       onClick={onClick}

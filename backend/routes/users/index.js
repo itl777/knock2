@@ -3,8 +3,10 @@ import moment from "moment-timezone";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../../utils/connect.js";
-import upload from "../../utils/upload-imgs.js";
+import upload from "../../utils/upload-avatar.js";
 import schemaForm from "./schema-profile.js";
+import transporter from "../../configs/mail.js";
+import { createOtp } from "./createOtp.js";
 
 const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
@@ -133,7 +135,7 @@ router.post("/api", async (req, res) => {
 });
 
 // 處理profile-form編輯的api
-router.put("/api", upload.none(), async (req, res) => {
+router.put("/api", async (req, res) => {
   const output = {
     success: false,
     code: 0,
@@ -165,13 +167,8 @@ router.put("/api", upload.none(), async (req, res) => {
   };
 
   if (!result.success) {
-    if (result.error?.issues?.length) {
-      for (let issue of result.error.issues) {
-        newProfileFormErrors[issue.path[0]] = issue.message;
-      }
-      setProfileFormErrors(newProfileFormErrors);
-    }
-    return; // 表單資料沒有驗證通過就直接返回
+    output.error = "驗證未通過";
+    return res.json(output); // 表單資料沒有驗證通過就直接返回
   }
 
   // 更新地址
@@ -195,10 +192,12 @@ router.put("/api", upload.none(), async (req, res) => {
       } else {
         output.code = 103;
         output.address_error = "地址更新失敗2";
+        return res.json(output);
       }
     } catch (ex) {
       output.code = 101;
       output.address_error = ex;
+      return res.json(output);
     }
   }
 
@@ -227,11 +226,11 @@ router.put("/api", upload.none(), async (req, res) => {
     output.error = ex;
   }
 
-  res.json(output);
+  return res.json(output);
 });
 
 // 處理 register 註冊的api
-router.post("/register", upload.none(), async (req, res) => {
+router.post("/register", async (req, res) => {
   const output = {
     success: false,
     code: 0,
@@ -259,6 +258,147 @@ router.post("/register", upload.none(), async (req, res) => {
   }
 
   res.json(output);
+});
+
+// forgot-password 忘記密碼的api
+router.post("/forgot-password", async (req, res) => {
+  const output = {
+    success: false,
+    error: "",
+    data: {},
+  };
+
+  const { account } = req.body;
+
+  const otpCode = await createOtp(account);
+
+  if (!otpCode.success) {
+    return res.json(otpCode);
+  }
+
+  // 寄送 email
+  const mailOptions = {
+    from: `"support"<${process.env.SMTP_TO_EMAIL}>`,
+    to: account,
+    subject: "重置您的密碼 - OTP 認證碼",
+    text: `
+      親愛的用戶，
+
+      您收到這封郵件是因為您請求了密碼重置。請使用以下一次性密碼 (OTP) 完成您的密碼重置流程：
+
+      OTP 認證碼：${otpCode.data}
+
+      此認證碼將在 10 分鐘內有效。請勿將此認證碼告訴他人。如非您本人操作，請忽略此郵件，您的帳號仍然是安全的。
+
+      感謝您的使用！
+
+      祝您順利，
+
+
+      悄瞧 knock knock   團隊
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (err, response) => {
+    if (err) {
+      output.success = false;
+      output.error = err;
+      console.log(output, "false");
+      return res.status(400).json(output);
+    } else {
+      output.success = true;
+      console.log(output, "true");
+      return res.json(output);
+    }
+  });
+});
+
+router.post("/google-login", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    data: {
+      id: 0,
+      nickname: "",
+      avatar: "",
+      token: "",
+    },
+  };
+
+  // 沒有google登入資料
+  if (!req.body.providerId || !req.body.uid) {
+    output.success = false;
+    output.code = 400;
+    output.error = "缺少google登入資料";
+    return res.json(output);
+  }
+
+  const { displayName, email, uid, phoneNumber } = req.body;
+
+  // 1. 先查詢資料庫是否有同google_uid的資料
+  try {
+    const sql_google_uid = "SELECT * FROM users WHERE google_uid=?";
+    const [rows] = await db.query(sql_google_uid, [uid]);
+
+    if (!rows.length) {
+      //  2-1.不存在 -> 建立一個新會員資料(無帳號與密碼)，只有google來的資料 -> 執行登入工作
+      const data = {
+        account: email,
+        name: displayName,
+        nick_name: displayName,
+        mobile_phone: phoneNumber,
+        google_uid: uid,
+      };
+      try {
+        const sql = "INSERT INTO users SET ?";
+        const [result] = await db.query(sql, [data]);
+        if (!result.affectedRows) {
+          output.code = 441;
+          output.error = "預期外的錯誤，請聯絡管理員";
+          return res.json(output);
+        }
+      } catch (ex) {
+        output.code = 440;
+        output.error = "預期外的錯誤，請聯絡管理員";
+        console.error(ex);
+        if (ex.errno === 1062) {
+          output.code = 450;
+          output.error = "Email已被註冊，請試試其他Email";
+        }
+        return res.json(output);
+      }
+    }
+  } catch (ex) {
+    output.error = ex;
+  }
+
+  try {
+    const sql_google_uid = "SELECT * FROM users WHERE google_uid=?";
+    const [rows] = await db.query(sql_google_uid, [uid]);
+
+    //  有存在 -> 執行登入工作
+    output.success = true;
+    const payload = {
+      id: rows[0].user_id,
+      account: rows[0].account,
+    };
+    const token = jwt.sign(payload, process.env.JWT_KEY);
+
+    output.data = {
+      id: rows[0].user_id,
+      nickname: rows[0].nick_name,
+      avatar: rows[0].avatar,
+      token,
+    };
+  } catch (ex) {
+    output.code = 460;
+    output.error = "預期外的錯誤，請聯絡管理員";
+    console.error(ex);
+    return res.json(output);
+  }
+
+  return res.json(output);
 });
 
 // 處理刪除的api
@@ -289,11 +429,32 @@ router.post("/register", upload.none(), async (req, res) => {
 // });
 
 // 上傳 avatar 的api
-router.post("/upload-avatar", upload.single("avatar"), (req, res) => {
-  res.json({
-    body: req.body,
+router.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
+  const output = {
+    success: false,
+    error: "",
     file: req.file,
-  });
+  };
+  console.log(req.body, req.file);
+  if (!req.file) {
+    output.error = "上傳失敗";
+    return res.json(output);
+  }
+
+  try {
+    const sql = "UPDATE users SET avatar=? WHERE user_id=?";
+    const [result] = await db.query(sql, [req.file.filename, req.body.user_id]);
+    output.success = !!result.affectedRows;
+    if (!output.success) {
+      output.error = "更新失敗";
+      return res.json(output);
+    }
+  } catch (ex) {
+    output.error = ex;
+  }
+
+  output.file = req.file;
+  return res.json(output);
 });
 
 export default router;

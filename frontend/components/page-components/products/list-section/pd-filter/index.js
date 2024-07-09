@@ -1,33 +1,61 @@
 import React from 'react'
 import Image from 'next/image'
-import frameSvg from '@/public/products/frame.svg'
-import FilterBtn from '@/components/UI/filter-btn'
 import 'hover.css/css/hover-min.css'
 import CategoryBtn from './category-btn'
+import SearchInput from './search-input'
+import FilterBtnArea from './filter-btn-area'
+import myStyle from './filter.module.css'
+import PriceSlider from './price-slider'
 
 export default function PdFilter() {
   return (
     <>
       <div className="container">
-        <Image id="frame-head" layout="responsive" src={frameSvg} alt="" />
+        <div className={myStyle.frame}>
+          <Image
+            className={`${myStyle.ghostLeft} hvr-buzz`}
+            src="/ghost/ghost_14.png"
+            width={178}
+            height={155}
+            alt="Picture of the author"
+          />
+          <Image
+            className={`${myStyle.ghostRight} hvr-wobble-top`}
+            src="/ghost/ghost_13.png"
+            width={147}
+            height={145}
+            alt="Picture of the author"
+          />
+
+          <Image
+            id="frame-head"
+            src="/products/frame.svg"
+            width={1200}
+            height={58}
+            alt="frame"
+          />
+        </div>
 
         <div id="frame">
           <CategoryBtn />
 
           {/* price range */}
-          <div className="row mt-4">
-            <div className="col-6 offset-1 d-flex">
+          <div className="row mt-5">
+            <div className="col-4 offset-1 d-flex justify-content-between align-items-center">
               <div className="text">
-                <h6>Price range:</h6>
+                <div className={myStyle.text}>Price range:</div>
               </div>
               <div>
-                <input type="range" className="form-range" id="customRange1" />
+                <PriceSlider />
               </div>
             </div>
 
-            <div className="col-4 text-end">
-              <FilterBtn btnText={'最新上架'} href={'/'} />
-              <FilterBtn btnText={'價格排序'} href={'/'} />
+            <div className="col-4 d-flex justify-content-center ">
+              <SearchInput />
+            </div>
+
+            <div className="col-3 text-end d-flex align-items-center">
+              <FilterBtnArea />
             </div>
           </div>
         </div>
@@ -44,15 +72,11 @@ export default function PdFilter() {
           .container {
             max-width: 1200px;
             margin-bottom: 5rem;
-            padding:0;
+            padding: 0;
           }
 
           .text {
             display: fit-content;
-          }
-          .text h6 {
-            font-weight: 600;
-            font-family: 'Noto Serif JP', 'Noto Sans TC';
           }
         `}
       </style>

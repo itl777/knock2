@@ -23,7 +23,6 @@ export default function ThemeBranches() {
     fetch(`${THEME_LIST}?branch_id=${selectedBranch}`)
       .then((response) => response.json())
       .then((myData) => {
-        console.log('Theme Data:', myData)
         setData({
           success: true,
           themes: myData.themes,
@@ -36,7 +35,6 @@ export default function ThemeBranches() {
     fetch(BRANCH_LIST)
       .then((response) => response.json())
       .then((data) => {
-        console.log('Branch Data:', data)
         setData2({
           success: true,
           branches: data.branches,

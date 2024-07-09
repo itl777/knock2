@@ -11,6 +11,12 @@ export function useProduct() {
 
 export const ProductProvider = ({ children }) => {
   const router = useRouter()
+
+  const [cardChange, setCardChange] = useState(true)
+
+  // 數量在這裡
+  const [buyQuantity, setBuyQuantity] = useState(1)
+
   const [data, setData] = useState({
     success: false,
     page: 0,
@@ -18,6 +24,9 @@ export const ProductProvider = ({ children }) => {
     totalPages: 0,
     rows: [],
   })
+  // 排序箭頭狀態
+  const [showIcon, setShowIcon] = useState(false)
+  const [userSearch, setUserSearch] = useState('')
 
   const getFavorite = async (page) => {
     page = page || 1
@@ -33,7 +42,15 @@ export const ProductProvider = ({ children }) => {
     }
   }
 
-  const getProductRows = async (page) => {
+  const getProductRows = async (
+    page,
+    category_id,
+    sort,
+    order,
+    userSearch,
+    price_start,
+    price_end
+  ) => {
     // if (!page) {
     //   router.push({
     //     pathname: router.pathname,
@@ -41,7 +58,13 @@ export const ProductProvider = ({ children }) => {
     //   })
     // }
     page = page || 1
-    const url = `${PRODUCT_LIST}?page=${page}`
+    category_id = category_id || ''
+    sort = sort || ''
+    order = order || ''
+    userSearch = userSearch || ''
+    price_start = price_start || ''
+    price_end = price_end || ''
+    const url = `${PRODUCT_LIST}?page=${page}&category_id=${category_id}&sort=${sort}&order=${order}&userSearch=${userSearch}&price_start=${price_start}&price_end=${price_end}`
     try {
       const res = await fetch(url)
       const resData = await res.json()
@@ -54,26 +77,50 @@ export const ProductProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    let { page } = router.query
-    if (!page) {
-      router.push({
-        pathname: router.pathname,
-        query: { ...router.query, page: 1 },
-      })
-    }
+    let { page, category_id, sort, order, userSearch, price_start, price_end } =
+      router.query
+    // if (!page) {
+    //   router.push({
+    //     pathname: router.pathname,
+    //     query: { ...router.query, page: 1 },
+    //   })
+    // }
     if (router.isReady) {
-      if (router.asPath.includes('/product/product-favorite')) {
+      // console.log(router.asPath)
+      const url = router.asPath.split('?')
+      if (url[0] === '/product/product-favorite') {
         getFavorite(page)
-      } else if (router.asPath.includes('/product')) {
-        getProductRows(page)
+      } else if (url[0] === '/product') {
+        getProductRows(
+          page,
+          category_id,
+          sort,
+          order,
+          userSearch,
+          price_start,
+          price_end
+        )
       }
     }
     // window.scrollTo({ top: 0, behavior: 'auto' })
-  }, [router.query])
+  }, [router.query, cardChange])
 
   return (
     <ProductContext.Provider
-      value={{ getFavorite, getProductRows, data, router }}
+      value={{
+        getFavorite,
+        getProductRows,
+        data,
+        router,
+        buyQuantity,
+        showIcon,
+        userSearch,
+        cardChange,
+        setCardChange,
+        setUserSearch,
+        setShowIcon,
+        setBuyQuantity,
+      }}
     >
       {children}
     </ProductContext.Provider>

@@ -10,6 +10,9 @@ export default function UserTab() {
     if (path === '/user/orders/ongoing') {
       return router.pathname.startsWith('/user/orders')
     }
+    if (path === '/user/coupon/ongoing') {
+      return router.pathname.startsWith('/user/coupon')
+    }
     return router.pathname.startsWith(path)
   }
 
@@ -23,7 +26,7 @@ export default function UserTab() {
     },
     { key: 'orders', name: '商品訂單', path: '/user/orders/ongoing' },
     { key: 'favorite', name: '我的收藏', path: '/user/favorite' },
-    { key: 'coupons', name: '優惠券', path: '/user/coupons' },
+    { key: 'coupons', name: '優惠券', path: '/user/coupon/ongoing' },
   ]
 
   return (

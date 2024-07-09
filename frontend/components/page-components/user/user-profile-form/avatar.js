@@ -1,8 +1,8 @@
 import styled from '@emotion/styled'
 import { API_SERVER } from '@/configs/api-path'
 
-export default function AvatarFormItem({ avatar = '' }) {
-  const AvatarFormItem = styled.div`
+export default function AvatarFormItem({ avatar = '', open }) {
+  const AvatarFormItem = styled.button`
     width: 250px;
     height: 250px;
     border-radius: 125px;
@@ -12,5 +12,6 @@ export default function AvatarFormItem({ avatar = '' }) {
     background-position: center;
     box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.25);
   `
-  return <AvatarFormItem />
+
+  return <AvatarFormItem onClick={open} />
 }
