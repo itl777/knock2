@@ -37,12 +37,12 @@ const AirbnbSlider = styled(Slider)(({ theme }) => ({
     boxShadow: '0 0 20px 20px rgba(185, 151, 85, 0.3)',
   },
   '& .MuiSlider-track': {
-    height: 3,
+    height: 2,
   },
   '& .MuiSlider-rail': {
     color: theme.palette.mode === 'rgba(0, 0, 0, 1)',
     opacity: theme.palette.mode === 'dark' ? undefined : 1,
-    height: 3,
+    height: 1,
   },
   '& .MuiSlider-valueLabel': {
     fontSize: 18,

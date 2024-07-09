@@ -3,11 +3,11 @@ import TextField from '@mui/material/TextField'
 import { createTheme, ThemeProvider, useTheme } from '@mui/material/styles'
 import { useProduct } from '@/context/product-context'
 import { useRouter } from 'next/router'
-
+import { outlinedInputClasses } from '@mui/material/OutlinedInput'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import { FaMagnifyingGlass } from 'react-icons/fa6'
-import { BsSearch } from "react-icons/bs";
+import { BsSearch } from 'react-icons/bs'
 
 const customTheme = (outerTheme) =>
   createTheme({
@@ -23,6 +23,24 @@ const customTheme = (outerTheme) =>
             '--TextField-brandBorderFocusedColor': '#B99755',
             '& label.Mui-focused': {
               color: 'var(--TextField-brandBorderFocusedColor)',
+            },
+          },
+        },
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          notchedOutline: {
+            borderColor: 'var(--TextField-brandBorderColor)',
+            borderRadius: '100px',
+            color: 'black',
+            fontFamily: 'Noto Serif JP',
+          },
+          root: {
+            [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
+              borderColor: 'var(--TextField-brandBorderHoverColor)',
+            },
+            [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
+              borderColor: 'var(--TextField-brandBorderFocusedColor)',
             },
           },
         },
@@ -69,8 +87,8 @@ export default function SearchInput() {
   return (
     <ThemeProvider theme={customTheme(outerTheme)}>
       <TextField
-        label="Search"
-        variant="standard"
+        label="搜尋商品"
+        variant="outlined"
         value={userSearch}
         sx={{ width: '180px' }}
         onChange={handleSearch}
