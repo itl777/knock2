@@ -1,0 +1,17 @@
+.dialogImg {
+  width: 128px;
+  margin-top: -92px;
+}
+
+.dialogTitle {
+  margin-top: 24px;
+  margin-bottom: 32px;
+}
+.dialogContent {
+  width: 400px;
+}
+
+.btnStack {
+  display: flex;
+  gap: 1.5rem;
+}
