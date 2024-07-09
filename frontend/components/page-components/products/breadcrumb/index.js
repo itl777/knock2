@@ -41,8 +41,6 @@ export default function Breadcrumb({ productName = '商品名稱' }) {
 
   if (router.asPath.split('/').length < 4) {
     breadcrumbs.pop()
-    // console.log(router.asPath.split('/').length)
-    // console.log(breadcrumbs)
   }
 
   return (

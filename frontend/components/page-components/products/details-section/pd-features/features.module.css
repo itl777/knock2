@@ -90,3 +90,10 @@
   fill: rgba(91, 91, 91, 1);
   font-weight: 900;
 }
+
+.sm-likeStyle{
+  position: absolute;
+  right: 14px;
+  top: -22px;
+  z-index: 100;
+}

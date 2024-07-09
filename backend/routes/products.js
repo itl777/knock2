@@ -19,27 +19,43 @@ const getListDate = async (req) => {
   }
   // 處裡搜尋欄位
   let userSearch = req.query.userSearch || "";
+  let price_start = req.query.price_start || 0;
+  let price_end = req.query.price_end || 0;
   let idSearch = req.params.product_id || "";
   let category_id = req.query.category_id || "";
   // 排序用
-  const sort = req.query.sort || "product_id";
+  let sort = req.query.sort || "product_id";
   const order = req.query.order || "DESC";
-  let orderBy = `ORDER BY ${sort} ${order}`;
+
   let where = " WHERE 1 ";
 
-  if (userSearch) {
-    const userSearch_ = db.escape(`%${userSearch}%`);
-    where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_} `;
-  }
   if (idSearch) {
     const idSearch_ = db.escape(`${idSearch}`);
     where += `AND ( \`product_id\` LIKE ${idSearch_} ) `;
   }
 
+  if (userSearch) {
+    const userSearch_ = db.escape(`%${userSearch}%`);
+    where += `AND ( \`product_name\` LIKE ${userSearch_} OR \`product_id\` LIKE ${userSearch_}) `;
+  }
+
+  if (Number(price_start) || Number(price_end)) {
+    Number(price_start) ? price_start : (price_start = 0);
+    Number(price_end) ? price_end : (price_end = 2000);
+
+    // const price_start_ = db.escape(`${price_start}`);
+    // const price_end_ = db.escape(`${price_end}`);
+    where += `AND ( \`price\` BETWEEN ${price_start} AND ${price_end}) `;
+  }
+
   // 類別篩選
   if (category_id) {
     const category_id_ = db.escape(`${category_id}`);
-    where = `JOIN \`product_category\` ON product_management.category_id = product_category.category_id where product_management.category_id=${category_id_} `;
+    where += `AND product_management.category_id=${category_id_} `;
+  }
+  // order by排序
+  if (sort === "created_at") {
+    sort = "product_management.created_at";
   }
 
   const t_sql = `SELECT COUNT(1) totalRows FROM product_management ${where}`;
@@ -48,7 +64,6 @@ const getListDate = async (req) => {
   let totalPages = 0;
   let rows = [];
   let productImg = "";
-
   // 查詢的db有無回傳值
   if (totalRows) {
     // 有回傳，計算總頁數
@@ -59,33 +74,39 @@ const getListDate = async (req) => {
       return { success, redirect };
     }
 
+    let orderBy = `ORDER BY ${sort} ${order}`;
+
     // JOIN圖片
-    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\`
-    on \`product_id\` = \`img_product_id\` ${where} ${orderBy} LIMIT ${
+    // const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` on \`product_id\` = \`img_product_id\` ${where} ${orderBy} LIMIT ${
+    //   (page - 1) * perPage
+    // },${perPage}`;
+
+    // JOIN分類
+    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` 
+    ON \`product_id\` = \`img_product_id\` JOIN \`product_category\` ON product_management.category_id = product_category.category_id ${where} ${orderBy}  LIMIT ${
       (page - 1) * perPage
     },${perPage}`;
 
     [rows] = await db.query(sql);
 
     success = true;
+
     return {
       success,
-      // perPage,
       page,
       totalRows,
       totalPages,
       rows,
-      // qs: req.query,
     };
-  } else {
-    return { success, redirect };
   }
+
+  return { success, message: "無法查詢到資料，查詢字串可能有誤" };
 };
 
 const getFavoriteDate = async (req) => {
   let success = false;
   let redirect = "";
-  const perPage = 6; //每頁卡片數量
+  const perPage = 8; //每頁卡片數量
 
   let where = " WHERE 1 ";
 
@@ -132,18 +153,17 @@ const getFavoriteDate = async (req) => {
 
 router.get("/", async (req, res) => {
   const data = await getListDate(req);
-  if (data.redirect) {
-    return res.json({
-      redirect: data.redirect,
-      message: "無法查詢到資料，查詢字串可能有誤",
-    });
-  }
   if (data.success) {
-    // const category_sql = "SELECT * FROM product_category";
-    // const [category_result] = await db.query(category_sql);
-    // data.category_result = category_result;
-
     return res.json(data);
+  }
+  if (data.redirect) {
+    return res.redirect(data.redirect);
+  }
+  if (data.message) {
+    return res.json({
+      success: data.success,
+      message: data.message,
+    });
   }
 });
 

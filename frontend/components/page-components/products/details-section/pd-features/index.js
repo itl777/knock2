@@ -6,7 +6,6 @@ import CategoryGroup from './category-group'
 import myStyle from './features.module.css'
 import { useEffect, useState } from 'react'
 
-
 export default function PdFeatures({ data }) {
   const [productData, setProductData] = useState({
     product_name: '',
@@ -25,7 +24,6 @@ export default function PdFeatures({ data }) {
   }, [data])
   return (
     <>
-
       {/* 商品詳情 */}
       <div className={`${myStyle['container']} container`}>
         <div className={`${myStyle['pd-features']} row pd-features `}>
@@ -43,7 +41,7 @@ export default function PdFeatures({ data }) {
               </div>
             </div>
 
-            <CategoryGroup />
+            <CategoryGroup productData={productData} />
 
             <div className={myStyle.content}>{productData.summary}</div>
             <div className={myStyle.price}>${productData.price}</div>
