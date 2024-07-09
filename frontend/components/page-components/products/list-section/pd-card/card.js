@@ -18,9 +18,9 @@ export default function Card({ dbData }) {
   return (
     <>
       <div
-        className="card hvr-grow-shadow"
+        className={`${myStyle.card} card hvr-grow-shadow`}
         id={dbData.product_id}
-        style={{ width: '20rem' }}
+        // style={{ width: '20rem' }}
       >
         <Link
           href={`product/product-details/${dbData.product_id}`}
@@ -38,45 +38,30 @@ export default function Card({ dbData }) {
         <FavoriteIconBtn product_id={dbData.product_id} />
 
         <div className={myStyle.tag}>{dbData.category_name}</div>
-    
+
         <div className="card-body text-center d-flex flex-column">
           <h5 className="card-title">{dbData.product_name}</h5>
 
-          <div className="card-btn-outer d-flex justify-content-center my-3">
-            <div className="card-btn d-flex">
-              <div className="buy-btn-outer w-100 py-1">
-                <div className="buy-btn">${dbData.price}</div>
+          <div
+            className={`${myStyle['card-btn-outer']} d-flex justify-content-center my-3`}
+          >
+            <div className={`${myStyle['card-btn']} d-flex`}>
+              <div className={`${myStyle['buy-btn-outer']} w-100 py-1`}>
+                <div className={`${myStyle['buy-btn']}`}>${dbData.price}</div>
               </div>
-              <div className="buy-btn-outer w-100">
-       
-
+              <div className={`${myStyle['buy-btn-outer']} w-100`}>
                 {/* ******* Iris Added Start ******* */}
                 {/* <BuyBtn product_id={dbData.product_id} /> */}
-                <BuyBtn2 onClick={() => handleAddToCart(dbData.product_id, 1, "add")} />
+                <BuyBtn2
+                  onClick={() => handleAddToCart(dbData.product_id, 1, 'add')}
+                />
 
                 {/* ******* Iris Added End ******* */}
-             
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>
-        {`
-          .card-btn {
-            border: 2px solid black;
-            width: 270px;
-          }
-
-          .buy-btn-outer:first-child {
-            border-right: 2px solid black;
-          }
-          .card {
-            margin: 2.2rem;
-          }
-        `}
-      </style>
     </>
   )
 }

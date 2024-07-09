@@ -90,7 +90,7 @@ export default function SearchInput() {
         label="搜尋商品"
         variant="outlined"
         value={userSearch}
-        sx={{ width: '180px' }}
+        sx={{ width: '8.25rem' }}
         onChange={handleSearch}
         InputProps={{
           endAdornment: (

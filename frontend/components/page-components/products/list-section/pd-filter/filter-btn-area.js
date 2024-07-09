@@ -51,7 +51,7 @@ export default function FilterBtnArea() {
               (priceToggle ? <AiFillCaretUp /> : <AiFillCaretDown />)}
           </>
         }
-        marginLeft={'10px'}
+        // marginLeft={'10px'}
         onClick={() => handleFilterPrice('price', priceToggle ? 'DESC' : 'ASC')}
       />
 

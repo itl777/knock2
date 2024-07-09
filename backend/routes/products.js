@@ -106,7 +106,7 @@ const getListDate = async (req) => {
 const getFavoriteDate = async (req) => {
   let success = false;
   let redirect = "";
-  const perPage = 8; //每頁卡片數量
+  const perPage = 6; //每頁卡片數量
 
   let where = " WHERE 1 ";
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import Image from 'next/image'
 import 'hover.css/css/hover-min.css'
 import CategoryBtn from './category-btn'
@@ -8,6 +7,7 @@ import myStyle from './filter.module.css'
 import PriceSlider from './price-slider'
 import { FaEraser } from 'react-icons/fa6'
 import { useRouter } from 'next/router'
+import OutlineBtn from '@/components/UI/outline-btn'
 
 export default function PdFilter() {
   const router = useRouter()
@@ -65,17 +65,22 @@ export default function PdFilter() {
               <FilterBtnArea />
             </div>
 
-            <div className="col-6 d-flex flex-column justify-content-center align-items-center">
-              <div className="text">
+            <div className="col-5 d-flex flex-column justify-content-center align-items-center">
+              {/* <div className="text">
                 <div className={myStyle.text}>價格範圍</div>
-              </div>
+              </div> */}
               <div>
                 <PriceSlider />
               </div>
             </div>
 
-            <div className="col-3 d-flex justify-content-center ">
+            <div className="col-4 d-flex justify-content-start gap-3">
               <SearchInput />
+              <OutlineBtn
+                btnText={'清空搜尋'}
+                onClick={() => {}}
+
+              />
             </div>
           </div>
         </div>
