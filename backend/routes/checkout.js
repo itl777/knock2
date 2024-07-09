@@ -65,6 +65,136 @@ router.post("/api/cart_member", async (req, res) => {
   }
 });
 
+// POST insert local storage items into to cart_member table
+router.post("/api/cart_member/merge", async (req, res) => {
+  const { memberId, guestCart } = req.body;
+
+  try {
+    for (const item of guestCart) {
+      const [existingCartItem] = await db.query(
+        "SELECT * FROM cart_member WHERE cart_member_id = ? AND cart_product_id = ?",
+        [memberId, item.product_id]
+      );
+
+      const insertSql = `
+        INSERT INTO cart_member (
+          cart_member_id, 
+          cart_product_id, 
+          cart_product_quantity, 
+          created_at, 
+          last_modified_at
+        ) VALUES (
+          ?, ?, ?, now(), now()
+        );
+      `;
+
+      const updateSql = `
+        UPDATE cart_member
+        SET cart_product_quantity = cart_product_quantity + ?, 
+        last_modified_at = now()
+        WHERE cart_member_id = ? AND cart_product_id = ?
+      `;
+
+      if (existingCartItem.length > 0) {
+        const updateValues = [
+          item.cart_product_quantity,
+          memberId,
+          item.product_id,
+        ];
+        await db.query(updateSql, updateValues);
+      } else {
+        const insertValues = [
+          memberId,
+          item.product_id,
+          item.cart_product_quantity,
+        ];
+        await db.query(insertSql, insertValues);
+      }
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error while merging guest cart to member cart:", error);
+    res.status(500).json({
+      error: "An error occurred while merging guest cart to member cart.",
+    });
+  }
+});
+
+// POST change device id to member id
+router.post("/api/update_member", async (req, res) => {
+  const { memberId, deviceId } = req.body;
+
+  try {
+    // 查詢 deviceId 下的商品
+    const deviceCartItemsSql = `
+      SELECT cart_product_id, cart_product_quantity 
+      FROM cart_member 
+      WHERE cart_member_id = ?
+    `;
+    const [deviceCartItems] = await db.query(deviceCartItemsSql, [deviceId]);
+
+    // 查詢 deviceId 下的商品是否與 memberId 下的商品相同
+    for (const deviceItem of deviceCartItems) {
+      const memberCartItemSql = `
+        SELECT cart_product_id, cart_product_quantity 
+        FROM cart_member 
+        WHERE cart_member_id = ? AND cart_product_id = ?
+      `;
+      const [memberCartItems] = await db.query(memberCartItemSql, [
+        memberId,
+        deviceItem.cart_product_id,
+      ]);
+
+      if (memberCartItems.length > 0) {
+        // 如果有相同的商品，則將 memberId 下的商品數量加上 deviceId 的商品數量
+        const newQuantity =
+          memberCartItems[0].cart_product_quantity +
+          deviceItem.cart_product_quantity;
+        const updateCartItemSql = `
+          UPDATE cart_member 
+          SET cart_product_quantity = ?, last_modified_at = NOW() 
+          WHERE cart_member_id = ? AND cart_product_id = ?
+        `;
+        await db.query(updateCartItemSql, [
+          newQuantity,
+          memberId,
+          deviceItem.cart_product_id,
+        ]);
+
+        // 如果有相同的商品，則刪除 deviceId 下的商品
+        const deleteDeviceCartItemSql = `
+          DELETE FROM cart_member 
+          WHERE cart_member_id = ? AND cart_product_id = ?
+        `;
+        await db.query(deleteDeviceCartItemSql, [
+          deviceId,
+          deviceItem.cart_product_id,
+        ]);
+      } else {
+        // 如果「沒」有相同的商品，則更新 cart_member_id
+        const updateDeviceCartItemSql = `
+          UPDATE cart_member 
+          SET cart_member_id = ?, last_modified_at = NOW() 
+          WHERE cart_member_id = ? AND cart_product_id = ?
+        `;
+        await db.query(updateDeviceCartItemSql, [
+          memberId,
+          deviceId,
+          deviceItem.cart_product_id,
+        ]);
+      }
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error while updating member id in member cart:", error);
+    res
+      .status(500)
+      .json({ error: "Failed to update member id in member cart" });
+  }
+});
+
 // GET member cart items
 router.get("/cart/", async (req, res) => {
   // 從 query 中取得 member_id
@@ -479,7 +609,6 @@ router.get("/api/city", async (req, res) => {
   }
 });
 
-
 // GET district data from cities
 router.get("/api/district", async (req, res) => {
   try {
@@ -499,6 +628,5 @@ router.get("/api/district", async (req, res) => {
     });
   }
 });
-
 
 export default router;

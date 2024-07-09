@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import styles from './checkout-offcanvas.module.css'
 import Drawer from '@mui/joy/Drawer'
@@ -7,7 +7,7 @@ import Badge from '@mui/material/Badge'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 // components
-import {useAuth} from '@/context/auth-context'
+import { useAuth } from '@/context/auth-context'
 import { useCart } from '@/context/cart-context'
 import HDivider from '../divider/horizontal-divider'
 import BlackBtn from '../black-btn'
@@ -33,16 +33,13 @@ export default function CheckoutOffcanvas() {
   const toggleShow = () => setShow((s) => !s)
 
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
-  const { checkoutItems, checkoutTotal, handleQuantityChange } = useCart()
+  const { checkoutItems, checkoutTotal, cartBadgeQty, handleQuantityChange } =
+    useCart()
 
   return (
     <>
       <IconButton aria-label="cart" onClick={toggleShow}>
-        <StyledBadge
-          badgeContent={checkoutItems.length}
-          color="secondary"
-          max={99}
-        >
+        <StyledBadge badgeContent={cartBadgeQty} color="secondary" max={99}>
           <FaCartShopping />
         </StyledBadge>
       </IconButton>
@@ -56,11 +53,11 @@ export default function CheckoutOffcanvas() {
             {/* drawer title */}
             <div className={styles.checkoutTitle}>
               <h5>購物車</h5>
-              <div className={styles.cartItemCount}>{checkoutItems.length}</div>
+              <div className={styles.cartItemCount}>{cartBadgeQty}</div>
             </div>
 
             {/* checkout item list */}
-            {checkoutItems.length === 0 ? (
+            {cartBadgeQty === 0 ? (
               <NoData />
             ) : (
               checkoutItems.map((v, i) => (
