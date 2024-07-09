@@ -37,9 +37,9 @@ export default function TeamListTest() {
           ...myData,
           rows: myData.rows.map((row) => ({
             ...row,
-            reservation_date: moment
-              .tz(row.reservation_date, 'Asia/Taipei')
-              .format('YYYY-MM-DD'),
+            // reservation_date: moment
+              // .tz(row.reservation_date, 'Asia/Taipei')
+              // .format('YYYY-MM-DD'),
             start_time: moment(row.start_time, 'HH:mm:ss').format('A hh:mm'),
           })),
         }

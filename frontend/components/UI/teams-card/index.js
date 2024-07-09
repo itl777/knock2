@@ -1,6 +1,7 @@
 import styles from './cards.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
+import moment from 'moment-timezone'
 
 import {
   AspectRatio,
@@ -38,6 +39,10 @@ export default function Card01({
       default:
         return '#222222' // 默認顏色
     }
+  }
+
+  const formatDateToTaiwan = (dateString) => {
+    return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
   }
 
   return (
@@ -126,7 +131,7 @@ export default function Card01({
         <span>團長：{rick_name}</span>
         <br />
         <span>
-          日期：{reservation_date} {start_time}
+          日期：{formatDateToTaiwan(reservation_date)} {start_time}
         </span>
         <span>時間長度：{themeTime} 分鐘</span>
       </CardContent>

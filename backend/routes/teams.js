@@ -67,7 +67,7 @@ router.get("/api/:team_id", async (req, res) => {
     return res.json({ success: false, error: "沒有編號" });
   }
 
-  const sql = `SELECT reservation_id, team_id ,team_title, theme_name, difficulty, nick_name, branch_name, reservation_date, s.start_time, theme_img
+  const sql = `SELECT reservation_id, team_id ,team_title, theme_name, difficulty, nick_name, branch_name, reservation_date, s.start_time, theme_img, s.theme_Time
   FROM reservations r
   JOIN \`teams_list\` team ON team.tour = reservation_id
   JOIN \`themes\` ON branch_themes_id = themes.theme_id

@@ -21,9 +21,25 @@ export default function TeamInfo() {
     difficulty: '',
     branch_name: '',
     reservation_date: '',
-    start_time: '',
-    end_time: '',
+    themeTime: 0,
   })
+
+  const formatDateToTaiwan = (dateString) => {
+    return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
+  }
+
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty) {
+      case 'EASY':
+        return '#63AA90' // 黑色
+      case 'MEDIUM':
+        return '#B99755' // 白色
+      case 'HARD':
+        return '#A43131' // 藍色
+      default:
+        return '#222222' // 默認顏色
+    }
+  }
 
   const getTeam = async (team_id) => {
     const url = 'http://localhost:3001/teams/api/' + team_id
@@ -54,6 +70,7 @@ export default function TeamInfo() {
             team_title: teamData.team_title || '',
             theme_name: teamData.theme_name || '',
             themeImg: teamData.theme_img || '',
+            themeTime: teamData.theme_Time || '',
           })
           console.log('Team data set successfully', teamData)
         }
@@ -93,25 +110,21 @@ export default function TeamInfo() {
                       <div className="col-9">
                         <div className="teamTitle">
                           <h3>{oneTeam.theme_name}</h3>
-                          難度:<span>{oneTeam.difficulty}</span>
+                          難度:<span style={{ bgcolor: getDifficultyColor(oneTeam.difficulty) }}>{oneTeam.difficulty}</span>
                         </div>
                         <h5>團名：{oneTeam.team_title}</h5>
                         <p>
                           團長：{oneTeam.nick_name}
                           <br />
-                          日期：{oneTeam.reservation_date}
+                          日期時間：{formatDateToTaiwan(oneTeam.reservation_date)} {oneTeam.start_time}
                           <br />
-                          開始時間：{oneTeam.start_time}
-                          <br />
-                          結束時間：{oneTeam.end_time}
+                          時間長度：{oneTeam.themeTime} 分鐘
                           <br />
                           場次：{oneTeam.branch_name}
                           <br />
                           人數：2 / 6
                         </p>
                         <p>
-                          目前人數
-                          <br />
                           團長的話
                           <br />
                         </p>
