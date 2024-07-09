@@ -50,7 +50,7 @@ export default function PdFeatures({ data }) {
               <div className={myStyle.content}>數量:</div>
               <NumInput />
             </div>
-            <BtnGroup product_id={productData.product_id} />
+            <BtnGroup product_id={productData.product_id} product_name={productData.product_name} />
           </div>
         </div>
       </div>

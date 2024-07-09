@@ -5,6 +5,7 @@ import axios from 'axios'
 import styles from './checkout-page.module.css'
 import { useCart } from '@/context/cart-context'
 import { useAuth } from '@/context/auth-context'
+import { useLoginModal } from '@/context/login-context'
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
 import VDivider from '@/components/UI/divider/vertical-divider'
@@ -20,7 +21,8 @@ import { PRODUCT_IMG, CHECKOUT_GET_ADDRESS, CHECKOUT_POST, ECPAY_GET } from '@/c
 
 export default function CheckOutPage() {
   const router = useRouter()
-  const { auth } = useAuth() // 取得 auth.id
+  const { auth, authIsReady } = useAuth() // 取得 auth.id, authIsReady
+  const { loginFormSwitch } = useLoginModal() // 取得登入視窗開關
   const [memberAddress, setMemberAddress] = useState([])
   const [deliverFee, setDeliverFee] = useState(120)
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
@@ -37,20 +39,6 @@ export default function CheckOutPage() {
     orderItems: [],
   })
 
-  // 登入驗證
-  useEffect(() => {
-    if (auth.id === 0) {
-      alert('請先登入')
-      router.push('/') 
-    }
-  }, [auth.id, router])
-
-  if (auth.id === 0) {
-    return <div>登入驗證中...</div>
-  }
-
-
-
   // 發票形式
   const invoiceTypeOption = [
     { value: 'member', text: '會員載具' },
@@ -65,7 +53,9 @@ export default function CheckOutPage() {
   // 取得會員地址
   const fetchMemberAddress = async () => {
     try {
-      const response = await fetch(`${CHECKOUT_GET_ADDRESS}?member_id=${auth.id}`)
+      const response = await fetch(
+        `${CHECKOUT_GET_ADDRESS}?member_id=${auth.id}`
+      )
 
       if (!response.ok) {
         throw new Error('Failed to fetch member address')
@@ -204,11 +194,21 @@ export default function CheckOutPage() {
     setIsModalOpen(false)
   }
 
+  // 登入驗證
   useEffect(() => {
-    if (auth.id) {
-      fetchMemberAddress()
+    if (router.isReady) {
+      if (!auth.id && authIsReady) {
+        loginFormSwitch('Login')
+      }
+      if (auth.id && authIsReady) {
+        fetchMemberAddress()
+      }
     }
-  }, [auth.id])
+  }, [auth.id, router.isReady, authIsReady])
+
+  if (!auth.id && authIsReady) {
+    return <section>請先登入</section>
+  }
 
   return (
     <section className={styles.sectionContainer}>
@@ -246,7 +246,7 @@ export default function CheckOutPage() {
           </div>
 
           {/* 訂單金額 */}
-          <CheckoutTotalTable 
+          <CheckoutTotalTable
             subtotal={checkoutTotal}
             deliverFee={deliverFee}
             totalDiscount={0}

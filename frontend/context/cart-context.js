@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from './auth-context'
+import { useSnackbar } from './snackbar-context'
 import {
   CHECKOUT_GET_CART,
   CHECKOUT_UPDATE_CART,
@@ -26,7 +27,8 @@ const getDeviceId = () => {
 
 export const CartProvider = ({ children }) => {
   const { auth } = useAuth() // 取得 auth.id
-  const router = useRouter()
+  // const router = useRouter()
+  const { openSnackbar } = useSnackbar() // success toast
   const [checkoutItems, setCheckoutItems] = useState([]) // 購物車內容
   const [checkoutTotal, setCheckoutTotal] = useState(0) // 購物車總金額
   const [cartBadgeQty, setCartBadgeQty] = useState(0) // 購物車商品項目數量
@@ -99,6 +101,7 @@ export const CartProvider = ({ children }) => {
   // 點擊「加入購物車」（actionType = buy 直接購買 or add 加入購物車）
   const handleAddToCart = async (
     selectedProductId,
+    selectedProductName,
     cartProductQuantity,
     actionType
   ) => {
@@ -119,9 +122,10 @@ export const CartProvider = ({ children }) => {
 
       if (response.data.success) {
         fetchMemberCart()
-        alert(
-          `成功加入購物車！！商品：${selectedProductId}，數量：${cartProductQuantity}`
-        )
+        openSnackbar(`商品「${selectedProductName}」已加入購物車！`, 'success')
+        // alert(
+        //   `成功加入購物車！！商品：${selectedProductId}，數量：${cartProductQuantity}`
+        // )
       } else {
         console.error('Failed to add item to cart')
       }

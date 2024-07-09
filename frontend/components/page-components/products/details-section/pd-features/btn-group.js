@@ -5,7 +5,7 @@ import { useCart } from '@/context/cart-context' // ****** Iris Added
 import Image from 'next/image'
 import myStyle from './features.module.css'
 
-export default function BtnGroup({ product_id }) {
+export default function BtnGroup({ product_id, product_name }) {
   // 從context來的quantity
   const { quantity, setQuantity } = useProduct()
   const { buyQuantity, setBuyQuantity } = useProduct() // ****** Iris Added
@@ -24,8 +24,8 @@ export default function BtnGroup({ product_id }) {
           />
           <PdBtnOutlined btnText={'加入收藏'} />
         </div>
-        <PdBtnContained btnText={'加入購物車'} color={'grey'} onClick={()=>{handleAddToCart(product_id, buyQuantity, "add")}} />
-        <PdBtnContained btnText={'直接購買'} color={'black'} onClick={()=>{handleAddToCart(product_id, buyQuantity, "buy")}}/>
+        <PdBtnContained btnText={'加入購物車'} color={'grey'} onClick={()=>{handleAddToCart(product_id, product_name, buyQuantity, "add")}} />
+        <PdBtnContained btnText={'直接購買'} color={'black'} onClick={()=>{handleAddToCart(product_id, product_name, buyQuantity, "buy")}}/>
       </div>
     </>
   )
