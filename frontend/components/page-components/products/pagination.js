@@ -29,7 +29,6 @@ export default function MyPagination({ totalPages }) {
   return (
     <>
       <ThemeProvider theme={theme}>
-        {/* 1 material方式 */}
         <div className="col-12 d-flex justify-content-center mt-5">
           <Pagination
             onChange={handlePageChange}

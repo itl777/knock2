@@ -1,0 +1,15 @@
+.pen {
+  height: 30px;
+  margin-left: 10px;
+  color: gray;
+}
+.pen:hover::after {
+  content: '雙擊可編輯文字';
+  position: absolute;
+  top: -20px;
+  left: 50px;
+  width: 130px;
+}
+.title:hover {
+  cursor: pointer;
+}
