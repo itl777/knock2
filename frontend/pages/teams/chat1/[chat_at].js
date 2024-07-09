@@ -1,21 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { GET_CHAT } from '@/configs/api-path'
-import styles from './teams.module.css'
+import styles from '../teams.module.css'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
 
-export default function ChatDisplay({
-  chat_at = 0,
-  chat_by = 0,
-  nick_name = '暱稱',
-  avatar = 'default.png',
-  chat_text = '留言內容',
-  create_at = '留言時間',
-}) {
+export default function ChatDisplay() {
 
   const router = useRouter()
 
   const [chat, setChat] = useState({
+    success: false,
+    rows:[],
     chat_at: 0,
     chat_by: 0,
     nick_name: '暱稱',
@@ -24,31 +19,26 @@ export default function ChatDisplay({
     create_at: '留言時間',
   })
 
-  const getChat = async (team_id) => {
-    
+  const getChat = async (chat_at) => {
+
+    const url = GET_CHAT + chat_at
     try {
       const res = await fetch(url)
       //
       const resData = await res.json()
 
-      const url = 'http://localhost:3001/teams/api/' + team_id
       if (resData.success) {
-        const teamData = resData.data
-        if (teamData && teamData.team_id) {
+        const chat = resData.data
+        if (chat_at && chat.chat_at) {
           setChat({
-            branch_name: teamData.branch_name || '',
-            difficulty: teamData.difficulty || '',
-            end_time: teamData.end_time || '',
-            nick_name: teamData.nick_name || '',
-            reservation_date: teamData.reservation_date || '',
-            start_time: teamData.start_time || '',
-            team_id: teamData.team_id || 0,
-            team_title: teamData.team_title || '',
-            theme_name: teamData.theme_name || '',
-            themeImg: teamData.theme_img || '',
-            themeTime: teamData.theme_Time || '',
+            // chat_at: chatData.chat_at || 0,
+            chat_by: chat.chat_by || 0,
+            nick_name: chat.nick_name || '',
+            avatar: chat.avatar || '',
+            chat_text: chat.chat_text || '',
+            create_at: chat.create_at || '',
           })
-          console.log('Team data set successfully', teamData)
+          console.log('chat data set successfully', chat)
         }
       }
     } catch (e) {
@@ -58,11 +48,11 @@ export default function ChatDisplay({
   useEffect(() => {
     if (router.isReady) {
       console.log(router.query)
-      const { team_id } = router.query
-      getChat(team_id)
+      const { chat_at } = router.query
+      getChat(chat_at)
       console.log(chat)
-    }
-  })
+      }})
+
 
 
 
@@ -82,11 +72,11 @@ export default function ChatDisplay({
         <div>
           <h4>留言區</h4>
         </div>
-        <img src={`/${avatar}`} />
+        <img src={`/${chat.avatar}`} />
         <div>
-          {nick_name} {create_at}
+          {chat.nick_name} {chat.create_at}
         </div>
-        <div>{chat_text}</div>
+        <div>{chat.chat_text}</div>
         <hr />
       </div>
     </>

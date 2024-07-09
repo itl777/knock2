@@ -5,7 +5,15 @@ import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
 import Link from 'next/link'
 
+import { useAuth } from '@/context/auth-context'
 import { TEAM_ALL } from '@/configs/api-path'
+
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Typography from '@mui/material/Typography';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import Tabs from '@mui/joy/Tabs'
 import TabList from '@mui/joy/TabList'
@@ -14,11 +22,10 @@ import TabPanel from '@mui/joy/TabPanel'
 
 import Card from '@/components/UI/teams-card'
 
-import PdBtnContained from '@/components/UI/pd-btn-contained'
-import { IoMdPeople } from 'react-icons/io'
-import { MdSchedule } from 'react-icons/md'
-
 export default function TeamListTest() {
+  
+  const { login, logout, auth } = useAuth()
+
   const [data, setData] = useState({
     success: false,
     rows: [],
@@ -33,18 +40,8 @@ export default function TeamListTest() {
         return r.json()
       })
       .then((myData) => {
-        const updatedData = {
-          ...myData,
-          rows: myData.rows.map((row) => ({
-            ...row,
-            // reservation_date: moment
-              // .tz(row.reservation_date, 'Asia/Taipei')
-              // .format('YYYY-MM-DD'),
-            start_time: moment(row.start_time, 'HH:mm:ss').format('A hh:mm'),
-          })),
-        }
-        console.log(updatedData)
-        setData(updatedData)
+        // console.log(data)
+        setData(myData)
       })
       .catch((error) => {
         console.error('Fetch error:', error)
@@ -59,6 +56,40 @@ export default function TeamListTest() {
             <h2>糾團頁面</h2>
           </div>
           <div className="container">
+          <div className='row'>
+            目前登入者：{auth.nickname}
+          </div>
+
+            <div className='row'>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ArrowDownwardIcon />}
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  <Typography>我想開團</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>a
+                  <Card />
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ArrowDropDownIcon />}
+                  aria-controls="panel2-content"
+                  id="panel2-header"
+                >
+                  <Typography>篩選團隊</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>b
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            </div>
+
             <div className="row">
               <h4>團隊一覽</h4>
               <hr></hr>
@@ -85,6 +116,9 @@ export default function TeamListTest() {
                   </div>
                 )
               })}
+            </div>
+
+            <div className='row'>
             </div>
           </div>
         </div>

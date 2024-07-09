@@ -87,6 +87,35 @@ router.get("/api/:team_id", async (req, res) => {
   res.json({ success: true, data: rows[0] });
 });
 
+//--分隔線
+
+// 取得指定id揪團的 API
+router.get("/api/user/:user_id", async (req, res) => {
+  const user_id = +req.params.user_id || 0;
+  if (!user_id) {
+    return res.json({ success: false, error: "沒有編號" });
+  }
+
+  const sql =`SELECT reservation_id, team_id ,team_title, theme_name, difficulty, nick_name, branch_name, reservation_date, s.start_time, theme_img, s.theme_Time
+  FROM reservations r
+  JOIN \`teams_list\` team ON team.tour = reservation_id
+  JOIN \`themes\` ON branch_themes_id = themes.theme_id
+  JOIN \`users\` u ON r.user_id = u.user_id
+  JOIN \`sessions\` s ON r.session_id = s.sessions_id
+  JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
+  JOIN \`branches\` b ON bt.branch_id = b.branch_id
+  WHERE u.user_id = ${user_id};`
+
+  const [rows] = await db.query(sql);
+
+  if (!rows.length) {
+    // 沒有該筆資料
+    return res.json({ success: false, error: "沒有該筆資料" });
+  }
+
+  res.json({ success: true, data: rows });
+});
+
 
 //--分隔線
 
