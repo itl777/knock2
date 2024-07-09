@@ -170,30 +170,34 @@ export function AuthContextProvider({ children }) {
   // 用戶如果重刷頁面，狀態可以由 localStorage 載入
   useEffect(() => {
     const str = localStorage.getItem(storageKey)
-    if (!str) return
-    try {
-      const data = JSON.parse(str)
-      const { token } = data
+    if (!str) {
+      setAuthIsReady(true)
+      return
+    } else {
+      try {
+        const data = JSON.parse(str)
+        const { token } = data
 
-      fetch(VERIFY_TOKEN_POST, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token }),
-      })
-        .then((r) => r.json())
-        .then((result) => {
-          if (!result.success) {
-            return
-          }
+        fetch(VERIFY_TOKEN_POST, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
         })
-      if (data?.id && data?.token) {
-        setAuth(data)
-        setAuthIsReady(true)
+          .then((r) => r.json())
+          .then((result) => {
+            if (!result.success) {
+              return
+            }
+          })
+        if (data?.id && data?.token) {
+          setAuth(data)
+          setAuthIsReady(true)
+        }
+      } catch (ex) {
+        console.error(ex)
       }
-    } catch (ex) {
-      console.error(ex)
     }
   }, [])
 

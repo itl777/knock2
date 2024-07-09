@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import ThirdPartyLoginButton from '../third-party-login-button'
+import { useLoginModal } from '@/context/login-context/index'
+
 
 // styles
 import styles from '../login-form.module.scss'
@@ -22,32 +23,25 @@ const dialogTheme = createTheme({
   },
 })
 
-export default function RegisterForm({
-  open, // state
-  close, // function
-  value,
-  onChange,
-  onSubmit,
-  errorText,
-  formChange,
-}) {
-  // open={registerState}
-  // close={() => setRegisterState(false)}
-  // value={registerData}
-  // onChange={handleRegisterChange}
-  // onSubmit={registerSubmit}
-  // errorText={registerError}
-  // formChange={handleFormSwitch}
+export default function RegisterForm() {
+  const {
+    registerState,
+    registerData,
+    registerErrors,
+    handleRegisterChange,
+    registerSubmit,
+    loginFormSwitch,
+  } = useLoginModal()
   return (
     <>
       <ThemeProvider theme={dialogTheme}>
         <Dialog
-          open={open}
-          onClose={close}
+          open={registerState}
+          onClose={() => loginFormSwitch()}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <form className={styles.forms} onSubmit={onSubmit}>
+          <form className={styles.forms} onSubmit={registerSubmit}>
             <div className={styles.title}>
               <h3>會員註冊</h3>
             </div>
@@ -55,39 +49,39 @@ export default function RegisterForm({
               <AuthFormInput
                 name="account"
                 type="text"
-                value={value.account}
+                value={registerData.account}
                 placeholder="請輸入Email"
-                onChange={onChange}
+                onChange={handleRegisterChange}
               />
-              <span className={styles.errorText}>{errorText.account}</span>
+              <span className={styles.errorText}>{registerErrors.account}</span>
               <AuthFormInput
                 name="password"
                 type="password"
-                value={value.password}
+                value={registerData.password}
                 placeholder="請輸入密碼"
-                onChange={onChange}
+                onChange={handleRegisterChange}
               />{' '}
-              <span className={styles.errorText}>{errorText.password}</span>
+              <span className={styles.errorText}>{registerErrors.password}</span>
               <AuthFormInput
                 name="reenter_password"
                 type="password"
-                value={value.reenter_password}
+                value={registerData.reenter_password}
                 placeholder="請再次輸入密碼"
-                onChange={onChange}
+                onChange={handleRegisterChange}
               />
               <span className={styles.errorText}>
-                {errorText.reenter_password}
+                {registerErrors.reenter_password}
               </span>
               <AuthFormInput
                 name="name"
                 type="text"
-                value={value.name}
+                value={registerData.name}
                 placeholder="請輸入姓名"
-                onChange={onChange}
+                onChange={handleRegisterChange}
               />
               <span className={styles.errorText}>
-                {errorText.name}
-                {errorText.result}
+                {registerErrors.name}
+                {registerErrors.result}
               </span>
             </div>
             <div className={styles.box}>
@@ -97,7 +91,7 @@ export default function RegisterForm({
               <Link
                 href=""
                 onClick={() => {
-                  formChange('Login')
+                  loginFormSwitch('Login')
                 }}
               >
                 <span>已有註冊會員？ 返回登入</span>

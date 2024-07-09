@@ -3,8 +3,13 @@ import { v4 } from "uuid";
 
 const extMap = {
   "image/jpg": ".jpg",
+  "image/jpg": ".jpeg",
   "image/png": ".png",
+  "image/gif": ".gif",
+  "image/bmp": ".bmp",
   "image/webp": ".webp",
+  "image/tiff": ".tiff",
+  "image/svg": ".svg",
 };
 
 const fileFilter = (req, file, callback) => {

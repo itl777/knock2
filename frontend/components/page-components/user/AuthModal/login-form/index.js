@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import ThirdPartyLoginButton from '../third-party-login-button'
+import { useLoginModal } from '@/context/login-context/index'
+
 
 // styles
 import styles from '../login-form.module.scss'
@@ -23,21 +25,23 @@ const dialogTheme = createTheme({
   },
 })
 
-export default function LoginForm({
-  open,
-  close,
-  value,
-  onChange,
-  onSubmit,
-  errorText,
-  formChange,
-}) {
+export default function LoginForm() {
+  const {
+    loginModalState,
+    loginData,
+    loginErrors,
+    handleLoginChange,
+    loginSubmit,
+    loginFormSwitch,
+  } = useLoginModal()
+
+
   return (
     <>
       <ThemeProvider theme={dialogTheme}>
         <Dialog
-          open={open}
-          onClose={close}
+          open={loginModalState}
+          onClose={() => loginFormSwitch()}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
@@ -45,7 +49,7 @@ export default function LoginForm({
             <Image src="/ghost/ghost_04.png" alt="" width={133} height={138} />
             <Image src="/ghost/ghost_13.png" alt="" width={115} height={115} />
           </figure>
-          <form className={styles.forms} onSubmit={onSubmit}>
+          <form className={styles.forms} onSubmit={loginSubmit}>
             <div className={styles.title}>
               <h3>會員登入</h3>
             </div>
@@ -53,25 +57,25 @@ export default function LoginForm({
               <AuthFormInput
                 name="account"
                 type="text"
-                value={value.account}
+                value={loginData.account}
                 placeholder="請輸入Email"
-                onChange={onChange}
+                onChange={handleLoginChange}
               />
-              <span className={styles.errorText}>{errorText.account}</span>
+              <span className={styles.errorText}>{loginErrors.account}</span>
               <AuthFormInput
                 name="password"
                 type="password"
-                value={value.password}
+                value={loginData.password}
                 placeholder="請輸入密碼"
-                onChange={onChange}
+                onChange={handleLoginChange}
               />
-              <span className={styles.errorText}>{errorText.password}</span>
+              <span className={styles.errorText}>{loginErrors.password}</span>
               <div className={styles.box2}>
-                <span className={styles.errorText}>{errorText.result}</span>
+                <span className={styles.errorText}>{loginErrors.result}</span>
                 <Link
                   href=""
                   onClick={() => {
-                    formChange('ForgotPassword')
+                    loginFormSwitch('ForgotPassword')
                   }}
                 >
                   <span>忘記密碼？</span>
@@ -86,7 +90,7 @@ export default function LoginForm({
               <Link
                 href=""
                 onClick={() => {
-                  formChange('Register')
+                  loginFormSwitch('Register')
                 }}
               >
                 <span>尚未註冊會員？ 立即註冊</span>
