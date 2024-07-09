@@ -1,12 +1,9 @@
-import { useState } from 'react'
 import { IconButton, ThemeProvider } from '@mui/material'
-import { FcGoogle } from 'react-icons/fc'
-import { FaGoogle } from 'react-icons/fa'
+import { FaGoogle, FaFacebookF, FaApple } from 'react-icons/fa'
 import useFirebase from '@/hooks/useFirebase'
 
 export default function ThirdPartyLoginButton() {
-  const { loginWithGooglePopup, loginWithGoogleRedirect } = useFirebase()
-  const [googleButtonState, setGoogleButtonState] = useState(false)
+  const { loginWithGooglePopup } = useFirebase()
 
   const customTheme = {
     components: {
@@ -25,18 +22,14 @@ export default function ThirdPartyLoginButton() {
     <>
       <ThemeProvider theme={customTheme}>
         <IconButton aria-label="delete" onClick={loginWithGooglePopup}>
-          <FcGoogle />
+          <FaGoogle />
         </IconButton>
-        <span>Popup</span>
-        <IconButton
-          aria-label="delete"
-          onClick={loginWithGoogleRedirect}
-          onMouseOver={() => setGoogleButtonState(true)}
-          onMouseLeave={() => setGoogleButtonState(false)}
-        >
-          {googleButtonState ? <FcGoogle /> : <FaGoogle />}
+        <IconButton aria-label="delete">
+          <FaFacebookF />
         </IconButton>
-        <span>Redirect</span>
+        <IconButton aria-label="delete">
+          <FaApple />
+        </IconButton>
         {/* <button type="button" onClick={loginWithGooglePopup}>
         loginWithGooglePopup
       </button>

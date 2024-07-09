@@ -5,6 +5,7 @@ import '@/styles/globals.css'
 import { CartProvider } from '@/context/cart-context'
 import { AuthContextProvider } from '@/context/auth-context'
 import { SnackbarContextProvider } from '@/context/snackbar-context'
+import { LoginContextProvider } from '@/context/login-context'
 
 export default function MyApp({ Component, pageProps }) {
   // 使用自訂在頁面層級的版面(layout)
@@ -14,7 +15,9 @@ export default function MyApp({ Component, pageProps }) {
     <AuthContextProvider>
       <SnackbarContextProvider>
         <CartProvider>
-          <Component {...pageProps} />
+          <LoginContextProvider>
+            <Component {...pageProps} />
+          </LoginContextProvider>
         </CartProvider>
       </SnackbarContextProvider>
     </AuthContextProvider>

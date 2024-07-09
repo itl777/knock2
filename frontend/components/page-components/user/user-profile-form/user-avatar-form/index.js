@@ -117,7 +117,16 @@ export default function AvatarFormDialogs({ open, close }) {
           <CloseIcon />
         </IconButton>
         <form>
-          <DialogContent dividers>
+          <DialogContent
+            dividers
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '20px',
+            }}
+          >
             {imgUrl ? (
               <Image
                 src={imgUrl}
@@ -127,7 +136,7 @@ export default function AvatarFormDialogs({ open, close }) {
                 style={{
                   objectFit: 'contain',
                   background: '#222222',
-                  borderRadius: '125px',
+                  borderRadius: '50%',
                 }}
               />
             ) : (

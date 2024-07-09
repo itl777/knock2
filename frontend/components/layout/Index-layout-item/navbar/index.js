@@ -8,17 +8,18 @@ import NavbarIcon from './navbar-icon'
 import NavbarLinks from './navbar-links'
 import NavMenu from './nav-menu'
 import AuthModal from '@/components/page-components/user/AuthModal'
+import { useLoginModal } from '@/context/login-context/index'
 
 export default function Navbar({ pageName }) {
   // context && Ref
   const { auth } = useAuth()
   const timeOutRef = useRef(null)
   const hideNavMenuRef = useRef(null)
+  const { loginFormSwitch } = useLoginModal()
   // state
   const [menuState, setMenuState] = useState(`${styles['menu-hide']}`)
   const [showNavMenu, setShowNavMenu] = useState(false)
   const [navMenuAnimate, setNavMenuAnimate] = useState('')
-  const [authModalState, setAuthModalState] = useState(false)
 
   // function
   const handleMobileMenu = () => {
@@ -41,7 +42,7 @@ export default function Navbar({ pageName }) {
   const handleNavMenuOpen = (event) => {
     event.preventDefault()
     if (!auth.id) {
-      setAuthModalState(true)
+      loginFormSwitch('Login')
       // login('test@test.com', '123456')
     } else {
       clearTimeout(timeOutRef.current)
@@ -64,10 +65,7 @@ export default function Navbar({ pageName }) {
         onMouseEnter={handleNavMenuTimeOut}
       >
         {showNavMenu && auth.id ? <NavMenu show={navMenuAnimate} /> : ''}
-        <AuthModal
-          loginModalState={authModalState}
-          setLoginModalState={setAuthModalState}
-        />
+        <AuthModal />
         <nav>
           <NavbarIcon
             handleNavMenuOpen={handleNavMenuOpen}
