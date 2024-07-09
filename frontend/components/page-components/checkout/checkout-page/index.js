@@ -16,7 +16,7 @@ import OrderInputBox from '../order-input-box'
 import OrderSelectBox from '../order-select-box'
 import NoData from '@/components/UI/no-data'
 import CheckoutTotalTable from './checkout-total-table'
-import { PRODUCT_IMG, CHECKOUT_GET, CHECKOUT_POST, ECPAY_GET } from '@/configs/api-path'
+import { PRODUCT_IMG, CHECKOUT_GET_ADDRESS, CHECKOUT_POST, ECPAY_GET } from '@/configs/api-path'
 
 export default function CheckOutPage() {
   const router = useRouter()
@@ -51,7 +51,7 @@ export default function CheckOutPage() {
   // 取得會員地址
   const fetchMemberAddress = async () => {
     try {
-      const response = await fetch(`${CHECKOUT_GET}?member_id=${auth.id}`)
+      const response = await fetch(`${CHECKOUT_GET_ADDRESS}?member_id=${auth.id}`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch member address')
