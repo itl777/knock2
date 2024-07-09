@@ -23,6 +23,7 @@ export const CHECKOUT_CITY_GET = `${API_SERVER}/checkout/api/city`
 export const CHECKOUT_DISTRICT_GET = `${API_SERVER}/checkout/api/district`
 export const CHECKOUT_POST = `${API_SERVER}/checkout/api/checkout`
 export const CHECKOUT_GET_CART = `${API_SERVER}/checkout/api/cart`
+export const CHECKOUT_GET_PROFILE = `${API_SERVER}/checkout/api/member_profile`
 export const CHECKOUT_GET_ADDRESS = `${API_SERVER}/checkout/api/member_address`
 export const CHECKOUT_DELETE_ADDRESS = `${API_SERVER}/checkout/api/delete_address`
 export const CHECKOUT_ADD_ADDRESS = `${API_SERVER}/checkout/api/add_address`
@@ -30,6 +31,7 @@ export const CHECKOUT_UPDATE_CART = `${API_SERVER}/checkout/api/cart/update`
 export const ECPAY_GET = `${API_SERVER}/payments`
 export const ORDER_REVIEW_POST = `${API_SERVER}/orders/api/add-reviews`
 export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
+
 
 
 //teams

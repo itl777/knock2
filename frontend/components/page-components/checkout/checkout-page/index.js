@@ -17,14 +17,20 @@ import OrderInputBox from '../order-input-box'
 import OrderSelectBox from '../order-select-box'
 import NoData from '@/components/UI/no-data'
 import CheckoutTotalTable from './checkout-total-table'
-import { PRODUCT_IMG, CHECKOUT_GET_ADDRESS, CHECKOUT_POST, ECPAY_GET } from '@/configs/api-path'
+import {
+  PRODUCT_IMG,
+  CHECKOUT_GET_PROFILE,
+  CHECKOUT_GET_ADDRESS,
+  CHECKOUT_POST,
+  ECPAY_GET,
+} from '@/configs/api-path'
 
 export default function CheckOutPage() {
   const router = useRouter()
   const { auth, authIsReady } = useAuth() // 取得 auth.id, authIsReady
   const { loginFormSwitch } = useLoginModal() // 取得登入視窗開關
+  const [memberProfile, setMemberProfile] = useState([])
   const [memberAddress, setMemberAddress] = useState([])
-  const [deliverFee, setDeliverFee] = useState(120)
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
   const [formData, setFormData] = useState({
     memberId: 0,
@@ -32,12 +38,20 @@ export default function CheckOutPage() {
     recipientMobile: '',
     recipientDistrictId: 1,
     recipientAddress: '',
-    // invoice_type: '',
     memberInvoice: 0,
     mobileInvoice: '',
     recipientTaxId: '',
     orderItems: [],
   })
+
+  // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
+  const {
+    checkoutItems,
+    checkoutTotal,
+    handleQuantityChange,
+    clearCart,
+    deliverFee,
+  } = useCart()
 
   // 發票形式
   const invoiceTypeOption = [
@@ -45,10 +59,6 @@ export default function CheckOutPage() {
     { value: 'mobile', text: '手機載具' },
     { value: 'tax', text: '統一編號' },
   ]
-
-  // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
-  const { checkoutItems, checkoutTotal, handleQuantityChange, clearCart } =
-    useCart()
 
   // 取得會員地址
   const fetchMemberAddress = async () => {
@@ -78,6 +88,27 @@ export default function CheckOutPage() {
     }
   }
 
+  // 取得會員基本資料
+  const fetchMemberProfile = async () => {
+    try {
+      const response = await axios.get(
+        `${CHECKOUT_GET_PROFILE}?member_id=${auth.id}`
+      )
+      if (response.data.status) {
+        const results = response.data.rows[0]
+        setMemberProfile(results)
+        // 根據 profile 更新 formData
+        setFormData((v) => ({
+          ...v,
+          mobileInvoice: results.invoice_carrier_id,
+          recipientTaxId: results.tax_id,
+        }))
+      }
+    } catch (error) {
+      console.log('Error fetching member profile:', error)
+    }
+  }
+
   // 更新已經選擇的地址
   const handleAddressSelected = (address) => {
     setMemberAddress(address)
@@ -95,36 +126,7 @@ export default function CheckOutPage() {
 
   const handleInvoiceTypeChange = (e) => {
     const value = e.target.value
-    console.log(value)
     setInvoiceTypeValue(value)
-
-    // 根據不同的 invoice_type 更新 formData 中的相應欄位
-    switch (value) {
-      case 'member':
-        setFormData({
-          ...formData,
-          memberInvoice: 1,
-          mobileInvoice: '',
-          recipientTaxId: '',
-        })
-        break
-      case 'mobile':
-        setFormData({
-          ...formData,
-          memberInvoice: 0,
-          recipientTaxId: '',
-        })
-        break
-      case 'tax':
-        setFormData({
-          ...formData,
-          memberInvoice: 0,
-          mobileInvoice: '',
-        })
-        break
-      default:
-        break
-    }
   }
 
   // 送出表單
@@ -141,8 +143,35 @@ export default function CheckOutPage() {
       orderQty: item.cart_product_quantity,
     }))
 
+    // 根據發票形式設置 formData
+    let updatedFormData = { ...formData }
+
+    if (invoiceTypeValue === 'member') {
+      updatedFormData = {
+        ...updatedFormData,
+        memberInvoice: 1,
+        mobileInvoice: '',
+        recipientTaxId: '',
+      }
+    } else if (invoiceTypeValue === 'mobile') {
+      updatedFormData = {
+        ...updatedFormData,
+        memberInvoice: 0,
+        mobileInvoice: formData.mobileInvoice,
+        recipientTaxId: '',
+      }
+    } else if (invoiceTypeValue === 'tax') {
+      updatedFormData = {
+        ...updatedFormData,
+        memberInvoice: 0,
+        mobileInvoice: '',
+        recipientTaxId: formData.recipientTaxId,
+      }
+    }
+
+
     const dataToSubmit = {
-      ...formData,
+      ...updatedFormData,
       memberId: auth.id,
       recipientName: recipientData[0].recipient_name, // 收件人姓名
       recipientMobile: recipientData[0].mobile_phone, // 收件人手機號碼
@@ -196,12 +225,13 @@ export default function CheckOutPage() {
 
   // 登入驗證
   useEffect(() => {
-    if (router.isReady) {
-      if (!auth.id && authIsReady) {
-        loginFormSwitch('Login')
-      }
-      if (auth.id && authIsReady) {
+    if (router.isReady && authIsReady) {
+      if (auth.id) {
         fetchMemberAddress()
+        fetchMemberProfile()
+      }
+      if (!auth.id) {
+        loginFormSwitch('Login')
       }
     }
   }, [auth.id, router.isReady, authIsReady])
@@ -291,6 +321,7 @@ export default function CheckOutPage() {
                 name="mobileInvoice"
                 label="手機載具"
                 value={formData.mobileInvoice}
+                // value={memberProfile.invoice_carrier_id}
                 onChange={handleInputChange}
               />
             )}
@@ -300,6 +331,7 @@ export default function CheckOutPage() {
                 name="recipientTaxId"
                 label="統一編號"
                 value={formData.recipientTaxId}
+                // value={memberProfile.tax_id}
                 onChange={handleInputChange}
               />
             )}

@@ -26,12 +26,15 @@ const getDeviceId = () => {
 }
 
 export const CartProvider = ({ children }) => {
-  const { auth } = useAuth() // 取得 auth.id
-  // const router = useRouter()
+  const { auth, authIsReady } = useAuth() // 取得 auth.id, authIsReady
+  const router = useRouter()
   const { openSnackbar } = useSnackbar() // success toast
-  const [checkoutItems, setCheckoutItems] = useState([]) // 購物車內容
-  const [checkoutTotal, setCheckoutTotal] = useState(0) // 購物車總金額
-  const [cartBadgeQty, setCartBadgeQty] = useState(0) // 購物車商品項目數量
+  const [ checkoutItems, setCheckoutItems ] = useState([]) // 購物車內容
+  const [ checkoutTotal, setCheckoutTotal ] = useState(0) // 購物車總金額
+  const [ cartBadgeQty, setCartBadgeQty ] = useState(0) // 購物車商品項目數量
+  const [ deliverFee, setDeliverFee ] = useState(120)
+  
+
 
   useEffect(() => {
     setCartBadgeQty(checkoutItems.length)
@@ -61,9 +64,11 @@ export const CartProvider = ({ children }) => {
   const calculateTotal = (items) => {
     let newCheckTotal = 0
     items.forEach((item) => {
-      newCheckTotal += item.cart_product_quantity * item.price // 這裡假設每個項目都有 price
+      newCheckTotal += item.cart_product_quantity * item.price
     })
     setCheckoutTotal(newCheckTotal)
+
+    newCheckTotal >= 1000 ? setDeliverFee(0) : setDeliverFee(120)
   }
 
   // 記錄商品數量異動
@@ -122,10 +127,7 @@ export const CartProvider = ({ children }) => {
 
       if (response.data.success) {
         fetchMemberCart()
-        openSnackbar(`商品「${selectedProductName}」已加入購物車！`, 'success')
-        // alert(
-        //   `成功加入購物車！！商品：${selectedProductId}，數量：${cartProductQuantity}`
-        // )
+        openSnackbar(`商品「${selectedProductName}」（共${cartProductQuantity}個）已加入購物車！`, 'success')
       } else {
         console.error('Failed to add item to cart')
       }
@@ -146,21 +148,21 @@ export const CartProvider = ({ children }) => {
   const clearCart = () => {
     setCheckoutItems([])
     setCheckoutTotal(0)
+    setDeliverFee(120)
     // localStorage.removeItem('kkCart')
   }
 
-  // 登入後，更新 cart_member cart member_id > auth.id
-  const handleLogin = async () => {
-    if (!auth.id) {
-      return
-    }
 
+  
+
+  // 登入後，更新 cart_member cart 將原本未登入的 device_id 改成 auth.id
+  const handleLogin = async () => {
     const deviceId = +getDeviceId()
     const memberId = auth.id
 
     try {
       const updateResponse = await axios.post(
-        'http://127.0.0.1:3001/checkout/api/update_member',
+        'http://127.0.0.1:3001/checkout/api/update_cart',
         {
           memberId,
           deviceId,
@@ -170,7 +172,7 @@ export const CartProvider = ({ children }) => {
       if (updateResponse.data.success) {
         console.log('Successfully updated cart_member_id')
         // Update auth state and fetch member cart
-        setAuth({ id: memberId })
+        // setAuth({ id: memberId })
         fetchMemberCart()
       } else {
         console.error('Failed to update cart_member_id')
@@ -180,23 +182,25 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // 未登入不可以導向特定頁面
-  // const handleCheckoutRedirect = () => {
-  //   if (auth.id === 0) {
-  //     router.push('/')
-  //     alert('請登入') // 未登入，跳轉至登入頁面
-  //     return
-  //   } else {
-  //     router.push('/checkout') // 已登入，跳轉至結帳頁面
+  // useEffect(() => {
+  //   if (auth.id) {
+  //     handleLogin()
   //   }
-  // }
+  // }, [auth.id])
 
+  // 登入後，
   useEffect(() => {
-    fetchMemberCart()
-    if (auth.id) {
-      handleLogin()
+    if (router.isReady && authIsReady) {
+      if (auth.id) {
+        handleLogin()
+        fetchMemberCart()
+      }
+      if (!auth.id) {
+        clearCart()
+        fetchMemberCart()
+      }
     }
-  }, [auth.id])
+  }, [auth.id, router.isReady, authIsReady])
 
   return (
     <CartContext.Provider
@@ -205,7 +209,7 @@ export const CartProvider = ({ children }) => {
         setCheckoutItems,
         cartBadgeQty,
         checkoutTotal,
-        // handleCheckoutRedirect,
+        deliverFee,
         handleAddToCart,
         handleQuantityChange,
         clearCart,

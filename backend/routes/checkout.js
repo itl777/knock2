@@ -66,7 +66,7 @@ router.post("/api/cart_member", async (req, res) => {
 });
 
 // POST change device id to member id
-router.post("/api/update_member", async (req, res) => {
+router.post("/api/update_cart", async (req, res) => {
   const { memberId, deviceId } = req.body;
 
   try {
@@ -337,6 +337,37 @@ router.post("/api/checkout", async (req, res) => {
       .json({ error: "An error occurred while processing checkout." });
   }
 });
+
+// CHECKOUT_GET_PROFILE select user profile from users table
+router.get("/api/member_profile", async (req, res) => {
+  // 從 query 中取得 member_id, order_status_id
+  const { member_id } = req.query;
+
+  try {
+    const sql = `
+      SELECT
+        name,
+        mobile_phone,
+        invoice_carrier_id,
+        tax_id
+      FROM users
+      WHERE user_id =  ?;
+    `;
+
+    const [rows] = await db.query(sql, [member_id]);
+
+    console.log("member profile: ", rows);
+
+    res.json({
+      status: true,
+      rows,
+    });
+  } catch (error) {
+    console.error("Error fetching member profile: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 // CHECKOUT_GET_ADDRESS member address
 router.get("/api/member_address", async (req, res) => {
