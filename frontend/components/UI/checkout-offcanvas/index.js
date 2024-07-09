@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useState } from 'react'
 import styles from './checkout-offcanvas.module.css'
 import Drawer from '@mui/joy/Drawer'
 // for badge
@@ -7,7 +6,6 @@ import Badge from '@mui/material/Badge'
 import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 // components
-import { useAuth } from '@/context/auth-context'
 import { useCart } from '@/context/cart-context'
 import HDivider from '../divider/horizontal-divider'
 import BlackBtn from '../black-btn'
@@ -15,7 +13,6 @@ import NoData from '../no-data'
 import OrderItemCheckout from '@/components/page-components/orders/order-item-checkout'
 import { PRODUCT_IMG } from '@/configs/api-path'
 import { FaCartShopping } from 'react-icons/fa6'
-// import { IoAdd, IoHeartOutline } from 'react-icons/io5'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -27,14 +24,18 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }))
 
 export default function CheckoutOffcanvas() {
-  const { auth } = useAuth()
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const toggleShow = () => setShow((s) => !s)
 
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
-  const { checkoutItems, checkoutTotal, cartBadgeQty, handleQuantityChange } =
-    useCart()
+  const {
+    checkoutItems,
+    checkoutTotal,
+    cartBadgeQty,
+    handleQuantityChange,
+    handleCheckoutRedirect,
+  } = useCart()
 
   return (
     <>

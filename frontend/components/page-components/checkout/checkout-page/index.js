@@ -37,6 +37,20 @@ export default function CheckOutPage() {
     orderItems: [],
   })
 
+  // 登入驗證
+  useEffect(() => {
+    if (auth.id === 0) {
+      alert('請先登入')
+      router.push('/') 
+    }
+  }, [auth.id, router])
+
+  if (auth.id === 0) {
+    return <div>登入驗證中...</div>
+  }
+
+
+
   // 發票形式
   const invoiceTypeOption = [
     { value: 'member', text: '會員載具' },

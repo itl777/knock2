@@ -6,6 +6,7 @@ import {
   CHECKOUT_UPDATE_CART,
   CART_POST,
 } from '@/configs/api-path'
+import { useRouter } from 'next/router'
 
 const CartContext = createContext()
 
@@ -25,6 +26,7 @@ const getDeviceId = () => {
 
 export const CartProvider = ({ children }) => {
   const { auth } = useAuth() // 取得 auth.id
+  const router = useRouter()
   const [checkoutItems, setCheckoutItems] = useState([]) // 購物車內容
   const [checkoutTotal, setCheckoutTotal] = useState(0) // 購物車總金額
   const [cartBadgeQty, setCartBadgeQty] = useState(0) // 購物車商品項目數量
@@ -174,11 +176,20 @@ export const CartProvider = ({ children }) => {
     }
   }
 
+  // 未登入不可以導向特定頁面
+  // const handleCheckoutRedirect = () => {
+  //   if (auth.id === 0) {
+  //     router.push('/')
+  //     alert('請登入') // 未登入，跳轉至登入頁面
+  //     return
+  //   } else {
+  //     router.push('/checkout') // 已登入，跳轉至結帳頁面
+  //   }
+  // }
+
   useEffect(() => {
     fetchMemberCart()
-
     if (auth.id) {
-      // moveLocalStorageItemsToCart()
       handleLogin()
     }
   }, [auth.id])
@@ -188,8 +199,9 @@ export const CartProvider = ({ children }) => {
       value={{
         checkoutItems,
         setCheckoutItems,
-        checkoutTotal,
         cartBadgeQty,
+        checkoutTotal,
+        // handleCheckoutRedirect,
         handleAddToCart,
         handleQuantityChange,
         clearCart,
@@ -199,27 +211,3 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   )
 }
-
-// const moveLocalStorageItemsToCart = async () => {
-//   try {
-//     // 獲取 guest cart 資料
-//     let guestCart = JSON.parse(localStorage.getItem('kkCart')) || []
-
-//     // 合併 guest cart 到 member cart
-//     if (guestCart.length > 0) {
-//       const response = await axios.post(`${CART_POST}/merge`, {
-//         memberId: auth.id,
-//         guestCart: guestCart,
-//       })
-
-//       if (response.data.success) {
-//         // 清空 guest cart
-//         localStorage.removeItem('kkCart')
-//       } else {
-//         console.error('Failed to merge guest cart to member cart')
-//       }
-//     }
-//   } catch (error) {
-//     console.error('Error adding item to cart:', error)
-//   }
-// }
