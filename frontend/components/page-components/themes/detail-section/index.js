@@ -23,14 +23,16 @@ export default function DetailSection() {
                   marginTop: '30px',
                 }}
               />
-              <p className={myStyle.p}>主題與劇情</p>
-              <p className={myStyle.p}>主題與劇情</p>
-              <p className={myStyle.p}>
-                主題與劇情{' '}
-                <span>
-                  <button>注意事項</button>
-                </span>
-              </p>
+              <div>
+                <p className={myStyle.p}>主題與劇情</p>
+                <p className={myStyle.p}>主題與劇情</p>
+                <p className={myStyle.p}>
+                  主題與劇情{' '}
+                  <span className={myStyle.span}>
+                    <button className={myStyle.warning}>注意事項</button>
+                  </span>
+                </p>
+              </div>
             </div>
           </div>
         </div>

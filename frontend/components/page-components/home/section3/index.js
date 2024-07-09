@@ -42,7 +42,7 @@ export default function HomeSection3() {
   const settings = {
     className: 'center',
     centerMode: true,
-    slidesToShow: 5,
+    slidesToShow: 6,
     infinite: true,
     speed: 500,
     autoplay: true,
@@ -117,8 +117,8 @@ export default function HomeSection3() {
         <div className={styles['HomeBtn']}>
           <HomeBtn
             linkSrc="/themes"
-            btnText="Check More"
-            hoverColor="#ffffff"
+            btnText="更多詳情"
+            hoverColor="white"
             hoverBorderColor="#222222"
             hoverBackgroundColor="#222222"
           />
