@@ -1,0 +1,33 @@
+.h1{
+    color: var(--pri-3);
+    text-align: center;
+    margin: 3.75rem;
+}
+.line{
+    border: 1.5px solid #ffffff;
+}
+.step{
+    color: var(--pri-3);
+    font-size: 28px;
+}
+.icon{
+    font-size: 76px;
+    color: var(--pri-3);
+    margin-top: 30px;
+    text-align: center;
+}
+.check{
+    height: 100px;
+    width: 48%;
+    background: url('/ghost/ghost_03.png')center center;
+    background-size: cover;
+    margin-top: 20px;
+}
+.p{
+    color: var(--pri-3);
+    margin-top: 30px;
+}
+.p2{
+    color: var(--pri-3);
+    margin-top: 10px;
+}

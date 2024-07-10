@@ -19,26 +19,26 @@ export default function Banner() {
               <hr className={myStyle.hr} />
               <div className={myStyle.comment}>
                 <div className={myStyle.section}>
-                  <span className={myStyle.title}>主題與劇情</span>
+                  <span>主題與劇情</span>
                   <span className={myStyle.star}>
-                    <FaStar style={{ marginRight: '5px' }} />
-                    <FaStar style={{ marginRight: '5px' }} />
-                    <FaStar style={{ marginRight: '5px' }} />
-                    <FaStar style={{ marginRight: '5px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
                   </span>
                 </div>
                 <div className={myStyle.section}>
-                  <span className={myStyle.title}>謎題與設計</span>
+                  <span>謎題與設計</span>
                   <span className={myStyle.star}>
-                    <FaStar style={{ marginRight: '5px' }} />
-                    <FaStar style={{ marginRight: '5px' }} />
-                    <FaStar style={{ marginRight: '5px' }} />
-                    <FaStar style={{ marginRight: '5px' }} />
-                    <FaStar style={{ marginRight: '5px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
+                    <FaStar style={{ marginRight: '6px' }} />
                   </span>
                 </div>
                 <div className={myStyle.section}>
-                  <span className={myStyle.title}>環境與氣氛</span>
+                  <span>環境與氣氛</span>
                   <span className={myStyle.star}>
                     <FaStar style={{ marginRight: '6px' }} />
                     <FaStar style={{ marginRight: '6px' }} />
