@@ -1,4 +1,4 @@
-import ReviewStar from '@/components/UI/review-star'
+import ReviewStar from '@/components/UI/review-rating'
 import PdSlick from '../pd-slick'
 import NumInput from './num-input'
 import BtnGroup from './btn-group'
@@ -37,6 +37,7 @@ export default function PdFeatures({ data }) {
             <div className="d-flex justify-content-between align-items-center">
               <h1 className={myStyle.title}>{productData.product_name}</h1>
               <div>
+              {/* 還沒接評價資料 */}
                 <ReviewStar />
               </div>
             </div>
