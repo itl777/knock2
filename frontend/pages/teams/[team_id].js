@@ -153,7 +153,7 @@ export default function TeamInfo() {
               </div>
             </div>
             <div className="row">
-              <ChatDisplay />
+              <ChatDisplay chat_at={oneTeam.team_id} />
             </div>
           </div>
         </div>

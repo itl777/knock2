@@ -126,7 +126,7 @@ router.get("/api/chat/:team_id", async (req, res) => {
     return res.json({ success: false, error: "沒有編號" });
   }
 
-  const sql =`SELECT nick_name, avatar, chat_text, create_at 
+  const sql =`SELECT chat_id, nick_name, avatar, chat_text, create_at 
 FROM \`teams_chats\` 
 JOIN \`users\` ON chat_by = user_id
 WHERE chat_at = ${team_id} AND chat_display = 1`;

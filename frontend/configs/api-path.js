@@ -37,7 +37,7 @@ export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
 //teams
 export const TEAM_ALL = `${API_SERVER}/teams/apiAll`
 export const ONE_TEAM = `${API_SERVER}/teams/api/`
-export const GET_CHAT = `${API_SERVER}/teams/api/chat`
+export const GET_CHAT = `${API_SERVER}/teams/api/chat/`
 
 //THEME
 export const THEME_LIST = `${API_SERVER}/themes`
