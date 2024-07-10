@@ -12,13 +12,14 @@ import { useOrderValidation } from '@/hooks/orderValidation'
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
 import VDivider from '@/components/UI/divider/vertical-divider'
+import HDivider from '@/components/UI/divider/horizontal-divider'
 import RecipientButton from '../recipient-button'
 import RecipientButtonSelected from '../recipient-button-selected'
 import BasicModal from '@/components/UI/basic-modal'
 import RecipientModalBody from '../recipient-modal-body'
 import OrderInputBox from '../order-input-box'
 import OrderSelectBox from '../order-select-box'
-import CheckoutTotalTable from './checkout-total-table'
+import CheckoutTotalTable from '../checkout-total-table'
 import EmptyCart from '@/components/page-components/checkout/empty-cart'
 // api path
 import {
@@ -49,6 +50,7 @@ export default function CheckOutPage() {
     recipientTaxId: '',
     orderItems: [],
   })
+  const [isSmallScreen, setIsSmallScreen] = useState(false) // 判斷螢幕是否小於 640px
 
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
   const {
@@ -244,6 +246,17 @@ export default function CheckOutPage() {
     setIsModalOpen(false)
   }
 
+  // 判斷螢幕是否小於 640px
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 640px)')
+    const handleMediaQueryChange = (e) => setIsSmallScreen(e.matches)
+    mediaQuery.addListener(handleMediaQueryChange)
+
+    setIsSmallScreen(mediaQuery.matches)
+
+    return () => mediaQuery.removeListener(handleMediaQueryChange)
+  }, [])
+
   // 登入驗證
   useEffect(() => {
     if (router.isReady && authIsReady) {
@@ -282,6 +295,7 @@ export default function CheckOutPage() {
             <div className={styles.itemList}>
               {checkoutItems.map((v, i) => (
                 <OrderItemCheckout
+                  type={isSmallScreen ? 'small' : 'def'}
                   key={v.product_id}
                   cartId={v.cart_id}
                   productId={v.product_id}
@@ -303,11 +317,9 @@ export default function CheckOutPage() {
             />
           </div>
 
-          <VDivider margin="2rem 0" />
           {/* RIGHT RECIPIENT INFO START */}
           <div className={styles.checkoutRight}>
             <h5>收件資料</h5>
-
             {/* RecipientButton */}
             <div className={styles.checkoutRightMain}>
               {memberAddress.length === 0 ? (
@@ -363,6 +375,7 @@ export default function CheckOutPage() {
               type="submit"
               href={null}
               paddingType="medium"
+              className={styles.btnStyle}
             />
           </div>
         </form>

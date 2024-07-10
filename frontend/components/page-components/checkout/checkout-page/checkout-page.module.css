@@ -1,37 +1,41 @@
 .h2Style {
   text-align: center;
-  margin-bottom: 2rem;
+  padding: 2.5rem 0;
 }
 
 .sectionContainer {
   width: 100%;
   height: auto;
-  padding: 80px;
+  padding-bottom: 4rem;
 }
 
 .contentContainer {
   display: flex;
-  width: 100%;
+  width: 90%;
   height: auto;
+  margin: auto;
+  overflow: hidden;
   border-radius: var(--content-radius);
   background-color: white;
+  box-shadow: var(--card-shadow);
 }
 
 .contentContainer h5 {
   margin-bottom: 2rem;
-  flex-basis:1
+  flex-basis: 1
 }
 
 .checkoutLeft {
   width: 50%;
   padding: var(--content-padding);
+  background-color: #f2f2f2;
 }
 
 .checkoutRight {
   width: 50%;
   padding: var(--content-padding);
+  position: relative;
 }
-
 
 .itemList {
   display: flex;
@@ -39,8 +43,13 @@
   gap: 1.5rem;
 }
 
+.btnStyle {
+  position: absolute;
+  right: var(--content-padding);
+  bottom: var(--content-padding);
+}
+
 .checkoutRightMain {
-  display: flex;
   flex-direction: column;
   display: grid;
   gap: 1.5rem;
@@ -48,50 +57,17 @@
   margin-bottom: 4rem;
 }
 
-
-.recipientDesc {
-  /* width: 100%; */
-  grid-column: span 2;
-  font-size: 1rem;
-}
-
-.recipientContent, .recipientContentEdit, .recipientContentAdd {
-  width: 100%;
-  padding: 1rem 1.25rem;
-  border: none;
-  border-radius: var(--input-radius);
-  text-align: left;
-}
-
-.recipientLabel {
-  margin-bottom: .375rem;
-}
-
-.recipientContent {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.recipientContent .recipientName {
-  margin-bottom: .5rem;
-}
-
-
-
-
-
-
-
-
-
-
 @media screen and (max-width: 1120px) {
   .contentContainer {
     flex-direction: column;
   }
 
-  .checkoutLeft, .checkoutRight {
+  .checkoutLeft,
+  .checkoutRight {
     width: 100%;
+  }
+
+  .checkoutRightMain {
+    display: flex;
   }
 }

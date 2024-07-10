@@ -1,53 +1,45 @@
 // page components checkout success
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
-import axios from 'axios'
-import useFetchOrderData from '@/hooks/fetchOrderDetails'
-import BlackBtn from '@/components/UI/black-btn'
 import styles from './checkout-success.module.css'
-import OrderProductImgBox from '../../orders/order-product-img-box'
+import { useRouter } from 'next/router'
+// hooks
+import useFetchOrderData from '@/hooks/fetchOrderDetails'
+// components
+import BlackBtn from '@/components/UI/black-btn'
+import OrderItemDetail from '../../orders/order-item-detail'
+import CheckoutTotalTable from '../checkout-total-table'
+// api path
 import { PRODUCT_IMG } from '@/configs/api-path'
 
 export default function CheckoutSuccess() {
   const router = useRouter()
   const { order_id } = router.query
   const { orderData, orderDetails } = useFetchOrderData(order_id)
-  
+
   return (
     <section className={styles.sectionContainer}>
-      <h2 className={styles.h2Styles}>訂單付款完成</h2>
-      <img
-        className={styles.checkoutSuccessImg}
-        src="/ghost/ghost_03.png"
-        alt=""
-      />
+      <h3 className={styles.titleStyles}>訂單已成立</h3>
+
       <div className={styles.contentContainer}>
+        <img className={styles.ghostImg} src="/ghost/ghost_03.png" alt="" />
         {orderDetails.map((detail) => (
-          <div className="itemBoxS" key={detail.product_id}>
-            <OrderProductImgBox
-              imgSrc={`${PRODUCT_IMG}/${detail.product_img}`}
-            />
-            <div className={styles.itemInfo}>
-              <p className={styles.productName}>{detail.product_name}</p>
-              <div className={styles.itemQtyPriceBox}>
-                <p>x {detail.order_quantity}</p>
-                <div className="itemPriceS">
-                  <p>${detail.order_unit_price}</p>
-                  <small>
-                    ${detail.order_unit_price * detail.order_quantity}
-                  </small>
-                </div>
-              </div>
-            </div>
-          </div>
+          <OrderItemDetail
+            key={detail.product_id}
+            productName={detail.product_name}
+            originalPrice={detail.order_unit_price}
+            discountedPrice={detail.order_unit_price}
+            productImg={`${PRODUCT_IMG}/${detail.product_img}`}
+            orderQty={detail.order_quantity}
+          />
         ))}
-        <div className="horizontalDividerS" />
-        <div className={styles.total}>
-          <small>合計 {orderData.total_price}</small>
-          <h5>$ {orderData.total_price}</h5>
-        </div>
+
+        <CheckoutTotalTable
+          subtotal={orderData.total_price}
+          deliverFee={0}
+          totalDiscount={0}
+        />
       </div>
-      <div className={styles.btnHorizontal}>
+
+      <div className={styles.btnStack}>
         <BlackBtn btnText="繼續購物" href="/product" paddingType="medium" />
         <BlackBtn
           btnText="檢視訂單"
@@ -55,6 +47,7 @@ export default function CheckoutSuccess() {
           paddingType="medium"
         />
       </div>
+      
     </section>
   )
 }

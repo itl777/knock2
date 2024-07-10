@@ -1,20 +1,22 @@
 // 我的訂單頁面
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { useAuth } from '@/context/auth-context'
 import styles from './order-list-cards.module.css'
-import FilterBtn from '@/components/UI/filter-btn'
+// components
 import OrderStatusTag from '../order-status-tag'
 import NoData from '@/components/UI/no-data'
 import OrderProductImgBox from '../order-product-img-box'
+import CardHeader from './card-header'
+import IconTextRow from './icon-text-row'
+// icons
+import { HiOutlineCreditCard, HiOutlineCube } from 'react-icons/hi'
+// api path
 import { ORDER_LIST_GET, PRODUCT_IMG } from '@/configs/api-path'
-import { FiShoppingBag, FiCreditCard, FiPackage } from 'react-icons/fi'
 
 export default function OrderListCards({ orderStatusId }) {
   const [orderData, setOrderData] = useState([])
   const [orderDetailData, setOrderDetailData] = useState([])
   const { auth } = useAuth()
-  // const router = useRouter()
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -54,33 +56,28 @@ export default function OrderListCards({ orderStatusId }) {
       ) : (
         orderData.map((v, i) => (
           <div key={v.order_id} className={styles.orderBox}>
-            <div className={styles.orderHeader}>
-              <p>{v.order_date}</p>
-              <FilterBtn
-                btnText="詳情"
-                href={`/user/orders/details/${v.order_id}`}
-              />
-            </div>
-            <div className="horizontalDividerS" />
-            <div className={styles.orderContent}>
-              <div className={styles.orderInfo}>
-                <div className={styles.orderInfoRow}>
-                  <FiShoppingBag />
-                  <p>{v.order_id}</p>
+            <CardHeader
+              title={v.order_date}
+              btnText="詳情"
+              btnHref={`/user/orders/details/${v.order_id}`}
+            />
+            <div className={styles.orderBody}>
+              <div>
+                <div className={styles.orderInfoRowBox}>
+                  <IconTextRow content={v.order_id} />
+                  <IconTextRow
+                    content={`$ ${v.total_price} / ${v.payment_method}`}
+                    icon={HiOutlineCreditCard}
+                  />
+                  <IconTextRow content={v.full_address} icon={HiOutlineCube} />
                 </div>
-                <div className={styles.orderInfoRow}>
-                  <FiCreditCard />
-                  <p>{`$ ${v.total_price} / ${v.payment_method}`}</p>
-                </div>
-                <div className={styles.orderInfoRow}>
-                  <FiPackage />
-                  <p>{v.full_address}</p>
-                </div>
+
                 <OrderStatusTag status={v.order_status_name} />
               </div>
-              <div className={styles.orderProductImg}>
+
+              <div className={styles.imgListBox}>
                 {orderDetailData
-                  .filter((detail) => detail.order_id === v.order_id) // 取得訂單下所有的商品
+                  .filter((detail) => detail.order_id === v.order_id)
                   .map((detail, i) => (
                     <OrderProductImgBox
                       key={i}

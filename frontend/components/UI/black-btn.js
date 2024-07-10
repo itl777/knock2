@@ -7,6 +7,7 @@ export default function BlackBtn({
   href = '/',
   onClick = () => {},
   paddingType = '',
+  className,
 }) {
   return (
     <Button
@@ -14,6 +15,7 @@ export default function BlackBtn({
       href={href}
       variant="outlined"
       onClick={onClick}
+      className={className}
       sx={{
         color: 'white',
         fontFamily: 'Noto Serif JP',

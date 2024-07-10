@@ -20,7 +20,7 @@ export default function CheckoutTotalTable({
         <p>運費</p>
         <p>$ {deliverFee}</p>
       </div>
-      <HDivider margin="1rem 0" />
+      <HDivider margin="0.75rem 0" />
       <div className={styles.totalRow}>
         <p>合計</p>
         <p>$ {subtotal+deliverFee-totalDiscount}</p>
