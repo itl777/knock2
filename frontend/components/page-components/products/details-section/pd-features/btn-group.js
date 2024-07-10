@@ -15,7 +15,7 @@ export default function BtnGroup({ product_id }) {
 
   return (
     <>
-      <div className="d-flex justify-content-between">
+      <div className={`${myStyle['btn-group']}`}>
         <div className="position-relative">
           <Image
             className={myStyle['sm-likeStyle']}

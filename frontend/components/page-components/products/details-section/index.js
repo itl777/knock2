@@ -5,7 +5,7 @@ export default function DetailsSection({ breadcrumb, features, tab }) {
       <div className="container">{breadcrumb}</div>
       <div className={myStyle.section}>
         {features}
-        {tab}
+        {/* {tab} */}
       </div>
     </>
   )

@@ -10,3 +10,14 @@
 .slick-thumb li img {
   width: 100%;
 }
+
+
+@media screen and (max-width: 1140px) {
+  .slick-thumb li {
+   display: none;
+  }
+  .slider-img img{
+  width: 100%;
+  }
+
+}

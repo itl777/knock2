@@ -5,7 +5,6 @@ export default function CategoryGroup({ productData }) {
   const [data, setData] = useState({})
 
   useEffect(() => {
-    console.log('productData', productData)
     setData(productData)
   }, [productData])
 

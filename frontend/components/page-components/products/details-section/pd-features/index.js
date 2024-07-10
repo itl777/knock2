@@ -6,8 +6,6 @@ import CategoryGroup from './category-group'
 import myStyle from './features.module.css'
 import { useEffect, useState } from 'react'
 
-
-
 export default function PdFeatures({ dbData }) {
   const [productData, setProductData] = useState({
     product_name: '',
@@ -18,7 +16,6 @@ export default function PdFeatures({ dbData }) {
     category_id: 0,
   })
 
-  
   useEffect(() => {
     if (dbData && dbData.length > 0) {
       const newData = { ...dbData[0] }
@@ -29,18 +26,22 @@ export default function PdFeatures({ dbData }) {
     <>
       {/* 商品詳情 */}
       <div className={`${myStyle['container']} container`}>
-        <div className={`${myStyle['pd-features']} row pd-features `}>
+        <div className={`${myStyle['pd-features']} row`}>
           {/*詳情左側-商品圖 */}
-          <div className="col-5 px-0 position-relative">
+          <div
+            className={`${myStyle['slick']} col-lg-5 px-0 position-relative`}
+          >
             <PdSlick />
           </div>
 
           {/* 詳情右側 */}
-          <div className="col-6 offset-1 d-flex flex-column justify-content-between px-0">
+          <div
+            className={`${myStyle['features-right']} col-lg-6 offset-lg-1 col-sm-12 d-flex flex-column justify-content-between px-0`}
+          >
             <div className="d-flex justify-content-between align-items-center">
               <h1 className={myStyle.title}>{productData.product_name}</h1>
               <div>
-              {/* 還沒接評價資料 */}
+                {/* 還沒接評價資料 */}
                 <ReviewStar />
               </div>
             </div>
@@ -54,9 +55,14 @@ export default function PdFeatures({ dbData }) {
               <div className={myStyle.content}>數量:</div>
               <NumInput />
             </div>
-            <BtnGroup product_id={productData.product_id} />
+            <div className={myStyle['btn-area']}>
+              <BtnGroup product_id={productData.product_id} />
+            </div>
           </div>
         </div>
+      </div>
+      <div className={myStyle['media-1200']}>
+        <BtnGroup product_id={productData.product_id} />
       </div>
     </>
   )
