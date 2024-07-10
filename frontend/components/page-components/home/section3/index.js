@@ -148,7 +148,7 @@ export default function HomeSection3() {
         <div className={styles['HomeBtn']}>
           <HomeBtn
             linkSrc="/themes"
-            btnText="Check More"
+            btnText="更多資訊"
             hoverColor="#ffffff"
             hoverBorderColor="#222222"
             hoverBackgroundColor="#222222"

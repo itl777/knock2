@@ -244,7 +244,7 @@ export default function UserProfileForm() {
     if (auth.id) fetchData()
     // 下面這行 讓eslint略過一行檢查
     // eslint-disable-next-line
-  }, [auth.id, openAvatarModal])
+  }, [auth])
 
   // render form
   return (
@@ -347,11 +347,11 @@ export default function UserProfileForm() {
                 onChange={handleChange}
               />
               <UserProfileSelect
-                label="常用地址"
+                label="收件地址"
                 options={addressForm}
                 name="address_id"
                 value={addressValue.address_id}
-                placeholder="請選擇常用地址"
+                placeholder="請選擇常用收件地址"
                 errorText={profileFormErrors.address_id}
                 onChange={handleChange}
               />
