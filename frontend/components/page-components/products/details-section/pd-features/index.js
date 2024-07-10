@@ -6,7 +6,9 @@ import CategoryGroup from './category-group'
 import myStyle from './features.module.css'
 import { useEffect, useState } from 'react'
 
-export default function PdFeatures({ data }) {
+
+
+export default function PdFeatures({ dbData }) {
   const [productData, setProductData] = useState({
     product_name: '',
     price: 0,
@@ -16,12 +18,13 @@ export default function PdFeatures({ data }) {
     category_id: 0,
   })
 
+  
   useEffect(() => {
-    if (data && data.length > 0) {
-      const newData = { ...data[0] }
+    if (dbData && dbData.length > 0) {
+      const newData = { ...dbData[0] }
       setProductData(newData)
     }
-  }, [data])
+  }, [dbData])
   return (
     <>
       {/* 商品詳情 */}

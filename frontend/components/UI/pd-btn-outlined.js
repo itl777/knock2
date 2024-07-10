@@ -3,11 +3,12 @@ import { Button } from '@mui/material'
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '@/context/theme'
 
-export default function PdBtnOutlined({ btnText = '沒設定' }) {
+export default function PdBtnOutlined({ btnText = '沒設定', onClick }) {
   return (
     <>
       <ThemeProvider theme={theme}>
         <Button
+          onClick={onClick}
           variant="outlined"
           color="favRed"
           sx={{
