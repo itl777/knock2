@@ -21,6 +21,7 @@ const theme = createTheme({
           padding: '1.5rem',
           borderRadius: 'var(--popup-radius)',
           border: '2px solid #A43131',
+          width: '400px',
         },
       },
     },
@@ -30,12 +31,12 @@ const theme = createTheme({
 export default function ConfirmDialog({
   open,
   onClose,
+  onClickLeft,
+  onClickRight,
   dialogTitle = '標題',
   btnTextRight = '確定',
   btnTextLeft = '取消',
 }) {
-
-
   return (
     <ThemeProvider theme={theme}>
       <Dialog
@@ -46,18 +47,20 @@ export default function ConfirmDialog({
       >
         <img src="/ghost/ghost_14.png" className={styles.dialogImg} />
 
-        <h5 className={styles.dialogTitle}>{dialogTitle}</h5>
+        <h6 className={styles.dialogTitle}>{dialogTitle}</h6>
 
         <div className={styles.btnStack}>
           <BlackBtn
             btnText={btnTextLeft}
             paddingType="medium"
-            onClick={onClose}
+            onClick={onClickLeft}
+            href={null}
           />
           <BlackBtn
             btnText={btnTextRight}
             paddingType="medium"
-            onClick={onClose}
+            onClick={onClickRight}
+            href={null}
           />
         </div>
       </Dialog>

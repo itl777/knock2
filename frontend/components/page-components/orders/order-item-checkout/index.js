@@ -33,6 +33,7 @@ export default function OrderItemCheckout({
           onQuantityChange={(newQuantity) =>
             onQuantityChange(productId, newQuantity)
           }
+          productName={productName}  // 將商品名稱傳給子元件
         />
       </div>
       <IoHeartOutline className={styles.addToFavoriteIcon} />

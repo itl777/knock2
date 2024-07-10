@@ -4,11 +4,8 @@
 }
 
 .dialogTitle {
-  margin-top: 24px;
+  margin-top: 16px;
   margin-bottom: 32px;
-}
-.dialogContent {
-  width: 400px;
 }
 
 .btnStack {

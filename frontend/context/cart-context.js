@@ -2,12 +2,13 @@ import React, { createContext, useState, useContext, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from './auth-context'
 import { useSnackbar } from './snackbar-context'
+import { useRouter } from 'next/router'
+
 import {
   CHECKOUT_GET_CART,
   CHECKOUT_UPDATE_CART,
   CART_POST,
 } from '@/configs/api-path'
-import { useRouter } from 'next/router'
 
 const CartContext = createContext()
 
@@ -29,12 +30,10 @@ export const CartProvider = ({ children }) => {
   const { auth, authIsReady } = useAuth() // 取得 auth.id, authIsReady
   const router = useRouter()
   const { openSnackbar } = useSnackbar() // success toast
-  const [ checkoutItems, setCheckoutItems ] = useState([]) // 購物車內容
-  const [ checkoutTotal, setCheckoutTotal ] = useState(0) // 購物車總金額
-  const [ cartBadgeQty, setCartBadgeQty ] = useState(0) // 購物車商品項目數量
-  const [ deliverFee, setDeliverFee ] = useState(120)
-  
-
+  const [checkoutItems, setCheckoutItems] = useState([]) // 購物車內容
+  const [checkoutTotal, setCheckoutTotal] = useState(0) // 購物車總金額
+  const [cartBadgeQty, setCartBadgeQty] = useState(0) // 購物車商品項目數量
+  const [deliverFee, setDeliverFee] = useState(120)
 
   useEffect(() => {
     setCartBadgeQty(checkoutItems.length)
@@ -127,7 +126,10 @@ export const CartProvider = ({ children }) => {
 
       if (response.data.success) {
         fetchMemberCart()
-        openSnackbar(`商品「${selectedProductName}」（共${cartProductQuantity}個）已加入購物車！`, 'success')
+        openSnackbar(
+          `商品「${selectedProductName}」（共${cartProductQuantity}個）已加入購物車！`,
+          'success'
+        )
       } else {
         console.error('Failed to add item to cart')
       }
@@ -151,9 +153,6 @@ export const CartProvider = ({ children }) => {
     setDeliverFee(120)
     // localStorage.removeItem('kkCart')
   }
-
-
-  
 
   // 登入後，更新 cart_member cart 將原本未登入的 device_id 改成 auth.id
   const handleLogin = async () => {
@@ -182,13 +181,7 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // useEffect(() => {
-  //   if (auth.id) {
-  //     handleLogin()
-  //   }
-  // }, [auth.id])
-
-  // 登入後，
+  // 登入判斷
   useEffect(() => {
     if (router.isReady && authIsReady) {
       if (auth.id) {
