@@ -19,12 +19,11 @@ const customTheme = (outerTheme) =>
       MuiTextField: {
         styleOverrides: {
           root: {
-       
-            '--TextField-brandBorderColor': '#5B5B5B',
+            '--TextField-brandBorderColor': 'rgba(217, 217, 217, 1)',
             '--TextField-brandBorderHoverColor': 'rgba(34, 34, 34, 1)',
             '--TextField-brandBorderFocusedColor': '#B99755',
             '& label.Mui-focused': {
-              color: 'var(--TextField-brandBorderFocusedColor)',
+              color: 'var(--TextField-brandBorderColor)',
             },
           },
         },
@@ -32,18 +31,18 @@ const customTheme = (outerTheme) =>
       MuiOutlinedInput: {
         styleOverrides: {
           notchedOutline: {
-            borderColor: 'var(--TextField-brandBorderColor)',
-            borderRadius: '100px',
+            border: '2px solid var(--TextField-brandBorderHoverColor)',
+            borderRadius: '8px',
             color: 'black',
             fontFamily: 'Noto Serif JP',
           },
           root: {
-            height:'45px',
+            height: '45px',
             [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
               borderColor: 'var(--TextField-brandBorderHoverColor)',
             },
             [`&.Mui-focused .${outlinedInputClasses.notchedOutline}`]: {
-              borderColor: 'var(--TextField-brandBorderFocusedColor)',
+              borderColor: 'var(--TextField-brandBorderHoverColor)',
             },
           },
         },
@@ -61,8 +60,7 @@ const customTheme = (outerTheme) =>
               borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
             },
             '&.Mui-focused:after': {
-              borderBottom:
-                '2px solid var(--TextField-brandBorderFocusedColor)',
+              borderBottom: '2px solid var(--TextField-brandBorderHoverColor)',
             },
           },
         },
@@ -70,7 +68,7 @@ const customTheme = (outerTheme) =>
     },
   })
 
-export default function SearchInput() {
+export default function SearchInputPhone() {
   const outerTheme = useTheme()
   const router = useRouter()
 
@@ -94,7 +92,7 @@ export default function SearchInput() {
         placeholder="搜尋商品"
         variant="outlined"
         value={userSearch}
-        sx={{ width: '8.25rem', height: '45.82px' }}
+        sx={{ height: '45.82px', width: '100%' }}
         onChange={handleSearch}
         InputProps={{
           endAdornment: (

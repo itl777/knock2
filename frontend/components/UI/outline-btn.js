@@ -17,7 +17,8 @@ export default function OutlineBtn({
         color: 'black',
         fontFamily: 'Noto Serif JP',
         borderRadius: '100px',
-        fontSize: '18px',
+        letterSpacing: '1.92px',
+        fontSize: '16px',
         borderColor: '#222',
         padding: paddingType === 'medium' ? '8px 32px' : '8px 16px',
         ':hover': {

@@ -2,106 +2,116 @@ import Image from 'next/image'
 import 'hover.css/css/hover-min.css'
 import CategoryBtn from './category-btn'
 import SearchInput from './search-input'
+import SearchInputPhone from './search-input/search-input-phone'
 import FilterBtnArea from './filter-btn-area'
 import myStyle from './filter.module.css'
 import PriceSlider from './price-slider'
-import { FaEraser } from 'react-icons/fa6'
 import { useRouter } from 'next/router'
 import OutlineBtn from '@/components/UI/outline-btn'
+import { useSnackbar } from '@/context/snackbar-context'
 
 export default function PdFilter() {
+  const { openSnackbar } = useSnackbar()
+
   const router = useRouter()
-  const url = router.asPath.split('?')
   const handleClearUrl = () => {
     const { pathname } = router
     router.replace(pathname, undefined, { shallow: true })
+    openSnackbar('清除篩選', 'error')
   }
 
   return (
     <>
       <div className="container">
-        <div className={myStyle.frame}>
-          <Image
-            className={`${myStyle.ghostLeft} hvr-wobble-top`}
-            src="/ghost/ghost_14.png"
-            width={178}
-            height={155}
-            alt="Picture of the author"
-          />
+        <div className={myStyle.container}>
+          <div className={myStyle.frame}>
+            <Image
+              className={`${myStyle.ghostLeft} hvr-wobble-top`}
+              src="/ghost/ghost_14.png"
+              width={178}
+              height={155}
+              alt="Picture of the author"
+            />
 
-          <Image
-            className={`${myStyle.ghostRight} hvr-wobble-top`}
-            src="/ghost/ghost_13.png"
-            width={147}
-            height={145}
-            alt="Picture of the author"
-          />
+            <Image
+              className={`${myStyle.ghostRight} hvr-wobble-top`}
+              src="/ghost/ghost_13.png"
+              width={147}
+              height={145}
+              alt="Picture of the author"
+            />
 
-          {url[1] ? (
-            <button
-              className={`${myStyle.eraserIcon} hvr-grow`}
-              onClick={handleClearUrl}
-            >
-              <FaEraser />
-            </button>
-          ) : (
-            ''
-          )}
+            <div className="d-flex">
+              <div className={`${myStyle['frame-around']}`}></div>
+              <div>
+                <Image
+                  className={myStyle['frame-img']}
+                  src="/products/frame.svg"
+                  width={180}
+                  height={46}
+                  alt="frame"
+                />
+              </div>
 
-          <Image
-            id="frame-head"
-            src="/products/frame.svg"
-            width={1200}
-            height={58}
-            alt="frame"
-          />
-        </div>
+              <div className={`${myStyle['frame-around']}`}></div>
+            </div>
+          </div>
 
-        <div id="frame">
-          <CategoryBtn />
+          <div id={`${myStyle['frame-border']}`}>
+            {/* 手機板的input */}
+            <div className={myStyle['top-input']}>
+              <SearchInputPhone />
+            </div>
+            <CategoryBtn />
 
-          <div className="row mt-5">
-            <div className="col-3 d-flex align-items-center gap-3 justify-content-end">
-              <FilterBtnArea />
+            <div className={myStyle['top-search-input']}>
+              <OutlineBtn btnText={'重設'} onClick={handleClearUrl} />
             </div>
 
-            <div className="col-5 d-flex flex-column justify-content-center align-items-center">
-              {/* <div className="text">
+            {/* 下方區塊 */}
+            <div className={`${myStyle['frame-bottom']} row`}>
+              <div
+                className={`${myStyle['bottom-left']} col-lg-4 align-items-center gap-3`}
+              >
+                <FilterBtnArea />
+              </div>
+
+              <div
+                className={`${myStyle['bottom-center']} col-lg-4 d-flex flex-column justify-content-center align-items-center`}
+              >
+                {/* <div className="text">
                 <div className={myStyle.text}>價格範圍</div>
               </div> */}
-              <div>
-                <PriceSlider />
+                <div>
+                  <PriceSlider />
+                </div>
               </div>
-            </div>
 
-            <div className="col-4 d-flex justify-content-start gap-3">
-              <SearchInput />
-              <OutlineBtn
-                btnText={'清空搜尋'}
-                onClick={() => {}}
-
-              />
+              <div className={`${myStyle['bottom-right']} col-lg-4 gap-3`}>
+                <div className={myStyle['input-bottom']}>
+                  <SearchInput />
+                </div>
+                <OutlineBtn btnText={'重設'} onClick={handleClearUrl} />
+              </div>
             </div>
           </div>
         </div>
       </div>
+
       <style jsx>
         {`
-          #frame {
+           {
+            /* #frame-border {
             border-left: 2px solid black;
             border-right: 2px solid black;
             border-bottom: 2px solid black;
 
             padding: 50px 0;
+          } */
           }
           .container {
-            max-width: 1200px;
             margin-bottom: 5rem;
             padding: 0;
-          }
-
-          .text {
-            display: fit-content;
           }
         `}
       </style>
