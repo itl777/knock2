@@ -28,30 +28,23 @@ export default function ChatDisplay() {
       const resData = await res.json()
 
       if (resData.success) {
-        const chat = resData.data
-        if (chat_at && chat.chat_at) {
-          setChat({
-            // chat_at: chatData.chat_at || 0,
-            chat_by: chat.chat_by || 0,
-            nick_name: chat.nick_name || '',
-            avatar: chat.avatar || '',
-            chat_text: chat.chat_text || '',
-            create_at: chat.create_at || '',
-          })
-          console.log('chat data set successfully', chat)
-        }
+        setChatData(resData.data)
+        setChatData(resData.data)
       }
     } catch (e) {
-      console.error(e)
+      console.error("Error fetching chat data: ", e)
     }
   }
   useEffect(() => {
     if (router.isReady) {
       console.log(router.query)
       const { chat_at } = router.query
-      getChat(chat_at)
-      console.log(chat)
-      }})
+      if (chat_at) {
+        console.log("Router is ready, team_id: ", chat_at)
+        fetchChatData(chat_at)
+      }
+    }
+  }, [router.isReady, router.query])
 
 
 
