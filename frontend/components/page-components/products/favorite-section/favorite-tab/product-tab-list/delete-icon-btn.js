@@ -29,7 +29,7 @@ export default function DeleteIconBtn({
     }
   }
   return (
-    <div>
+    <>
       <IconButton
         onClick={handleDelete}
         aria-label="delete"
@@ -38,6 +38,6 @@ export default function DeleteIconBtn({
       >
         <DeleteIcon />
       </IconButton>
-    </div>
+    </>
   )
 }

@@ -17,7 +17,7 @@ export default function NumInput() {
     setBuyQuantity(buyQuantity - 1)
   }
   return (
-    <div>
+    <>
       <div className={myStyle['input-border']}>
         <button className={myStyle['iconBtn']} onClick={handleMinus}>
           <RemoveIcon />
@@ -36,6 +36,6 @@ export default function NumInput() {
           <AddIcon />
         </button>
       </div>
-    </div>
+    </>
   )
 }

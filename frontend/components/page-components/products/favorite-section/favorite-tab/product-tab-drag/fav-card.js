@@ -1,24 +1,11 @@
 import Image from 'next/image'
 import { FaXmark, FaCartShopping } from 'react-icons/fa6'
+import { useProduct } from '@/context/product-context'
+import myStyle from './drag.module.css'
+import DeleteIconBtn from '../product-tab-list/delete-icon-btn'
 
-export default function FavCard({ pdId = 1 }) {
-  const imgStyle = {
-    width: ' 100%',
-    height: '100%',
-    borderRadius: '12px 0 0 12px',
-  }
-  const xStyle = {
-    position: 'absolute',
-    top: '10px',
-    left: '10px',
-    color: 'rgb(158, 158, 158)',
-  }
-  const cartStyle = {
-    position: 'absolute',
-    bottom: '10px',
-    right: '10px',
-    color: '#5B5B5B',
-  }
+export default function FavCard({ pdId = 1, dbData }) {
+  const { cardChange, setCardChange } = useProduct()
 
   return (
     <>
@@ -32,17 +19,24 @@ export default function FavCard({ pdId = 1 }) {
             src="/products/tea3.jpg"
             width={81}
             height={113}
-            style={imgStyle}
+            className={myStyle.imgStyle}
             draggable="false"
             alt=""
           />
-          <FaXmark style={xStyle} />
+          <div className={myStyle.xStyle}>
+            <DeleteIconBtn
+              cardChange={cardChange}
+              setCardChange={setCardChange}
+              product_id={dbData.product_id}
+            />
+          </div>
+          {/* <FaXmark /> */}
         </div>
         <div className="p-2">
-          <p>桌遊文字</p>
-          <p>$1880</p>
+          <p>{dbData.product_name}</p>
+          <p>${dbData.price}</p>
         </div>
-        <FaCartShopping style={cartStyle} />
+        <FaCartShopping className={myStyle.cartStyle} />
       </div>
       <style jsx>
         {`

@@ -42,7 +42,7 @@ export default function ProductDetails() {
         <IndexLayout pageName="productDetails" background="light">
           <DetailsSection
             breadcrumb={<Breadcrumb productName={productName.product_name} />}
-            features={<PdFeatures data={productData} />}
+            features={<PdFeatures dbData={productData} />}
             tab={<PdTabs data={productData} />}
           />
         </IndexLayout>

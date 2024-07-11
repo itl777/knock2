@@ -26,8 +26,8 @@ export default function CategoryBtn() {
   return (
     <>
       <div className="row">
-        <div className="col-6 offset-3">
-          <ul id="category-ul" className="d-flex">
+        <div className={`${myStyle['category-area']} col-xl-6 offset-xl-3`}>
+          <ul id={myStyle['category-ul']} className="d-flex">
             {tabItems.map((v) => (
               <li key={v.key} className={myStyle['li-line']}>
                 <Link

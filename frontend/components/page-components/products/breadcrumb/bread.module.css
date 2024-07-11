@@ -9,3 +9,10 @@
   gap: 8px;
   padding: 20px 80px;
 }
+
+@media screen and (max-width: 576px) {
+  .bread {
+    gap: 4px;
+    padding: 20px;
+  }
+}

@@ -26,12 +26,12 @@ export default function PdCard() {
 
       <style jsx>
         {`
-          .d-grid {
+          {/* .d-grid {
             grid-template-columns: auto auto auto;
             max-width: 1200px;
             padding: 0;
             margin: auto;
-          }
+          } */}
         `}
       </style>
     </>

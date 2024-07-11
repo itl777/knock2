@@ -21,20 +21,17 @@ function PdSlick() {
     autoplay: true,
   }
   return (
-    <div className={myStyle['slider-container']}>
+    <div>
       <Slider {...settings}>
-        <div>
+        <div className={myStyle['slider-img']}>
           <img src="/products/tea1.jpg" />
         </div>
-        <div>
+        <div className={myStyle['slider-img']}>
           <img src="/products/tea2.jpg" />
         </div>
-        <div>
+        <div className={myStyle['slider-img']}>
           <img src="/products/tea3.jpg" />
         </div>
-        {/* <div>
-          <img src="/pics/tea4.jpg" />
-        </div> */}
       </Slider>
     </div>
   )
