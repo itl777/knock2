@@ -22,8 +22,8 @@ export default function OrderSelectBox({
         options={options}
         onChange={onChange}
       />
-      <div className={styles.errorText}>
-        {errorText !== '' ? <span>{errorText}</span> : ''}
+      <div className={styles.errorTextBox}>
+        {errorText !== '' ? <span className={styles.errorText}>{errorText}</span> : ''}
       </div>
     </div>
   )
