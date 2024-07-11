@@ -28,7 +28,7 @@ let TradeNo;
 
 router.get("/", async (req, res) => {
   const { orderId, checkoutTotal } = req.query;
-  TradeNo = "test" + new Date().getTime().toString();
+  TradeNo = "kk" + new Date().getTime().toString();
   const MerchantTradeDate = new Date().toLocaleString("zh-TW", {
     year: "numeric",
     month: "2-digit",
@@ -50,8 +50,9 @@ router.get("/", async (req, res) => {
     ReturnURL: `https://4ed4-223-139-24-45.ngrok-free.app/payments/return`,
     ChoosePayment: "Credit",
     EncryptType: 1,
-    ClientBackURL: `http://127.0.0.1:3000/product?page=1`,
-    OrderResultURL: `http://127.0.0.1:3000/user/orders/details/${orderId}`,
+    ClientBackURL: `http://localhost:3000/product?page=1`,
+    // OrderResultURL: `http://localhost:3000/user/orders/details/${orderId}`,
+    OrderResultURL: `http://localhost:3000/checkout/success?order_id=${orderId}`,
     NeedExtraPaidInfo: "Y",
   };
   try {

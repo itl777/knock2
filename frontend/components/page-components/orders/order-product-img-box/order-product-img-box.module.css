@@ -1,27 +1,3 @@
-/* .itemImgBox {
-  overflow: hidden;
-  flex: none;
-  width: 8rem;
-  height: 8rem;
-  border-radius: var(--img-radius);
-}
-
-
-.itemImgBox img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-@media screen and (max-width: 640px) {
-  .itemImgBox {
-    width: 6rem;
-    height: 6rem;
-    border-radius: var(--img-radius);
-  }
-
-} */
-
 .itemImgBox {
   overflow: hidden;
   flex: none;

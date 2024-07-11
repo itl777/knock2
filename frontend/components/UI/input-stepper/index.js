@@ -2,6 +2,7 @@ import IconButton from '@mui/material/IconButton'
 import { styled } from '@mui/material/styles'
 import styles from './input-stepper.module.css'
 import { useEffect, useState } from 'react'
+import ConfirmDialog from '../confirm-dialog'
 import { IoIosAdd, IoIosRemove } from 'react-icons/io'
 
 export default function InputStepper({
@@ -9,17 +10,19 @@ export default function InputStepper({
   maxValue = 10,
   stepperValue = 1,
   onQuantityChange, //通知父層更新
+  productName, // 接受父層的資料
 }) {
   const [value, setValue] = useState(stepperValue)
+  const [openDialog, setOpenDialog] = useState(false) // confirm dialog open or close
 
   // 通知 cart-context.js 更新
-  useEffect(()=> {
+  useEffect(() => {
     setValue(stepperValue)
   }, [stepperValue])
 
   const handleIncrease = () => {
     if (+value >= maxValue) {
-      return
+      return // 如果數字已經大於等於 maxValue，則不可以往上加
     }
     const newStepperValue = +value + 1
     setValue(newStepperValue)
@@ -28,11 +31,27 @@ export default function InputStepper({
 
   const handleDecrease = () => {
     if (+value <= minValue) {
-      return
+      return // 如果數字已經小於等於 minValue，則不可以往下減
+    }
+    if (+value === 1) {
+      setOpenDialog(true)
+      return // 如果數字等於 1，要有確認是否要變成 0 (刪除商品)
     }
     const newStepperValue = +value - 1
     setValue(newStepperValue)
     onQuantityChange(newStepperValue)
+  }
+
+  // close confirm dialog
+  const handleDialogClose = () => {
+    setOpenDialog(false)
+  }
+
+  // 點擊「確定刪除」後
+  const handleConfirmDelete = () => {
+    setValue(minValue) // 數量歸 0
+    onQuantityChange(minValue) // 通知父層數量歸 0
+    setOpenDialog(false) // close confirm dialog
   }
 
   const StepperButton = styled(IconButton)(({ theme }) => ({
@@ -57,6 +76,16 @@ export default function InputStepper({
       <StepperButton onClick={handleIncrease}>
         <IoIosAdd />
       </StepperButton>
+
+      <ConfirmDialog
+        open={openDialog}
+        onClose={handleDialogClose}
+        onClickLeft={handleDialogClose}
+        onClickRight={handleConfirmDelete}
+        dialogTitle={`確定要刪除商品「${productName}」嗎？`}
+        btnTextRight="確定刪除"
+        btnTextLeft="取消"
+      />
     </div>
   )
 }

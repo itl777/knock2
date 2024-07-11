@@ -8,6 +8,7 @@ export default function Input01({
   disabled = false,
   inputStyles = 'def',
   onChange = () => {},
+  onBlur=() => {},
 }) {
   value === null ? (value = '') : value
 
@@ -32,6 +33,7 @@ export default function Input01({
         disabled={disabled === true ? 'disabled' : ''}
         className={className}
         onChange={onChange}
+        onBlur={onBlur}
       />
     </>
   )

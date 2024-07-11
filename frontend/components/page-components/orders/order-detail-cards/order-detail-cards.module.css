@@ -1,4 +1,4 @@
-.orderDetailBox {
+.orderDetailContainer {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -6,22 +6,6 @@
   background-color: white;
   border-radius: var(--content-radius);
   box-shadow: var(--card-shadow);
-}
-
-
-.orderDetailHeader {
-  display: flex;
-  justify-content: space-between;
-}
-
-.titleBox {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.titleBox svg {
-  fill: var(--sec-1);
 }
 
 .orderDetailContent {
@@ -42,40 +26,24 @@
 
 
 .orderInfoBox {
-  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
   border-radius: 1rem;
   background-color: var(--bg-grey-light);
-  margin-bottom: 2rem;
 }
-
-.orderInfoRow {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-}
-
-.orderInfoRow p:first-child {
-  width: 5rem;
-}
-
-.order-status-tag {
-  margin-top: 0.5rem;
-}
-
 
 .orderReviewHintBox {
   display: flex;
   gap: 2rem;
 }
 
-
-
 .orderReviewHintBox img {
   width: 8rem;
   align-self: flex-end;
 }
-
-
 
 .orderReviewDialog {
   width: 100%;
@@ -86,7 +54,6 @@
   border: 2px solid var(--pri-3);
 }
 
-
 .orderReviewDialog p {
   margin-bottom: 1.5rem;
 }
@@ -95,7 +62,7 @@
   align-self: end;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1120px) {
   .orderDetailContent {
     flex-direction: column;
   }
@@ -125,5 +92,11 @@
     padding: 1.25rem;
   }
 
+}
 
+
+@media screen and (max-width: 480px) {
+  .orderDetailContainer {
+    padding: 1.25rem;
+  }
 }
