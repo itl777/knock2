@@ -7,9 +7,10 @@
     border: 2px solid var(--sec-1);
     border-radius: 20px;
     color: var(--pri-3);
-    padding: 10px;
+    /* padding: 10px; */
     display: flex;
     justify-content: center;
+    padding: 5px;
   }
   
   .date {
@@ -178,3 +179,15 @@
     margin-right: 8px;
     margin-left: 20px;
   }
+  .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    font-size: 18px;
+  }
+.icon5{
+    font-size: 54px;
+    margin-left: 30px;
+    cursor: pointer;
+}

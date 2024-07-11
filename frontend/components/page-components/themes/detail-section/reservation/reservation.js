@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
 import { IoIosArrowDropleft, IoIosArrowDropright } from 'react-icons/io'
-import myStyle from './reservation.module.css' // 假設你的樣式在這個文件中
+import myStyle from './reservation.module.css'
 import { FaCircle } from 'react-icons/fa'
+import { FaFacebook, FaInstagram } from 'react-icons/fa6'
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(dayjs())
@@ -194,8 +195,17 @@ const Calendar = () => {
               </div>
             </div>
             <hr className={myStyle.hr} />
-            <div>
-              <p>預約當日場次請來電(ゝ∀･)</p>
+            <div className="d-flex justify-content-between">
+              <div className={`${myStyle.info}`}>
+                <div className="mb-3">預約當日場次請來電 (･∀･)</div>
+                <div>For international travelers, </div>
+                <div>please send a direct message</div>
+                <div>to our FB or Instagram.</div>
+              </div>
+              <div className={`d-flex justify-content-end align-items-end`}>
+                <FaFacebook className={myStyle.icon5} />
+                <FaInstagram className={myStyle.icon5} />
+              </div>
             </div>
           </div>
         </div>
