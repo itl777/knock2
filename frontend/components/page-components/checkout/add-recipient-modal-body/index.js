@@ -4,7 +4,7 @@ import styles from './add-recipient-modal-body.module.css'
 import BlackBtn from '@/components/UI/black-btn'
 import OrderInputBox from '../order-input-box'
 import OrderSelectBox from '../order-select-box'
-import { CHECKOUT_ADD_ADDRESS_POST } from '@/configs/api-path'
+import { CHECKOUT_ADD_ADDRESS } from '@/configs/api-path'
 import useFetchCityDistrict from '@/hooks/fetchCityDistrict'
 
 export default function AddRecipientModalBody({ handleClose, memberId }) {
@@ -52,7 +52,7 @@ export default function AddRecipientModalBody({ handleClose, memberId }) {
     e.preventDefault()
 
     try {
-      const response = await fetch(CHECKOUT_ADD_ADDRESS_POST, {
+      const response = await fetch(CHECKOUT_ADD_ADDRESS, {
         method: 'POST',
         body: JSON.stringify(addAddressData),
         headers: {

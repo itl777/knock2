@@ -10,12 +10,11 @@ export default function OrderInputBox({
   disabled = false,
   errorText = '',
   onChange = () => {},
+  onBlur = () => {},
 }) {
   return (
     <div className={styles.inputBox}>
-      <label htmlFor={name} className={styles.labelStyle}>
-        {label}
-      </label>
+      <label htmlFor={name}>{label}</label>
       <Input01
         name={name}
         type={type}
@@ -23,7 +22,11 @@ export default function OrderInputBox({
         placeholder={placeholder}
         disabled={disabled}
         onChange={onChange}
+        onBlur={onBlur}
       />
+      <div className={styles.errorTextBox}>
+        {errorText !== '' ? <span className={styles.errorText}>{errorText}</span> : ''}
+      </div>
     </div>
   )
 }

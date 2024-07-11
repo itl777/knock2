@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import OTPInput from '@/components/UI/form-item/otp-input'
 import ThirdPartyLoginButton from '../third-party-login-button'
+import { useLoginModal } from '@/context/login-context/index'
 
 // styles
 import styles from '../login-form.module.scss'
@@ -22,34 +22,27 @@ const dialogTheme = createTheme({
   },
 })
 
-export default function ForgotPasswordForm({
-  open,
-  close,
-  inputValue,
-  onInputChange,
-  onSubmit,
-  otpValue,
-  onOtpChange,
-  errorText,
-  formChange,
-}) {
-  // open={forgotPasswordState}
-  // close={() => setForgotPasswordState(false)}
-  // value={forgotPasswordData}
-  // onChange={handleForgotPasswordChange}
-  // onSubmit={forgotPasswordSubmit}
-  // errorText={forgotForgotPasswordError}
-  // formChange={handleFormSwitch}
+export default function ForgotPasswordForm() {
+  const {
+    forgotPasswordState,
+    forgotPasswordData,
+    forgotForgotPasswordErrors,
+    handleForgotPasswordChange,
+    forgotPasswordSubmit,
+    loginFormSwitch,
+    formatTime,
+  } = useLoginModal()
+
   return (
     <>
       <ThemeProvider theme={dialogTheme}>
         <Dialog
-          open={open}
-          onClose={close}
+          open={forgotPasswordState}
+          onClose={() => loginFormSwitch()}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <form className={styles.forms} onSubmit={onSubmit}>
+          <form className={styles.forms} onSubmit={forgotPasswordSubmit}>
             <div className={styles.title}>
               <h3>忘記密碼</h3>
             </div>
@@ -57,27 +50,34 @@ export default function ForgotPasswordForm({
               <AuthFormInput
                 name="account"
                 type="text"
-                value={inputValue.account}
+                value={forgotPasswordData.account}
                 placeholder="請輸入註冊時填寫的 Email 帳號"
-                onChange={onInputChange}
+                onChange={handleForgotPasswordChange}
               />
               <span className={styles.errorText}>
-                {errorText.account}
-                {errorText.result}
+                {forgotForgotPasswordErrors.account}
+                {forgotForgotPasswordErrors.result}
               </span>
-              <OTPInput value={otpValue} onChange={onOtpChange} />
             </div>
             <div className={styles.box}>
-              <input type="submit" value="送出" />
+              <input
+                type="submit"
+                value={
+                  formatTime === 'ok'
+                    ? '送出'
+                    : `請等候 ${formatTime} 秒後才能重新發送`
+                }
+                disabled={formatTime === 'ok' ? false : true}
+              />
             </div>
             <div className={styles.links}>
               <Link
                 href=""
                 onClick={() => {
-                  formChange('Login')
+                  loginFormSwitch('Login')
                 }}
               >
-                <span>想起密碼了？ 返回登入</span>
+                <span>想起密碼了嗎？ 返回登入</span>
               </Link>
             </div>
             <div className={styles.links}>

@@ -26,6 +26,7 @@ export const ProductProvider = ({ children }) => {
   })
   // 排序箭頭狀態
   const [showIcon, setShowIcon] = useState(false)
+  const [showIconNew, setShowIconNew] = useState(false)
   const [userSearch, setUserSearch] = useState('')
 
   const getFavorite = async (page) => {
@@ -116,6 +117,8 @@ export const ProductProvider = ({ children }) => {
         showIcon,
         userSearch,
         cardChange,
+        showIconNew,
+        setShowIconNew,
         setCardChange,
         setUserSearch,
         setShowIcon,

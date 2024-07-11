@@ -23,7 +23,7 @@ export default function MenuList() {
     },
     { key: 'orders', name: '商品訂單', path: '/user/orders/ongoing' },
     { key: 'favorite', name: '我的收藏', path: '/user/favorite' },
-    { key: 'coupons', name: '優惠券', path: '/user/coupons' },
+    { key: 'coupons', name: '優惠券', path: '/user/coupon/ongoing' },
   ]
 
   return (

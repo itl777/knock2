@@ -61,7 +61,12 @@ export default function PdTabs({ data }) {
   return (
     <div className={`${myStyle['container']} container`} style={{ padding: 0 }}>
       <Box
-        sx={{ width: '100%', typography: 'body1', fontFamily: 'Noto Sans TC' }}
+        sx={{
+          width: '100%',
+          typography: 'body1',
+          fontFamily: 'Noto Sans TC',
+          maxWidth: '1200px',
+        }}
       >
         <TabContext value={value}>
           <Box>
@@ -80,12 +85,11 @@ export default function PdTabs({ data }) {
             </TabList>
           </Box>
           <TabPanel sx={mySxPanel} value="1">
-          {/* 詳情 */}
+            {/* 詳情 */}
             <p>{productData.description}</p>
           </TabPanel>
 
           <TabPanel sx={mySxPanel} value="2">
-
             {/* 評價 */}
             <div className="col-10 offset-1 d-flex justify-content-center my-5 position-relative">
               <ProductReview />

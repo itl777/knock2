@@ -7,7 +7,7 @@ import { useAuth } from '@/context/auth-context'
 import Avatar from '@mui/joy/Avatar'
 import { FaCircleUser } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
-import CheckoutOffcanvas from '@/components/UI/checkout-offcanvas'
+import CheckoutOffcanvas from '@/components/page-components/checkout/checkout-offcanvas'
 import styles from '../nav-styles.module.scss'
 
 export default function NavbarIcon({ handleNavMenuOpen, handleMobileMenu }) {

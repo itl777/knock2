@@ -5,7 +5,7 @@ import {
   GOOGLE_LOGIN_POST,
   VERIFY_TOKEN_POST,
   REGISTER_POST,
-  FORGET_PASSWORD_POST,
+  OTP_MAIL_POST,
 } from '@/configs/api-path'
 
 const AuthContext = createContext()
@@ -20,6 +20,7 @@ const emptyAuth = {
 export function AuthContextProvider({ children }) {
   const { logoutFirebase } = useFirebase()
   const [auth, setAuth] = useState({ ...emptyAuth })
+  const [authRefresh, setAuthRefresh] = useState(false)
   const [authIsReady, setAuthIsReady] = useState(false)
 
   const login = async (account, password) => {
@@ -124,13 +125,13 @@ export function AuthContextProvider({ children }) {
     }
   }
 
-  const forgotPassword = async (account) => {
+  const otpMail = async (account) => {
     const output = {
       success: false,
       error: '',
     }
     try {
-      const r = await fetch(FORGET_PASSWORD_POST, {
+      const r = await fetch(OTP_MAIL_POST, {
         method: 'POST',
         body: JSON.stringify({ account }),
         headers: {
@@ -170,43 +171,46 @@ export function AuthContextProvider({ children }) {
   // 用戶如果重刷頁面，狀態可以由 localStorage 載入
   useEffect(() => {
     const str = localStorage.getItem(storageKey)
-    if (!str) return
-    try {
-      const data = JSON.parse(str)
-      const { token } = data
+    if (!str) {
+      setAuthIsReady(true)
+      return
+    } else {
+      try {
+        const data = JSON.parse(str)
+        const { token } = data
 
-      fetch(VERIFY_TOKEN_POST, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token }),
-      })
-        .then((r) => r.json())
-        .then((result) => {
-          if (!result.success) {
-            return
-          }
+        fetch(VERIFY_TOKEN_POST, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
         })
-      if (data?.id && data?.token) {
-        setAuth(data)
-        setAuthIsReady(true)
+          .then((r) => r.json())
+          .then((result) => {
+            if (result.success) {
+              setAuth(result.data)
+              setAuthIsReady(true)
+            }
+          })
+      } catch (ex) {
+        console.error(ex)
       }
-    } catch (ex) {
-      console.error(ex)
     }
-  }, [])
+    setAuthRefresh(false)
+  }, [authRefresh])
 
   return (
     <AuthContext.Provider
       value={{
         auth,
         authIsReady,
+        setAuthRefresh,
         login,
         googleLogin,
         logout,
         register,
-        forgotPassword,
+        otpMail,
         getAuthHeader,
       }}
     >

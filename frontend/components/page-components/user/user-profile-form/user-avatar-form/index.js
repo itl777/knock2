@@ -29,7 +29,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 export default function AvatarFormDialogs({ open, close }) {
   const { openSnackbar } = useSnackbar()
-  const { auth, getAuthHeader } = useAuth()
+  const { auth, setAuthRefresh, getAuthHeader } = useAuth()
   const [imgUrl, setImgUrl] = useState('')
 
   const onDrop = (acceptedFiles) => {
@@ -82,6 +82,7 @@ export default function AvatarFormDialogs({ open, close }) {
       .then((data) => {
         if (data.success) {
           close()
+          setAuthRefresh(true)
           openSnackbar('新增成功', 'success')
         } else {
           openSnackbar('新增失敗', 'error')
@@ -102,7 +103,7 @@ export default function AvatarFormDialogs({ open, close }) {
         fullWidth={true}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          <h5>上傳頭像</h5>
+          <p>上傳頭像</p>
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -117,7 +118,16 @@ export default function AvatarFormDialogs({ open, close }) {
           <CloseIcon />
         </IconButton>
         <form>
-          <DialogContent dividers>
+          <DialogContent
+            dividers
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '20px',
+            }}
+          >
             {imgUrl ? (
               <Image
                 src={imgUrl}
@@ -127,7 +137,7 @@ export default function AvatarFormDialogs({ open, close }) {
                 style={{
                   objectFit: 'contain',
                   background: '#222222',
-                  borderRadius: '125px',
+                  borderRadius: '50%',
                 }}
               />
             ) : (
