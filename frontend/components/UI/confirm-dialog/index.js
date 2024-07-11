@@ -1,5 +1,6 @@
-import { useState, forwardRef } from 'react'
+import { forwardRef } from 'react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import RedBtn from '../red-btn'
 import styles from './confirm-dialog.module.css'
 import Dialog from '@mui/material/Dialog'
 import Slide from '@mui/material/Slide'
@@ -56,7 +57,7 @@ export default function ConfirmDialog({
             onClick={onClickLeft}
             href={null}
           />
-          <BlackBtn
+          <RedBtn
             btnText={btnTextRight}
             paddingType="medium"
             onClick={onClickRight}

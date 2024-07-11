@@ -19,6 +19,7 @@ import OrderInputBox from '../order-input-box'
 import OrderSelectBox from '../order-select-box'
 import CheckoutTotalTable from '../checkout-total-table'
 import EmptyCart from '@/components/page-components/checkout/empty-cart'
+import RedirectionGuide from '@/components/UI/redirect-guide'
 // api path
 import {
   PRODUCT_IMG,
@@ -268,15 +269,22 @@ export default function CheckOutPage() {
     }
   }, [auth.id, router.isReady, authIsReady])
 
+  // if (!auth.id && authIsReady) {
+  //   return <section>請先登入</section>
+  // }
   if (!auth.id && authIsReady) {
-    return <section>請先登入</section>
+    return <RedirectionGuide text="請先登入" hideBtn={true} />
   }
 
   return (
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
 
-      {cartBadgeQty <= 0 && <EmptyCart />}
+      {cartBadgeQty <= 0 && (
+        <div className={styles.contentContainer}>
+          <EmptyCart />
+        </div>
+      )}
 
       {cartBadgeQty > 0 && (
         <form
