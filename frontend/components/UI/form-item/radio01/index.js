@@ -1,5 +1,7 @@
-import { Box, List, ListItem, Radio, RadioGroup } from '@mui/joy'
+import { Box, Radio, RadioGroup, FormControlLabel } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { ThemeProvider } from '@mui/material/styles'
+import customTheme from './theme'
 
 export default function Radio01({
   radios = [],
@@ -20,28 +22,23 @@ export default function Radio01({
   return (
     <>
       {radiosArray ? (
-        <Box
-          height={44}
-          display="flex"
-          alignItems="center"
-          sx={{ width: '100%' }}
-        >
-          <RadioGroup overlay name={name}>
-            <List component="div" orientation="horizontal">
+        <ThemeProvider theme={customTheme}>
+          <Box height={44} display="flex" alignItems="center">
+            <RadioGroup row name={name}>
               {radios?.map((v, i) => (
-                <ListItem key={i}>
-                  <Radio
-                    value={v.value}
-                    label={v.label}
-                    disabled={disabled}
-                    checked={checked === v.value}
-                    onChange={onChange}
-                  />
-                </ListItem>
+                <FormControlLabel
+                  key={i}
+                  value={v.value}
+                  control={<Radio />}
+                  label={v.label}
+                  disabled={disabled}
+                  checked={checked === v.value}
+                  onChange={onChange}
+                />
               ))}
-            </List>
-          </RadioGroup>
-        </Box>
+            </RadioGroup>
+          </Box>
+        </ThemeProvider>
       ) : (
         ''
       )}
