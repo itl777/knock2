@@ -1,5 +1,6 @@
 import React from 'react'
 import styles from './order-detail-cards.module.css'
+import { formatPrice } from '@/hooks/numberFormat'
 import useFetchOrderData from '@/hooks/fetchOrderDetails'
 import OrderItemDetail from '../order-item-detail'
 import FilterBtn from '@/components/UI/filter-btn'
@@ -41,7 +42,7 @@ export default function OrderDetailCards({ orderId }) {
             <OrderDetailRow label="訂單編號" content={'20230404**'} />
             <OrderDetailRow
               label="總金額"
-              content={`$ ${orderData?.total_price}`}
+              content={formatPrice(orderData?.total_price)}
             />
             <OrderDetailRow
               label="付款時間"

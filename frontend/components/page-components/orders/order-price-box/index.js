@@ -1,4 +1,5 @@
 import styles from './order-price-box.module.css'
+import { formatPrice } from '@/hooks/numberFormat'
 
 export default function OrderPriceBox({
   discountedPrice,
@@ -6,8 +7,8 @@ export default function OrderPriceBox({
 }) {
   return (
     <div className={styles.itemPriceStyle}>
-    <p>$ {discountedPrice}</p>
-    <small>$ {originalPrice}</small>
+    <p>{formatPrice(discountedPrice)}</p>
+    <small>{formatPrice(originalPrice)}</small>
   </div>
   )
 }

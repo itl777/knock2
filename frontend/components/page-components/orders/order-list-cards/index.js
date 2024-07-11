@@ -1,7 +1,9 @@
 // 我的訂單頁面
 import React, { useState, useEffect } from 'react'
-import { useAuth } from '@/context/auth-context'
 import styles from './order-list-cards.module.css'
+// hooks
+import { useAuth } from '@/context/auth-context'
+import { formatPrice } from '@/hooks/numberFormat'
 // components
 import OrderStatusTag from '../order-status-tag'
 import NoData from '@/components/UI/no-data'
@@ -66,7 +68,7 @@ export default function OrderListCards({ orderStatusId }) {
                 <div className={styles.orderInfoRowBox}>
                   <IconTextRow content={v.order_id} />
                   <IconTextRow
-                    content={`$ ${v.total_price} / ${v.payment_method}`}
+                    content={`${formatPrice(v.total_price)} / ${v.payment_method}`}
                     icon={HiOutlineCreditCard}
                   />
                   <IconTextRow content={v.full_address} icon={HiOutlineCube} />

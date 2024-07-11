@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import '@/styles/share-order.css'
 import '@/styles/globals.css'
 // Context
 import { CartProvider } from '@/context/cart-context'

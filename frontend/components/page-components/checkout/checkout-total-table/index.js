@@ -1,4 +1,5 @@
 import styles from './checkout-total-table.module.css'
+import CheckoutTotalRow from './checkout-total-row'
 import HDivider from '@/components/UI/divider/horizontal-divider'
 
 export default function CheckoutTotalTable({
@@ -8,23 +9,11 @@ export default function CheckoutTotalTable({
 }) {
   return (
     <div className={styles.totalBox}>
-      <div className={styles.totalRow}>
-        <p>小計</p>
-        <p>$ {subtotal}</p>
-      </div>
-      <div className={styles.totalRow}>
-        <p>折扣</p>
-        <p>$ {totalDiscount}</p>
-      </div>
-      <div className={styles.totalRow}>
-        <p>運費</p>
-        <p>$ {deliverFee}</p>
-      </div>
+      <CheckoutTotalRow label='小計' content={subtotal}/>
+      <CheckoutTotalRow label='折扣' content={totalDiscount}/>
+      <CheckoutTotalRow label='運費' content={deliverFee}/>
       <HDivider margin="0.75rem 0" />
-      <div className={styles.totalRow}>
-        <p>合計</p>
-        <p>$ {subtotal+deliverFee-totalDiscount}</p>
-      </div>
+      <CheckoutTotalRow label='合計' content={subtotal + deliverFee - totalDiscount}/>
     </div>
   )
 }

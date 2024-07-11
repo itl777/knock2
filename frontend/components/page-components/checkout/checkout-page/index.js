@@ -11,8 +11,6 @@ import { useOrderValidation } from '@/hooks/orderValidation'
 // components
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
-import VDivider from '@/components/UI/divider/vertical-divider'
-import HDivider from '@/components/UI/divider/horizontal-divider'
 import RecipientButton from '../recipient-button'
 import RecipientButtonSelected from '../recipient-button-selected'
 import BasicModal from '@/components/UI/basic-modal'
