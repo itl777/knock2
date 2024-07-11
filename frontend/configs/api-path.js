@@ -43,4 +43,4 @@ export const GET_CHAT = `${API_SERVER}/teams/api/chat/`
 export const THEME_LIST = `${API_SERVER}/themes`
 export const BRANCH_LIST = `${API_SERVER}/themes/branches`
 export const THEME_DETAIL = `${API_SERVER}/themes/`
-export const BRANCH_THEMES = `${API_SERVER}/themes/branch-themes`
+export const BRANCH_THEMES = `${API_SERVER}/themes/second`
