@@ -1,10 +1,10 @@
 import { forwardRef } from 'react'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import RedBtn from '../red-btn'
+import OutlineBtn from '../outline-btn'
 import styles from './confirm-dialog.module.css'
 import Dialog from '@mui/material/Dialog'
 import Slide from '@mui/material/Slide'
-import BlackBtn from '../black-btn'
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />
@@ -51,7 +51,7 @@ export default function ConfirmDialog({
         <h6 className={styles.dialogTitle}>{dialogTitle}</h6>
 
         <div className={styles.btnStack}>
-          <BlackBtn
+          <OutlineBtn
             btnText={btnTextLeft}
             paddingType="medium"
             onClick={onClickLeft}
