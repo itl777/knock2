@@ -36,7 +36,7 @@ export default function PdFeatures({ dbData }) {
 
           {/* 詳情右側 */}
           <div
-            className={`${myStyle['features-right']} col-lg-6 offset-lg-1 col-sm-12 d-flex flex-column justify-content-between px-0`}
+            className={`${myStyle['features-right']} col-lg-6 offset-lg-1 col-sm-12 d-flex flex-column justify-content-between `}
           >
             <div className="d-flex justify-content-between align-items-center">
               <h1 className={myStyle.title}>{productData.product_name}</h1>
@@ -49,18 +49,32 @@ export default function PdFeatures({ dbData }) {
             <CategoryGroup productData={productData} />
 
             <div className={myStyle.content}>{productData.summary}</div>
-            <div className={myStyle.price}>${productData.price}</div>
 
-            <div className="d-flex">
+            <div className={myStyle.price}>
+              <div>${productData.price}</div>
+
+              {/* RWD992以下顯示 */}
+              <div className={myStyle['media-992']}>
+                <div className={myStyle.content}>數量:</div>
+                <NumInput />
+              </div>
+              {/* RWD992以下顯示end */}
+            </div>
+
+            <div className={myStyle.quantity}>
               <div className={myStyle.content}>數量:</div>
               <NumInput />
             </div>
+
+            {/* 按鈕 */}
             <div className={myStyle['btn-area']}>
               <BtnGroup product_id={productData.product_id} />
             </div>
           </div>
         </div>
       </div>
+
+              {/* RWD1200以下顯示 */}
       <div className={myStyle['media-1200']}>
         <BtnGroup product_id={productData.product_id} />
       </div>
