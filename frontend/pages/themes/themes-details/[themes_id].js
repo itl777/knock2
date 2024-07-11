@@ -7,9 +7,7 @@ export default function ThemeDetails() {
   return (
     <>
       <IndexLayout pageName="themesDetails" title="密室逃脫" background="dark">
-        <div>
-          <DetailSection />
-        </div>
+        <DetailSection />
         <div className="container">
           <div className="row"></div>
         </div>

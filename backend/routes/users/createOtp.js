@@ -7,12 +7,13 @@ const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 export const createOtp = async (account) => {
   const output = {
     success: false,
+    nick_name: "",
     error: "",
-    data: {},
+    token: {},
   };
 
   // 先確認帳號是否存在
-  const sqlUsers = `SELECT user_id, account FROM users WHERE account = '${account}'`;
+  const sqlUsers = `SELECT user_id, account, nick_name FROM users WHERE account = '${account}'`;
   const [users] = await db.query(sqlUsers);
 
   if (!users.length) {
@@ -30,7 +31,7 @@ export const createOtp = async (account) => {
 
     if (!(now - otpTimestamp > 60 * 1000)) {
       // 1. 有 otp 且 60 秒內重新申請 不能產生 OTP (return)
-      output.error = '需等候 60 秒才能再次請求新的驗證碼';
+      output.error = "需等候 60 秒才能再次請求新的驗證碼";
       return output;
     } else {
       // 2. 有 otp 但 60 秒已過 可以產生新的 OTP (update)
@@ -46,7 +47,8 @@ export const createOtp = async (account) => {
         const sql = `UPDATE otp SET ? WHERE account = '${account}'`;
         const [result] = await db.query(sql, newOtp);
         output.success = !!result.affectedRows;
-        output.data = otpToken;
+        output.token = otpToken;
+        output.nick_name = users[0].nick_name;
       } catch (ex) {
         output.success = false;
         output.error = ex;
@@ -72,7 +74,8 @@ export const createOtp = async (account) => {
       const [result] = await db.query(sql, [newOtp]);
 
       output.success = !!result.affectedRows;
-      output.data = otpToken;
+      output.token = otpToken;
+      output.nick_name = users[0].nick_name;
     } catch (ex) {
       output.success = false;
       output.error = ex;

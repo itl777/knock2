@@ -5,7 +5,8 @@ import IndexLayout from '@/components/layout'
 
 import ChatDisplay from '@/pages/teams/chat'
 
-import { CHAT_GET } from '@/configs/api-path'
+// import { CHAT_GET } from '@/configs/api-path'
+import { ONE_TEAM } from '@/configs/api-path'
 
 import styles from './teams.module.css'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
@@ -28,21 +29,21 @@ export default function TeamInfo() {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
   }
 
-  const getDifficultyColor = (difficulty) => {
+  const getDifficulty = (difficulty) => {
     switch (difficulty) {
       case 'EASY':
-        return '#63AA90' // 黑色
+        return styles.diffeasy
       case 'MEDIUM':
-        return '#B99755' // 白色
+        return styles.diffmedium
       case 'HARD':
-        return '#A43131' // 藍色
+        return styles.diffhard
       default:
-        return '#222222' // 默認顏色
+        return styles.difficulty
     }
   }
 
   const getTeam = async (team_id) => {
-    const url = 'http://localhost:3001/teams/api/' + team_id
+    const url = ONE_TEAM + team_id
 
     try {
       const res = await fetch(url)
@@ -93,7 +94,7 @@ export default function TeamInfo() {
 
   return (
     <>
-      <IndexLayout title="糾團">
+      <IndexLayout title="糾團" background="dark">
         <div className={styles.teamsPage}>
           <div className={styles.pageTitle}>
             <h2>團隊內頁</h2>
@@ -110,7 +111,7 @@ export default function TeamInfo() {
                       <div className="col-9">
                         <div className="teamTitle">
                           <h3>{oneTeam.theme_name}</h3>
-                          難度:<span style={{ bgcolor: getDifficultyColor(oneTeam.difficulty) }}>{oneTeam.difficulty}</span>
+                          <span className={`${getDifficulty(oneTeam.difficulty)}`}>{oneTeam.difficulty}</span>
                         </div>
                         <h5>團名：{oneTeam.team_title}</h5>
                         <p>
@@ -152,7 +153,7 @@ export default function TeamInfo() {
               </div>
             </div>
             <div className="row">
-              <ChatDisplay />
+              <ChatDisplay chat_at={oneTeam.team_id} />
             </div>
           </div>
         </div>

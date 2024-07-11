@@ -16,7 +16,7 @@ export const schemaLoginForm = z.object({
       required_error: '請填寫密碼',
     })
     .min(8, {
-      message: '密碼長度至少為 8 個字元',
+      message: '請填寫密碼，至少為 8 個字元',
     })
     .max(100, {
       message: '密碼長度最多為 100 個字元',
@@ -40,7 +40,7 @@ export const schemaRegisterForm = z
         required_error: '請填寫密碼',
       })
       .min(8, {
-        message: '密碼長度至少為 8 個字元',
+        message: '請填寫密碼，至少為 8 個字元',
       })
       .max(100, {
         message: '密碼長度最多為 100 個字元',

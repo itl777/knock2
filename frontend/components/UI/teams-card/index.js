@@ -44,6 +44,9 @@ export default function Card01({
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
   }
+  const formatTime = (timeString) => {
+    return moment(timeString, 'HH:mm:ss').format('A hh:mm')
+  }
 
   return (
     <Card
@@ -131,9 +134,9 @@ export default function Card01({
         <span>團長：{rick_name}</span>
         <br />
         <span>
-          日期：{formatDateToTaiwan(reservation_date)} {start_time}
+          時間：{formatDateToTaiwan(reservation_date)} {formatTime(start_time)}
         </span>
-        <span>時間長度：{themeTime} 分鐘</span>
+        <span>長度：{themeTime} 分鐘</span>
       </CardContent>
       <CardOverflow>
         <CardContent

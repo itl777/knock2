@@ -17,7 +17,7 @@ export default function DropZone({
             ${isDragReject ? styles.reject : ''}
                 `,
         })}
-        Ｆ
+        
         style={{ width: '100%', backgroundColor: '#aaaaaa' }}
       >
         <input {...getInputProps()} />

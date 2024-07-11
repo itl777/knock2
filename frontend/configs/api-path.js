@@ -4,10 +4,13 @@ export const API_SERVER = 'http://localhost:3001'
 
 // users
 export const JWT_LOGIN_POST = `${API_SERVER}/users/login-jwt`
+export const VERIFY_TOKEN_POST = `${API_SERVER}/users/verify-token`
 export const GOOGLE_LOGIN_POST = `${API_SERVER}/users/google-login`
 export const REGISTER_POST = `${API_SERVER}/users/register`
-export const FORGET_PASSWORD_POST = `${API_SERVER}/users/forgot-password`
-export const VERIFY_TOKEN_POST = `${API_SERVER}/users/verify-token`
+export const OTP_MAIL_POST = `${API_SERVER}/users/otp-mail`
+export const VERIFY_OTP_POST = `${API_SERVER}/users/verify-otp`
+export const RESET_PASSWORD_POST = `${API_SERVER}/users/reset-password`
+
 
 // product image path
 export const PRODUCT_IMG = `${API_SERVER}/images`
@@ -36,10 +39,11 @@ export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
 
 //teams
 export const TEAM_ALL = `${API_SERVER}/teams/apiAll`
-export const CHAT_GET = `${API_SERVER}/teams/api/chat`
+export const ONE_TEAM = `${API_SERVER}/teams/api/`
+export const GET_CHAT = `${API_SERVER}/teams/api/chat/`
 
 //THEME
 export const THEME_LIST = `${API_SERVER}/themes`
 export const BRANCH_LIST = `${API_SERVER}/themes/branches`
 export const THEME_DETAIL = `${API_SERVER}/themes/`
-export const BRANCH_THEMES = `${API_SERVER}/themes/branch-themes`
+export const BRANCH_THEMES = `${API_SERVER}/themes/second`

@@ -7,6 +7,9 @@ import upload from "../../utils/upload-avatar.js";
 import schemaForm from "./schema-profile.js";
 import transporter from "../../configs/mail.js";
 import { createOtp } from "./createOtp.js";
+import { mailHtml } from "./mail-html.js";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
@@ -72,16 +75,51 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
 });
 
 // 驗證 jwt token
-router.post("/verify-token", (req, res) => {
-  const output = { success: true, payload: {} };
+router.post("/verify-token", async (req, res) => {
+  console.log(!req.body.token, "111");
+
+  if (!req.body.token) return res.json(output);
+  console.log(!req.body.token, "222");
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    data: {
+      id: 0,
+      nickname: "",
+      avatar: "",
+      token: "",
+    },
+  };
+
+  let payload = {};
+
   try {
-    output.payload = jwt.verify(req.body.token, process.env.JWT_KEY);
+    payload = jwt.verify(req.body.token, process.env.JWT_KEY);
   } catch (ex) {
     // 如果 token 是無效的
-    output.payload = req.body.token;
+    output.code = 400;
+    output.error = "無效的 token";
     output.success = false;
+    return res.json(output);
   }
 
+  try {
+    const sql = "SELECT user_id,nick_name,avatar FROM users WHERE user_id=?";
+    const [rows] = await db.query(sql, [payload.id]);
+    output.data = {
+      id: rows[0].user_id,
+      nickname: rows[0].nick_name,
+      avatar: rows[0].avatar,
+      token: req.body.token,
+    };
+  } catch (ex) {
+    output.error = ex;
+    output.success = false;
+    return res.json(output);
+  }
+
+  output.success = true;
   res.json(output);
 });
 
@@ -260,8 +298,8 @@ router.post("/register", async (req, res) => {
   res.json(output);
 });
 
-// forgot-password 忘記密碼的api
-router.post("/forgot-password", async (req, res) => {
+// otp-mail 發送忘記密碼email的api
+router.post("/otp-mail", async (req, res) => {
   const output = {
     success: false,
     error: "",
@@ -270,33 +308,37 @@ router.post("/forgot-password", async (req, res) => {
 
   const { account } = req.body;
 
-  const otpCode = await createOtp(account);
+  const otpResult = await createOtp(account);
 
-  if (!otpCode.success) {
-    return res.json(otpCode);
+  if (!otpResult.success) {
+    return res.json(otpResult);
   }
+
+  const payload = {
+    account: account,
+    otp: otpResult.token,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_KEY);
+  const link = `http://localhost:3000/user/reset-password?t=${token}`;
+
+  console.log(token, "token");
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
 
   // 寄送 email
   const mailOptions = {
     from: `"support"<${process.env.SMTP_TO_EMAIL}>`,
     to: account,
-    subject: "重置您的密碼 - OTP 認證碼",
-    text: `
-      親愛的用戶，
-
-      您收到這封郵件是因為您請求了密碼重置。請使用以下一次性密碼 (OTP) 完成您的密碼重置流程：
-
-      OTP 認證碼：${otpCode.data}
-
-      此認證碼將在 10 分鐘內有效。請勿將此認證碼告訴他人。如非您本人操作，請忽略此郵件，您的帳號仍然是安全的。
-
-      感謝您的使用！
-
-      祝您順利，
-
-
-      悄瞧 knock knock   團隊
-    `,
+    subject: "重置您的密碼 - 悄瞧 團隊",
+    html: mailHtml(otpResult.nick_name, link),
+    attachments: [
+      {
+        filename: "logo.png",
+        path: join(__dirname, "./mail-img/logo.png"),
+        cid: "logo@nodemailer.com",
+      },
+    ],
   };
 
   transporter.sendMail(mailOptions, (err, response) => {
@@ -313,6 +355,118 @@ router.post("/forgot-password", async (req, res) => {
   });
 });
 
+// reset-password" 重設密碼email的api
+router.post("/verify-otp", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    user_id: 0,
+    error: "",
+  };
+
+  const token = req.body.token;
+
+  let payload = {};
+
+  try {
+    payload = jwt.verify(token, process.env.JWT_KEY);
+  } catch (ex) {
+    // 如果 token 是無效的
+    output.code = 400;
+    output.error = "無效的 token";
+    return res.json(output);
+  }
+  // payload = { account: 'knockk2411@gmail.com', otp: '134753', iat: 1720577779 }
+  const { account, otp } = payload;
+
+  const sql = "SELECT user_id, token, exp_timestamp FROM otp WHERE account=?";
+  const [[row]] = await db.query(sql, [account]);
+  // row = { token: '134753', exp_timestamp: 1720578379113 } 已算上 10 分鐘
+
+  if (!row) {
+    output.code = 401;
+    output.error = "沒有發送otp紀錄";
+    return res.json(output);
+  }
+
+  if (payload.otp !== row.token || Date.now() > row.exp_timestamp) {
+    // 如果傳來的otp跟資料庫不同 或 otp已經過期
+    output.code = 403;
+    output.error = "驗證碼不正確或已經過期";
+    return res.json(output);
+  }
+
+  // 如果都通過檢查
+  output.user_id = row.user_id;
+  output.success = true;
+  return res.json(output);
+});
+
+// reset-password" 重設密碼email的api
+router.put("/reset-password", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+  };
+
+  const { old_password, new_password, user_id } = req.body.data;
+
+  try {
+    const sql = "SELECT password FROM users WHERE user_id=?";
+    const [[row]] = await db.query(sql, [user_id]);
+    if (req.body.isLogin) {
+      // 如果有登入 - 驗證舊密碼是否正確
+      const result = await bcrypt.compare(old_password, row.password);
+      if (!result) {
+        // 密碼是錯的
+        output.code = 420;
+        output.error = "舊密碼輸入錯誤，請重新輸入";
+        return res.json(output);
+      }
+    } else {
+      // 如果沒登入 - 驗證新密碼跟舊密碼是否相同
+      const result = await bcrypt.compare(new_password, row.password);
+      if (result) {
+        // 密碼相同
+        output.code = 421;
+        output.error = "新密碼與舊密碼不能相同，請重新輸入";
+        return res.json(output);
+      }
+    }
+  } catch (ex) {
+    output.code = 440;
+    output.error = "找不到此筆帳號";
+    return res.json(output);
+  }
+
+  // 舊密碼正確 或 忘記密碼 - 修改密碼
+  const new_password_hash = await bcrypt.hash(new_password, 12);
+  try {
+    const sql = "UPDATE users SET password=? WHERE user_id=?";
+    const [result] = await db.query(sql, [new_password_hash, user_id]);
+    output.success = !!result.affectedRows;
+  } catch (ex) {
+    console.error(ex);
+    output.code = 441;
+    output.error = "無法更新密碼";
+    return res.json(output);
+  }
+
+  if (!req.body.isLogin && output.success) {
+    // 如果是登入且修改密碼成功 刪除otp紀錄
+    try {
+      const sql = "DELETE FROM otp WHERE user_id=?";
+      await db.query(sql, [user_id]);
+    } catch (ex) {
+      console.error(ex);
+    }
+  }
+
+  return res.json(output);
+});
+
+// google login 的api
 router.post("/google-login", async (req, res) => {
   const output = {
     success: false,

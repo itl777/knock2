@@ -1,40 +1,56 @@
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { CHAT_GET } from '@/configs/api-path'
+import moment from 'moment-timezone'
+import { GET_CHAT } from '@/configs/api-path'
 import styles from './teams.module.css'
-import PdBtnContained from '@/components/UI/pd-btn-contained'
 
-export default function ChatDisplay({
-  chat_at = 0,
-  chat_by = 0,
-  nick_name = '暱稱',
-  avatar = 'default.png',
-  chat_text = '留言內容',
-  create_at = '留言時間',
-}) {
+const ChatDisplay = ({ chat_at }) => {
+  const [chatData, setChatData] = useState([])
+
+  const fetchChatData = async (chat_at) => {
+    const url = GET_CHAT + chat_at
+    try {
+      const resChat = await fetch(url)
+      const resChatData = await resChat.json()
+
+      if (resChatData.success) {
+        setChatData(resChatData.data)
+      }
+    } catch (e) {
+      console.error("Error fetching chat data: ", e)
+    }
+  }
+
+  useEffect(() => {
+    if (chat_at) {
+      fetchChatData(chat_at)
+    }
+  }, [chat_at])
+
   return (
     <>
       <div className={styles.borderbox}>
-        <h4>留言給團長</h4>
-        <form>
-          <inputarea></inputarea>
-        </form>
-        <div style={{ textAlign: 'center' }}>
-          <PdBtnContained btnText="送出留言" color="grey" />
+        <div className="container">
+          <div className="row">
+            <h4>留言區</h4>
+          </div>
+          <div className="row">
+            {chatData.map((chat) => (
+              <div key={chat.chat_id}>
+                <div className="row">
+                  {/* <img src={`/${chat.avatar}`} alt={`${chat.nick_name} avatar`} /> */}
+                  <div>
+                    {chat.nick_name} {moment(chat.create_at).tz('Asia/Taipei').format('YYYY年MM月DD日 HH:mm')}
+                  </div>
+                  <div>{chat.chat_text}</div>
+                  <hr />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-
-      <div className={styles.borderbox}>
-        <div>
-          <h4>留言區</h4>
-        </div>
-        <img src={`/${avatar}`} />
-        <div>
-          {nick_name} {create_at}
-        </div>
-        <div>{chat_text}</div>
-        <hr />
       </div>
     </>
   )
 }
+
+export default ChatDisplay

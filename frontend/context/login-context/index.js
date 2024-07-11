@@ -12,7 +12,7 @@ const LoginContext = createContext()
 
 export function LoginContextProvider({ children }) {
   // context
-  const { auth, login, googleLogin, register, forgotPassword } = useAuth()
+  const { auth, login, googleLogin, register, otpMail } = useAuth()
   const { openSnackbar } = useSnackbar()
   const { getOAuth } = useFirebase()
 
@@ -126,7 +126,6 @@ export function LoginContextProvider({ children }) {
   }
 
   // ForgotPassword
-  const [otpData, setOtpData] = useState('')
   const [forgotPasswordState, setForgotPasswordState] = useState(false) // open close
   const [forgotPasswordData, setForgotPasswordData] = useState({
     account: '',
@@ -143,6 +142,8 @@ export function LoginContextProvider({ children }) {
   const forgotPasswordSubmit = async (e) => {
     e.preventDefault()
     // 資料驗證
+    setFormatTime('00:00')
+
     const fpValidationResult =
       schemaForgetPasswordForm.safeParse(forgotPasswordData)
     const newForgotPasswordErrors = {
@@ -155,18 +156,18 @@ export function LoginContextProvider({ children }) {
         for (let issue of fpValidationResult.error.issues) {
           newForgotPasswordErrors[issue.path[0]] = issue.message
         }
-
         setForgotPasswordErrors(newForgotPasswordErrors)
       }
-
+      setFormatTime('ok')
       return // 表單資料沒有驗證通過就直接返回
     }
 
     // 驗證成功，包裝送後端 OTP
 
-    let result = await forgotPassword(forgotPasswordData.account)
+    let result = await otpMail(forgotPasswordData.account)
     if (result.success) {
       // 如果發送成功
+      startCountdownTimer(60)
       setForgotPasswordData({ account: '' })
       setForgotPasswordErrors({ account: '', result: '' })
       openSnackbar('發送成功', 'success')
@@ -174,11 +175,13 @@ export function LoginContextProvider({ children }) {
       // 如果發送失敗
       console.error(result.error)
       openSnackbar(result.error, 'error')
+      setFormatTime('ok')
     }
   }
 
   // FormSwitch
   const loginFormSwitch = (formName) => {
+    stopCountdownTimer(0)
     setLoginData({ account: '', password: '' })
     setRegisterData({
       account: '',
@@ -245,27 +248,73 @@ export function LoginContextProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // countdown
+
+  const [countdown, setCountdown] = useState(0)
+  const [formatTime, setFormatTime] = useState('ok')
+
+  useEffect(() => {
+    if (countdown <= 0) return
+    const intervalId = setInterval(() => {
+      setCountdown(countdown - 1)
+
+      const newFormatTime = format(countdown - 1)
+      if (newFormatTime === '00:00') {
+        setFormatTime('ok')
+      } else {
+        setFormatTime(newFormatTime)
+      }
+    }, 1000)
+
+    return () => clearInterval(intervalId)
+  }, [countdown])
+
+  const startCountdownTimer = (seconds) => {
+    setCountdown(seconds)
+    setFormatTime(format(seconds))
+  }
+
+  const stopCountdownTimer = () => {
+    setCountdown(0)
+    setFormatTime('ok')
+  }
+
+  const format = (seconds) => {
+    const minutes = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${minutes.toString().padStart(2, '0')}:${secs
+      .toString()
+      .padStart(2, '0')}`
+  }
+
   return (
     <LoginContext.Provider
       value={{
+        // Login
         loginModalState,
         loginData,
         loginErrors,
         handleLoginChange,
         loginSubmit,
+        // Register
         registerState,
         registerData,
         registerErrors,
         handleRegisterChange,
         registerSubmit,
+        // ForgotPassword
         forgotPasswordState,
         forgotPasswordData,
         forgotForgotPasswordErrors,
         handleForgotPasswordChange,
         forgotPasswordSubmit,
-        otpData,
-        setOtpData,
+        // FormSwitch
         loginFormSwitch,
+        //CountdownTimer
+        countdown,
+        formatTime,
+        startCountdownTimer,
+        stopCountdownTimer,
       }}
     >
       {children}
