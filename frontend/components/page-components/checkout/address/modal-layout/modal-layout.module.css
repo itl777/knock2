@@ -1,0 +1,36 @@
+.modalBody {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.title {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  padding: 0 1.5rem;
+  background-color: white;
+  font-size: 1.25rem;
+  font-weight: bold;
+  height: 4.5rem;
+  line-height: 4.5rem;
+}
+
+.modalContent {
+  width: 100%;
+  overflow-y: auto;
+  padding: 0.5rem 1.5rem 3rem 1.5rem;
+}
+
+.btnBar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  width: 100%;
+  height: 5rem;
+  bottom: 0;
+  padding: 1rem 1.5rem;
+  background-color: white;
+}

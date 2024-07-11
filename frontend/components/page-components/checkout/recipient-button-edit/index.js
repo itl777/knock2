@@ -2,10 +2,11 @@
 import styles from './recipient-button-edit.module.css'
 import { useState } from 'react'
 import { styled } from '@mui/material/styles'
-import { CHECKOUT_DELETE_ADDRESS } from '@/configs/api-path'
+// contexts
+import { useAddress } from '@/context/address-context'
+// components
 import TextButton from '@/components/UI/text-button'
-import EditRecipientModalBody from '../edit-recipient-modal-body'
-import BasicModal from '@/components/UI/basic-modal'
+// icons
 import { FaPhoneAlt } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 
@@ -35,57 +36,9 @@ export default function RecipientButtonEdit({
   phone = '無收件手機',
   address = '無收件地址',
   href = '/',
-  updateFetch, // 更新成員地址列表的函數
-  addressId, // 接收父層資料
-  memberId, // 接收父層資料
-  memberAddress, // 接收父層資料
-  updateSelectedAddress, // 傳至父層
-  closeRecipientModal, // 點擊使用自動關閉 modal
+  addressId, // 接收父層 SelectAddressModal 資料
 }) {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-
-  const openEditModal = () => {
-    setIsEditModalOpen(true)
-  }
-
-  const closeEditModal = () => {
-    setIsEditModalOpen(false)
-  }
-
-  const selectAddress = () => {
-    const updatedSelectedAddresses = memberAddress.map((v) => ({
-      ...v,
-      selected: v.id === addressId, // 選中的 addressId = true, 其餘為 false
-    }))
-    updateSelectedAddress(updatedSelectedAddresses)
-    console.log(
-      'update selected selected address from use button',
-      addressId,
-      updatedSelectedAddresses
-    )
-
-    if (closeRecipientModal) {
-      closeRecipientModal();
-    }
-  }
-
-  const handleDelete = async () => {
-    try {
-      const response = await fetch(`${CHECKOUT_DELETE_ADDRESS}/${addressId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-      })
-      const data = await response.json()
-      if (data.success) {
-        updateFetch() // 成功刪除後，執行 updateFetch 來更新成員地址列表
-        console.log(`delete address is: ${addressId}`)
-      } else {
-        console.error('地址刪除失敗', data)
-      }
-    } catch (error) {
-      console.error('刪除地址時出錯', error)
-    }
-  }
+  const { handleAddressDelete, handleSelectAddress } = useAddress()
 
   return (
     <div>
@@ -96,25 +49,24 @@ export default function RecipientButtonEdit({
             <TextButton
               btnText="刪除"
               type="sec"
-              onClick={handleDelete}
+              onClick={() => {
+                handleAddressDelete(addressId)
+              }}
               href={null}
             />
 
             <div className={styles.btnDivider}> </div>
 
-            <TextButton
-              btnText="編輯"
-              type="sec"
-              onClick={openEditModal}
-              href={null}
-            />
+            <TextButton btnText="編輯" type="sec" href={null} />
 
             <div className={styles.btnDivider}> </div>
 
             <TextButton
               btnText="使用"
               type="pri"
-              onClick={selectAddress}
+              onClick={() => {
+                handleSelectAddress(addressId)
+              }}
               href={null}
             />
           </div>
@@ -129,13 +81,6 @@ export default function RecipientButtonEdit({
           <span>{address}</span>
         </div>
       </RecipientBtnEdit>
-
-      <BasicModal
-        modalTitle="編輯收件人資料"
-        open={isEditModalOpen}
-        handleClose={closeEditModal}
-        modalBody={<EditRecipientModalBody handleClose={closeEditModal} />}
-      />
     </div>
   )
 }

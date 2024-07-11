@@ -1,6 +1,9 @@
 import styles from './recipient-button-selected.module.css'
 import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
+// contexts
+import { useAddress } from '@/context/address-context';
+// icons
 import { FaPhoneAlt } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 import { IoIosArrowForward } from 'react-icons/io'
@@ -27,10 +30,11 @@ export default function RecipientButtonSelected({
   recipientName = '',
   recipientMobile = '',
   address = '',
-  onClick = () => {},
 }) {
+  const { openAddressSelectModal } = useAddress();
+
   return (
-    <RecipientBtnSelected onClick={onClick}>
+    <RecipientBtnSelected onClick={openAddressSelectModal}>
       <div className={styles.infoBox}>
         <p>{recipientName}</p>
         <div className={styles.iconTextRow}>

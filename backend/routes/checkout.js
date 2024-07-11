@@ -396,14 +396,14 @@ router.get("/api/member_address", async (req, res) => {
       WHERE a.user_id =  ?;
     `;
 
-    const [memberAddresses] = await db.query(sql, [member_id]);
+    const [rows] = await db.query(sql, [member_id]);
 
-    console.log("member address: ", memberAddresses);
+    console.log("member address: ", rows);
 
     // 將查詢結果傳送到前端
     res.json({
       status: true,
-      memberAddresses: memberAddresses,
+      rows,
     });
   } catch (error) {
     console.error("Error fetching member addresses: ", error);
