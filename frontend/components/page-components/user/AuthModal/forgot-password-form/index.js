@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import OTPInput from '@/components/UI/form-item/otp-input'
 import ThirdPartyLoginButton from '../third-party-login-button'
 import { useLoginModal } from '@/context/login-context/index'
 
@@ -30,10 +29,10 @@ export default function ForgotPasswordForm() {
     forgotForgotPasswordErrors,
     handleForgotPasswordChange,
     forgotPasswordSubmit,
-    otpData,
-    setOtpData,
     loginFormSwitch,
+    formatTime,
   } = useLoginModal()
+
   return (
     <>
       <ThemeProvider theme={dialogTheme}>
@@ -59,10 +58,17 @@ export default function ForgotPasswordForm() {
                 {forgotForgotPasswordErrors.account}
                 {forgotForgotPasswordErrors.result}
               </span>
-              <OTPInput value={otpData} onChange={setOtpData} />
             </div>
             <div className={styles.box}>
-              <input type="submit" value="送出" />
+              <input
+                type="submit"
+                value={
+                  formatTime === 'ok'
+                    ? '送出'
+                    : `請等候 ${formatTime} 秒後才能重新發送`
+                }
+                disabled={formatTime === 'ok' ? false : true}
+              />
             </div>
             <div className={styles.links}>
               <Link
@@ -71,7 +77,7 @@ export default function ForgotPasswordForm() {
                   loginFormSwitch('Login')
                 }}
               >
-                <span>想起密碼了？ 返回登入</span>
+                <span>想起密碼了嗎？ 返回登入</span>
               </Link>
             </div>
             <div className={styles.links}>

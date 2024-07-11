@@ -68,6 +68,7 @@ export default function Navbar({ pageName }) {
         <AuthModal />
         <nav>
           <NavbarIcon
+            key={auth}
             handleNavMenuOpen={handleNavMenuOpen}
             handleMobileMenu={handleMobileMenu}
           />
