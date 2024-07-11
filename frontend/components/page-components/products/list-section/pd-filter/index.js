@@ -9,6 +9,8 @@ import PriceSlider from './price-slider'
 import { useRouter } from 'next/router'
 import OutlineBtn from '@/components/UI/outline-btn'
 import { useSnackbar } from '@/context/snackbar-context'
+import { MdOutlineAttachMoney } from 'react-icons/md'
+import { TfiMoney } from "react-icons/tfi";
 
 export default function PdFilter() {
   const { openSnackbar } = useSnackbar()
@@ -79,9 +81,11 @@ export default function PdFilter() {
               <div
                 className={`${myStyle['bottom-center']} col-lg-4 d-flex flex-column justify-content-center align-items-center`}
               >
-                {/* <div className="text">
-                <div className={myStyle.text}>價格範圍</div>
-              </div> */}
+                <div className={myStyle.text}>
+                  {/* <MdOutlineAttachMoney /> */}
+                  <TfiMoney/>
+                  {/* <div className={myStyle.text}>$</div> */}
+                </div>
                 <div>
                   <PriceSlider />
                 </div>

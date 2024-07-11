@@ -18,7 +18,6 @@ export default function PdBtnOutlined({ btnText = '沒設定', onClick }) {
   const btnWidth = size > 576 ? '11.25rem' : 'auto'
   const btnFontSize = size > 576 ? '18px' : '14px'
 
-  console.log('size > 576 ', size > 576)
 
   return (
     <>

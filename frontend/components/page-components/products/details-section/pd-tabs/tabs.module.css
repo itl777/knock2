@@ -20,3 +20,8 @@
     background: #d9d9d9;
   }
 
+  .description{
+    margin-bottom: 1.25rem;
+    text-indent: 2em;
+    text-align:justify;
+  }
