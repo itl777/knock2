@@ -8,10 +8,10 @@ import { styled, ThemeProvider, createTheme } from '@mui/material/styles'
 // context
 import { useCart } from '@/context/cart-context'
 // components
-import CheckoutTotalTable from '@/components/page-components/checkout/checkout-total-table'
-import BlackBtn from '../black-btn'
-import OrderItemCheckout from '@/components/page-components/orders/order-item-checkout'
-import EmptyCart from '@/components/page-components/checkout/empty-cart'
+import CheckoutTotalTable from '../checkout-total-table'
+import BlackBtn from '@/components/UI/black-btn'
+import OrderItemCheckout from '../../orders/order-item-checkout'
+import EmptyCart from '../empty-cart'
 // icons
 import { FaCartShopping } from 'react-icons/fa6'
 // api path
@@ -32,7 +32,7 @@ const drawerTheme = createTheme({
       styleOverrides: {
         paper: {
           width: '40%',
-          maxWidth: '480',
+          maxWidth: '480px',
           minWidth: '352px',
           backgroundColor: 'white',
           '@media (max-width:400px)': {
