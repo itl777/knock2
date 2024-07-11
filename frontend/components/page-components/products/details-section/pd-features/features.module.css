@@ -14,6 +14,10 @@
   /* margin-bottom: 5rem; */
   padding:0;
 }
+
+.tag{
+  padding: 0.25rem 1rem;
+}
 .slick{
   height: auto;
 }
@@ -103,7 +107,7 @@
   position: absolute;
   right: 14px;
   top: -22px;
-  z-index: 100;
+  z-index: 3;
 }
 .btn-group{
   display: flex;
@@ -142,7 +146,8 @@
   width: 100%;
   background-color: #d9d9d9;
   z-index: 100;
-  padding-top: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   }
 
 }
@@ -164,8 +169,22 @@
 }
 
 @media screen and (max-width: 576px) {
+  .content{
+    display: none;
+  }
+  .features-right{
+    height: 8.75rem;
+      
+    }
+  .tag{
+    padding: 0.25rem;
+  }
  .features-right{
   padding-left: 10px;
   padding-right: 10px;
  }
+
+ .input-border{
+  margin:0 ;
+}
 }
