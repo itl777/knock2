@@ -1,13 +1,14 @@
 import Banner from './banner/banner'
 import Item from './item/item'
-import Reservation from './reservation/reservation'
+import Step from './step/step'
 
 export default function DetailSection() {
   return (
     <>
       <Banner />
       <Item />
-      <Reservation />
+      <Step />
+      {/* <Reservation /> */}
     </>
   )
 }
