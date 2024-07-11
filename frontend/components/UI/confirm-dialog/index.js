@@ -5,6 +5,7 @@ import OutlineBtn from '../outline-btn'
 import styles from './confirm-dialog.module.css'
 import Dialog from '@mui/material/Dialog'
 import Slide from '@mui/material/Slide'
+import { useConfirmDialog } from '@/context/confirm-dialog-context'
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />
@@ -30,21 +31,20 @@ const theme = createTheme({
 })
 
 export default function ConfirmDialog({
-  open,
-  onClose,
-  onClickLeft,
-  onClickRight,
   dialogTitle = '標題',
   btnTextRight = '確定',
   btnTextLeft = '取消',
 }) {
+
+  const { isConfirmDialogOpen, closeConfirmDialog, handleConfirm } = useConfirmDialog()
+
   return (
     <ThemeProvider theme={theme}>
       <Dialog
-        open={open}
+        open={isConfirmDialogOpen}
+        onClose={closeConfirmDialog}
         TransitionComponent={Transition}
         keepMounted
-        onClose={onClose}
       >
         <img src="/ghost/ghost_14.png" className={styles.dialogImg} />
 
@@ -54,13 +54,13 @@ export default function ConfirmDialog({
           <OutlineBtn
             btnText={btnTextLeft}
             paddingType="medium"
-            onClick={onClickLeft}
+            onClick={closeConfirmDialog}
             href={null}
           />
           <RedBtn
             btnText={btnTextRight}
             paddingType="medium"
-            onClick={onClickRight}
+            onClick={handleConfirm}
             href={null}
           />
         </div>

@@ -4,8 +4,10 @@ import { useState } from 'react'
 import { styled } from '@mui/material/styles'
 // contexts
 import { useAddress } from '@/context/address-context'
+import { useConfirmDialog } from '@/context/confirm-dialog-context'
 // components
 import TextButton from '@/components/UI/text-button'
+import ConfirmDialog from '@/components/UI/confirm-dialog'
 // icons
 import { FaPhoneAlt } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
@@ -39,6 +41,11 @@ export default function RecipientButtonEdit({
   addressId, // 接收父層 SelectAddressModal 資料
 }) {
   const { handleAddressDelete, handleSelectAddress } = useAddress()
+  const { openConfirmDialog } = useConfirmDialog()
+
+  const handleDeleteClick = () => {
+    openConfirmDialog(() => handleAddressDelete(addressId))
+  }
 
   return (
     <div>
@@ -49,9 +56,7 @@ export default function RecipientButtonEdit({
             <TextButton
               btnText="刪除"
               type="sec"
-              onClick={() => {
-                handleAddressDelete(addressId)
-              }}
+              onClick={handleDeleteClick}
               href={null}
             />
 
@@ -81,6 +86,12 @@ export default function RecipientButtonEdit({
           <span>{address}</span>
         </div>
       </RecipientBtnEdit>
+
+      <ConfirmDialog
+        dialogTitle="確定要刪除地址嗎？"
+        btnTextRight="確定刪除"
+        btnTextLeft="取消"
+      />
     </div>
   )
 }

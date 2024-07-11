@@ -28,7 +28,6 @@
 .checkoutLeft {
   width: 50%;
   padding: var(--content-padding);
-  background-color: #f2f2f2;
 }
 
 .checkoutRight {
@@ -69,5 +68,15 @@
 
   .checkoutRightMain {
     display: flex;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .checkoutLeft {
+    padding: 1.5rem;
+  }
+  
+  .checkoutRight {
+    padding: 1.5rem;
   }
 }

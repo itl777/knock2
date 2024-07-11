@@ -39,8 +39,7 @@ export const AddressProvider = ({ children }) => {
 
       if (!orderAddress) {
         const newOrderAddress =
-          data.rows.find((v) => v.type === '1') ||
-          data.rows[0]
+          data.rows.find((v) => v.type === '1') || data.rows[0]
 
         setOrderAddress(newOrderAddress)
       }
@@ -80,7 +79,7 @@ export const AddressProvider = ({ children }) => {
       const data = await response.json()
       if (data.success) {
         fetchMemberAddress() // 成功刪除後，更新前端會員地址資料
-        if (addressId === orderAddress.id ) {
+        if (addressId === orderAddress.id) {
           setOrderAddress(null)
         }
         console.log(`delete address is: ${addressId}`)
@@ -124,14 +123,13 @@ export const AddressProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    if (!!memberAddress){
+    if (!!memberAddress) {
       const newOrderAddress = memberAddress.find((v) => v.id === newAddressId)
       if (newOrderAddress) {
         setOrderAddress(newOrderAddress)
       }
     }
   }, [memberAddress, newAddressId])
-
 
   return (
     <AddressContext.Provider
@@ -158,23 +156,3 @@ export const AddressProvider = ({ children }) => {
     </AddressContext.Provider>
   )
 }
-
-// 設定使用的地址
-// const handleSelectAddress = (addressId) => {
-//   const updatedSelectedAddresses = memberAddress.map((v) => ({
-//     ...v,
-//     selected: v.id === addressId, // 選中的 addressId = true, 其餘為 false
-//   }))
-//   setSelectedAddress(updatedSelectedAddresses)
-// }
-
-// 更新已經選擇的地址
-// const handleAddressSelected = (addressId) => {
-//   setMemberAddress(addressId)
-//   setSelectedAddress(addressId)
-// }
-
-// 重新加載成員地址列表
-// const handleUpdateAddresses = () => {
-//   fetchMemberAddress()
-// }

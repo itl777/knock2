@@ -1,6 +1,5 @@
 import styles from './add-address-modal.module.css'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 // context
 import { useAuth } from '@/context/auth-context'
 import { useAddress } from '@/context/address-context'
@@ -109,42 +108,15 @@ export default function AddAddressModal() {
           errorText=""
           onChange={handleInputChange}
         />
-        <OrderInputBox
-          label="地址"
-          name="recipientAddress"
-          value={addAddressData.recipientAddress}
-          onChange={handleInputChange}
-        />
+        <div className={styles.span2}>
+          <OrderInputBox
+            label="地址"
+            name="recipientAddress"
+            value={addAddressData.recipientAddress}
+            onChange={handleInputChange}
+          />
+        </div>
       </form>
     </ModalLayout>
   )
 }
-
-/*
-  const handleAddAddressSubmit = async (e) => {
-    e.preventDefault()
-
-    try {
-      const response = await axios.post(CHECKOUT_ADD_ADDRESS, addAddressData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-
-      console.log(response.data)
-
-      if (response.data.success && !!response.data.addressId) {
-        fetchMemberAddress()
-        setNewAddressId(response.data.addressId)
-        closeAddressAddModal()
-        closeAddressSelectModal()
-      } else {
-        alert('新增失敗！')
-      }
-
-      console.log('new added id', response.data.addressId)
-    } catch (error) {
-      console.error('新增地址錯誤', error)
-    }
-  }
-*/
