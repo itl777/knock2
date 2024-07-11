@@ -12,6 +12,7 @@ export default function Profile() {
   const router = useRouter()
   const [isVerified, setIsVerified] = useState(false)
   const { auth } = useAuth() // 登入狀態的話就直接改密碼，不驗證ＯＴＰ
+  const [user_id, setUser_id] = useState(0)
 
   useEffect(() => {
     if (!router.isReady) return
@@ -27,6 +28,7 @@ export default function Profile() {
         .then((res) => res.json())
         .then((result) => {
           if (result.success) {
+            setUser_id(result.user_id)
             setIsVerified(true)
           } else {
             setIsVerified(false)
@@ -43,7 +45,7 @@ export default function Profile() {
           userTab={auth.id ? <UserTab /> : ''}
           sectionRight={
             isVerified || auth.id ? (
-              <ResetPasswordForm />
+              <ResetPasswordForm user_id={user_id} />
             ) : (
               '驗證連結無效或已經過期，請再重新申請忘記密碼。'
             )

@@ -44,3 +44,20 @@ $border-color: #3399ff;
   border-radius: 8px;
   border: unset;
 }
+
+.input{
+  position: relative;
+  .eyeIcon{
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: #FFFFFF;
+    font-size: 24px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+  }
+}

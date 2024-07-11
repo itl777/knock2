@@ -2,10 +2,11 @@ export const mailHtml = (nick_name, otpLink) => {
   return `
       <section
       style="
+        width: 60%;
+        min-width: 300px;
+        max-width: 550px;
         text-align: center;
         font-size: 16px;
-        width: 60%;
-        min-width: 350px;
         margin: auto;
         background-color: #212429;
         color: #ffffff;

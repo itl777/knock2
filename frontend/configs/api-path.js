@@ -9,7 +9,7 @@ export const GOOGLE_LOGIN_POST = `${API_SERVER}/users/google-login`
 export const REGISTER_POST = `${API_SERVER}/users/register`
 export const OTP_MAIL_POST = `${API_SERVER}/users/otp-mail`
 export const VERIFY_OTP_POST = `${API_SERVER}/users/verify-otp`
-export const RESET_PASSWORD_POST = `${API_SERVER}/users//reset-password`
+export const RESET_PASSWORD_POST = `${API_SERVER}/users/reset-password`
 
 
 // product image path

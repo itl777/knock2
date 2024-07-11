@@ -360,6 +360,7 @@ router.post("/verify-otp", async (req, res) => {
   const output = {
     success: false,
     code: 0,
+    user_id: 0,
     error: "",
   };
 
@@ -378,7 +379,7 @@ router.post("/verify-otp", async (req, res) => {
   // payload = { account: 'knockk2411@gmail.com', otp: '134753', iat: 1720577779 }
   const { account, otp } = payload;
 
-  const sql = "SELECT token, exp_timestamp FROM otp WHERE account=?";
+  const sql = "SELECT user_id, token, exp_timestamp FROM otp WHERE account=?";
   const [[row]] = await db.query(sql, [account]);
   // row = { token: '134753', exp_timestamp: 1720578379113 } 已算上 10 分鐘
 
@@ -396,13 +397,73 @@ router.post("/verify-otp", async (req, res) => {
   }
 
   // 如果都通過檢查
+  output.user_id = row.user_id;
   output.success = true;
   return res.json(output);
 });
 
 // reset-password" 重設密碼email的api
-router.post("/reset-password", async (req, res) => {
-  //
+router.put("/reset-password", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+  };
+
+  const { old_password, new_password, user_id } = req.body.data;
+
+  try {
+    const sql = "SELECT password FROM users WHERE user_id=?";
+    const [[row]] = await db.query(sql, [user_id]);
+    if (req.body.isLogin) {
+      // 如果有登入 - 驗證舊密碼是否正確
+      const result = await bcrypt.compare(old_password, row.password);
+      if (!result) {
+        // 密碼是錯的
+        output.code = 420;
+        output.error = "舊密碼輸入錯誤，請重新輸入";
+        return res.json(output);
+      }
+    } else {
+      // 如果沒登入 - 驗證新密碼跟舊密碼是否相同
+      const result = await bcrypt.compare(new_password, row.password);
+      if (result) {
+        // 密碼相同
+        output.code = 421;
+        output.error = "新密碼與舊密碼不能相同，請重新輸入";
+        return res.json(output);
+      }
+    }
+  } catch (ex) {
+    output.code = 440;
+    output.error = "找不到此筆帳號";
+    return res.json(output);
+  }
+
+  // 舊密碼正確 或 忘記密碼 - 修改密碼
+  const new_password_hash = await bcrypt.hash(new_password, 12);
+  try {
+    const sql = "UPDATE users SET password=? WHERE user_id=?";
+    const [result] = await db.query(sql, [new_password_hash, user_id]);
+    output.success = !!result.affectedRows;
+  } catch (ex) {
+    console.error(ex);
+    output.code = 441;
+    output.error = "無法更新密碼";
+    return res.json(output);
+  }
+
+  if (!req.body.isLogin && output.success) {
+    // 如果是登入且修改密碼成功 刪除otp紀錄
+    try {
+      const sql = "DELETE FROM otp WHERE user_id=?";
+      await db.query(sql, [user_id]);
+    } catch (ex) {
+      console.error(ex);
+    }
+  }
+
+  return res.json(output);
 });
 
 // google login 的api

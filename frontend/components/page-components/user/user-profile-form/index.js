@@ -16,6 +16,7 @@ import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
 import AvatarFormDialogs from './user-avatar-form'
 import schemaForm from './schema-form'
+import BlackBtn from '@/components/UI/black-btn'
 
 export default function UserProfileForm() {
   // useContext
@@ -146,7 +147,6 @@ export default function UserProfileForm() {
 
     // 表單驗證
     const result = schemaForm.safeParse(data.users)
-    console.log(result)
     const newProfileFormErrors = {
       name: '',
       nick_name: '',
@@ -280,6 +280,9 @@ export default function UserProfileForm() {
                 name="password"
                 type="password"
                 value="PasswordPasswordPassword"
+                btn={true}
+                btnHref="/user/reset-password"
+                btnText="修改密碼"
                 disabled={true}
               />
             </div>
@@ -381,7 +384,13 @@ export default function UserProfileForm() {
             </div>
           </div>
           <div className={styles['box2']}>
-            <button type="submit">送出</button>
+            <BlackBtn
+              btnText="儲存"
+              type="submit"
+              href={null}
+              onClick={null}
+              paddingType="medium"
+            />
           </div>
         </form>
       ) : (
