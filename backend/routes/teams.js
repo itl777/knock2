@@ -5,6 +5,75 @@ import { getIdParam } from "../utils/db-tool.js"
 
 const router = express.Router();
 
+// 有搜尋的所有團隊紀錄
+
+const searchData = async (req) => {
+  let success = false;
+  let redirect = "";
+
+  const perPage = 9;
+  let page = parseInt(req.query.page) || 1;
+
+  if (page < 1) {
+    redirect = "?page=1"; //跳轉頁面
+    return { success, redirect };
+  }
+
+  //搜尋排序
+  let userSearch = req.params.user_id || "";
+  let local = req.query.local || "";
+  let start_date = req.query.startdate || "";
+  let end_date = req.query.enddate || "";
+  let team_state = req.query.userSearch || "";
+
+  let sort = req.query.sort || "team_id";
+  const order = req.query.order || "DESC";
+
+  let where = " WHERE 1 ";
+  let rows = [];
+
+  // 如果提供了 user_id，则添加到 WHERE 子句中
+  if (userSearch) {
+    const userSearch_esc = db.escape(`${userSearch}`);
+    where += ` AND (u.user_id = ${userSearch_esc})`;
+  }
+
+  // 构建 SQL 查询语句
+  const sql = `SELECT reservation_id, team_id, team_title, theme_name, difficulty, u.user_id, nick_name, branch_name, reservation_date, s.start_time, s.end_time, theme_img, s.theme_Time
+  FROM reservations r
+  JOIN \`teams_list\` team ON team.tour = reservation_id
+  JOIN \`themes\` t ON branch_themes_id = t.theme_id
+  JOIN \`users\` u ON r.user_id = u.user_id
+  JOIN \`sessions\` s ON r.session_id = s.sessions_id
+  JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
+  JOIN \`branches\` b ON bt.branch_id = b.branch_id
+  ${where} ORDER BY reservation_id DESC LIMIT ${(page - 1) * perPage},${perPage}`;
+
+  // 执行 SQL 查询
+  [rows] = await db.query(sql);
+  success = true;
+
+  return {
+    success,
+    perPage,
+    page,
+    // totalRows,
+    // totalPages,
+    rows,
+    qs: req.query,
+  };
+};
+
+router.get("/apiSearch/", async (req, res) => {
+  const data = await searchData(req);
+  res.json(data);
+});
+
+router.get("/apiSearch/:user_id", async (req, res) => {
+  const data = await searchData(req);
+  res.json(data);
+});
+
 
 // 取得所有團隊紀錄
 
