@@ -110,7 +110,7 @@ export default function CheckoutOffcanvas() {
                   totalDiscount={0}
                 />
                 <BlackBtn
-                  btnText="前往結帳"
+                  btnText="前往購物車"
                   href="/checkout"
                   paddingType="medium"
                 />

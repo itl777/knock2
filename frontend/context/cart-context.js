@@ -138,11 +138,7 @@ export const CartProvider = ({ children }) => {
     }
 
     if (actionType === 'buy') {
-      if (auth.id) {
-        window.location.href = '/checkout'
-      } else {
-        alert('請先登入')
-      }
+      window.location.href = '/checkout'
     }
   }
 
