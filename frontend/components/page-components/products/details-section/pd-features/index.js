@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 
 export default function PdFeatures({ dbData }) {
   const [productData, setProductData] = useState({
+    product_id: '',
     product_name: '',
     price: 0,
     summary: '',
@@ -31,7 +32,7 @@ export default function PdFeatures({ dbData }) {
           <div
             className={`${myStyle['slick']} col-lg-5 px-0 position-relative`}
           >
-            <PdSlick />
+            <PdSlick product_id={productData.product_id}/>
           </div>
 
           {/* 詳情右側 */}
