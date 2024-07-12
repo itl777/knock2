@@ -3,7 +3,7 @@ import Select, { selectClasses } from '@mui/joy/Select'
 import { Option, Typography } from '@mui/joy'
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
 
-export default function Select03({
+export default function Select01({
   name = '',
   defaultValue = '',
   placeholder = '',

@@ -5,6 +5,7 @@ import { CartProvider } from '@/context/cart-context'
 import { AuthContextProvider } from '@/context/auth-context'
 import { SnackbarContextProvider } from '@/context/snackbar-context'
 import { LoginContextProvider } from '@/context/login-context'
+import { DateProvider } from '@/context/date-context' // Import DateProvider
 
 export default function MyApp({ Component, pageProps }) {
   // 使用自訂在頁面層級的版面(layout)
@@ -15,7 +16,11 @@ export default function MyApp({ Component, pageProps }) {
       <SnackbarContextProvider>
         <CartProvider>
           <LoginContextProvider>
-            <Component {...pageProps} />
+            <DateProvider>
+              {' '}
+              {/* Wrap the component tree with DateContextProvider */}
+              <Component {...pageProps} />
+            </DateProvider>
           </LoginContextProvider>
         </CartProvider>
       </SnackbarContextProvider>
