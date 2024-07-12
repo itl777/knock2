@@ -8,7 +8,16 @@ import { TEAM_ALL } from '@/configs/api-path'
 
 import Card from '@/components/UI/teams-card'
 
-export default function TeamListTest() {
+import TeamList from './teamlist'
+
+
+
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
+import Typography from '@mui/material/Typography'
+
+export default function TeamPage() {
   const { login, logout, auth } = useAuth()
 
   const [userData, setUserData] = useState({
@@ -16,28 +25,7 @@ export default function TeamListTest() {
     rows: [],
   })
 
-  const [data, setData] = useState({
-    success: false,
-    rows: [],
-  })
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${TEAM_ALL}`)
-      .then((r) => {
-        if (!r.ok) {
-          throw new Error('Fetch Failed')
-        }
-        return r.json()
-      })
-      .then((myData) => {
-        setData(myData)
-      })
-      .catch((error) => {
-        console.error('Fetch error:', error)
-      })
-  }, [])
+  const [isLoading, setIsLoading] = useState(true)
 
   // 登入者的團隊
   useEffect(() => {
@@ -59,7 +47,7 @@ export default function TeamListTest() {
     fetchUserData()
   }, [auth.id])
 
-  if (isLoading){
+  if (isLoading) {
     return <div>Loading...</div>
   }
 
@@ -77,59 +65,45 @@ export default function TeamListTest() {
               id = {auth.id}
             </div>
             <div className="row">
-              <h4>您的團隊</h4>
-              {userData.rows.map((r, i) => {
-                return (
-                  <div className="col-12 col-md-6 col-lg-4" key={r.team_id}>
-                    <Card
-                      team_id={r.team_id}
-                      key={r.team_id}
-                      branchName={r.branch_name}
-                      themeImg={r.theme_img}
-                      themeName={r.theme_name}
-                      difficulty={r.difficulty}
-                      suitablePlayers={r.suitable_players}
-                      themeTime={r.theme_Time}
-                      nick_name={r.nick_name}
-                      reservation_date={r.reservation_date}
-                      start_time={r.start_time}
-                      team_title={r.team_title}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            <div className="row">
-              <h4>團隊一覽</h4>
-              <hr></hr>
-            </div>
-
-            <div className="row">
-              {data.rows.map((r, i) => {
-                return (
-                  <div className="col-12 col-md-6 col-lg-4" key={r.team_id}>
-                    <Card
-                      team_id={r.team_id}
-                      key={r.team_id}
-                      branchName={r.branch_name}
-                      themeImg={r.theme_img}
-                      themeName={r.theme_name}
-                      difficulty={r.difficulty}
-                      suitablePlayers={r.suitable_players}
-                      themeTime={r.theme_Time}
-                      rick_name={r.nick_name}
-                      reservation_date={r.reservation_date}
-                      start_time={r.start_time}
-                      team_title={r.team_title}
-                    />
-                  </div>
-                )
-              })}
-            </div>
-
-            <div className='row'>
+              <Accordion>
+                <AccordionSummary
+                  aria-controls="panel1-content"
+                  id="panel1-header"
+                >
+                  <Typography>我想開團</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>
+                    <div className="row">
+                      <h4>您的團隊</h4>
+                      {userData.rows.map((r, i) => {
+                        return (
+                          <div className="col-12 col-md-6 col-lg-4" key={r.team_id}>
+                            <Card
+                              team_id={r.team_id}
+                              key={r.team_id}
+                              branchName={r.branch_name}
+                              themeImg={r.theme_img}
+                              themeName={r.theme_name}
+                              difficulty={r.difficulty}
+                              suitablePlayers={r.suitable_players}
+                              themeTime={r.theme_Time}
+                              nick_name={r.nick_name}
+                              reservation_date={r.reservation_date}
+                              start_time={r.start_time}
+                              team_title={r.team_title}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
             </div>
           </div>
+
+          <TeamList />
         </div>
       </IndexLayout>
     </>

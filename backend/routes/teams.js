@@ -32,13 +32,11 @@ const searchData = async (req) => {
   let where = " WHERE 1 ";
   let rows = [];
 
-  // 如果提供了 user_id，则添加到 WHERE 子句中
   if (userSearch) {
     const userSearch_esc = db.escape(`${userSearch}`);
     where += ` AND (u.user_id = ${userSearch_esc})`;
   }
 
-  // 构建 SQL 查询语句
   const sql = `SELECT reservation_id, team_id, team_title, theme_name, difficulty, u.user_id, nick_name, branch_name, reservation_date, s.start_time, s.end_time, theme_img, s.theme_Time
   FROM reservations r
   JOIN \`teams_list\` team ON team.tour = reservation_id
@@ -49,7 +47,6 @@ const searchData = async (req) => {
   JOIN \`branches\` b ON bt.branch_id = b.branch_id
   ${where} ORDER BY reservation_id DESC LIMIT ${(page - 1) * perPage},${perPage}`;
 
-  // 执行 SQL 查询
   [rows] = await db.query(sql);
   success = true;
 
@@ -215,6 +212,28 @@ WHERE chat_at = ${team_id} AND chat_display = 1`;
   res.json({ success: true, data: rows });
 });
 
+// 新增留言的API
+router.post("/api/chat/add", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    result: {},
+  };
+
+  let body = { ...req.body };
+  body.create_at = new Date();
+
+  const { chat_at, chat_by, chat_text } = body;
+  try {
+  const sql = "INSERT INTO `teams_chats` (`chat_at`, `chat_by`, `chat_text`, `create_at`) VALUES (?, ?, ?, ?)";
+  const [result] = await db.query(sql, [chat_at, chat_by, chat_text, body.create_at]);
+
+  }catch (ex) {
+    output.error = ex.message;
+  }
+
+  res.json(output);
+});
 
 export default router;
 
