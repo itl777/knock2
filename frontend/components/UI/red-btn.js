@@ -19,14 +19,14 @@ export default function RedBtn({
         color: 'white',
         fontFamily: 'Noto Serif JP',
         borderRadius: '100px',
-        borderColor: '#A43131',
-        background: '#A43131',
+        borderColor: 'var(--danger)',
+        background: 'var(--danger)',
         fontSize: '16px',
         padding:
           paddingType === 'medium' ? '8px 32px' : '8px 16px',
         ':hover': {
-          color: '#A43131',
-          borderColor: '#A43131',
+          color: 'var(--danger)',
+          borderColor: 'var(--danger)',
         },
       }}
     >

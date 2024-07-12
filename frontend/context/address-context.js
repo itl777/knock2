@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { useAuth } from './auth-context'
 import axios from 'axios'
+// contexts
+import { useSnackbar } from './snackbar-context'
 // api path
 import {
   CHECKOUT_GET_ADDRESS,
@@ -21,6 +23,7 @@ export const AddressProvider = ({ children }) => {
   const [memberAddress, setMemberAddress] = useState([]) // 取得會員 address table 所有地址
   const [orderAddress, setOrderAddress] = useState(null)
   const [newAddressId, setNewAddressId] = useState(0)
+  const { openSnackbar } = useSnackbar() // success toast
 
   // 取得會員地址
   const fetchMemberAddress = async () => {
@@ -79,6 +82,7 @@ export const AddressProvider = ({ children }) => {
       const data = await response.json()
       if (data.success) {
         fetchMemberAddress() // 成功刪除後，更新前端會員地址資料
+        openSnackbar('已成功刪除地址', 'success')
         if (addressId === orderAddress.id) {
           setOrderAddress(null)
         }
@@ -97,6 +101,7 @@ export const AddressProvider = ({ children }) => {
     closeAddressSelectModal()
   }
 
+  // 提交新增地址表單
   const handleAddAddressSubmit = async (addAddressData) => {
     try {
       const response = await axios.post(CHECKOUT_ADD_ADDRESS, addAddressData, {
@@ -112,6 +117,7 @@ export const AddressProvider = ({ children }) => {
         setNewAddressId(response.data.addressId)
         closeAddressAddModal()
         closeAddressSelectModal()
+        openSnackbar('新增地址成功！', 'success')
       } else {
         alert('新增失敗！')
       }

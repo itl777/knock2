@@ -22,7 +22,7 @@ const theme = createTheme({
           overflow: 'visible',
           padding: '1.5rem',
           borderRadius: 'var(--popup-radius)',
-          border: '2px solid #A43131',
+          border: '2px solid var(--danger)',
           width: '400px',
         },
       },

@@ -15,8 +15,8 @@ export default function ModalLayout({
   modalHeight = 'auto',
   isOpen,
   handleClose,
-  onClickRight=handleClose,
-  onClickLeft=handleClose,
+  onClickRight = handleClose,
+  onClickLeft = handleClose,
 }) {
   const theme = createTheme({
     components: {
@@ -40,15 +40,14 @@ export default function ModalLayout({
         <div className={styles.modalBody}>
           {/* 標題 */}
           <div className={styles.title}>{title}</div>
+
           {/* 內容 */}
           <div className={styles.modalContent}>{children}</div>
-
           {/* 按鈕群組 */}
           <div className={styles.btnBar}>
             {!btnLeftHidden && (
               <OutlineBtn
                 btnText={btnTextLeft}
-                // onClick={handleClose}
                 onClick={onClickLeft}
                 href={null}
               />

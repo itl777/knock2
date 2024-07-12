@@ -8,6 +8,7 @@ import {
   CHECKOUT_GET_CART,
   CHECKOUT_UPDATE_CART,
   CART_POST,
+  CHECKOUT_GET_PROFILE,
 } from '@/configs/api-path'
 
 const CartContext = createContext()
@@ -34,10 +35,46 @@ export const CartProvider = ({ children }) => {
   const [checkoutTotal, setCheckoutTotal] = useState(0) // 購物車總金額
   const [cartBadgeQty, setCartBadgeQty] = useState(0) // 購物車商品項目數量
   const [deliverFee, setDeliverFee] = useState(120)
+  const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
+    // order submit form 內容
+    const [formData, setFormData] = useState({
+      memberId: 0,
+      recipientName: '',
+      recipientMobile: '',
+      recipientDistrictId: 1,
+      recipientAddress: '',
+      memberInvoice: 0,
+      mobileInvoice: '',
+      recipientTaxId: '',
+      orderItems: [],
+    })
 
   useEffect(() => {
     setCartBadgeQty(checkoutItems.length)
   }, [checkoutItems])
+
+
+  // 取得會員基本資料
+  const fetchMemberProfile = async () => {
+    try {
+      const response = await axios.get(
+        `${CHECKOUT_GET_PROFILE}?member_id=${auth.id}`
+      )
+      if (response.data.status) {
+        const results = response.data.rows[0]
+        setMemberProfile(results)
+        // 根據 profile 更新 formData
+        setFormData((v) => ({
+          ...v,
+          mobileInvoice: results.invoice_carrier_id,
+          recipientTaxId: results.tax_id,
+        }))
+      }
+    } catch (error) {
+      console.log('Error fetching member profile:', error)
+    }
+  }
+
 
   // 取得會員購物車 cart_member 資料
   const fetchMemberCart = async () => {
@@ -202,6 +239,10 @@ export const CartProvider = ({ children }) => {
         handleAddToCart,
         handleQuantityChange,
         clearCart,
+        memberProfile,
+        fetchMemberProfile,
+        formData,
+        setFormData,
       }}
     >
       {children}

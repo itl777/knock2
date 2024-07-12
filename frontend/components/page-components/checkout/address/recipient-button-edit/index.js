@@ -8,12 +8,12 @@ import { useConfirmDialog } from '@/context/confirm-dialog-context'
 // components
 import TextButton from '@/components/UI/text-button'
 import ConfirmDialog from '@/components/UI/confirm-dialog'
+import AddressInfoRow from '../address-info-row'
 // icons
 import { FaPhoneAlt } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 
 const RecipientBtnEdit = styled('div')(({}) => ({
-  // gridColumn: 'span 2',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'start',
@@ -44,7 +44,7 @@ export default function RecipientButtonEdit({
   const { openConfirmDialog } = useConfirmDialog()
 
   const handleDeleteClick = () => {
-    openConfirmDialog(() => handleAddressDelete(addressId))
+    openConfirmDialog(() => {handleAddressDelete(addressId)})
   }
 
   return (
@@ -77,14 +77,8 @@ export default function RecipientButtonEdit({
           </div>
         </div>
 
-        <div className={styles.iconTextRow}>
-          <FaPhoneAlt />
-          <span>{phone}</span>
-        </div>
-        <div className={styles.iconTextRow}>
-          <FaLocationDot />
-          <span>{address}</span>
-        </div>
+        <AddressInfoRow content={phone} icon={FaPhoneAlt} />
+        <AddressInfoRow content={address} icon={FaLocationDot} />
       </RecipientBtnEdit>
 
       <ConfirmDialog
@@ -95,3 +89,16 @@ export default function RecipientButtonEdit({
     </div>
   )
 }
+
+
+/*
+<div className={styles.iconTextRow}>
+  <FaPhoneAlt />
+  <p className={styles.contentText}>{phone}</p>
+</div>
+<div className={styles.iconTextRow}>
+  <FaLocationDot />
+  <p className={styles.contentText}>{address}</p>
+</div>
+*/
+

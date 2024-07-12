@@ -4,8 +4,8 @@ import { useAuth } from '@/context/auth-context'
 import { useAddress } from '@/context/address-context'
 // components
 import ModalLayout from '../modal-layout'
-import RecipientButton from '../../recipient-button'
-import RecipientButtonEdit from '../../recipient-button-edit'
+import RecipientButton from '../recipient-button'
+import RecipientButtonEdit from '../recipient-button-edit'
 import AddAddressModal from '../add-address-modal'
 import NoData from '@/components/UI/no-data'
 
@@ -21,6 +21,7 @@ export default function SelectAddressModal() {
   return (
     <ModalLayout
       title="請選擇收件人"
+      modalHeight='720px'
       btnLeftHidden={true}
       btnTextRight="關閉"
       isOpen={isAddressSelectModalOpen}
