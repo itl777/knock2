@@ -8,6 +8,7 @@ import { useCart } from '@/context/cart-context'
 import { useAuth } from '@/context/auth-context'
 import { useLoginModal } from '@/context/login-context'
 import { useAddress } from '@/context/address-context'
+import useScreenSize from '@/hooks/useScreenSize'
 // hooks
 import { useOrderValidation } from '@/hooks/orderValidation'
 // components
@@ -23,12 +24,7 @@ import EmptyCart from '@/components/page-components/checkout/empty-cart'
 import RedirectionGuide from '@/components/UI/redirect-guide'
 
 // api path
-import {
-  PRODUCT_IMG,
-  CHECKOUT_GET_PROFILE,
-  CHECKOUT_POST,
-  ECPAY_GET,
-} from '@/configs/api-path'
+import { PRODUCT_IMG, CHECKOUT_POST, ECPAY_GET } from '@/configs/api-path'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -37,19 +33,8 @@ export default function CheckoutPage() {
   // const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
   const { timeout, errors, validateField } = useOrderValidation() // 訂單驗證
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
-  // order submit form 內容
-  // const [formData, setFormData] = useState({
-  //   memberId: 0,
-  //   recipientName: '',
-  //   recipientMobile: '',
-  //   recipientDistrictId: 1,
-  //   recipientAddress: '',
-  //   memberInvoice: 0,
-  //   mobileInvoice: '',
-  //   recipientTaxId: '',
-  //   orderItems: [],
-  // })
-
+  const userClientWidth = useScreenSize()
+  const [screenWidth, setScreenWidth] = useState(userClientWidth)
   const {
     isAddressSelectModalOpen,
     openAddressSelectModal,
@@ -78,27 +63,6 @@ export default function CheckoutPage() {
     { value: 'mobile', text: '手機載具' },
     { value: 'tax', text: '統一編號' },
   ]
-
-  // 取得會員基本資料
-  // const fetchMemberProfile = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${CHECKOUT_GET_PROFILE}?member_id=${auth.id}`
-  //     )
-  //     if (response.data.status) {
-  //       const results = response.data.rows[0]
-  //       setMemberProfile(results)
-  //       // 根據 profile 更新 formData
-  //       setFormData((v) => ({
-  //         ...v,
-  //         mobileInvoice: results.invoice_carrier_id,
-  //         recipientTaxId: results.tax_id,
-  //       }))
-  //     }
-  //   } catch (error) {
-  //     console.log('Error fetching member profile:', error)
-  //   }
-  // }
 
   // 控制表單輸入欄位，更新 formData
   const handleInputChange = (e) => {
@@ -230,9 +194,15 @@ export default function CheckoutPage() {
     }
   }, [auth.id, router.isReady, authIsReady])
 
+  // 未登入顯示的內容
   if (!auth.id && authIsReady) {
     return <RedirectionGuide text="請先登入" hideBtn={true} />
   }
+
+  // 監聽視窗寬度
+  useEffect(() => {
+    setScreenWidth(userClientWidth)
+  }, [userClientWidth])
 
   return (
     <section className={styles.sectionContainer}>
@@ -260,6 +230,7 @@ export default function CheckoutPage() {
               {checkoutItems.map((v, i) => (
                 <OrderItemCheckout
                   key={v.product_id}
+                  type={screenWidth < 640 ? 'small' : 'def'}
                   cartId={v.cart_id}
                   productId={v.product_id}
                   productName={v.product_name}

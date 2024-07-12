@@ -7,9 +7,9 @@ import { FaArrowLeftLong } from 'react-icons/fa6'
 export default function CardHeader({
   title = '標題',
   btnHref = '/',
-  btnText = '按鈕'
+  btnText = '按鈕',
+  btnHidden = false,
 }) {
-
   return (
     <div>
       <div className={styles.orderDetailHeader}>
@@ -17,7 +17,7 @@ export default function CardHeader({
           <p className={styles.titleStyle}>{title}</p>
         </div>
 
-        <FilterBtn btnText={btnText} href={btnHref} />
+        {!btnHidden && <FilterBtn btnText={btnText} href={btnHref} />}
       </div>
       <HDivider margin="1.5rem 0" />
     </div>

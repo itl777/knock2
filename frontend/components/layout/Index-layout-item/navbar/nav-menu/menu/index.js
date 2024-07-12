@@ -15,7 +15,7 @@ export default function MenuList() {
 
   const tabItems = [
     { key: 'profile', name: '會員資料', path: '/user/profile' },
-    { key: 'reservation', name: '行程預約', path: '/user/reservation' },
+    { key: 'reservation', name: '行程預約', path: '/user/reservation/ongoing' },
     {
       key: 'group-reservation',
       name: '揪團行程',
