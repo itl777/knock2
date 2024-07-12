@@ -4,11 +4,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import ThirdPartyLoginButton from '../third-party-login-button'
 import { useLoginModal } from '@/context/login-context/index'
 
-
 // styles
 import styles from '../login-form.module.scss'
 // components
 import AuthFormInput from '../auth-form-input'
+import ClearButton from '@/components/UI/ClearButton'
 
 const dialogTheme = createTheme({
   components: {
@@ -61,7 +61,9 @@ export default function RegisterForm() {
                 placeholder="請輸入密碼"
                 onChange={handleRegisterChange}
               />{' '}
-              <span className={styles.errorText}>{registerErrors.password}</span>
+              <span className={styles.errorText}>
+                {registerErrors.password}
+              </span>
               <AuthFormInput
                 name="reenter_password"
                 type="password"
@@ -88,14 +90,12 @@ export default function RegisterForm() {
               <input type="submit" value="註冊" />
             </div>
             <div className={styles.links}>
-              <Link
-                href=""
+              <ClearButton
                 onClick={() => {
                   loginFormSwitch('Login')
                 }}
-              >
-                <span>已有註冊會員？ 返回登入</span>
-              </Link>
+                btnText={<span>已有註冊會員？ 返回登入</span>}
+              />
             </div>
             <div className={styles.links}>
               <span>——— 或選擇其他方式註冊 ———</span>
