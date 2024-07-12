@@ -151,6 +151,26 @@ const getFavoriteDate = async (req) => {
   }
 };
 
+const getImg = async (req) => {
+  let success = false;
+  let rows = [];
+  const product_id = +req.params.product_id || 0;
+
+  console.log('product_id',product_id);
+
+
+  const sql = `SELECT \`img_id\` FROM \`product_management\` JOIN \`product_img\` ON \`product_id\` = \`img_product_id\` WHERE \`product_id\` = ${product_id}`;
+
+  [rows] = await db.query(sql);
+
+  success = true;
+
+  return {
+    success,
+    rows,
+  };
+};
+
 router.get("/", async (req, res) => {
   const data = await getListDate(req);
   if (data.success) {
@@ -167,8 +187,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+
 router.get("/details/:product_id", async (req, res) => {
   const data = await getListDate(req);
+  res.json(data);
+});
+
+// 圖片
+router.get("/img/:product_id", async (req, res) => {
+  const data = await getImg(req);
+  console.log(req.params.product_id);
   res.json(data);
 });
 
