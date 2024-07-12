@@ -156,8 +156,7 @@ const getImg = async (req) => {
   let rows = [];
   const product_id = +req.params.product_id || 0;
 
-  console.log('product_id',product_id);
-
+  console.log("product_id", product_id);
 
   const sql = `SELECT \`img_id\` FROM \`product_management\` JOIN \`product_img\` ON \`product_id\` = \`img_product_id\` WHERE \`product_id\` = ${product_id}`;
 
@@ -187,7 +186,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.get("/details/:product_id", async (req, res) => {
   const data = await getListDate(req);
   res.json(data);
@@ -195,9 +193,13 @@ router.get("/details/:product_id", async (req, res) => {
 
 // 圖片
 router.get("/img/:product_id", async (req, res) => {
-  const data = await getImg(req);
-  console.log(req.params.product_id);
-  res.json(data);
+  try {
+    const data = await getImg(req);
+    console.log(req.params.product_id);
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: "/img/:product_id出錯了" });
+  }
 });
 
 router.get("/favorite", async (req, res) => {
