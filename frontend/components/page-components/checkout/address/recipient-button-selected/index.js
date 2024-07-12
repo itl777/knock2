@@ -1,12 +1,16 @@
 import styles from './recipient-button-selected.module.css'
 import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
+// contexts
+import { useAddress } from '@/context/address-context'
+// components
+import AddressInfoRow from '../address-info-row'
+// icons
 import { FaPhoneAlt } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 import { IoIosArrowForward } from 'react-icons/io'
 
-
-const RecipientBtnSelected = styled(Button)(({  }) => ({
+const RecipientBtnSelected = styled(Button)(({}) => ({
   gridColumn: 'span 2',
   display: 'flex',
   justifyContent: 'space-between',
@@ -27,22 +31,28 @@ export default function RecipientButtonSelected({
   recipientName = '',
   recipientMobile = '',
   address = '',
-  onClick = () => {},
 }) {
+  const { openAddressSelectModal } = useAddress()
+
   return (
-    <RecipientBtnSelected onClick={onClick}>
+    <RecipientBtnSelected onClick={openAddressSelectModal}>
       <div className={styles.infoBox}>
-        <p>{recipientName}</p>
-        <div className={styles.iconTextRow}>
-          <FaPhoneAlt />
-          <span>{recipientMobile}</span>
-        </div>
-        <div className={styles.iconTextRow}>
-          <FaLocationDot />
-          <span>{address}</span>
-        </div>
+        <p className={styles.headerText}>{recipientName}</p>
+        <AddressInfoRow content={recipientMobile} icon={FaPhoneAlt} />
+        <AddressInfoRow content={address} icon={FaLocationDot} />
       </div>
       <IoIosArrowForward />
     </RecipientBtnSelected>
   )
 }
+
+/*
+<div className={styles.iconTextRow}>
+  <FaPhoneAlt />
+  <p>{recipientMobile}</p>
+</div>
+<div className={styles.iconTextRow}>
+  <FaLocationDot />
+  <p>{address}</p>
+</div>
+*/

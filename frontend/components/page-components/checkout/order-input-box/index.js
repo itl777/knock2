@@ -1,5 +1,6 @@
 import styles from './order-input-box.module.css'
 import Input01 from '@/components/UI/form-item/input01'
+import OrderInputError from '../order-input-error'
 
 export default function OrderInputBox({
   label = 'label',
@@ -13,8 +14,10 @@ export default function OrderInputBox({
   onBlur = () => {},
 }) {
   return (
-    <div className={styles.inputBox}>
-      <label htmlFor={name}>{label}</label>
+    <div>
+      <label htmlFor={name} className={styles.label}>
+        {label}
+      </label>
       <Input01
         name={name}
         type={type}
@@ -24,9 +27,8 @@ export default function OrderInputBox({
         onChange={onChange}
         onBlur={onBlur}
       />
-      <div className={styles.errorTextBox}>
-        {errorText !== '' ? <span className={styles.errorText}>{errorText}</span> : ''}
-      </div>
+
+      <OrderInputError errorText={errorText} />
     </div>
   )
 }

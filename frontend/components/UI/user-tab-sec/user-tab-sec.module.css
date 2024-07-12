@@ -20,7 +20,6 @@
 
 .userTabSec .active :hover {
   padding-bottom: .5rem;
-  border-bottom: 3px solid #7c7c7c;
 }
 
 @media screen and (max-width: 800px) {

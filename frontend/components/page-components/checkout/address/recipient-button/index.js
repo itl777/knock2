@@ -1,7 +1,8 @@
-import styles from './recipient-button.module.css';
-import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import { IoIosArrowForward, IoMdAdd } from 'react-icons/io';
+import styles from './recipient-button.module.css'
+import { styled } from '@mui/material/styles'
+import Button from '@mui/material/Button'
+// icons
+import { IoIosArrowForward, IoMdAdd } from 'react-icons/io'
 
 const RecipientBtn = styled(Button)(({ bgtype }) => ({
   gridColumn: 'span 2',
@@ -19,20 +20,18 @@ const RecipientBtn = styled(Button)(({ bgtype }) => ({
     backgroundColor: '#fafafa',
     boxShadow: 'none',
   },
-}));
+}))
 
 export default function RecipientButton({
   btnText = '請選擇收件人資料',
   iconType = 'arrow',
   bgtype = 'fill',
-  onClick = () => {},
+  onClick = { onClick },
 }) {
   return (
-    <RecipientBtn bgtype={bgtype} onClick={onClick}>
+    <RecipientBtn bgtype={bgtype} onClick={onClick} type='button'>
       <p className={styles.btnTextStyle}>{btnText}</p>
       {iconType === 'arrow' ? <IoIosArrowForward /> : <IoMdAdd />}
     </RecipientBtn>
-  );
+  )
 }
-
-
