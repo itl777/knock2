@@ -1,17 +1,15 @@
 @import '@/styles/variables.scss';
 
 // default
-$border: #dae2ed;
 $color: #1c2025;
 
 // focus
-$box-shadow: #80bfff;
+$box-shadow: #efede8;
 // hover focus
-$border-color: #3399ff;
+$border-color: #bbb29f;
 
 // disabled
 $disabled-field-line: #eaeaea;
-
 
 .inputDefault {
   @include font-small;
@@ -38,7 +36,6 @@ $disabled-field-line: #eaeaea;
   &:focus-visible {
     outline: 0;
   }
-
 }
 
 .inputDefaultLine {
@@ -100,12 +97,11 @@ $disabled-field-line: #eaeaea;
   &:focus-visible {
     outline: 0;
   }
-
 }
 
-.input{
+.input {
   position: relative;
-  .eyeIcon{
+  .eyeIcon {
     position: absolute;
     top: 50%;
     right: 1rem;
@@ -116,5 +112,6 @@ $disabled-field-line: #eaeaea;
     border: none;
     background-color: transparent;
     cursor: pointer;
+    color: $text-grey;
   }
 }

@@ -7,48 +7,42 @@ import { useRouter } from 'next/router'
 import { useCart } from '@/context/cart-context'
 import { useAuth } from '@/context/auth-context'
 import { useLoginModal } from '@/context/login-context'
+import { useAddress } from '@/context/address-context'
+import useScreenSize from '@/hooks/useScreenSize'
+// hooks
 import { useOrderValidation } from '@/hooks/orderValidation'
 // components
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
-import RecipientButton from '../recipient-button'
-import RecipientButtonSelected from '../recipient-button-selected'
-import BasicModal from '@/components/UI/basic-modal'
-import RecipientModalBody from '../recipient-modal-body'
+import RecipientButton from '../address/recipient-button'
+import RecipientButtonSelected from '../address/recipient-button-selected'
+import SelectAddressModal from '../address/select-address-modal'
 import OrderInputBox from '../order-input-box'
 import OrderSelectBox from '../order-select-box'
 import CheckoutTotalTable from '../checkout-total-table'
 import EmptyCart from '@/components/page-components/checkout/empty-cart'
-// api path
-import {
-  PRODUCT_IMG,
-  CHECKOUT_GET_PROFILE,
-  CHECKOUT_GET_ADDRESS,
-  CHECKOUT_POST,
-  ECPAY_GET,
-} from '@/configs/api-path'
+import RedirectionGuide from '@/components/UI/redirect-guide'
 
-export default function CheckOutPage() {
+// api path
+import { PRODUCT_IMG, CHECKOUT_POST, ECPAY_GET } from '@/configs/api-path'
+
+export default function CheckoutPage() {
   const router = useRouter()
   const { auth, authIsReady } = useAuth() // 取得 auth.id, authIsReady
   const { loginFormSwitch } = useLoginModal() // 取得登入視窗開關
-  const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
-  const [memberAddress, setMemberAddress] = useState([]) // 取得會員地址
-  const { errors, validateInvoice, clearError } = useOrderValidation() // 訂單驗證
+  // const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
+  const { timeout, errors, validateField } = useOrderValidation() // 訂單驗證
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
-  // order submit form 內容
-  const [formData, setFormData] = useState({
-    memberId: 0,
-    recipientName: '',
-    recipientMobile: '',
-    recipientDistrictId: 1,
-    recipientAddress: '',
-    memberInvoice: 0,
-    mobileInvoice: '',
-    recipientTaxId: '',
-    orderItems: [],
-  })
-  const [isSmallScreen, setIsSmallScreen] = useState(false) // 判斷螢幕是否小於 640px
+  const userClientWidth = useScreenSize()
+  const [screenWidth, setScreenWidth] = useState(userClientWidth)
+  const {
+    isAddressSelectModalOpen,
+    openAddressSelectModal,
+    closeAddressSelectModal,
+    fetchMemberAddress,
+    memberAddress,
+    orderAddress,
+  } = useAddress()
 
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
   const {
@@ -58,6 +52,9 @@ export default function CheckOutPage() {
     handleQuantityChange,
     clearCart,
     deliverFee,
+    fetchMemberProfile,
+    formData,
+    setFormData,
   } = useCart()
 
   // 發票形式
@@ -67,60 +64,6 @@ export default function CheckOutPage() {
     { value: 'tax', text: '統一編號' },
   ]
 
-  // 取得會員地址
-  const fetchMemberAddress = async () => {
-    try {
-      const response = await fetch(
-        `${CHECKOUT_GET_ADDRESS}?member_id=${auth.id}`
-      )
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch member address')
-      }
-
-      const data = await response.json()
-      const updatedMemberAddress = data.memberAddresses.map((v) => ({
-        ...v,
-        selected: false,
-      }))
-
-      // 取得預設地址（type='1'）
-      const defaultAddress =
-        updatedMemberAddress.find((v) => v.type == 1) || updatedMemberAddress[0]
-      defaultAddress.selected = true
-
-      setMemberAddress(updatedMemberAddress)
-    } catch (error) {
-      console.log('Error member address:', error)
-    }
-  }
-
-  // 取得會員基本資料
-  const fetchMemberProfile = async () => {
-    try {
-      const response = await axios.get(
-        `${CHECKOUT_GET_PROFILE}?member_id=${auth.id}`
-      )
-      if (response.data.status) {
-        const results = response.data.rows[0]
-        setMemberProfile(results)
-        // 根據 profile 更新 formData
-        setFormData((v) => ({
-          ...v,
-          mobileInvoice: results.invoice_carrier_id,
-          recipientTaxId: results.tax_id,
-        }))
-      }
-    } catch (error) {
-      console.log('Error fetching member profile:', error)
-    }
-  }
-
-  // 更新已經選擇的地址
-  const handleAddressSelected = (address) => {
-    setMemberAddress(address)
-  }
-
   // 控制表單輸入欄位，更新 formData
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -129,16 +72,22 @@ export default function CheckOutPage() {
       ...formData,
       [name]: value,
     })
+
+    // 表單驗證
+    setTimeout(() => {
+      validateField(name, value)
+    }, timeout)
+  }
+
+  // 表單驗證
+  const handleBlur = (e) => {
+    const { name, value } = e.target
+    validateField(name, value)
   }
 
   const handleInvoiceTypeChange = (e) => {
     const value = e.target.value
     setInvoiceTypeValue(value)
-  }
-
-  const handleBlur = (e) => {
-    const { name, value } = e.target
-    validateInvoice(name, value)
   }
 
   // 送出表單
@@ -184,8 +133,8 @@ export default function CheckOutPage() {
     }
 
     // 驗證手機載具、統一編號
-    validateInvoice('mobileInvoice', formData.mobileInvoice)
-    validateInvoice('recipientTaxId', formData.recipientTaxId)
+    validateField('mobileInvoice', formData.mobileInvoice)
+    validateField('recipientTaxId', formData.recipientTaxId)
 
     if (errors.mobileInvoice || errors.recipientTaxId) {
       alert('請確認欄位')
@@ -194,10 +143,10 @@ export default function CheckOutPage() {
     const dataToSubmit = {
       ...updatedFormData,
       memberId: auth.id,
-      recipientName: recipientData[0].recipient_name, // 收件人姓名
-      recipientMobile: recipientData[0].mobile_phone, // 收件人手機號碼
-      recipientDistrictId: recipientData[0].district_id, // 收件人區域 ID
-      recipientAddress: recipientData[0].address, // 收件人地址
+      recipientName: orderAddress.recipient_name, // 收件人姓名
+      recipientMobile: orderAddress.mobile_phone, // 收件人手機號碼
+      recipientDistrictId: orderAddress.district_id, // 收件人區域 ID
+      recipientAddress: orderAddress.address, // 收件人地址
       orderItems, // 將 orderItems 加入到要提交的數據中
     }
 
@@ -232,29 +181,6 @@ export default function CheckOutPage() {
     }
   }
 
-  // 關閉 recipientModalBody
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  const openModal = async () => {
-    await fetchMemberAddress()
-    setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-  }
-
-  // 判斷螢幕是否小於 640px
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 640px)')
-    const handleMediaQueryChange = (e) => setIsSmallScreen(e.matches)
-    mediaQuery.addListener(handleMediaQueryChange)
-
-    setIsSmallScreen(mediaQuery.matches)
-
-    return () => mediaQuery.removeListener(handleMediaQueryChange)
-  }, [])
-
   // 登入驗證
   useEffect(() => {
     if (router.isReady && authIsReady) {
@@ -268,15 +194,25 @@ export default function CheckOutPage() {
     }
   }, [auth.id, router.isReady, authIsReady])
 
+  // 未登入顯示的內容
   if (!auth.id && authIsReady) {
-    return <section>請先登入</section>
+    return <RedirectionGuide text="請先登入" hideBtn={true} />
   }
+
+  // 監聽視窗寬度
+  useEffect(() => {
+    setScreenWidth(userClientWidth)
+  }, [userClientWidth])
 
   return (
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
 
-      {cartBadgeQty <= 0 && <EmptyCart />}
+      {cartBadgeQty <= 0 && (
+        <div className={styles.contentContainer}>
+          <EmptyCart />
+        </div>
+      )}
 
       {cartBadgeQty > 0 && (
         <form
@@ -293,8 +229,8 @@ export default function CheckOutPage() {
             <div className={styles.itemList}>
               {checkoutItems.map((v, i) => (
                 <OrderItemCheckout
-                  type={isSmallScreen ? 'small' : 'def'}
                   key={v.product_id}
+                  type={screenWidth < 640 ? 'small' : 'def'}
                   cartId={v.cart_id}
                   productId={v.product_id}
                   productName={v.product_name}
@@ -320,20 +256,23 @@ export default function CheckOutPage() {
             <h5>收件資料</h5>
             {/* RecipientButton */}
             <div className={styles.checkoutRightMain}>
-              {memberAddress.length === 0 ? (
-                <RecipientButton onClick={openModal} />
+              {isAddressSelectModalOpen && (
+                <SelectAddressModal onClose={closeAddressSelectModal} />
+              )}
+
+              {!!orderAddress ? (
+                <RecipientButtonSelected
+                  key={orderAddress.id}
+                  recipientName={orderAddress.recipient_name}
+                  recipientMobile={orderAddress.mobile_phone}
+                  address={
+                    orderAddress.city_name +
+                    orderAddress.district_name +
+                    orderAddress.address
+                  }
+                />
               ) : (
-                memberAddress
-                  .filter((v) => v.selected === true)
-                  .map((address) => (
-                    <RecipientButtonSelected
-                      key={address.id}
-                      recipientName={address.recipient_name}
-                      recipientMobile={address.mobile_phone}
-                      address={address.address}
-                      onClick={openModal}
-                    />
-                  ))
+                <RecipientButton onClick={openAddressSelectModal} />
               )}
 
               <OrderSelectBox
@@ -378,22 +317,6 @@ export default function CheckOutPage() {
           </div>
         </form>
       )}
-
-      {/* RecipientModalBody */}
-      <BasicModal
-        modalTitle="請選擇收件人資料"
-        open={isModalOpen}
-        handleClose={closeModal}
-        modalBody={
-          <RecipientModalBody
-            handleClose={closeModal}
-            memberId={auth.id}
-            memberAddress={memberAddress}
-            fetchMemberAddress={fetchMemberAddress}
-            onSelectedAddress={handleAddressSelected}
-          />
-        }
-      />
     </section>
   )
 }

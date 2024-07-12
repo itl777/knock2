@@ -15,6 +15,7 @@ export const RESET_PASSWORD_POST = `${API_SERVER}/users/reset-password`
 // product image path
 export const PRODUCT_IMG = `${API_SERVER}/images`
 export const PRODUCT_LIST = `${API_SERVER}/products`
+export const PRODUCT_BACKEND_IMG = `${API_SERVER}/products/img`
 export const PRODUCT_DETAILS = `${API_SERVER}/products/details`
 export const PRODUCT_FAVORITE = `${API_SERVER}/products/favorite`
 

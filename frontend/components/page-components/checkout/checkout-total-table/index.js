@@ -7,13 +7,16 @@ export default function CheckoutTotalTable({
   deliverFee,
   totalDiscount,
 }) {
+  const total = +subtotal + +deliverFee - +totalDiscount
+
   return (
+
     <div className={styles.totalBox}>
       <CheckoutTotalRow label='小計' content={subtotal}/>
       <CheckoutTotalRow label='折扣' content={totalDiscount}/>
       <CheckoutTotalRow label='運費' content={deliverFee}/>
       <HDivider margin="0.75rem 0" />
-      <CheckoutTotalRow label='合計' content={subtotal + deliverFee - totalDiscount}/>
+      <CheckoutTotalRow label='合計' content={total}/>
     </div>
   )
 }

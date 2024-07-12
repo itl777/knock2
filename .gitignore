@@ -5,3 +5,4 @@ _trash/
 *.bak
 .DS_Store
 config/
+frontend/pages/teams/draft/

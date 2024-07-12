@@ -1,0 +1,22 @@
+.reservationrBg {
+    width: 600px;
+    height: 860px;
+    background-color: var(--pri-1);
+    margin-top: 60px;
+    margin-bottom: 60px;
+    border: 2px solid var(--sec-1);
+    border-radius: 20px;
+    color: var(--pri-3);
+    /* padding: 10px; */
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+  }
+
+.form{
+    margin-top: 40px;
+    /* margin-left: 38px; */
+}
+.p{
+    margin-top: 30px;
+}

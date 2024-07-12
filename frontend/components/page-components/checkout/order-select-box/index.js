@@ -1,5 +1,6 @@
 import styles from './order-select-box.module.css'
 import Select02 from '@/components/UI/form-item/select02'
+import OrderInputError from '../order-input-error'
 
 export default function OrderSelectBox({
   label = 'label',
@@ -11,8 +12,8 @@ export default function OrderSelectBox({
   onChange = () => {},
 }) {
   return (
-    <div className={styles.inputBox}>
-      <label htmlFor={name} className={styles.labelStyle}>
+    <div>
+      <label htmlFor={name} className={styles.label}>
         {label}
       </label>
       <Select02
@@ -22,9 +23,8 @@ export default function OrderSelectBox({
         options={options}
         onChange={onChange}
       />
-      <div className={styles.errorText}>
-        {errorText !== '' ? <span>{errorText}</span> : ''}
-      </div>
+
+      <OrderInputError errorText={errorText} />
     </div>
   )
 }

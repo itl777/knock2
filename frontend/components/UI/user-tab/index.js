@@ -10,6 +10,9 @@ export default function UserTab() {
     if (path === '/user/orders/ongoing') {
       return router.pathname.startsWith('/user/orders')
     }
+    if (path === '/user/reservation/ongoing') {
+      return router.pathname.startsWith('/user/reservation')
+    }
     if (path === '/user/coupon/ongoing') {
       return router.pathname.startsWith('/user/coupon')
     }
@@ -18,7 +21,7 @@ export default function UserTab() {
 
   const tabItems = [
     { key: 'profile', name: '會員資料', path: '/user/profile' },
-    { key: 'reservation', name: '行程預約', path: '/user/reservation' },
+    { key: 'reservation', name: '行程預約', path: '/user/reservation/ongoing' },
     {
       key: 'group-reservation',
       name: '揪團行程',

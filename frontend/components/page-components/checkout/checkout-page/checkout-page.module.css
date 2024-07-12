@@ -28,7 +28,6 @@
 .checkoutLeft {
   width: 50%;
   padding: var(--content-padding);
-  background-color: #f2f2f2;
 }
 
 .checkoutRight {
@@ -54,7 +53,7 @@
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 1fr 1fr;
-  margin-bottom: 4rem;
+  margin-bottom: 6rem;
 }
 
 @media screen and (max-width: 1120px) {
@@ -69,5 +68,15 @@
 
   .checkoutRightMain {
     display: flex;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .checkoutLeft {
+    padding: 1.5rem;
+  }
+  
+  .checkoutRight {
+    padding: 1.5rem;
   }
 }
