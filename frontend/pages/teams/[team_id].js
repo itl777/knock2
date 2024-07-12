@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import moment from 'moment-timezone'
 import IndexLayout from '@/components/layout'
+import { useAuth } from '@/context/auth-context'
 
-import ChatDisplay from '@/pages/teams/chat'
+import AddChatForm from '@/pages/teams/add_chat'
+import ChatDisplay from '@/pages/teams/display_chat'
 
-// import { CHAT_GET } from '@/configs/api-path'
 import { ONE_TEAM } from '@/configs/api-path'
 
 import styles from './teams.module.css'
@@ -13,6 +14,8 @@ import PdBtnContained from '@/components/UI/pd-btn-contained'
 
 export default function TeamInfo() {
   const router = useRouter()
+
+  const { login, logout, auth } = useAuth()
 
   const [oneTeam, setOneTeam] = useState({
     team_id: 0,
@@ -25,8 +28,14 @@ export default function TeamInfo() {
     themeTime: 0,
   })
 
+  const [submissionCount, setSubmissionCount] = useState(0)
+
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
+  }
+
+  const formatTime = (timeString) => {
+    return moment(timeString, 'HH:mm:ss').format('A hh:mm')
   }
 
   const getDifficulty = (difficulty) => {
@@ -88,73 +97,84 @@ export default function TeamInfo() {
       getTeam(team_id)
       console.log(oneTeam)
     }
-
     //
-  }, [router.isReady])
+  }, [router.isReady, submissionCount])
+
+  const handleFormSubmit = () => {
+    setSubmissionCount((prevCount) => prevCount + 1)
+  }
 
   return (
     <>
       <IndexLayout title="糾團" background="dark">
         <div className={styles.teamsPage}>
-          <div className={styles.pageTitle}>
-            <h2>團隊內頁</h2>
-          </div>
           <div className="container">
-            <div className="row">
-              <div className={`${styles.teamsSection} row`}>
-                <div
-                  className={`${styles.teamUnite} borderbox`}
-                  key={oneTeam.team_id}
-                >
-                  <div className={styles.borderbox}>
-                    <div className="row">
-                      <div className="col-9">
-                        <div className="teamTitle">
-                          <h3>{oneTeam.theme_name}</h3>
-                          <span className={`${getDifficulty(oneTeam.difficulty)}`}>{oneTeam.difficulty}</span>
-                        </div>
-                        <h5>團名：{oneTeam.team_title}</h5>
-                        <p>
-                          團長：{oneTeam.nick_name}
-                          <br />
-                          日期時間：{formatDateToTaiwan(oneTeam.reservation_date)} {oneTeam.start_time}
-                          <br />
-                          時間長度：{oneTeam.themeTime} 分鐘
-                          <br />
-                          場次：{oneTeam.branch_name}
-                          <br />
-                          人數：2 / 6
-                        </p>
-                        <p>
-                          團長的話
-                          <br />
-                        </p>
-                      </div>
-                      <div className="col-3">
-                        {' '}
-                        <div className="teamPhoto">
-                          {/* <img src={catImage} alt="cat" /> */}
-                          <img
-                            src={`/themes-main/${oneTeam.themeImg}`}
-                            alt=""
-                            width={'100%'}
-                          />
-                        </div>
-                      </div>
-                      <div style={{ textAlign: 'center' }}>
-                        <PdBtnContained
-                          btnText="申請加入 / 管理團員"
-                          color="grey"
-                        />
-                      </div>
+            <div className={styles.pageTitle}>
+              <h2>團隊內頁</h2>
+            </div>
+            <div className={`${styles.teamsSection} row`}>
+              <div className={styles.borderbox} key={oneTeam.team_id}>
+                <div className="row">
+                  <div className="col-9">
+                    <div className="teamTitle">
+                      <h3>{oneTeam.theme_name}</h3>
+                      <span className={`${getDifficulty(oneTeam.difficulty)}`}>
+                        {oneTeam.difficulty}
+                      </span>
                     </div>
+                    <h5>團名：{oneTeam.team_title}</h5>
+                    <p>
+                      團長：{oneTeam.nick_name}
+                      <br />
+                      日期時間：{formatDateToTaiwan(
+                        oneTeam.reservation_date
+                      )}{' '}
+                      {formatTime(oneTeam.start_time)}
+                      <br />
+                      時間長度：{oneTeam.themeTime} 分鐘
+                      <br />
+                      場次：{oneTeam.branch_name}
+                      <br />
+                      人數：2 / 6
+                    </p>
+                    <p>
+                      團長的話
+                      <br />
+                    </p>
+                  </div>
+                  <div className="col-3">
+                    {' '}
+                    <div className="teamPhoto">
+                      {/* <img src={catImage} alt="cat" /> */}
+                      <img
+                        src={`/themes-main/${oneTeam.themeImg}`}
+                        alt=""
+                        width={'100%'}
+                      />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <PdBtnContained
+                      btnText="申請加入 / 管理團員"
+                      color="grey"
+                    />
                   </div>
                 </div>
               </div>
             </div>
-            <div className="row">
-              <ChatDisplay chat_at={oneTeam.team_id} />
-            </div>
+            <>
+              <AddChatForm
+                chat_at={oneTeam.team_id}
+                chat_by={auth.id}
+                onSubmit={handleFormSubmit}
+              />
+            </>
+            <>
+              <ChatDisplay
+                chat_at={oneTeam.team_id}
+                submissionCount={submissionCount}
+              />
+            </>
           </div>
         </div>
       </IndexLayout>
