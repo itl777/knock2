@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import useScreenSize from '@/hooks/useScreenSize'
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import TabContext from '@mui/lab/TabContext'
@@ -7,6 +8,8 @@ import TabPanel from '@mui/lab/TabPanel'
 import ProductReview from './product-review'
 import FilterBtn from '@/components/UI/filter-btn'
 import myStyle from './tabs.module.css'
+import Description from './description'
+
 
 export default function PdTabs({ data }) {
   const [value, setValue] = useState('1')
@@ -14,15 +17,24 @@ export default function PdTabs({ data }) {
     product_name: '',
     price: 0,
     summary: '',
+    description:'',
     players: '',
     age: '',
     category_id: 0,
   })
 
+  const userClientWidth = useScreenSize()
+  const [size, setSize] = useState(userClientWidth)
+
+  useEffect(() => {
+    setSize(userClientWidth)
+  }, [userClientWidth])
+
+const panelPadding =  size > 992 ? '80px 120px':'60px'
+
   useEffect(() => {
     if (data && data.length > 0) {
       const newData = { ...data[0] }
-      // console.log('newData', newData)
       setProductData(newData)
     }
   }, [data])
@@ -38,9 +50,10 @@ export default function PdTabs({ data }) {
     borderTopLeftRadius: '15px',
     borderTopRightRadius: '15px',
     borderBottom: '#fff',
-    width: '185px',
+    width: '11rem',
     height: ' 53.5px',
-    marginRight: '25px',
+    marginRight: '10px',
+    marginLeft: '10px',
     fontSize: 18,
     fontWeight: 600,
     '&.Mui-selected': {
@@ -54,7 +67,7 @@ export default function PdTabs({ data }) {
   const mySxPanel = {
     backgroundColor: '#fff',
     borderRadius: '16px',
-    padding: '80px 120px',
+    padding: panelPadding,
     boxShadow: 2,
   }
 
@@ -86,7 +99,10 @@ export default function PdTabs({ data }) {
           </Box>
           <TabPanel sx={mySxPanel} value="1">
             {/* 詳情 */}
-            <p>{productData.description}</p>
+            {/* <p> */}
+              <Description description={productData.description} />
+              {/* {productData.description} */}
+            {/* </p> */}
           </TabPanel>
 
           <TabPanel sx={mySxPanel} value="2">
