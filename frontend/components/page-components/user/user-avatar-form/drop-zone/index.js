@@ -1,0 +1,63 @@
+import styles from './drop-zone.module.scss'
+import FilterBtn from '@/components/UI/filter-btn'
+import {
+  FaRegLightbulb,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from 'react-icons/fa'
+
+export default function DropZone({
+  children,
+  openBtn,
+  getRootProps,
+  getInputProps,
+  isDragActive,
+  isDragReject,
+  isDragAccept,
+  hasImage,
+}) {
+  return (
+    <>
+      <div
+        {...getRootProps({
+          className: `
+            ${styles.dorpZone} 
+            ${!isDragActive ? styles.active : ''}
+            ${isDragAccept ? styles.accept : ''}
+            ${isDragReject ? styles.reject : ''}
+                `,
+        })}
+      >
+        <input {...getInputProps()} />
+        {children}
+
+        {isDragAccept && (
+          <span>
+            {' '}
+            <FaCheckCircle />
+            此檔案可以上傳
+          </span>
+        )}
+        {isDragReject && (
+          <span>
+            {' '}
+            <FaExclamationCircle />
+            檔案需請選擇圖片，且需小於2MB
+          </span>
+        )}
+        {!isDragActive && (
+          <span>
+            <FaRegLightbulb />
+            可拖放檔案至此區域，檔案需小於2MB
+          </span>
+        )}
+        <FilterBtn
+          href=""
+          btnText={hasImage ? '更換圖片' : '上傳圖片'}
+          onClick={openBtn}
+          className={styles.btn}
+        ></FilterBtn>
+      </div>
+    </>
+  )
+}
