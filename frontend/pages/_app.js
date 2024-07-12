@@ -15,11 +15,13 @@ export default function MyApp({ Component, pageProps }) {
   return getLayout(
     <AuthContextProvider>
       <SnackbarContextProvider>
+      <ConfirmDialogProvider>
         <CartProvider>
           <LoginContextProvider>
             <Component {...pageProps} />
           </LoginContextProvider>
         </CartProvider>
+        </ConfirmDialogProvider>
       </SnackbarContextProvider>
     </AuthContextProvider>
   )
