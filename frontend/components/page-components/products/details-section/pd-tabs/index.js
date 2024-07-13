@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import useScreenSize from '@/hooks/useScreenSize'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 import Box from '@mui/material/Box'
 import Tab from '@mui/material/Tab'
 import TabContext from '@mui/lab/TabContext'
@@ -10,14 +12,13 @@ import FilterBtn from '@/components/UI/filter-btn'
 import myStyle from './tabs.module.css'
 import Description from './description'
 
-
 export default function PdTabs({ data }) {
   const [value, setValue] = useState('1')
   const [productData, setProductData] = useState({
     product_name: '',
     price: 0,
     summary: '',
-    description:'',
+    description: '',
     players: '',
     age: '',
     category_id: 0,
@@ -30,7 +31,11 @@ export default function PdTabs({ data }) {
     setSize(userClientWidth)
   }, [userClientWidth])
 
-const panelPadding =  size > 992 ? '80px 120px':'60px'
+  useEffect(() => {
+    AOS.init()
+  }, [])
+
+  const panelPadding = size > 992 ? '80px 120px' : '60px'
 
   useEffect(() => {
     if (data && data.length > 0) {
@@ -72,7 +77,7 @@ const panelPadding =  size > 992 ? '80px 120px':'60px'
   }
 
   return (
-    <div className={`${myStyle['container']} container`} style={{ padding: 0 }}>
+    <div  data-aos="fade-up" className={`${myStyle['container']} container`} style={{ padding: 0 }}>
       <Box
         sx={{
           width: '100%',
@@ -100,8 +105,8 @@ const panelPadding =  size > 992 ? '80px 120px':'60px'
           <TabPanel sx={mySxPanel} value="1">
             {/* 詳情 */}
             {/* <p> */}
-              <Description description={productData.description} />
-              {/* {productData.description} */}
+            <Description description={productData.description} />
+            {/* {productData.description} */}
             {/* </p> */}
           </TabPanel>
 

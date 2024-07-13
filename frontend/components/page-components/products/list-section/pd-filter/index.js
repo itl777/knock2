@@ -5,8 +5,11 @@ import SearchInput from './search-input'
 import SearchInputPhone from './search-input/search-input-phone'
 import FilterBtnArea from './filter-btn-area'
 import myStyle from './filter.module.css'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 import PriceSlider from './price-slider'
 import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import OutlineBtn from '@/components/UI/outline-btn'
 import { useSnackbar } from '@/context/snackbar-context'
 import { MdOutlineAttachMoney } from 'react-icons/md'
@@ -21,10 +24,13 @@ export default function PdFilter() {
     router.replace(pathname, undefined, { shallow: true })
     openSnackbar('清除篩選', 'error')
   }
+  useEffect(() => {
+    AOS.init()
+  }, [])
 
   return (
     <>
-      <div className="container">
+      <div data-aos="zoom-in-up"  data-aos-duration="1500" className="container">
         <div className={myStyle.container}>
           <div className={myStyle.frame}>
             <Image

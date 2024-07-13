@@ -1,7 +1,9 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 import Image from 'next/image'
-import {PRODUCT_IMG} from '@/configs/api-path'
+import { PRODUCT_IMG } from '@/configs/api-path'
 import 'hover.css/css/hover-min.css'
 import myStyle from './card.module.css'
 import FavoriteIconBtn from './favorite-icon-btn'
@@ -25,11 +27,15 @@ export default function Card({ dbData }) {
     setIsId(dbData.product_id)
   }, [dbData])
 
+  useEffect(() => {
+    AOS.init()
+  }, [])
+
   return (
     <>
       <div
+        data-aos="fade-up"
         className={`${myStyle.card} card hvr-grow-shadow`}
-
       >
         <Link
           href={`product/product-details/${dbData.product_id}`}
