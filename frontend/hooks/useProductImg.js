@@ -7,7 +7,7 @@ export const useProductImg = (product_id) => {
   // 取得商品join img 內容
 
   const getImgArray = async (myId) => {
-    const url = `http://localhost:3001/products/img/${myId}`
+    const url = `${PRODUCT_BACKEND_IMG}/${myId}`
 
     let newData = []
     try {
@@ -15,11 +15,10 @@ export const useProductImg = (product_id) => {
       const resData = await res.json()
       if (resData.success) {
         resData.rows.map((v) => {
-          newData.push(v.img_id)
+          newData.push(v.product_img)
         })
-        console.log('set data now!')
         setData(newData)
-        console.log('set data done!')
+
       }
     } catch (e) {
       console.error(e)

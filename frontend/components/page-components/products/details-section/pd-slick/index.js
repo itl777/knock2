@@ -3,6 +3,7 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import myStyle from './slick.module.css'
 import { useProductImg } from '@/hooks/useProductImg'
+import { PRODUCT_IMG } from '@/configs/api-path'
 import { useEffect, useState } from 'react'
 
 function PdSlick({ product_id }) {
@@ -22,14 +23,13 @@ function PdSlick({ product_id }) {
   //   }
   // }, [data])
 
-  console.log('25-data', data)
   // console.log('25-isData', isData)
 
   const settings = {
     customPaging: function (i) {
       return (
         <a>
-          <img src={`http://127.0.0.1:3001/images/${data[i]}.png`} />
+          <img src={`${PRODUCT_IMG}/${data[i]}.jpg`} />
         </a>
       )
     },
@@ -47,7 +47,7 @@ function PdSlick({ product_id }) {
         {data.map((v, i) => {
           return (
             <div key={i} className={myStyle['slider-img']}>
-              <img src={`http://127.0.0.1:3001/images/${v}.png`} />
+              <img src={`${PRODUCT_IMG}/${v}.jpg`} />
             </div>
           )
         })}

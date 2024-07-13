@@ -82,8 +82,7 @@ const getListDate = async (req) => {
     // },${perPage}`;
 
     // JOIN分類
-    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` 
-    ON \`product_id\` = \`img_product_id\` JOIN \`product_category\` ON product_management.category_id = product_category.category_id ${where} ${orderBy}  LIMIT ${
+    const sql = `SELECT * FROM \`product_management\` JOIN \`product_category\` ON product_management.category_id = product_category.category_id ${where} ${orderBy}  LIMIT ${
       (page - 1) * perPage
     },${perPage}`;
 
@@ -137,7 +136,11 @@ const getFavoriteDate = async (req) => {
       (page - 1) * perPage
     },${perPage}`;
 
+ 
+
     [rows] = await db.query(sql);
+
+
     success = true;
     return {
       success,
@@ -156,9 +159,11 @@ const getImg = async (req) => {
   let rows = [];
   const product_id = +req.params.product_id || 0;
 
-  console.log("product_id", product_id);
 
-  const sql = `SELECT \`img_id\` FROM \`product_management\` JOIN \`product_img\` ON \`product_id\` = \`img_product_id\` WHERE \`product_id\` = ${product_id}`;
+
+  const sql = `SELECT product_img.product_img FROM \`product_management\` JOIN \`product_img\` ON \`product_id\` = \`img_product_id\` WHERE \`product_id\` = ${product_id}`;
+
+
 
   [rows] = await db.query(sql);
 
