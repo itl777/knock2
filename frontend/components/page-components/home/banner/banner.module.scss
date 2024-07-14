@@ -1,11 +1,9 @@
 @import '@/styles/variables.scss';
 
-$nav-height: 97px;
-@media screen and (min-width: 768px) {
-  $nav-height: 108px;
-}
 .banner {
-  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   height: calc(100vh - #{$nav-height});
   overflow: hidden;
   background-color: rgb(0, 0, 0);
@@ -36,50 +34,52 @@ $nav-height: 97px;
     inset: 0;
     opacity: 1;
     z-index: 2;
-    mask-image: url('/home/key.svg'),
-      linear-gradient(
-        rgb(0, 0, 0, 0) 0%,
-        rgb(0, 0, 0, 0) 10%,
-        rgba(0, 0, 0, 0.5) 50%,
-        rgba(0, 0, 0, 0) 90%,
-        rgba(0, 0, 0, 0) 100%
-      );
+    // mask-image: url('/home/key.svg'),
+    //   linear-gradient(
+    //     rgb(0, 0, 0, 0) 0%,
+    //     rgb(0, 0, 0, 0) 10%,
+    //     rgba(0, 0, 0, 0.5) 50%,
+    //     rgba(0, 0, 0, 0) 90%,
+    //     rgba(0, 0, 0, 0) 100%
+    //   );
 
-    mask-size: 10%, cover;
-    mask-position: center, center;
-    mask-repeat: no-repeat, no-repeat;
-    mask-composite: add;
+    // mask-size: 10%, cover;
+    // mask-position: center, center;
+    // mask-repeat: no-repeat, no-repeat;
+    // mask-composite: add;
 
-    transition: mask 1s;
-    animation: key 3s 1s ease-in forwards;
+    // transition: mask 1s;
+    // animation: key 3s 1s ease-in forwards;
     // &:hover{
     //   mask-size: 100%;
     // }
-    @keyframes key {
-      0% {
-        mask-size: 10%, cover;
-      }
-      80% {
-        mask-size: 200%, cover;
-      }
-      100% {
-        mask-size: 200%, cover;
-      }
-    }
+    // @keyframes key {
+    //   0% {
+    //     mask-size: 10%, cover;
+    //   }
+    //   80% {
+    //     mask-size: 200%, cover;
+    //   }
+    //   100% {
+    //     mask-size: 200%, cover;
+    //   }
+    // }
   }
 
   $text-mobile-width: 80vw;
   $text-screen-width: 30vw;
 
   .banner-text {
-    position: absolute;
-    width: $text-mobile-width;
     @media screen and (min-width: 768px) {
       width: $text-screen-width;
     }
+    position: absolute;
+    width: $text-mobile-width;
     z-index: 4;
     opacity: 0;
-    animation: key-text-show 1s 4s linear forwards;
+    &.text-show {
+      opacity: 1;
+    }
     &::after {
       content: '';
       position: absolute;
@@ -93,18 +93,19 @@ $nav-height: 97px;
       object-fit: contain;
     }
     &:nth-child(2) {
+      transition: all 1s;
       top: 5%;
       left: 5%;
       height: calc($text-mobile-width * (831 / 1877));
       @media screen and (min-width: 768px) {
         height: calc($text-screen-width * (831 / 1877));
       }
-      animation: key-text-show 1s 4s linear forwards;
       > img {
         animation: key-text 5s linear infinite alternate;
       }
     }
     &:nth-child(3) {
+      transition: all 1s 0.5s;
       top: 50%;
       right: 5%;
       transform: translateY(-50%);
@@ -112,7 +113,6 @@ $nav-height: 97px;
       @media screen and (min-width: 768px) {
         height: calc($text-screen-width * (416 / 1935));
       }
-      animation: key-text-show 1s 5s linear forwards;
       > img {
         animation: key-text 6s linear infinite alternate-reverse;
       }
@@ -127,31 +127,40 @@ $nav-height: 97px;
     left: 50%;
     transform: translateX(-50%);
     opacity: 0;
-    animation: title-show 1s 7s linear forwards;
     z-index: 5;
     color: $text-white;
+    transition: all 1s 1s;
+    &.title-show {
+      top: 30%;
+      opacity: 1;
+      filter: drop-shadow(0px 0px 10px rgba(255, 255, 255, 1));
+    }
+  }
+  .banner-btn {
+    position: absolute;
+    bottom: 10%;
+    left: 10%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    opacity: 0;
+    z-index: 5;
+    transition: all 1s 1s;
+    &.btn-show {
+      opacity: 1;
+    }
   }
 }
 
-.banner-btn {
-  position: absolute;
-  bottom: 10%;
-  left: 10%;
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  opacity: 0;
-  animation: key-text-show 1s 6s linear forwards;
-  z-index: 5;
-}
-@keyframes key-text-show {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+// @keyframes key-text-show {
+//   from {
+//     opacity: 0;
+//   }
+//   to {
+//     opacity: 1;
+//   }
+// }
+
 @keyframes key-text {
   0% {
     filter: unset;
@@ -185,14 +194,14 @@ $nav-height: 97px;
   }
 }
 
-@keyframes title-show {
-  from {
-    top: 0%;
-    opacity: 0;
-  }
-  to {
-    top: 30%;
-    opacity: 1;
-    filter: drop-shadow(0px 0px 10px rgba(255, 255, 255, 1));
-  }
-}
+// @keyframes title-show {
+//   from {
+//     top: 0%;
+//     opacity: 0;
+//   }
+//   to {
+//     top: 30%;
+//     opacity: 1;
+//     filter: drop-shadow(0px 0px 10px rgba(255, 255, 255, 1));
+//   }
+// }

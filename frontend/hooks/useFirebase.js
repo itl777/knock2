@@ -27,12 +27,12 @@ const getOAuth = async (callbackFunction) => {
     const result = await getRedirectResult(auth)
     if (result) {
       const user = result.user
-
-      if (user) {
-        callbackFunction(user.providerData[0])
+      if (!user) {
+        return console.error('沒有登入資訊')
       }
-    } else {
-    }
+      callbackFunction(user.providerData[0])
+    } 
+
   } catch (ex) {
     console.error(ex, 'getOAuthError')
   }
