@@ -19,7 +19,7 @@ export default function OrderStatusTag({ statusText }) {
       // statusText = '已完成'
       break
     case '已取消':
-      statusClass = styles.orderStatusGreen
+      statusClass = styles.orderStatusGrey
       // statusText = '已完成'
       break
     default:

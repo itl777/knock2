@@ -81,6 +81,7 @@ router.get("/", async (req, res) => {
       LEFT JOIN order_status os ON os.id = o.order_status_id
       WHERE o.member_id = ? AND o.order_status_id = ?
       GROUP BY o.id
+      ORDER BY o.id DESC
       LIMIT ? OFFSET ?;
     `;
 
@@ -175,7 +176,7 @@ router.get("/:orderId", async (req, res) => {
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
         o.order_status_id,
         os.order_status_name,
-        SUM(od.order_quantity * pm.price) AS total_price
+        SUM(od.order_quantity * pm.price + deliver_fee) AS total_price
       FROM orders o
       LEFT JOIN order_details od ON od.order_id = o.id
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
@@ -345,6 +346,31 @@ router.post("/api/add-reviews", async (req, res) => {
     console.error("Error while processing add reviews", error);
     res.status(500).json({
       error: "An error occurred while processing add reviews.",
+    });
+  }
+});
+
+// POST update orders
+router.post("/api/cancel_order", async (req, res) => {
+  const { order_id } = req.query;
+
+  try {
+    const sql = `
+      UPDATE orders SET 
+        order_status_id = 4, 
+        last_modified_at = now()
+      WHERE id = ?;
+    `;
+
+    await db.query(sql, [order_id])
+
+    res.json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error while canceling order", error);
+    res.status(500).json({
+      error: "An error occurred while canceling order.",
     });
   }
 });

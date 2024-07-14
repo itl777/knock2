@@ -12,9 +12,9 @@ export default function OrdersPage() {
 
   const tabItems = [
     { key: 'ongoing', name: '待付款', path: '/user/orders/ongoing' },
-    { key: 'canceled', name: '待出貨', path: '/user/orders/shipping' },
+    { key: 'shipping', name: '待出貨', path: '/user/orders/shipping' },
     { key: 'completed', name: '已完成', path: '/user/orders/completed' },
-    { key: 'completed', name: '已取消', path: '/user/orders/canceled' },
+    { key: 'canceled', name: '已取消', path: '/user/orders/canceled' },
   ]
 
   // 根據 status 設置 order_status_id

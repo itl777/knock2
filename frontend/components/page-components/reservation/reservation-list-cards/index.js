@@ -10,7 +10,7 @@ export default function ReservationListCards({ status }) {
 
   return (
     <div className={styles.reservationContainer}>
-      <CardHeader title="2024-00-00 r.reservation_date" btnHref={null} btnHidden={true} />
+      <CardHeader title="2024-00-00 r.reservation_date" btnRightHidden={true} btnLeftHidden={true} />
 
       <div className={styles.reservationContent}>
         {/* card body left */}

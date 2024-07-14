@@ -1,8 +1,3 @@
-.couponContentBox {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 2rem;
-}
 
 .couponCard {
   display: flex;
@@ -38,24 +33,13 @@
   color: white;
 }
 
-.couponInfo p:first-child {
-  margin-bottom: .5rem;
-}
-
-.couponInfo p:not(:first-child) {
+.textBox p {
   font-size: 14px;
 }
 
-.moreInfo {
-  display: inline-block;
-  margin-top: .5rem;
-  padding-bottom: 4px;
-  color: white;
-  font-size: 14px;
-  border-bottom: 1px solid white;
-
+.textBox {
+  margin: 6px 0;
 }
-
 
 .couponCardLeft::before,
 .couponCardLeft::after {
@@ -88,15 +72,16 @@
   background-color: var(--text-grey);
 }
 
-
-@media screen and (max-width: 1280px) {
-  .couponContentBox {
-    grid-template-columns: auto;
+@media screen and (max-width: 480px) {
+  
+  .couponCardLeft {
+    padding: .5rem .75rem .5rem .5rem;
   }
-}
 
-@media screen and (max-width: 800px) {
-  .couponContentBox {
-    grid-template-columns: auto;
+  .couponCardRight {
+    padding: 1rem .625rem 1rem 1rem;
+  }
+  .couponCard img {
+    width: 3.5rem;
   }
 }

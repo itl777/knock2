@@ -12,3 +12,8 @@
 .titleStyle {
   font-weight: bold;
 }
+
+.btnStack {
+  display: flex;
+  gap: 1rem;
+}

@@ -92,6 +92,7 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
             total_price={v.total_price}
             payment_type={v.payment_type}
             full_address={v.full_address}
+            order_status_id={v.order_status_id}
             order_status_name={v.order_status_name}
             orderDetailData={orderDetailData}
           />

@@ -1,14 +1,17 @@
 import styles from './card-header.module.css'
-import IconButton from '@mui/material/IconButton'
 import FilterBtn from '@/components/UI/filter-btn'
 import HDivider from '@/components/UI/divider/horizontal-divider'
-import { FaArrowLeftLong } from 'react-icons/fa6'
 
 export default function CardHeader({
   title = '標題',
-  btnHref = '/',
-  btnText = '按鈕',
-  btnHidden = false,
+  btnRightHref = '/',
+  btnLeftHref = '/',
+  btnRightText = '按鈕',
+  btnLeftText = '按鈕',
+  btnRightHidden = false,
+  btnLeftHidden = false,
+  btnRightOnClick,
+  btnLeftOnClick,
 }) {
   return (
     <div>
@@ -17,7 +20,22 @@ export default function CardHeader({
           <p className={styles.titleStyle}>{title}</p>
         </div>
 
-        {!btnHidden && <FilterBtn btnText={btnText} href={btnHref} />}
+        <div className={styles.btnStack}>
+          {!btnLeftHidden && (
+            <FilterBtn
+              btnText={btnLeftText}
+              href={btnLeftHref}
+              onClick={btnLeftOnClick}
+            />
+          )}
+          {!btnRightHidden && (
+            <FilterBtn
+              btnText={btnRightText}
+              href={btnRightHref}
+              onClick={btnRightOnClick}
+            />
+          )}
+        </div>
       </div>
       <HDivider margin="1.5rem 0" />
     </div>
