@@ -4,7 +4,7 @@ import styles from './reservation-list-cards.module.css'
 import { formatPrice } from '@/hooks/numberFormat'
 // components
 import OrderDetailRow from '../../orders/order-detail-row'
-import CardHeader from '../../orders/order-list-cards/card-header'
+import CardHeader from '../../orders/order-list-layout/card-header'
 
 export default function ReservationListCards({ status }) {
 

@@ -201,7 +201,7 @@ export default function CheckoutPage() {
 
   // 未登入顯示的內容
   if (!auth.id && authIsReady) {
-    return <RedirectionGuide text="請先登入" hideBtn={true} />
+    return <RedirectionGuide />
   }
 
   return (
