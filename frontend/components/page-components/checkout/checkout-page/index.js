@@ -147,6 +147,7 @@ export default function CheckoutPage() {
       recipientMobile: orderAddress.mobile_phone, // 收件人手機號碼
       recipientDistrictId: orderAddress.district_id, // 收件人區域 ID
       recipientAddress: orderAddress.address, // 收件人地址
+      deliverFee,
       orderItems, // 將 orderItems 加入到要提交的數據中
     }
 

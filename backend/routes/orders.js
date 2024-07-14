@@ -4,6 +4,50 @@ import moment from "moment-timezone";
 
 const router = express.Router();
 const dateFormat = "YYYY-MM-DD";
+const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
+
+const getPaymentType = (payment_type) => {
+  if (!payment_type) {
+    return payment_type = "待付款";
+  } else {
+    // 找到第一個 "_" 的位置
+    const underscoreIndex = payment_type.indexOf("_");
+
+    // 如果有找到 "_"，則取 "_" 之前的字串，否則取整個字串
+    const prefix =
+      underscoreIndex !== -1
+        ? payment_type.substring(0, underscoreIndex)
+        : payment_type;
+
+    switch (prefix) {
+      case "Credit":
+        payment_type = "線上刷卡";
+        break;
+      case "CVS":
+        payment_type = "超商付款";
+        break;
+      case "ATM":
+        payment_type = "轉帳";
+        break;
+      case "WebATM":
+        payment_type = "網路銀行";
+        break;
+      case "BARCODE":
+        payment_type = "超商條碼繳款";
+        break;
+      case "TWQR":
+        payment_type = "歐付寶行動支付";
+        break;
+      default:
+        payment_type = "其他付款方式";
+        break;
+    }
+
+    return payment_type;
+  }
+  
+}
+
 
 // GET orders data
 router.get("/", async (req, res) => {
@@ -23,9 +67,10 @@ router.get("/", async (req, res) => {
       SELECT 
         o.id AS order_id,
         o.order_date,
-        o.customer_order_id,
-        o.payment_method,
+        o.merchant_trade_no,
+        o.payment_type,
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
+        o.order_status_id,
         os.order_status_name,
         SUM(od.order_quantity * pm.price) AS total_price
       FROM orders o
@@ -39,16 +84,26 @@ router.get("/", async (req, res) => {
       LIMIT ? OFFSET ?;
     `;
 
-    const [orders] = await db.query(orderSql, [member_id, order_status_id, perPage, offset]);
+    const [orders] = await db.query(orderSql, [
+      member_id,
+      order_status_id,
+      perPage,
+      offset,
+    ]);
 
     // 格式化 order_date
-    orders.forEach((order) => {
-      const m = moment(order.order_date);
+    orders.forEach((v) => {
+      const m = moment(v.order_date);
       if (m.isValid()) {
-        order.order_date = m.format(dateFormat);
+        v.order_date = m.format(dateFormat);
       } else {
-        order.order_date = "無訂單日期";
+        v.order_date = "無訂單日期";
       }
+    });
+
+    // 格式化 payment_type
+    orders.forEach((v) => {
+      v.payment_type = getPaymentType(v.payment_type);
     });
 
     // 取得訂單商品圖片
@@ -78,7 +133,10 @@ router.get("/", async (req, res) => {
       WHERE member_id = ? AND order_status_id = ?;
     `;
 
-    const [[{ count }]] = await db.query(countSql, [member_id, order_status_id]);
+    const [[{ count }]] = await db.query(countSql, [
+      member_id,
+      order_status_id,
+    ]);
     const totalPages = Math.ceil(count / perPage);
 
     console.log("orders data: ", orders);
@@ -110,9 +168,12 @@ router.get("/:orderId", async (req, res) => {
       SELECT 
         o.id AS order_id,
         o.order_date,
-        o.customer_order_id,
-        o.payment_method,
+        o.merchant_trade_no,
+        o.rtn_code,
+        o.payment_type,
+        o.payment_date,
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
+        o.order_status_id,
         os.order_status_name,
         SUM(od.order_quantity * pm.price) AS total_price
       FROM orders o
@@ -133,9 +194,25 @@ router.get("/:orderId", async (req, res) => {
       if (m.isValid()) {
         order.order_date = m.format(dateFormat);
       } else {
-        order.order_date = "無訂單日期";
+        order.order_date = "";
       }
     });
+
+    // 格式化 payment_date
+    orders.forEach((order) => {
+      const m = moment(order.payment_date);
+      if (m.isValid()) {
+        order.payment_date = m.format(dateTimeFormat);
+      } else {
+        order.payment_date = "";
+      }
+    });
+    
+    // 格式化 payment_type
+    orders.forEach((v) => {
+      v.payment_type = getPaymentType(v.payment_type);
+    });
+
 
     // 取得訂單詳細資料
     const orderDetailsSql = `
@@ -145,7 +222,8 @@ router.get("/:orderId", async (req, res) => {
         pm.product_name,
         od.order_unit_price,
         od.order_quantity,
-        img.product_img
+        img.product_img,
+        od.review_status
       FROM order_details od
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
       LEFT JOIN (
@@ -206,11 +284,11 @@ router.get("/api/reviews/:orderId", async (req, res) => {
     const [rows] = await db.query(sql, [orderId]);
 
     rows.forEach((r) => {
-      const m = moment(r.created_at);
+      const m = moment(r.review_date);
       if (m.isValid()) {
-        r.created_at = m.format(dateFormat);
+        r.review_date = m.format(dateTimeFormat);
       } else {
-        r.created_at = "無訂單日期";
+        r.review_date = "";
       }
     });
 

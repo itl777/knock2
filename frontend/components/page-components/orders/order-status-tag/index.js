@@ -1,26 +1,30 @@
 // Order Status Component
 import styles from './order-status-tag.module.css'
 
-export default function OrderStatusTag({ status }) {
+export default function OrderStatusTag({ statusText }) {
   let statusClass = ''
-  let statusText = ''
+  // let statusText = ''
 
-  switch (status) {
-    case '處理中':
+  switch (statusText) {
+    case '待付款':
       statusClass = styles.orderStatusOrange
-      statusText = '處理中'
+      // statusText = '處理中'
       break
-    case '已出貨':
+    case '待出貨':
       statusClass = styles.orderStatusBlue
-      statusText = '已出貨'
+      // statusText = '已出貨'
       break
     case '已完成':
       statusClass = styles.orderStatusGreen
-      statusText = '已完成'
+      // statusText = '已完成'
+      break
+    case '已取消':
+      statusClass = styles.orderStatusGreen
+      // statusText = '已完成'
       break
     default:
       statusClass = styles.orderStatusOrange
-      statusText = ''
+      // statusText = ''
       break
   }
 

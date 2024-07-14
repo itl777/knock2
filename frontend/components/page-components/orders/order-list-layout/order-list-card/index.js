@@ -13,9 +13,10 @@ import { PRODUCT_IMG } from '@/configs/api-path'
 
 export default function OrderListCard({
   order_id,
+  merchant_trade_no,
   order_date,
   total_price,
-  payment_method,
+  payment_type,
   full_address,
   order_status_name,
   orderDetailData,
@@ -30,15 +31,15 @@ export default function OrderListCard({
       <div className={styles.orderBody}>
         <div>
           <div className={styles.orderInfoRowBox}>
-            <IconTextRow content={order_id} />
+            <IconTextRow content={merchant_trade_no} />
             <IconTextRow
-              content={`${formatPrice(total_price)} / ${payment_method}`}
+              content={`${formatPrice(total_price)} / ${payment_type}`}
               icon={HiOutlineCreditCard}
             />
             <IconTextRow content={full_address} icon={HiOutlineCube} />
           </div>
 
-          <OrderStatusTag status={order_status_name} />
+          <OrderStatusTag statusText={order_status_name} />
         </div>
 
         <div className={styles.imgListBox}>

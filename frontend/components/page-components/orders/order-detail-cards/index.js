@@ -1,20 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './order-detail-cards.module.css'
-import { formatPrice } from '@/hooks/numberFormat'
 import useFetchOrderData from '@/hooks/fetchOrderDetails'
 import OrderItemDetail from '../order-item-detail'
-import FilterBtn from '@/components/UI/filter-btn'
-import OrderDetailRow from '../order-detail-row'
+import OrderReviewDialog from '../order-review-dialog'
 import UserHeader from '@/components/UI/user-header'
+import OrderDetailInfo from '../order-detail-info'
 import { PRODUCT_IMG } from '@/configs/api-path'
 
 export default function OrderDetailCards({ orderId }) {
   const orderIdNumber = orderId.order_id
-  const { orderData, orderDetails } = useFetchOrderData(orderIdNumber)
+  const { orderData, orderDetails, anyReviewed } =
+    useFetchOrderData(orderIdNumber)
+  const [showReviewDialog, setShowReviewDialog] = useState(false)
+
+  useEffect(() => {
+    if (!orderData.order_status_id) {
+      setShowReviewDialog(false)
+      return
+    }
+    if (orderData.order_status_id === 2 || orderData.order_status_id === 3) {
+      setShowReviewDialog(true)
+    } else {
+      setShowReviewDialog(false)
+    }
+  }, [orderData, orderDetails, orderIdNumber, anyReviewed])
 
   return (
     <div className={styles.orderDetailContainer}>
-      <UserHeader type='icon' title="訂單明細" btnHref={null} />
+      <UserHeader type="icon" title="訂單明細" btnHref={null} />
 
       {/* card body */}
       <div className={styles.orderDetailContent}>
@@ -37,36 +50,22 @@ export default function OrderDetailCards({ orderId }) {
 
         {/* card body right */}
         <div className={styles.orderDetailRight}>
-          <div className={styles.orderInfoBox}>
-            <OrderDetailRow label="訂單日期" content={orderData?.order_date} />
-            <OrderDetailRow label="訂單編號" content={'20230404**'} />
-            <OrderDetailRow
-              label="總金額"
-              content={formatPrice(orderData?.total_price)}
-            />
-            <OrderDetailRow
-              label="付款時間"
-              content={'2024.05.22 16:30:30**'}
-            />
-            <OrderDetailRow label="地址" content={orderData?.full_address} />
+          <OrderDetailInfo
+            order_date={orderData?.order_status_id}
+            merchant_trade_no={orderData?.merchant_trade_no}
+            total_price={orderData?.total_price}
+            payment_date={orderData?.payment_date}
+            full_address={orderData?.full_address}
+            order_status_name={orderData?.order_status_name}
+          />
 
-            <OrderDetailRow status={orderData?.order_status_name} />
-          </div>
-
-          <div className={styles.orderReviewHintBox}>
-            <img src="/ghost/ghost_05.png" alt="" />
-            <div className={styles.orderReviewDialog}>
-              <p>
-                喜歡您的商品嗎？
-                <br />
-                請留下您大大的讚賞！
-              </p>
-              <FilterBtn
-                btnText="評價"
-                href={`/user/orders/details/reviews/${orderIdNumber}`}
-              />
-            </div>
-          </div>
+          {showReviewDialog && (
+            <OrderReviewDialog
+              order_id={orderIdNumber}
+              content={anyReviewed ? '已收到您的評價！' : undefined}
+              btnText={anyReviewed ? '查看評價' : undefined}
+            />
+          )}
         </div>
       </div>
     </div>

@@ -28,14 +28,14 @@ export default function ReservationPage({ status }) {
   }, [auth.id, router.isReady, authIsReady])
 
   return (
-    <div className={styles.listContainer}>
+    <>
       {!isLogin && <RedirectionGuide />}
       {isLogin && (
-        <div>
+        <div className={styles.listContainer}>
           <ReservationListCards />
           <ReservationListCards />
         </div>
       )}
-    </div>
+    </>
   )
 }

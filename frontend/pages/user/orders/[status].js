@@ -11,22 +11,25 @@ export default function OrdersPage() {
   const { status, page = 1 } = router.query // 取得動態路由參數
 
   const tabItems = [
-    { key: 'ongoing', name: '處理中', path: '/user/orders/ongoing' },
-    { key: 'canceled', name: '已取消', path: '/user/orders/canceled' },
+    { key: 'ongoing', name: '待付款', path: '/user/orders/ongoing' },
+    { key: 'canceled', name: '待出貨', path: '/user/orders/shipping' },
     { key: 'completed', name: '已完成', path: '/user/orders/completed' },
+    { key: 'completed', name: '已取消', path: '/user/orders/canceled' },
   ]
 
   // 根據 status 設置 order_status_id
   const getOrderStatusId = (status) => {
     switch (status) {
       case 'ongoing':
-        return 5
+        return 1
+      case 'shipping':
+        return 2
+      case 'completed':
+        return 3
       case 'canceled':
         return 4
-      case 'completed':
-        return 9
       default:
-        return 5 // 預設處理中狀態
+        return 1 // 預設處理中狀態
     }
   }
 
