@@ -4,6 +4,7 @@ import InputStepper from '@/components/UI/input-stepper'
 import OrderProductImgBox from '../order-product-img-box'
 import OrderPriceBox from '../order-price-box'
 import { IoHeartOutline } from 'react-icons/io5'
+import CartFavoriteIcon from '../../products/cart-favorite-icon'
 
 export default function OrderItemCheckout({
   type = 'def',
@@ -37,7 +38,8 @@ export default function OrderItemCheckout({
           productName={productName} // 將商品名稱傳給子元件
         />
       </div>
-      <IoHeartOutline className={styles.addToFavoriteIcon} />
+      {/* <IoHeartOutline className={styles.addToFavoriteIcon} /> */}
+      <CartFavoriteIcon product_id={productId} />
     </div>
   )
 }
