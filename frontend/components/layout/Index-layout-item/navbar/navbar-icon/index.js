@@ -10,9 +10,30 @@ import { TiThMenu } from 'react-icons/ti'
 import ClearButton from '@/components/UI/ClearButton'
 import CheckoutOffcanvas from '@/components/page-components/checkout/checkout-offcanvas'
 import styles from '../nav-styles.module.scss'
+import NavMenu from './nav-menu'
+import { useState } from 'react'
+import { useLoginModal } from '@/context/login-context/index'
 
-export default function NavbarIcon({ handleNavMenuOpen, handleMobileMenu }) {
+export default function NavbarIcon({ handleMobileMenu }) {
   const { auth } = useAuth()
+  const { loginFormSwitch } = useLoginModal()
+
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+
+  const handleNavMenuOpen = (event) => {
+    event.preventDefault()
+    if (!auth.id) {
+      loginFormSwitch('Login')
+    } else {
+      if (!open) {
+        setAnchorEl(event.currentTarget)
+      } else {
+        setAnchorEl(null)
+      }
+    }
+  }
+
   return (
     <>
       <ul className={styles['navbar-icon']}>
@@ -42,6 +63,11 @@ export default function NavbarIcon({ handleNavMenuOpen, handleMobileMenu }) {
                 <FaCircleUser />
               )
             }
+          />
+          <NavMenu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleNavMenuOpen}
           />
           <a>
             <CheckoutOffcanvas />

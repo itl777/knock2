@@ -33,17 +33,20 @@ export default function AvatarFormItem({ avatar = '', open }) {
     }
   `
 
+
   return (
     <Avatar onClick={open}>
-      <Image
-        src={avatar !== '' ? `${API_SERVER}/avatar/${avatar}` : ''}
-        fill
-        alt="avatar"
-        style={{
-          objectFit: 'contain',
-          borderRadius: '100%',
-        }}
-      />
+      {avatar !== '' ? (
+        <Image
+          src={`${API_SERVER}/avatar/${avatar}`}
+          fill
+          alt=" "
+          style={{
+            objectFit: 'contain',
+            borderRadius: '100%',
+          }}
+        />
+      ) : null}
       <UploadIcon>
         <FaCloudUploadAlt />
       </UploadIcon>

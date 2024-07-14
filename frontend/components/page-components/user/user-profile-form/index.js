@@ -265,8 +265,6 @@ export default function UserProfileForm() {
           onSubmit={UserProfileFormSubmit}
         >
           <div className={styles['box1']}>
-            {/* <div className={styles['avatar']}>
-            </div> */}
             <AvatarFormDialogs
               openDialog={openAvatarModal}
               closeDialog={() => setOpenAvatarModal(false)}

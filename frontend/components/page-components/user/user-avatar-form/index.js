@@ -111,6 +111,7 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
   useEffect(() => {
     if (imgUrl && imageRef.current) {
       if (cropper) {
+        setZoomValue(0.1)
         cropper.replace(imgUrl)
       } else {
         const cropperInstance = new Cropper(imageRef.current, {
@@ -154,7 +155,7 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
         setZoomValue={setZoomValue}
       >
         <DropZone
-          openBtn={open}
+          uploadBtn={open}
           getRootProps={getRootProps}
           getInputProps={getInputProps}
           isDragActive={isDragActive}

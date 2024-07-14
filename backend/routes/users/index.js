@@ -76,10 +76,8 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
 
 // 驗證 jwt token
 router.post("/verify-token", async (req, res) => {
-  console.log(!req.body.token, "111");
 
   if (!req.body.token) return res.json(output);
-  console.log(!req.body.token, "222");
   const output = {
     success: false,
     code: 0,

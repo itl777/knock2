@@ -8,7 +8,7 @@ import {
 
 export default function DropZone({
   children,
-  openBtn,
+  uploadBtn,
   getRootProps,
   getInputProps,
   isDragActive,
@@ -33,14 +33,12 @@ export default function DropZone({
 
         {isDragAccept && (
           <span>
-            {' '}
             <FaCheckCircle />
             此檔案可以上傳
           </span>
         )}
         {isDragReject && (
           <span>
-            {' '}
             <FaExclamationCircle />
             檔案需請選擇圖片，且需小於2MB
           </span>
@@ -54,7 +52,7 @@ export default function DropZone({
         <FilterBtn
           href={null}
           btnText={hasImage ? '更換圖片' : '上傳圖片'}
-          onClick={openBtn}
+          onClick={uploadBtn}
           className={styles.btn}
         ></FilterBtn>
       </div>
