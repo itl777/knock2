@@ -8,7 +8,14 @@ const dateFormat = "YYYY-MM-DD";
 // GET orders data
 router.get("/", async (req, res) => {
   // 從 query 中取得 member_id, order_status_id
-  const { member_id, order_status_id } = req.query;
+  const { member_id, order_status_id, page } = req.query;
+  const perPage = 5; //每頁筆數
+  let currentPage = parseInt(page) || 1;
+  const offset = (currentPage - 1) * perPage;
+
+  if (currentPage < 1) {
+    return res.redirect("?page=1");
+  }
 
   try {
     // 取得訂單資料
@@ -28,10 +35,11 @@ router.get("/", async (req, res) => {
       LEFT JOIN city c ON c.id = d.city_id
       LEFT JOIN order_status os ON os.id = o.order_status_id
       WHERE o.member_id = ? AND o.order_status_id = ?
-      GROUP BY o.id;
+      GROUP BY o.id
+      LIMIT ? OFFSET ?;
     `;
 
-    const [orders] = await db.query(orderSql, [member_id, order_status_id]);
+    const [orders] = await db.query(orderSql, [member_id, order_status_id, perPage, offset]);
 
     // 格式化 order_date
     orders.forEach((order) => {
@@ -63,14 +71,27 @@ router.get("/", async (req, res) => {
       order_status_id,
     ]);
 
+    // 訂單總頁數
+    const countSql = `
+      SELECT COUNT(*) AS count
+      FROM orders
+      WHERE member_id = ? AND order_status_id = ?;
+    `;
+
+    const [[{ count }]] = await db.query(countSql, [member_id, order_status_id]);
+    const totalPages = Math.ceil(count / perPage);
+
     console.log("orders data: ", orders);
     console.log("order details data: ", orderDetails);
 
     // 將查詢結果傳送到前端
     res.json({
       status: true,
-      orders: orders,
-      orderDetails: orderDetails,
+      orders,
+      orderDetails,
+      perPage,
+      offset,
+      totalPages,
     });
   } catch (error) {
     console.error("Error fetching orders: ", error);
@@ -231,12 +252,7 @@ router.post("/api/add-reviews", async (req, res) => {
 
     const reviewPromises = reviews.map(
       ({ review, rate, order_id, order_product_id }) => {
-        return db.query(sql, [
-          review,
-          rate,
-          order_id,
-          order_product_id,
-        ]);
+        return db.query(sql, [review, rate, order_id, order_product_id]);
       }
     );
 
@@ -254,46 +270,5 @@ router.post("/api/add-reviews", async (req, res) => {
     });
   }
 });
-
-// router.post("/api/add-reviews", async (req, res) => {
-//   // const { review, rate, content, order_id, order_product_id } = req.body;
-//   const body = {...req.body}
-
-//   try {
-//     const sql = `
-//       UPDATE order_details SET
-//         review = ?,
-//         rate = ?,
-//         content = ?,
-//         review_status = 1,
-//       WHERE order_id = ? and order_product_id;
-//     `;
-
-//     const reviewPromises = body.map(({review, rate, content, order_id, order_product_id})=>{
-//       const rows = [
-//         review, rate, content, order_id, order_product_id
-//       ]
-//     }
-
-//     )
-//     const [results] = await db.query(sql, [review, rate, content, order_id, order_product_id]);
-
-//     // 確認是否有成功 insert value
-//     const success = results.affectedRows === 1;
-//     const id = results.insertId;
-
-//     // 返回結果到前端
-//     res.json({
-//       success,
-//       id,
-//     });
-
-//   } catch (error) {
-//     console.error("Error while processing add reviews", error);
-//     res.status(500).json({
-//       error: "An error occurred while processing add reviews.",
-//     });
-//   }
-// });
 
 export default router;

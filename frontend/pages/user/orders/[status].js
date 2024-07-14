@@ -8,7 +8,7 @@ import OrderListCards from '@/components/page-components/orders/order-list-cards
 
 export default function OrdersPage() {
   const router = useRouter()
-  const { status } = router.query // 取得動態路由參數
+  const { status, page = 1 } = router.query // 取得動態路由參數
 
   const tabItems = [
     { key: 'ongoing', name: '處理中', path: '/user/orders/ongoing' },
@@ -26,27 +26,24 @@ export default function OrdersPage() {
       case 'completed':
         return 9
       default:
-        return 5
+        return 5 // 預設處理中狀態
     }
   }
-
-  useEffect(() => {
-    if (!status) {
-      router.push('/user/orders/ongoing') // 如果沒有狀態，默認跳轉到 ongoing
-    }
-  }, [status])
 
   const orderStatusId = getOrderStatusId(status)
 
   return (
-    <>
-      <IndexLayout title="商品訂單" background="light">
-        <UserLayout
-          userTab={<UserTab />}
-          userTabSec={<UserTabSec tabItems={tabItems} />}
-          sectionRight={<OrderListCards orderStatusId={orderStatusId} />}
-        />
-      </IndexLayout>
-    </>
+    <IndexLayout title="商品訂單" background="light">
+      <UserLayout
+        userTab={<UserTab />}
+        userTabSec={<UserTabSec tabItems={tabItems} />}
+        sectionRight={
+          <OrderListCards
+            orderStatusId={orderStatusId}
+            initialPage={parseInt(page)}
+          />
+        }
+      />
+    </IndexLayout>
   )
 }

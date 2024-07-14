@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import styles from './order-list-cards.module.css'
 // hooks
 import { useAuth } from '@/context/auth-context'
+import { useRouter } from 'next/router'
 import { formatPrice } from '@/hooks/numberFormat'
 // components
 import OrderStatusTag from '../order-status-tag'
@@ -10,21 +11,25 @@ import NoData from '@/components/UI/no-data'
 import OrderProductImgBox from '../order-product-img-box'
 import CardHeader from './card-header'
 import IconTextRow from './icon-text-row'
+import UserPagination from '@/components/UI/user-pagination'
 // icons
 import { HiOutlineCreditCard, HiOutlineCube } from 'react-icons/hi'
 // api path
 import { ORDER_LIST_GET, PRODUCT_IMG } from '@/configs/api-path'
 
-export default function OrderListCards({ orderStatusId }) {
+export default function OrderListCards({ orderStatusId, initialPage = 1 }) {
   const [orderData, setOrderData] = useState([])
   const [orderDetailData, setOrderDetailData] = useState([])
+  const [totalPages, setTotalPages] = useState(1)
+  const [page, setPage] = useState(1)
+  const router = useRouter()
   const { auth } = useAuth()
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await fetch(
-          `${ORDER_LIST_GET}?member_id=${auth.id}&order_status_id=${orderStatusId}`
+          `${ORDER_LIST_GET}?member_id=${auth.id}&order_status_id=${orderStatusId}&page=${page}`
         )
 
         if (!response.ok) {
@@ -36,13 +41,22 @@ export default function OrderListCards({ orderStatusId }) {
         console.log(data)
         setOrderData(data.orders) // 取得訂單資料
         setOrderDetailData(data.orderDetails) // 取得訂單所有商品資料（圖片）
+        setTotalPages(data.totalPages)
       } catch (error) {
         console.log('Error fetching orders:', error)
       }
     }
 
     fetchOrders()
-  }, [auth.id, orderStatusId])
+  }, [auth.id, orderStatusId, page])
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage)
+    router.push({
+      pathname: router.pathname,
+      query: { ...router.query, page: newPage },
+    })
+  }
 
   return (
     <>
@@ -68,7 +82,9 @@ export default function OrderListCards({ orderStatusId }) {
                 <div className={styles.orderInfoRowBox}>
                   <IconTextRow content={v.order_id} />
                   <IconTextRow
-                    content={`${formatPrice(v.total_price)} / ${v.payment_method}`}
+                    content={`${formatPrice(v.total_price)} / ${
+                      v.payment_method
+                    }`}
                     icon={HiOutlineCreditCard}
                   />
                   <IconTextRow content={v.full_address} icon={HiOutlineCube} />
@@ -95,6 +111,12 @@ export default function OrderListCards({ orderStatusId }) {
           </div>
         ))
       )}
+
+      <UserPagination
+        page={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   )
 }

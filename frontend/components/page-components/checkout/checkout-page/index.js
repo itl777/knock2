@@ -181,6 +181,11 @@ export default function CheckoutPage() {
     }
   }
 
+  // 監聽視窗寬度
+  useEffect(() => {
+    setScreenWidth(userClientWidth)
+  }, [userClientWidth])
+
   // 登入驗證
   useEffect(() => {
     if (router.isReady && authIsReady) {
@@ -198,11 +203,6 @@ export default function CheckoutPage() {
   if (!auth.id && authIsReady) {
     return <RedirectionGuide text="請先登入" hideBtn={true} />
   }
-
-  // 監聽視窗寬度
-  useEffect(() => {
-    setScreenWidth(userClientWidth)
-  }, [userClientWidth])
 
   return (
     <section className={styles.sectionContainer}>

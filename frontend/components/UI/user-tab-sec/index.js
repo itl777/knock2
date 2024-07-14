@@ -23,10 +23,3 @@ export default function UserTabSec({ tabItems=[] }) {
     </ul>
   )
 }
-
-// 引入時記得設定 tab 的內容
-// const tabItems = [
-//   { key: 'ongoing', name: '處理中', path: '/user/orders/ongoing' },
-//   { key: 'canceled', name: '已取消', path: '/user/orders/canceled' },
-//   { key: 'completed', name: '已完成', path: '/user/orders/completed' },
-// ]
