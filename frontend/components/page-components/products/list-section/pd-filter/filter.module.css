@@ -90,10 +90,16 @@
   top: -50px;
   left: 100px;
 }
+.bottom-center{
+  position: relative;
+}
 .text {
   font-size: 16px;
   font-weight: 600;
   color: #676767;
+  position: absolute;
+  top: -10px;
+ 
 }
 
 .eraserIcon {

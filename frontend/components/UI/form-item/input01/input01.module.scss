@@ -11,7 +11,6 @@ $border-color: #bbb29f;
 // disabled
 $disabled-field-line: #eaeaea;
 
-
 .inputDefault {
   @include font-small;
   position: relative;
@@ -37,7 +36,6 @@ $disabled-field-line: #eaeaea;
   &:focus-visible {
     outline: 0;
   }
-
 }
 
 .inputDefaultLine {
@@ -99,12 +97,11 @@ $disabled-field-line: #eaeaea;
   &:focus-visible {
     outline: 0;
   }
-
 }
 
-.input{
+.input {
   position: relative;
-  .eyeIcon{
+  .eyeIcon {
     position: absolute;
     top: 50%;
     right: 1rem;
@@ -115,5 +112,6 @@ $disabled-field-line: #eaeaea;
     border: none;
     background-color: transparent;
     cursor: pointer;
+    color: $text-grey;
   }
 }

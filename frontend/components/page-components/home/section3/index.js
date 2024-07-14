@@ -7,37 +7,23 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import styles from './section3.module.scss'
 import HomeBtn from '@/components/UI/home-btn'
-
-// Fisher-Yates 洗牌算法
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-  return array
-}
+import _ from 'lodash'
 
 export default function HomeSection3() {
-  const [data, setData] = useState({
-    success: false,
-    themes: [],
-  })
-  const [selectedBranch, setSelectedBranch] = useState(1) // 默認選擇的第一個分店
+  const [data, setData] = useState([])
 
   useEffect(() => {
-    fetch(`${BRANCH_THEMES}?branch_id=${selectedBranch}`)
+    fetch(`${BRANCH_THEMES}?branch_id=1`)
       .then((response) => response.json())
       .then((myData) => {
-        const shuffledThemes = shuffleArray(myData.themes)
-        setData({
-          success: true,
-          themes: shuffledThemes,
-        })
+        console.log(myData)
+        let shuffledThemes = _.shuffle(myData.themes)
+        setData(shuffledThemes)
       })
       .catch((error) => {
         console.error('Error fetching themes:', error)
       })
-  }, [selectedBranch]) // 添加依賴數組
+  }, []) // 添加依賴數組
 
   const settings = {
     className: 'center',
@@ -96,9 +82,9 @@ export default function HomeSection3() {
           <h1>Game Theme</h1>
         </div>
 
-        <div className="slider-container">
+        <div className={`${styles['slider']} slider-container`}>
           <Slider {...settings}>
-            {data.themes.map((theme) => (
+            {data.map((theme) => (
               <Card02
                 key={theme.theme_id}
                 branchName={theme.branch_name}

@@ -15,6 +15,7 @@ export const RESET_PASSWORD_POST = `${API_SERVER}/users/reset-password`
 // product image path
 export const PRODUCT_IMG = `${API_SERVER}/images`
 export const PRODUCT_LIST = `${API_SERVER}/products`
+export const PRODUCT_BACKEND_IMG = `${API_SERVER}/products/img`
 export const PRODUCT_DETAILS = `${API_SERVER}/products/details`
 export const PRODUCT_FAVORITE = `${API_SERVER}/products/favorite`
 
@@ -38,9 +39,10 @@ export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
 
 
 //teams
-export const TEAM_ALL = `${API_SERVER}/teams/apiAll`
+export const TEAM_ALL = `${API_SERVER}/teams/apiSearch`
 export const ONE_TEAM = `${API_SERVER}/teams/api/`
 export const GET_CHAT = `${API_SERVER}/teams/api/chat/`
+export const ADD_CHAT = `${API_SERVER}/teams/api/chat/add/`
 
 //THEME
 export const THEME_LIST = `${API_SERVER}/themes`

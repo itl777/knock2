@@ -24,16 +24,6 @@ export default function PdCard() {
         </div>
       </div>
 
-      <style jsx>
-        {`
-          {/* .d-grid {
-            grid-template-columns: auto auto auto;
-            max-width: 1200px;
-            padding: 0;
-            margin: auto;
-          } */}
-        `}
-      </style>
     </>
   )
 }

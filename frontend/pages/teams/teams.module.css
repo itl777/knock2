@@ -75,3 +75,8 @@
 .MuiAccordionActions-spacing{
     background:none;
 }
+
+.avatarImg{
+    width:24px;
+    height:24px;
+}

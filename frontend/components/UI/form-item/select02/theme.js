@@ -3,8 +3,9 @@ import { createTheme } from '@mui/material/styles'
 const borderColor = '#d9d9d9'
 const borderWidth = '2px'
 const borderRadius = '8px'
-const borderColorHover = '#3399ff'
-const borderColorFocus = '#3399ff'
+const borderColorHover = '#bbb29f'
+const borderColorFocus = '#bbb29f'
+const boxShadowFocus = '#efede8'
 const selectedBackgroundColor = ''
 const selectedBackgroundColorHover = ''
 
@@ -29,6 +30,7 @@ const customTheme = createTheme({
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
             borderColor: borderColorFocus,
+            boxShadow: `0 0 0 3px ${boxShadowFocus}`,
           },
           '& .MuiSelect-icon': {
             transition: '200ms',

@@ -14,7 +14,7 @@ import UserProfileRadio from './user-profile-item/UserProfileRadio'
 import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
-import AvatarFormDialogs from './user-avatar-form'
+import AvatarFormDialogs from '../user-avatar-form'
 import schemaForm from './schema-form'
 import BlackBtn from '@/components/UI/black-btn'
 
@@ -74,6 +74,13 @@ export default function UserProfileForm() {
         setBirthdayValue(newBirthdayValue)
         getBirthdayOptions(year, month)
       }
+      return
+    }
+    // 修改常用載具(轉換為大寫英文字母)
+    if (name === 'invoice_carrier_id') {
+      const newValue = value.toUpperCase()
+      const newForm = { ...profileForm, [name]: newValue }
+      setProfileForm(newForm)
       return
     }
 
@@ -231,8 +238,11 @@ export default function UserProfileForm() {
           })
           setAddressForm(options)
           // 寫入 address value
-          const values = data.address.find((v) => v.type === '1').id
-          setAddressValue({ address_id: values })
+          const values = data.address.find((v) => v.type === '1')
+          if (values) {
+            const id = values.id
+            setAddressValue({ address_id: id })
+          }
         }
       }
     } catch (error) {
@@ -258,8 +268,8 @@ export default function UserProfileForm() {
             {/* <div className={styles['avatar']}>
             </div> */}
             <AvatarFormDialogs
-              open={openAvatarModal}
-              close={() => setOpenAvatarModal(false)}
+              openDialog={openAvatarModal}
+              closeDialog={() => setOpenAvatarModal(false)}
             />
             <AvatarFormItem
               avatar={profileForm.avatar}

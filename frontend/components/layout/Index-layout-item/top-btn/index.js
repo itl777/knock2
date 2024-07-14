@@ -1,8 +1,28 @@
 import styles from './top-btn.module.scss'
 import 'animate.css/animate.css'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 export default function TopBtn() {
+  // ****************IT 畫面在最頂端時隱藏top按鈕
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY === 0) {
+        setVisible(false)
+      } else {
+        setVisible(true)
+      }
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+  if (!visible) {
+    return null
+  }
+  // ****************IT
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,

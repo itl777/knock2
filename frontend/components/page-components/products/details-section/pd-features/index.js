@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 
 export default function PdFeatures({ dbData }) {
   const [productData, setProductData] = useState({
+    product_id: '',
     product_name: '',
     price: 0,
     summary: '',
@@ -31,7 +32,7 @@ export default function PdFeatures({ dbData }) {
           <div
             className={`${myStyle['slick']} col-lg-5 px-0 position-relative`}
           >
-            <PdSlick />
+            <PdSlick product_id={productData.product_id}/>
           </div>
 
           {/* 詳情右側 */}
@@ -68,16 +69,20 @@ export default function PdFeatures({ dbData }) {
 
             {/* 按鈕 */}
             <div className={myStyle['btn-area']}>
-              <BtnGroup product_id={productData.product_id} product_name={productData.product_name} />
+              <BtnGroup
+                product_id={productData.product_id}
+                product_name={productData.product_name}
+              />
             </div>
           </div>
         </div>
       </div>
 
-              {/* RWD1200以下顯示 */}
+      {/* RWD1200以下顯示 */}
       <div className={myStyle['media-1200']}>
         <BtnGroup product_id={productData.product_id} />
       </div>
+      {/* RWD1200以下顯示end */}
     </>
   )
 }

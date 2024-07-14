@@ -17,13 +17,31 @@ export default function BtnGroup({ product_id, product_name }) {
     <>
       <div className={`${myStyle['btn-group']}`}>
         <div className="position-relative">
-          <Image
+          {data.includes(product_id) ? (
+            <Image
+              className={`${myStyle['sm-likeStyle']}`}
+              src="/ghost/ghost_10.png"
+              width={44}
+              height={37}
+              alt="Picture"
+            />
+          ) : (
+            <Image
+              className={myStyle['sm-likeStyle']}
+              src="/ghost/ghost_19.png"
+              width={44}
+              height={37}
+              alt="Picture"
+            />
+          )}
+
+          {/* <Image
             className={myStyle['sm-likeStyle']}
             src="/ghost/ghost_10.png"
             width={44}
             height={37}
             alt="Picture"
-          />
+          /> */}
           <PdBtnOutlined
             btnText={data.includes(product_id) ? '已收藏' : '加入收藏'}
             onClick={toggleButton}
