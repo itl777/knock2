@@ -7,6 +7,7 @@ import { useAuth } from '@/context/auth-context'
 import Avatar from '@mui/joy/Avatar'
 import { FaCircleUser } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
+import ClearButton from '@/components/UI/ClearButton'
 import CheckoutOffcanvas from '@/components/page-components/checkout/checkout-offcanvas'
 import styles from '../nav-styles.module.scss'
 
@@ -27,18 +28,21 @@ export default function NavbarIcon({ handleNavMenuOpen, handleMobileMenu }) {
           </Link>
         </li>
         <li>
-          <Link href="" onClick={handleNavMenuOpen}>
-            {auth.id ? (
-              <Avatar
-                size="md"
-                variant="solid"
-                alt={auth.nickname}
-                src={auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''}
-              />
-            ) : (
-              <FaCircleUser />
-            )}
-          </Link>
+          <ClearButton
+            onClick={handleNavMenuOpen}
+            btnText={
+              auth.id ? (
+                <Avatar
+                  size="md"
+                  variant="solid"
+                  alt={auth.nickname}
+                  src={auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''}
+                />
+              ) : (
+                <FaCircleUser />
+              )
+            }
+          />
           <a>
             <CheckoutOffcanvas />
           </a>

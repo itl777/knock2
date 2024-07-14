@@ -6,8 +6,8 @@ const borderRadius = '8px'
 const borderColorHover = '#bbb29f'
 const borderColorFocus = '#bbb29f'
 const boxShadowFocus = '#efede8'
-const selectedBackgroundColor = ''
-const selectedBackgroundColorHover = ''
+const selectedBackgroundColor = '#efede8'
+const selectedBackgroundColorHover = '#efede8'
 
 const customTheme = createTheme({
   components: {
@@ -58,6 +58,7 @@ const customTheme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
+          
           fontFamily: 'Noto Serif JP, serif',
           '&.Mui-selected': {
             backgroundColor: selectedBackgroundColor,

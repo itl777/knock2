@@ -53,8 +53,7 @@ const logoutFirebase = async () => {
 
   try {
     // 登出成功
-    const result = await signOut(auth)
-    console.log(result, 'logoutFirebase')
+    await signOut(auth)
   } catch (ex) {
     // 登出失敗
     console.error(ex)

@@ -8,6 +8,7 @@ import { useLoginModal } from '@/context/login-context/index'
 import styles from '../login-form.module.scss'
 // components
 import AuthFormInput from '../auth-form-input'
+import ClearButton from '@/components/UI/ClearButton'
 
 const dialogTheme = createTheme({
   components: {
@@ -71,14 +72,12 @@ export default function ForgotPasswordForm() {
               />
             </div>
             <div className={styles.links}>
-              <Link
-                href=""
+              <ClearButton
                 onClick={() => {
                   loginFormSwitch('Login')
                 }}
-              >
-                <span>想起密碼了嗎？ 返回登入</span>
-              </Link>
+                btnText={<span>想起密碼了嗎？ 返回登入</span>}
+              />
             </div>
             <div className={styles.links}>
               <span>——— 或選擇其他方式登入 ———</span>

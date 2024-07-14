@@ -71,7 +71,7 @@ export default function AvatarDialog({
             {children}
           </DialogContent>
           <DialogActions>
-            <BlackBtn btnText="確認上傳" href="" onClick={avatarSubmit} />
+            <BlackBtn btnText="確認上傳" href={null} onClick={avatarSubmit} />
           </DialogActions>
         </form>
       </BootstrapDialog>

@@ -52,7 +52,7 @@ export default function DropZone({
           </span>
         )}
         <FilterBtn
-          href=""
+          href={null}
           btnText={hasImage ? '更換圖片' : '上傳圖片'}
           onClick={openBtn}
           className={styles.btn}
