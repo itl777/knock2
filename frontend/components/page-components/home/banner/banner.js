@@ -10,6 +10,7 @@ export default function Banner() {
   const [itemShow, setItemShow] = useState(false)
 
   const handleScroll = () => {
+    if (!sectionRef.current) return
     const scrollPercentage =
       window.scrollY /
       (sectionRef.current.offsetHeight - (window.innerHeight + 0) * 2 + 50)
