@@ -147,7 +147,6 @@ router.post("/return", async (req, res) => {
     res.status(400).send("比對失敗");
   }
 
-  res.send("1|OK");
   // // 交易成功後，需要回傳 1|OK 給綠界
   // if (CheckMacValue === checkValue) {
   //   res.send("1|OK");
