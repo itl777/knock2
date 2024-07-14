@@ -23,13 +23,13 @@ export default function NavbarIcon({ handleMobileMenu }) {
 
   const handleNavMenuOpen = (event) => {
     event.preventDefault()
-    if (!auth.id) {
-      loginFormSwitch('Login')
+    if (open) {
+      setAnchorEl(null)
     } else {
-      if (!open) {
-        setAnchorEl(event.currentTarget)
+      if (!auth.id) {
+        loginFormSwitch('Login')
       } else {
-        setAnchorEl(null)
+        setAnchorEl(event.currentTarget)
       }
     }
   }
