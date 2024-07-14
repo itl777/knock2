@@ -54,7 +54,7 @@ export default function FavoriteTab() {
 
         <TabPanel value="2">
           {/* 有分類的卡片列表 */}
-          <ProductTabDrag />
+          <ProductTabDrag favData={data}/>
         </TabPanel>
       </TabContext>
     </Box>

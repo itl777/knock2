@@ -4,14 +4,13 @@ import { useProduct } from '@/context/product-context'
 import myStyle from './drag.module.css'
 import DeleteIconBtn from '../product-tab-list/delete-icon-btn'
 
-export default function FavCard({ pdId = 1, dbData }) {
+export default function FavCard({ dbData }) {
   const { cardChange, setCardChange } = useProduct()
-
   return (
     <>
       <div
         draggable="true"
-        id={pdId}
+        id={dbData.favorite_id}
         className="pd-card d-flex position-relative mb-2"
       >
         <div className="img-div position-relative">

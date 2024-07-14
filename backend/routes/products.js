@@ -106,6 +106,7 @@ const getFavoriteDate = async (req) => {
   let success = false;
   let redirect = "";
   const perPage = 6; //每頁卡片數量
+  let favorite_id = req.params.favorite_id || 0; //取得收藏id
 
   let where = " WHERE 1 ";
 
@@ -114,6 +115,9 @@ const getFavoriteDate = async (req) => {
   if (page < 1) {
     redirect = "?page=1";
     return { success, redirect };
+  }
+
+  if (favorite_id) {
   }
 
   // user_id 暫設1
@@ -136,10 +140,7 @@ const getFavoriteDate = async (req) => {
       (page - 1) * perPage
     },${perPage}`;
 
- 
-
     [rows] = await db.query(sql);
-
 
     success = true;
     return {
@@ -159,11 +160,7 @@ const getImg = async (req) => {
   let rows = [];
   const product_id = +req.params.product_id || 0;
 
-
-
   const sql = `SELECT product_img.product_img FROM \`product_management\` JOIN \`product_img\` ON \`product_id\` = \`img_product_id\` WHERE \`product_id\` = ${product_id}`;
-
-
 
   [rows] = await db.query(sql);
 
@@ -225,6 +222,20 @@ router.get("/favorite/api", async (req, res) => {
     success,
     rows,
   });
+});
+
+// 編輯收藏欄位
+router.put("/favorite/edit/:favorite_id/:section", async (req, res) => {
+  // user_id: 1, //暫時寫死
+  const section = req.params.section;
+  const favorite_id = req.params.favorite_id;
+
+  // UPDATE `product_favorites` SET `section`=1 WHERE `favorite_id`=7;
+  const sql =
+    "UPDATE `product_favorites` SET `section`=? WHERE `favorite_id`=?";
+  const [result] = await db.query(sql, [section, favorite_id]);
+
+  res.json({ result, success: !!result.affectedRows });
 });
 
 // 新增

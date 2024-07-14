@@ -11,7 +11,6 @@ function PdSlick({ product_id }) {
   // const [isData, setIsData] = useState([])
 
   const { data } = useProductImg(isId)
-  console.log('13-data', data)
   useEffect(() => {
     setIsId(product_id)
   }, [product_id])
