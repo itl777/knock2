@@ -38,7 +38,7 @@ export default function Banner() {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  }, [isFixed])
+  }, [])
 
   return (
     <>
