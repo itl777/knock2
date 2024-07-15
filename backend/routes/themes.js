@@ -183,4 +183,9 @@ router.get("/branch-themes", async (req, res) => {
   });
 });
 
+router.get("/details/:themes_id", async (req, res) => {
+  const data = await getListDate(req);
+  res.json(data);
+});
+
 export default router;

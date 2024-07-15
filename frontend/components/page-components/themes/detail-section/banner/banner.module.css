@@ -1,13 +1,14 @@
 .theme {
-    position: relative;
-    height: calc(100vh - 100px);
-    overflow: hidden;
-    background: linear-gradient(to top, black, rgba(155, 155, 155, 0)), 
-                url("/themes-main/themes-7.jpg") no-repeat center center;
-    background-size: cover;
-    display: flex;
-    align-items: center;
-  }
+  position: relative;
+  height: calc(100vh - 100px);
+  overflow: hidden;
+  background: linear-gradient(to top, black, rgba(155, 155, 155, 0)), 
+              url("/themes-main/${themeImg}") no-repeat center center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+}
+
   
   .item {
     background-color: white;
