@@ -27,7 +27,7 @@ const searchData = async (req) => {
   let start_date = req.query.startdate || "";
   let end_date = req.query.enddate || "";
   
-  let sort = req.query.sort || "team_id";
+  let sort = req.query.sort || "reservation_id";
   const order = req.query.order || "DESC";
 
   let where = " WHERE 1 ";
@@ -43,11 +43,6 @@ const searchData = async (req) => {
     where += ` AND (b.branch_id = ${branch_id})`;
   }
 
-  if (team_id && team_id.trim() !== "") {
-    const team_id_esc = db.escape(`${team_id}`);
-    where += ` AND (team.team_id = ${team_id_esc})`;
-  }
-
   if (team_status && team_status.trim() !== "") {
     const team_status_esc = db.escape(`${team_status}`);
     where += ` AND (team.team_states = ${team_status_esc})`;
@@ -60,7 +55,8 @@ const searchData = async (req) => {
   JOIN \`sessions\` s ON r.session_id = s.sessions_id
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
   JOIN \`branches\` b ON bt.branch_id = b.branch_id
-   ${where}`;
+  ${where}`;
+  // ORDER BY ${sort} ${order}
   console.log(t_sql);
   const [[{ totalRows }]] = await db.query(t_sql);
 
@@ -81,13 +77,13 @@ const searchData = async (req) => {
   JOIN \`sessions\` s ON r.session_id = s.sessions_id
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
   JOIN \`branches\` b ON bt.branch_id = b.branch_id
-  ${where} ORDER BY reservation_id DESC LIMIT ${(page - 1) * perPage},${perPage}`;
+  ${where} 
+  ORDER BY ${sort} ${order}
+  LIMIT ${(page - 1) * perPage},${perPage}`;
 
   [rows] = await db.query(sql);
   success = true;
 }
-
-
   return {
     success,
     perPage,

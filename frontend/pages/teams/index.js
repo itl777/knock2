@@ -78,7 +78,7 @@ export default function TeamPage() {
                 <AccordionDetails>
                   <Typography>
                     <div className="row">
-                      <h4>您的團隊</h4>
+                      {/* <h4>您的團隊</h4> */}
                       {userData.rows.map((r, i) => {
                         return (
                           <div

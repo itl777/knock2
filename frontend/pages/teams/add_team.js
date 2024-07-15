@@ -3,6 +3,8 @@ import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
 import tempTour from '@/data/teams/temp-tour-data.json'
 
+import SubmitBtn from '@/pages/teams/submit-btn'
+
 export default function TeamsAdd() {
   return (
     <>
@@ -88,9 +90,9 @@ export default function TeamsAdd() {
                         我已閱讀<b>注意事項</b>
                       </label>
                     </div>
-                    <button type="submit" className="btn btn-primary">
-                      創立團隊
-                    </button>
+                    <div style={{ textAlign: 'center' }}>
+                      <SubmitBtn btnText="建立團隊" color="grey" />
+                    </div>
                   </form>
                 </div>
               </div>

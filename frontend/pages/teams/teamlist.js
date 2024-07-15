@@ -12,21 +12,21 @@ export default function TeamList() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [branchId, setBranchId] = useState('')
-  const [teamId, setTeamId] = useState('')
+  const [order, setOrder] = useState('')
   const [teamStatus, setTeamStatus] = useState('')
-  const [perPage] = useState(9)
+  const [perPage] = useState(6)
 
   const fetchData = async () => {
     const params = new URLSearchParams({ page })
 
     if (branchId) {
-      params.append('branch_id', branchId);
+      params.append('branch_id', branchId)
     }
-    if (teamId) {
-      params.append('team_id', teamId);
+    if (order) {
+      params.append('order', order)
     }
     if (teamStatus) {
-      params.append('team_status', teamStatus);
+      params.append('team_status', teamStatus)
     }
     try {
       const response = await fetch(`${TEAM_ALL}?${params.toString()}`)
@@ -41,7 +41,7 @@ export default function TeamList() {
 
   useEffect(() => {
     fetchData()
-  }, [branchId, teamId, teamStatus, page])
+  }, [branchId, order, teamStatus, page])
 
   return (
     <>
@@ -72,13 +72,13 @@ export default function TeamList() {
             <div className="col-12 col-md-6 col-lg-4">
               <label>
                 <select
-                  value={teamId}
-                  onChange={(e) => setTeamId(e.target.value)}
+                  value={order}
+                  onChange={(e) => setOrder(e.target.value)}
                 >
                   {/* <select value={location} onChange={(e) => setLocation(e.target.value)}> */}
                   <option value="">日期排序</option>
-                  <option value="1">從新到舊</option>
-                  <option value="2">從舊到新</option>
+                  <option value="DESC">從新到舊</option>
+                  <option value="ASC">從舊到新</option>
                 </select>
               </label>
             </div>
