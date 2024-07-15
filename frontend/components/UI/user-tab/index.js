@@ -6,37 +6,54 @@ import { FaGhost } from 'react-icons/fa'
 
 export default function UserTab() {
   const router = useRouter()
-  const isActive = (path) => {
-    if (path === '/user/orders/ongoing') {
-      return router.pathname.startsWith('/user/orders')
-    }
-    if (path === '/user/reservation/ongoing') {
-      return router.pathname.startsWith('/user/reservation')
-    }
-    if (path === '/user/coupon/ongoing') {
-      return router.pathname.startsWith('/user/coupon')
-    }
-    return router.pathname.startsWith(path)
+  const isActive = (paths) => {
+    return paths.some((path) => router.pathname.startsWith(path))
   }
 
   const tabItems = [
-    { key: 'profile', name: '會員資料', path: '/user/profile' },
-    { key: 'reservation', name: '行程預約', path: '/user/reservation/ongoing' },
+    {
+      key: 'profile',
+      name: '會員資料',
+      link: '/user/profile',
+      paths: ['/user/profile', '/user/reset-password'],
+    },
+    {
+      key: 'reservation',
+      name: '行程預約',
+      link: '/user/reservation/ongoing',
+      paths: ['/user/reservation'],
+    },
     {
       key: 'group-reservation',
       name: '揪團行程',
-      path: '/user/group-reservation',
+      link: '/user/group-reservation',
+      paths: ['/user/group-reservation'],
     },
-    { key: 'orders', name: '商品訂單', path: '/user/orders/ongoing' },
-    { key: 'favorite', name: '我的收藏', path: '/user/favorite' },
-    { key: 'coupons', name: '優惠券', path: '/user/coupon/ongoing' },
+    {
+      key: 'orders',
+      name: '商品訂單',
+      link: '/user/orders/ongoing',
+      paths: ['/user/orders'],
+    },
+    {
+      key: 'favorite',
+      name: '我的收藏',
+      link: '/user/favorite',
+      paths: ['/user/favorite'],
+    },
+    {
+      key: 'coupons',
+      name: '優惠券',
+      link: '/user/coupon/ongoing',
+      paths: ['/user/coupon'],
+    },
   ]
 
   return (
     <ul className={styles.userTab}>
       {tabItems.map((v, i) => (
-        <li key={v.key} className={isActive(v.path) ? styles.active : ''}>
-          <Link href={v.path}>
+        <li key={v.key} className={isActive(v.paths) ? styles.active : ''}>
+          <Link href={v.link}>
             <FaGhost />
             <span>{v.name}</span>
           </Link>

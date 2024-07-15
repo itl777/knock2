@@ -1,15 +1,16 @@
 import { FaArrowLeftLong } from 'react-icons/fa6'
 import IconButton from '@mui/material/IconButton'
 
-export default function UserProfileFormTitle({ text = '', href = '' }) {
+export default function UserProfileFormTitle({ text = '', href }) {
+  console.log(href)
   return (
     <>
       <div className="title">
-        {href === '' ? null : (
-          <IconButton href="/user/profile">
+        {href ? (
+          <IconButton href={href}>
             <FaArrowLeftLong />
           </IconButton>
-        )}
+        ) : null}
         <h5>{text}</h5>
       </div>
       <style jsx>{`

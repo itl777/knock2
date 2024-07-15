@@ -16,7 +16,3 @@ export default function Home() {
     </>
   )
 }
-
-// Home.getLayout = function getLayout(page) {
-//   return <IndexLayout title="首頁">{page}</IndexLayout>;
-// };

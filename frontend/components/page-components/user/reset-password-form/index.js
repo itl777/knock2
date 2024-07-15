@@ -108,7 +108,10 @@ export default function ResetPasswordForm({ user_id }) {
       <form className={styles['reset-password-form']} onSubmit={onSubmit}>
         <div className={styles['box2']}>
           <div>
-            <UserProfileFormTitle text={'修改密碼'} href="/user/profile" />
+            <UserProfileFormTitle
+              text={'修改密碼'}
+              href={auth.id ? '/user/profile' : null}
+            />
             {auth.id ? (
               <UserProfileInput
                 label="舊密碼"

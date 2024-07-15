@@ -5,14 +5,17 @@ import Select03 from '@/components/UI/form-item/select03'
 import { DateContext } from '@/context/date-context'
 import Box from '@mui/joy/Box'
 import Checkbox from '@mui/joy/Checkbox'
-import FormControl from '@mui/joy/FormControl'
-import Autocomplete from '@mui/joy/Autocomplete'
+import Textarea01 from '@/components/UI/form-item/textarea01'
+import Radio02 from '@/components/UI/form-item/radio02'
+import { FaGhost } from 'react-icons/fa'
+import BasicModal from '@/components/UI/basic-modal'
 
 export default function Reservation() {
   const { selectedDate } = useContext(DateContext)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
   const [date, setDate] = useState('')
+  const [radioValue, setRadioValue] = useState('')
 
   useEffect(() => {
     if (selectedDate) {
@@ -31,8 +34,11 @@ export default function Reservation() {
     setMobile(e.target.value)
   }
 
-  // 場次時間
-  // One time slot every 30 minutes.
+  const handleRadioChange = (e) => {
+    setRadioValue(e.target.value)
+    console.log(`Name: ${e.target.name}, Value: ${e.target.value}`)
+  }
+
   const timeSlots = Array.from(new Array(24 * 2)).map(
     (_, index) =>
       `${index < 20 ? '0' : ''}${Math.floor(index / 2)}:${
@@ -43,6 +49,10 @@ export default function Reservation() {
   return (
     <div className={myStyle.reservationrBg}>
       <div className={myStyle.form}>
+        <div className={myStyle.title}>
+          <FaGhost />
+          &ensp; 請先 登入/註冊會員 再預約
+        </div>
         <div className={myStyle.p}>
           <Input02
             className={myStyle.p}
@@ -64,7 +74,7 @@ export default function Reservation() {
           />
         </div>
         <Box sx={{ display: 'flex', gap: 3 }}>
-          <Checkbox label=" 同會員資料" sx={{ color: ' #B99755', mt: 3 }} />
+          <Checkbox label="同會員資料" sx={{ color: '#B99755', mt: 3 }} />
         </Box>
         <div className={myStyle.p}>
           <Input02
@@ -76,24 +86,49 @@ export default function Reservation() {
             readOnly
           />
         </div>
-
-        <FormControl id="disabled-options-demo" className={myStyle.p}>
-          <Autocomplete
+        <div className={myStyle.p}>
+          <Select03
+            name="timeSlot"
+            value=""
+            placeholder="選擇場次"
             options={timeSlots}
-            placeholder="選擇場次時間"
-            getOptionDisabled={(option) =>
-              option === timeSlots[0] || option === timeSlots[2]
-            }
-            sx={{
-              width: 500,
-              border: '2px solid #B99755',
-              height: 40,
-              background: '#222222',
-              color: '#B99755',
-            }}
+            onChange={(e) => console.log(e.target.value)}
           />
-        </FormControl>
-        <Select03 />
+        </div>
+        <div className={myStyle.p}>
+          <Select03
+            name="people"
+            value=""
+            placeholder="請選擇人數"
+            options={[1, 2, 3, 4, 5]}
+            onChange={(e) => console.log(e.target.value)}
+          />
+        </div>
+        <div className={myStyle.p}>
+          <Select03
+            name="discount"
+            value=""
+            placeholder="優惠項目"
+            options={['無', '學生', '會員', 'VIP']}
+            onChange={(e) => console.log(e.target.value)}
+          />
+        </div>
+        <div className={myStyle.p}>
+          <Textarea01 />
+        </div>
+        <div className={myStyle.p}>
+          <Radio02
+            radios={[{ value: 'check', label: '請閱讀注意事項' }]}
+            name="readNotice"
+            value={radioValue}
+            onChange={handleRadioChange}
+          />
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+          <button className={myStyle.booking} type="submit">
+            我要預約
+          </button>
+        </div>
       </div>
     </div>
   )

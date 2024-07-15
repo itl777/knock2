@@ -19,25 +19,17 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 }))
 export default function AvatarDialog({
   children,
-  cropper,
-  setCropper,
-  setImgUrl,
-  imageRef,
-  setZoomValue,
   openDialog,
   closeDialog,
   avatarSubmit,
+  resetUploader,
 }) {
   return (
     <>
       <BootstrapDialog
         onClose={() => {
           closeDialog()
-          if (cropper) cropper.destroy()
-          setCropper(null)
-          setImgUrl('')
-          imageRef.current = null
-          setZoomValue(0.1)
+          resetUploader()
         }}
         aria-labelledby="customized-dialog-title"
         open={openDialog}
@@ -71,6 +63,7 @@ export default function AvatarDialog({
             {children}
           </DialogContent>
           <DialogActions>
+            <BlackBtn btnText="清除" href={null} onClick={resetUploader} />
             <BlackBtn btnText="確認上傳" href={null} onClick={avatarSubmit} />
           </DialogActions>
         </form>

@@ -11,7 +11,7 @@ const searchData = async (req) => {
   let success = false;
   let redirect = "";
 
-  const perPage = 9;
+  const perPage = 6;
   let page = parseInt(req.query.page) || 1;
 
   if (page < 1) {
@@ -20,13 +20,14 @@ const searchData = async (req) => {
   }
 
   //搜尋排序
+  let branch_id = req.query.branch_id || "";
+  let team_status = req.query.team_status || "";
+  let team_id = req.query.team_id || "";
   let userSearch = req.params.user_id || "";
-  let local = req.query.local || "";
   let start_date = req.query.startdate || "";
   let end_date = req.query.enddate || "";
-  let team_state = req.query.userSearch || "";
-
-  let sort = req.query.sort || "team_id";
+  
+  let sort = req.query.sort || "reservation_id";
   const order = req.query.order || "DESC";
 
   let where = " WHERE 1 ";
@@ -37,7 +38,38 @@ const searchData = async (req) => {
     where += ` AND (u.user_id = ${userSearch_esc})`;
   }
 
-  const sql = `SELECT reservation_id, team_id, team_title, theme_name, difficulty, u.user_id, nick_name, branch_name, reservation_date, s.start_time, s.end_time, theme_img, s.theme_Time
+  if (branch_id && branch_id.trim() !== "") {
+    const branch_id_esc = db.escape(`${branch_id}`);
+    where += ` AND (b.branch_id = ${branch_id})`;
+  }
+
+  if (team_status && team_status.trim() !== "") {
+    const team_status_esc = db.escape(`${team_status}`);
+    where += ` AND (team.team_states = ${team_status_esc})`;
+  }
+
+  const t_sql = `SELECT COUNT(1) totalRows FROM reservations r
+  JOIN \`teams_list\` team ON team.tour = reservation_id
+  JOIN \`themes\` t ON branch_themes_id = t.theme_id
+  JOIN \`users\` u ON r.user_id = u.user_id
+  JOIN \`sessions\` s ON r.session_id = s.sessions_id
+  JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
+  JOIN \`branches\` b ON bt.branch_id = b.branch_id
+  ${where}`;
+  // ORDER BY ${sort} ${order}
+  console.log(t_sql);
+  const [[{ totalRows }]] = await db.query(t_sql);
+
+  
+  let totalPages = 0; //總頁數
+
+  if (totalRows) {
+    totalPages = Math.ceil(totalRows / perPage);
+    if (page > totalPages) {
+      redirect = `?page=${totalPages}`;
+      return { success, redirect };
+    }
+  const sql = `SELECT reservation_id, team_id, team_title, theme_name, b.branch_id, difficulty, u.user_id, nick_name, branch_name, reservation_date, s.start_time, s.end_time, theme_img, s.theme_Time, team_status
   FROM reservations r
   JOIN \`teams_list\` team ON team.tour = reservation_id
   JOIN \`themes\` t ON branch_themes_id = t.theme_id
@@ -45,17 +77,19 @@ const searchData = async (req) => {
   JOIN \`sessions\` s ON r.session_id = s.sessions_id
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
   JOIN \`branches\` b ON bt.branch_id = b.branch_id
-  ${where} ORDER BY reservation_id DESC LIMIT ${(page - 1) * perPage},${perPage}`;
+  ${where} 
+  ORDER BY ${sort} ${order}
+  LIMIT ${(page - 1) * perPage},${perPage}`;
 
   [rows] = await db.query(sql);
   success = true;
-
+}
   return {
     success,
     perPage,
     page,
-    // totalRows,
-    // totalPages,
+    totalRows,
+    totalPages,
     rows,
     qs: req.query,
   };
@@ -214,6 +248,29 @@ WHERE chat_at = ${team_id} AND chat_display = 1`;
 
 // 新增留言的API
 router.post("/api/chat/add", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    result: {},
+  };
+
+  let body = { ...req.body };
+  body.create_at = new Date();
+
+  const { chat_at, chat_by, chat_text } = body;
+  try {
+  const sql = "INSERT INTO `teams_chats` (`chat_at`, `chat_by`, `chat_text`, `create_at`) VALUES (?, ?, ?, ?)";
+  const [result] = await db.query(sql, [chat_at, chat_by, chat_text, body.create_at]);
+
+  }catch (ex) {
+    output.error = ex.message;
+  }
+
+  res.json(output);
+});
+
+// 新增揪團的API
+router.post("/api/teams/add", async (req, res) => {
   const output = {
     success: false,
     code: 0,

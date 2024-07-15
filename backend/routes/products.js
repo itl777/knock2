@@ -82,8 +82,7 @@ const getListDate = async (req) => {
     // },${perPage}`;
 
     // JOIN分類
-    const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` 
-    ON \`product_id\` = \`img_product_id\` JOIN \`product_category\` ON product_management.category_id = product_category.category_id ${where} ${orderBy}  LIMIT ${
+    const sql = `SELECT * FROM \`product_management\` JOIN \`product_category\` ON product_management.category_id = product_category.category_id ${where} ${orderBy}  LIMIT ${
       (page - 1) * perPage
     },${perPage}`;
 
@@ -107,6 +106,7 @@ const getFavoriteDate = async (req) => {
   let success = false;
   let redirect = "";
   const perPage = 6; //每頁卡片數量
+  let favorite_id = req.params.favorite_id || 0; //取得收藏id
 
   let where = " WHERE 1 ";
 
@@ -115,6 +115,9 @@ const getFavoriteDate = async (req) => {
   if (page < 1) {
     redirect = "?page=1";
     return { success, redirect };
+  }
+
+  if (favorite_id) {
   }
 
   // user_id 暫設1
@@ -138,6 +141,7 @@ const getFavoriteDate = async (req) => {
     },${perPage}`;
 
     [rows] = await db.query(sql);
+
     success = true;
     return {
       success,
@@ -156,10 +160,7 @@ const getImg = async (req) => {
   let rows = [];
   const product_id = +req.params.product_id || 0;
 
-  console.log('product_id',product_id);
-
-
-  const sql = `SELECT \`img_id\` FROM \`product_management\` JOIN \`product_img\` ON \`product_id\` = \`img_product_id\` WHERE \`product_id\` = ${product_id}`;
+  const sql = `SELECT product_img.product_img FROM \`product_management\` JOIN \`product_img\` ON \`product_id\` = \`img_product_id\` WHERE \`product_id\` = ${product_id}`;
 
   [rows] = await db.query(sql);
 
@@ -187,7 +188,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.get("/details/:product_id", async (req, res) => {
   const data = await getListDate(req);
   res.json(data);
@@ -195,9 +195,13 @@ router.get("/details/:product_id", async (req, res) => {
 
 // 圖片
 router.get("/img/:product_id", async (req, res) => {
-  const data = await getImg(req);
-  console.log(req.params.product_id);
-  res.json(data);
+  try {
+    const data = await getImg(req);
+    console.log(req.params.product_id);
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: "/img/:product_id出錯了" });
+  }
 });
 
 router.get("/favorite", async (req, res) => {
@@ -218,6 +222,20 @@ router.get("/favorite/api", async (req, res) => {
     success,
     rows,
   });
+});
+
+// 編輯收藏欄位
+router.put("/favorite/edit/:favorite_id/:section", async (req, res) => {
+  // user_id: 1, //暫時寫死
+  const section = req.params.section;
+  const favorite_id = req.params.favorite_id;
+
+  // UPDATE `product_favorites` SET `section`=1 WHERE `favorite_id`=7;
+  const sql =
+    "UPDATE `product_favorites` SET `section`=? WHERE `favorite_id`=?";
+  const [result] = await db.query(sql, [section, favorite_id]);
+
+  res.json({ result, success: !!result.affectedRows });
 });
 
 // 新增
