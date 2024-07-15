@@ -159,7 +159,8 @@ router.get("/api/cart", async (req, res) => {
       ON pm.product_id = cm.cart_product_id
       JOIN product_img AS pi
       ON pi.img_product_id = cm.cart_product_id
-      WHERE cm.cart_member_id = ?;
+      WHERE cm.cart_member_id = ?
+      LIMIT 1;
     `;
 
     const [rows] = await db.query(sql, [member_id]);
