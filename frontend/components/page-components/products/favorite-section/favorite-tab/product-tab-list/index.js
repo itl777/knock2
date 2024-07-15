@@ -3,6 +3,8 @@ import FavCardLarge from './fav-card-large'
 import useScreenSize from '@/hooks/useScreenSize'
 import FavCard from '../product-tab-drag/fav-card'
 import { useEffect, useState } from 'react'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 export default function ProductTabList({ favData }) {
   let favDataRows = favData['rows'] || []
@@ -13,8 +15,12 @@ export default function ProductTabList({ favData }) {
     setSize(userClientWidth)
   }, [userClientWidth])
 
+  useEffect(() => {
+    AOS.init()
+  }, [])
+
   return (
-    <div className={myStyle['grid']}>
+    <div data-aos="fade-up" className={myStyle['grid']}>
       {size > 1000
         ? favDataRows.map((r) => {
             return <FavCardLarge key={r.favorite_id} dbData={r} />
