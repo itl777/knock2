@@ -7,7 +7,6 @@
   height: calc(100vh - #{$nav-height});
   overflow: hidden;
   background-color: rgb(0, 0, 0);
-
   z-index: 1;
   &::after {
     content: '';
@@ -86,7 +85,7 @@
       inset: 0;
       z-index: 3;
       border-radius: 50px 50px 50px 50px;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.2);
       filter: blur(10px);
     }
     > img {
@@ -105,7 +104,7 @@
       }
     }
     &:nth-child(3) {
-      transition: all 1s 0.5s;
+      transition: all 1s 0.2s;
       top: 50%;
       right: 5%;
       transform: translateY(-50%);
@@ -129,7 +128,7 @@
     opacity: 0;
     z-index: 5;
     color: $text-white;
-    transition: all 1s 1s;
+    transition: all 1s 0.4s;
     &.title-show {
       top: 30%;
       opacity: 1;
@@ -145,7 +144,7 @@
     gap: 30px;
     opacity: 0;
     z-index: 5;
-    transition: all 1s 1s;
+    transition: all 1s 0.6s;
     &.btn-show {
       opacity: 1;
     }
