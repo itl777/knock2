@@ -1,3 +1,15 @@
+.grid{
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 1.25rem;
+}
+.grid > div{
+  width: 18.75rem;
+}
+.top-title{
+  padding: .625rem 0;
+
+}
 .pen {
   height: 30px;
   margin-left: 10px;

@@ -81,7 +81,11 @@ export default function PdFilter() {
               <div
                 className={`${myStyle['bottom-left']} col-lg-4 align-items-center gap-3`}
               >
-                <FilterBtnArea />
+                {/* <FilterBtnArea /> */}
+                <div className={myStyle['input-bottom']}>
+                  <SearchInput />
+                </div>
+                <OutlineBtn btnText={'重設'} onClick={handleClearUrl} />
               </div>
 
               <div
@@ -98,10 +102,11 @@ export default function PdFilter() {
               </div>
 
               <div className={`${myStyle['bottom-right']} col-lg-4 gap-3`}>
-                <div className={myStyle['input-bottom']}>
+                <FilterBtnArea />
+                {/* <div className={myStyle['input-bottom']}>
                   <SearchInput />
                 </div>
-                <OutlineBtn btnText={'重設'} onClick={handleClearUrl} />
+                <OutlineBtn btnText={'重設'} onClick={handleClearUrl} /> */}
               </div>
             </div>
           </div>
@@ -110,15 +115,6 @@ export default function PdFilter() {
 
       <style jsx>
         {`
-           {
-            /* #frame-border {
-            border-left: 2px solid black;
-            border-right: 2px solid black;
-            border-bottom: 2px solid black;
-
-            padding: 50px 0;
-          } */
-          }
           .container {
             margin-bottom: 5rem;
             padding: 0;

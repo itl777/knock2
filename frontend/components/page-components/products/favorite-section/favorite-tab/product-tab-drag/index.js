@@ -4,9 +4,11 @@ import { FaMarker } from 'react-icons/fa6'
 import myStyle from './drag.module.css'
 import { useDragFavorite } from '@/hooks/useDragFavorite'
 import { logging } from '@/next.config'
+import EmptyFavorite from '../empty-favorite'
 
 export default function ProductTabDrag({ favData }) {
   let favDataRows = favData['rows'] || []
+
   const { changeDragCard } = useDragFavorite()
 
   // 三個狀態紀錄section三欄資料
@@ -15,6 +17,7 @@ export default function ProductTabDrag({ favData }) {
     2: [],
     3: [],
   })
+
   useEffect(() => {
     let new1 = []
     let new2 = []
@@ -119,7 +122,7 @@ export default function ProductTabDrag({ favData }) {
       })
     })
   }, [sections])
-  
+
   const handleDragDown = (section, fav_id) => {
     setSections((prevSections) => {
       // 創建一個新的 sections 對象
@@ -152,27 +155,33 @@ export default function ProductTabDrag({ favData }) {
   }
 
   const handleDragEnd = (e) => {
-    console.log('handleDragEnd進');
+    console.log('handleDragEnd進')
     e.target.classList.add('animate__animated', 'animate__swing')
     setTimeout(() => {
       e.target.classList.remove('animate__animated', 'animate__swing')
     }, 2000)
   }
 
+  // 無收藏顯示頁面
+  if (favDataRows.length === 0) {
+    return <EmptyFavorite />
+  }
+
   return (
     <div>
-      <div className="container p-4">
+      <div className="container">
         <div className="d-flex justify-content-between"></div>
 
         {/* 卡片區 最外層*/}
-        <div className="d-grid gap-4">
+        <div className={`${myStyle.grid}`}>
+          {/* "d-grid gap-4" */}
           {/* 欄 */}
           <div
             id="1"
             //onDrop={(e) => handleDrop(e, '1')}
             className="text-center bg-gray d-flex align-items-center flex-column"
           >
-            <div className="d-flex position-relative">
+            <div className={`${myStyle['top-title']} d-flex position-relative`}>
               <h4
                 className={myStyle.title}
                 // onDoubleClick={() => handleClick(0)}
@@ -204,7 +213,7 @@ export default function ProductTabDrag({ favData }) {
             // onDrop={(e) => handleDrop(e, '2')}
             className="text-center bg-gray d-flex align-items-center flex-column"
           >
-            <div className="d-flex position-relative">
+            <div className={`${myStyle['top-title']} d-flex position-relative`}>
               <h4
                 className={myStyle.title}
                 // onDoubleClick={() => handleClick(1)}
@@ -234,7 +243,7 @@ export default function ProductTabDrag({ favData }) {
             // onDrop={(e) => handleDrop(e, '3')}
             className="text-center bg-gray d-flex align-items-center flex-column"
           >
-            <div className="d-flex position-relative">
+            <div className={`${myStyle['top-title']} d-flex position-relative`}>
               <h4
                 className={myStyle.title}
                 // onDoubleClick={() => handleClick(2)}
@@ -274,9 +283,6 @@ export default function ProductTabDrag({ favData }) {
             border-radius: 20px;
             padding: 20px 0;
             height: 100%;
-          }
-          .d-grid {
-            grid-template-columns: auto auto auto;
           }
         `}
       </style>
