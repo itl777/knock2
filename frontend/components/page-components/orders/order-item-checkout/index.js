@@ -21,7 +21,7 @@ export default function OrderItemCheckout({
 
   return (
     <div className={styles.itemBox}>
-      <OrderProductImgBox imgSrc={productImg} />
+      <OrderProductImgBox imgSrc={productImg} productId={productId}/>
       <div className={itemInfoClass}>
         <div className={styles.itemNamePriceBox}>
           <p className={styles.itemNameStyle}>{productName}</p>

@@ -8,24 +8,25 @@ import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
 
 export default function CartFavoriteIcon({ product_id }) {
   const { toggleButton, animate, data } = useFavoriteProduct(product_id)
-  const btnStyle = {
-    position: 'absolute',
-    top: '6px',
-    right: '6px',
-  }
+  // const btnStyle = {
+  //   position: 'absolute',
+  //   top: '6px',
+  //   right: '6px',
+  // }
   return (
     <>
       <IconButton
         onClick={toggleButton}
         aria-label="favorite"
         size="large"
-        sx={btnStyle}
-        className={animate ? myStyle.likeBefore : ''}
+        // sx={btnStyle}
+        className={animate ?myStyle.addToFavoriteIcon:''}
+        // className={animate ? myStyle.likeBefore : ''}
       >
         {data.includes(product_id) ? (
           <FavoriteIcon
-            className={myStyle.addToFavoriteIcon}
-            style={{ fill: 'red' }}
+            // className={myStyle.addToFavoriteIcon}
+            style={{ fill: 'rgba(164, 49, 49, 1)' }}
           />
         ) : (
           <IoHeartOutline className={myStyle.addToFavoriteIcon} />
