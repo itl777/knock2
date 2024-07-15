@@ -48,18 +48,18 @@ export default function OrderProductImgBox({
       }}
     >
       {/* ************************連it的商品圖 start*/}
-      {data ? (
+      {/* {data ? (
         <motion.img src={`${PRODUCT_IMG}/${data[0]}.jpg`} alt={imgAlt} />
       ) : (
         <NoData text="無商品圖" borderRadius="0rem" />
-      )}
+      )} */}
       {/* ************************連it的商品圖 end*/}
 
-      {/* {imgSrc ? (
-        <motion.img src={imgSrc} alt={imgAlt} />
+      {imgSrc ? (
+        <motion.img src={`${imgSrc}.jpg`} alt={imgAlt} />
       ) : (
         <NoData text="無商品圖" borderRadius="0rem" />
-      )} */}
+      )}
     </motion.div>
   )
 }
