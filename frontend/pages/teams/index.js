@@ -10,12 +10,14 @@ import Card from '@/components/UI/teams-card'
 
 import TeamList from './teamlist'
 
-
+import Link from 'next/link'
 
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Typography from '@mui/material/Typography'
+
+import PdBtnContained from '@/components/UI/pd-btn-contained'
 
 export default function TeamPage() {
   const { login, logout, auth } = useAuth()
@@ -64,13 +66,14 @@ export default function TeamPage() {
               <br />
               id = {auth.id}
             </div>
-            <div className="row">
+            {/* User Teams */}
+            <div className="row pb-3">
               <Accordion>
                 <AccordionSummary
                   aria-controls="panel1-content"
                   id="panel1-header"
                 >
-                  <Typography>我想開團</Typography>
+                  <Typography>您的團隊</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Typography>
@@ -78,7 +81,10 @@ export default function TeamPage() {
                       <h4>您的團隊</h4>
                       {userData.rows.map((r, i) => {
                         return (
-                          <div className="col-12 col-md-6 col-lg-4" key={r.team_id}>
+                          <div
+                            className="col-12 col-md-6 col-lg-4"
+                            key={r.team_id}
+                          >
                             <Card
                               team_id={r.team_id}
                               key={r.team_id}
@@ -94,8 +100,14 @@ export default function TeamPage() {
                               team_title={r.team_title}
                             />
                           </div>
-                        );
+                        )
                       })}
+                      <div style={{ margin: '0 auto', paddingTop: '10px ' }}>
+                        {' '}
+                        <Link href={`/teams/add_team`}>
+                          <PdBtnContained btnText="我要開團" color="black" />
+                        </Link>
+                      </div>
                     </div>
                   </Typography>
                 </AccordionDetails>

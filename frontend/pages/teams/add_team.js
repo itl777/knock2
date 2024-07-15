@@ -6,7 +6,7 @@ import tempTour from '@/data/teams/temp-tour-data.json'
 export default function TeamsAdd() {
   return (
     <>
-      <IndexLayout title="糾團">
+      <IndexLayout title="糾團" background="dark">
         <div>
           <h2>新增團隊</h2>
         </div>
@@ -98,10 +98,13 @@ export default function TeamsAdd() {
                 <div className={styles.borderbox}>
                   <h3 className="boxTitle">注意事項</h3>
                   <ol>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
+                    <li>1. 請先完成預約行程手續，並支付訂金。</li>
+                    <li>2. 選擇想揪團的行程後，填寫創團表單。</li>
+                    <li>3. 創團後，團長可以審核是否讓申請入團的使用者加入。</li>
+                    <li>
+                      4.
+                      確定成團後，團隊狀態將會變為「已成團」。成團之後團長無法任意更改團員名單。
+                    </li>
                     <li></li>
                     <li></li>
                   </ol>
