@@ -26,7 +26,6 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
       openSnackbar('圖片請小於 2MB', 'error')
       return
     }
-    console.log(acceptedFiles)
     const img_url = URL.createObjectURL(acceptedFiles[0])
 
     setImgUrl(img_url)
@@ -76,8 +75,6 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
       const formData = new FormData()
       formData.append('user_id', auth.id)
       formData.append('avatar', blob, 'cropped-image.png')
-
-      console.log(formData)
 
       const url = `${API_SERVER}/users/upload-avatar`
       const option = {

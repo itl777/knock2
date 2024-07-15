@@ -1,23 +1,15 @@
-.couponContentBox {
-  display: grid;
-  grid-template-columns: auto auto;
-  gap: 2rem;
-}
-
 .couponCard {
   display: flex;
   width: 100%;
   overflow: hidden;
-  /* padding: 1rem; */
   border-radius: .75rem;
-  /* background-color: var(--pri-1); */
 }
 
 .couponCardLeft {
   display: flex;
   align-items: center;
   position: relative;
-  padding: 1rem 2rem 1rem 1rem;
+  padding: 1rem 1.5rem 1rem 1rem;
   background-color: var(--pri-1);
   border-right: 1.5px dashed var(--pri-3);
 }
@@ -30,6 +22,10 @@
   background-color: var(--pri-1);
 }
 
+.history {
+  opacity: 0.75;
+}
+
 .couponCard img {
   width: 6rem;
 }
@@ -38,24 +34,13 @@
   color: white;
 }
 
-.couponInfo p:first-child {
-  margin-bottom: .5rem;
-}
-
-.couponInfo p:not(:first-child) {
+.textBox p {
   font-size: 14px;
 }
 
-.moreInfo {
-  display: inline-block;
-  margin-top: .5rem;
-  padding-bottom: 4px;
-  color: white;
-  font-size: 14px;
-  border-bottom: 1px solid white;
-
+.textBox {
+  margin: 6px 0;
 }
-
 
 .couponCardLeft::before,
 .couponCardLeft::after {
@@ -88,15 +73,17 @@
   background-color: var(--text-grey);
 }
 
+@media screen and (max-width: 480px) {
 
-@media screen and (max-width: 1280px) {
-  .couponContentBox {
-    grid-template-columns: auto;
+  .couponCardLeft {
+    padding: .5rem .75rem .5rem .5rem;
   }
-}
 
-@media screen and (max-width: 800px) {
-  .couponContentBox {
-    grid-template-columns: auto;
+  .couponCardRight {
+    padding: 1rem .625rem 1rem 1rem;
+  }
+
+  .couponCard img {
+    width: 3.5rem;
   }
 }

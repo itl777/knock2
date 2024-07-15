@@ -16,7 +16,6 @@ export default function HomeSection3() {
     fetch(`${BRANCH_THEMES}?branch_id=1`)
       .then((response) => response.json())
       .then((myData) => {
-        console.log(myData)
         let shuffledThemes = _.shuffle(myData.themes)
         setData(shuffledThemes)
       })

@@ -24,44 +24,6 @@
   width: 50%;
 }
 
-
-.orderInfoBox {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  padding: 1rem;
-  border-radius: 1rem;
-  background-color: var(--bg-grey-light);
-}
-
-.orderReviewHintBox {
-  display: flex;
-  gap: 2rem;
-}
-
-.orderReviewHintBox img {
-  width: 8rem;
-  align-self: flex-end;
-}
-
-.orderReviewDialog {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  padding: 1.25rem 1.5rem;
-  border-radius: 1rem;
-  border: 2px solid var(--pri-3);
-}
-
-.orderReviewDialog p {
-  margin-bottom: 1.5rem;
-}
-
-.orderReviewDialog a {
-  align-self: end;
-}
-
 @media screen and (max-width: 1120px) {
   .orderDetailContent {
     flex-direction: column;
@@ -70,17 +32,9 @@
   .orderDetailLeft {
     width: 100%;
   }
-  
+
   .orderDetailRight {
     width: 100%;
-  }
-
-  .orderReviewHintBox {
-    flex-direction: column;
-  }
-
-  .orderReviewHintBox img {
-    order: 1;
   }
 
   .orderInfoRow {

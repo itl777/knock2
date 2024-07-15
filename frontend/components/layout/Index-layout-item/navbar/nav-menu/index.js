@@ -8,6 +8,7 @@ import styles from './nav-menu.module.scss'
 import { MdLogout } from 'react-icons/md'
 import Avatar from '@mui/joy/Avatar'
 import MenuList from './menu'
+import ClearButton from '@/components/UI/ClearButton'
 
 export default function NavMenu({ show = '' }) {
   const { login, logout, auth } = useAuth()
@@ -30,10 +31,15 @@ export default function NavMenu({ show = '' }) {
             <span>{auth.nickname}</span>
           </li>
           <li>
-            <Link href="" onClick={logout}>
-              <MdLogout />
-              <span>登出</span>
-            </Link>
+            <ClearButton
+              onClick={logout}
+              btnText={
+                <>
+                  <MdLogout />
+                  <span>登出</span>
+                </>
+              }
+            />
           </li>
         </ul>
         <div className={styles['line']}></div>

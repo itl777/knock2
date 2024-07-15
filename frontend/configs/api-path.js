@@ -35,6 +35,9 @@ export const CHECKOUT_UPDATE_CART = `${API_SERVER}/checkout/api/cart/update`
 export const ECPAY_GET = `${API_SERVER}/payments`
 export const ORDER_REVIEW_POST = `${API_SERVER}/orders/api/add-reviews`
 export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
+export const GET_COUPON_DETAIL = `${API_SERVER}/coupons/coupon_details`
+export const GET_MEMBER_COUPON = `${API_SERVER}/coupons/member_coupons`
+export const CANCEL_ORDER = `${API_SERVER}/orders/api/cancel_order`
 
 
 

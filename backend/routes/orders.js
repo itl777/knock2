@@ -4,11 +4,62 @@ import moment from "moment-timezone";
 
 const router = express.Router();
 const dateFormat = "YYYY-MM-DD";
+const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
+
+const getPaymentType = (payment_type) => {
+  if (!payment_type) {
+    return payment_type = "待付款";
+  } else {
+    // 找到第一個 "_" 的位置
+    const underscoreIndex = payment_type.indexOf("_");
+
+    // 如果有找到 "_"，則取 "_" 之前的字串，否則取整個字串
+    const prefix =
+      underscoreIndex !== -1
+        ? payment_type.substring(0, underscoreIndex)
+        : payment_type;
+
+    switch (prefix) {
+      case "Credit":
+        payment_type = "線上刷卡";
+        break;
+      case "CVS":
+        payment_type = "超商付款";
+        break;
+      case "ATM":
+        payment_type = "轉帳";
+        break;
+      case "WebATM":
+        payment_type = "網路銀行";
+        break;
+      case "BARCODE":
+        payment_type = "超商條碼繳款";
+        break;
+      case "TWQR":
+        payment_type = "歐付寶行動支付";
+        break;
+      default:
+        payment_type = "其他付款方式";
+        break;
+    }
+
+    return payment_type;
+  }
+  
+}
+
 
 // GET orders data
 router.get("/", async (req, res) => {
   // 從 query 中取得 member_id, order_status_id
-  const { member_id, order_status_id } = req.query;
+  const { member_id, order_status_id, page } = req.query;
+  const perPage = 5; //每頁筆數
+  let currentPage = parseInt(page) || 1;
+  const offset = (currentPage - 1) * perPage;
+
+  if (currentPage < 1) {
+    return res.redirect("?page=1");
+  }
 
   try {
     // 取得訂單資料
@@ -16,9 +67,10 @@ router.get("/", async (req, res) => {
       SELECT 
         o.id AS order_id,
         o.order_date,
-        o.customer_order_id,
-        o.payment_method,
+        o.merchant_trade_no,
+        o.payment_type,
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
+        o.order_status_id,
         os.order_status_name,
         SUM(od.order_quantity * pm.price) AS total_price
       FROM orders o
@@ -28,19 +80,31 @@ router.get("/", async (req, res) => {
       LEFT JOIN city c ON c.id = d.city_id
       LEFT JOIN order_status os ON os.id = o.order_status_id
       WHERE o.member_id = ? AND o.order_status_id = ?
-      GROUP BY o.id;
+      GROUP BY o.id
+      ORDER BY o.id DESC
+      LIMIT ? OFFSET ?;
     `;
 
-    const [orders] = await db.query(orderSql, [member_id, order_status_id]);
+    const [orders] = await db.query(orderSql, [
+      member_id,
+      order_status_id,
+      perPage,
+      offset,
+    ]);
 
     // 格式化 order_date
-    orders.forEach((order) => {
-      const m = moment(order.order_date);
+    orders.forEach((v) => {
+      const m = moment(v.order_date);
       if (m.isValid()) {
-        order.order_date = m.format(dateFormat);
+        v.order_date = m.format(dateFormat);
       } else {
-        order.order_date = "無訂單日期";
+        v.order_date = "無訂單日期";
       }
+    });
+
+    // 格式化 payment_type
+    orders.forEach((v) => {
+      v.payment_type = getPaymentType(v.payment_type);
     });
 
     // 取得訂單商品圖片
@@ -63,14 +127,30 @@ router.get("/", async (req, res) => {
       order_status_id,
     ]);
 
+    // 訂單總頁數
+    const countSql = `
+      SELECT COUNT(*) AS count
+      FROM orders
+      WHERE member_id = ? AND order_status_id = ?;
+    `;
+
+    const [[{ count }]] = await db.query(countSql, [
+      member_id,
+      order_status_id,
+    ]);
+    const totalPages = Math.ceil(count / perPage);
+
     console.log("orders data: ", orders);
     console.log("order details data: ", orderDetails);
 
     // 將查詢結果傳送到前端
     res.json({
       status: true,
-      orders: orders,
-      orderDetails: orderDetails,
+      orders,
+      orderDetails,
+      perPage,
+      offset,
+      totalPages,
     });
   } catch (error) {
     console.error("Error fetching orders: ", error);
@@ -89,11 +169,14 @@ router.get("/:orderId", async (req, res) => {
       SELECT 
         o.id AS order_id,
         o.order_date,
-        o.customer_order_id,
-        o.payment_method,
+        o.merchant_trade_no,
+        o.rtn_code,
+        o.payment_type,
+        o.payment_date,
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
+        o.order_status_id,
         os.order_status_name,
-        SUM(od.order_quantity * pm.price) AS total_price
+        SUM(od.order_quantity * pm.price + deliver_fee) AS total_price
       FROM orders o
       LEFT JOIN order_details od ON od.order_id = o.id
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
@@ -112,9 +195,25 @@ router.get("/:orderId", async (req, res) => {
       if (m.isValid()) {
         order.order_date = m.format(dateFormat);
       } else {
-        order.order_date = "無訂單日期";
+        order.order_date = "";
       }
     });
+
+    // 格式化 payment_date
+    orders.forEach((order) => {
+      const m = moment(order.payment_date);
+      if (m.isValid()) {
+        order.payment_date = m.format(dateTimeFormat);
+      } else {
+        order.payment_date = "";
+      }
+    });
+    
+    // 格式化 payment_type
+    orders.forEach((v) => {
+      v.payment_type = getPaymentType(v.payment_type);
+    });
+
 
     // 取得訂單詳細資料
     const orderDetailsSql = `
@@ -124,7 +223,8 @@ router.get("/:orderId", async (req, res) => {
         pm.product_name,
         od.order_unit_price,
         od.order_quantity,
-        img.product_img
+        img.product_img,
+        od.review_status
       FROM order_details od
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
       LEFT JOIN (
@@ -185,11 +285,11 @@ router.get("/api/reviews/:orderId", async (req, res) => {
     const [rows] = await db.query(sql, [orderId]);
 
     rows.forEach((r) => {
-      const m = moment(r.created_at);
+      const m = moment(r.review_date);
       if (m.isValid()) {
-        r.created_at = m.format(dateFormat);
+        r.review_date = m.format(dateTimeFormat);
       } else {
-        r.created_at = "無訂單日期";
+        r.review_date = "";
       }
     });
 
@@ -231,12 +331,7 @@ router.post("/api/add-reviews", async (req, res) => {
 
     const reviewPromises = reviews.map(
       ({ review, rate, order_id, order_product_id }) => {
-        return db.query(sql, [
-          review,
-          rate,
-          order_id,
-          order_product_id,
-        ]);
+        return db.query(sql, [review, rate, order_id, order_product_id]);
       }
     );
 
@@ -255,45 +350,29 @@ router.post("/api/add-reviews", async (req, res) => {
   }
 });
 
-// router.post("/api/add-reviews", async (req, res) => {
-//   // const { review, rate, content, order_id, order_product_id } = req.body;
-//   const body = {...req.body}
+// POST update orders
+router.post("/api/cancel_order", async (req, res) => {
+  const { order_id } = req.query;
 
-//   try {
-//     const sql = `
-//       UPDATE order_details SET
-//         review = ?,
-//         rate = ?,
-//         content = ?,
-//         review_status = 1,
-//       WHERE order_id = ? and order_product_id;
-//     `;
+  try {
+    const sql = `
+      UPDATE orders SET 
+        order_status_id = 4, 
+        last_modified_at = now()
+      WHERE id = ?;
+    `;
 
-//     const reviewPromises = body.map(({review, rate, content, order_id, order_product_id})=>{
-//       const rows = [
-//         review, rate, content, order_id, order_product_id
-//       ]
-//     }
+    await db.query(sql, [order_id])
 
-//     )
-//     const [results] = await db.query(sql, [review, rate, content, order_id, order_product_id]);
-
-//     // 確認是否有成功 insert value
-//     const success = results.affectedRows === 1;
-//     const id = results.insertId;
-
-//     // 返回結果到前端
-//     res.json({
-//       success,
-//       id,
-//     });
-
-//   } catch (error) {
-//     console.error("Error while processing add reviews", error);
-//     res.status(500).json({
-//       error: "An error occurred while processing add reviews.",
-//     });
-//   }
-// });
+    res.json({
+      success: true,
+    });
+  } catch (error) {
+    console.error("Error while canceling order", error);
+    res.status(500).json({
+      error: "An error occurred while canceling order.",
+    });
+  }
+});
 
 export default router;

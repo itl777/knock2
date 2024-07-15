@@ -11,6 +11,7 @@ import users from "./routes/users/index.js";
 import orders from "./routes/orders.js";
 import checkout from "./routes/checkout.js";
 import payments from "./routes/payments.js";
+import coupons from "./routes/coupons.js";
 
 // 掛載 express
 const app = express();
@@ -58,6 +59,7 @@ app.use("/users", users);
 app.use("/orders", orders);
 app.use("/checkout", checkout);
 app.use("/payments", payments)
+app.use("/coupons", coupons)
 
 // 偵聽 port
 app.listen(3001, function () {
