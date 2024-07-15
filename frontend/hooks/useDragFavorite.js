@@ -2,7 +2,7 @@ import { PRODUCT_FAVORITE } from '@/configs/api-path'
 
 // export default function useDragFavorite() {
 export const useDragFavorite = () => {
-  const changeDragCard = async (favorite_id, section) => {
+  const changeDragCard = async (section, favorite_id) => {
     const url = `${PRODUCT_FAVORITE}/edit/${favorite_id}/${section}`
     try {
       const res = await fetch(url, {

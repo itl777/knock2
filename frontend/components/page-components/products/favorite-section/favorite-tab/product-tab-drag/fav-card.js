@@ -29,7 +29,7 @@ export default function FavCard({ dbData }) {
               src={`${PRODUCT_IMG}/${data[0]}.jpg`}
               width={81}
               height={112}
-              style={{ width: '100%', height: '100%' }}
+              draggable="false"
               className={myStyle.imgStyle}
               alt="..."
             />

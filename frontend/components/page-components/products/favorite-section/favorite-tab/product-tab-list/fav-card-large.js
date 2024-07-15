@@ -34,7 +34,7 @@ export default function FavCardLarge({ dbData }) {
               src={`${PRODUCT_IMG}/${data[0]}.jpg`}
               width={258}
               height={188}
-              style={{ width: '100%', height: 'auto',borderRadius:'12px 12px 0 0' }}
+              style={{ objectFit: 'cover', borderRadius: '12px 12px 0 0' }}
               className="card-img-top"
               alt="..."
             />
