@@ -5,15 +5,28 @@ import MoreInfoBtn from './more-info-text-btn'
 import { formatPrice } from '@/hooks/numberFormat'
 
 export default function CouponCard({
-  // status='',
-  coupon_name = '80 元折價券',
-  restrict = '最低消費金額：200 元',
-  expire_date = '2024.10.31',
+  coupon_name,
+  status='ongoing',
+  restrict,
+  expire_date,
   onClick,
   btnHidden = false,
 }) {
+  const getStatusClass = (baseClass) => {
+    switch (status) {
+      case 'ongoing':
+        return `${baseClass}`;
+      case 'used':
+        return `${baseClass} ${styles.history}`;
+      case 'expired':
+        return `${baseClass} ${styles.history}`;
+      default:
+        return baseClass;
+    }
+  }
+  
   return (
-    <div className={styles.couponCard}>
+    <div className={getStatusClass(styles.couponCard)}>
       <div className={styles.couponCardLeft}>
         <img src="/ghost/ghost_11.png" alt="" />
       </div>

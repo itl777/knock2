@@ -9,25 +9,25 @@ import CouponMoreInfoModal from '../coupon-more-info-modal'
 import NoData from '@/components/UI/no-data'
 import { GET_MEMBER_COUPON, GET_COUPON_DETAIL } from '@/configs/api-path'
 
-export default function CouponContainer() {
+export default function CouponContainer({status}) {
   const [coupons, setCoupons] = useState([])
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedCoupon, setSelectedCoupon] = useState(null)
   const [isCouponModalOpen, setIsCouponModalOpen] = useState(false)
   const [couponDetails, setCouponDetails] = useState([])
+  const [title, setTitle] = useState([])
   const { auth } = useAuth()
 
-  useEffect(() => {
-    fetchMemberCoupons(auth.id, currentPage)
-  }, [auth.id, currentPage])
 
-  const fetchMemberCoupons = async (memberId, page) => {
+
+  const fetchMemberCoupons = async (memberId, page, status) => {
     try {
       const response = await axios.get(GET_MEMBER_COUPON, {
         params: {
           member_id: memberId,
           page: page,
+          status: status,
         },
       })
       const { coupons, totalPages } = response.data
@@ -66,17 +66,37 @@ export default function CouponContainer() {
     setIsCouponModalOpen(false)
   }
 
+  useEffect(() => {
+    switch (status) {
+      case "ongoing":
+        setTitle('未使用')
+        break;
+      case "used":
+        setTitle('已使用')
+        break;
+      case "expired":
+        setTitle('已過期')
+        break;
+    }
+  }, [status])
+
+  useEffect(() => {
+    if (auth.id && !!status){
+      fetchMemberCoupons(auth.id, currentPage, status)
+    }
+  }, [auth.id, currentPage, status])
   return (
     <>
       <section className={styles.couponSection}>
         <div>
-          <UserHeader title="已領取的優惠券" btnHidden={true} />
+          <UserHeader title={`${title}的優惠券`} btnHidden={true} />
         </div>
         <div className={styles.couponBox}>
           {coupons.length > 0 ? (
             coupons.map((v) => (
               <CouponCard
                 key={v.coupon_id}
+                status={status}
                 coupon_name={v.coupon_name}
                 restrict={v.minimum_order}
                 expire_date={v.valid_until}

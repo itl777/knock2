@@ -1,18 +1,15 @@
-
 .couponCard {
   display: flex;
   width: 100%;
   overflow: hidden;
-  /* padding: 1rem; */
   border-radius: .75rem;
-  /* background-color: var(--pri-1); */
 }
 
 .couponCardLeft {
   display: flex;
   align-items: center;
   position: relative;
-  padding: 1rem 2rem 1rem 1rem;
+  padding: 1rem 1.5rem 1rem 1rem;
   background-color: var(--pri-1);
   border-right: 1.5px dashed var(--pri-3);
 }
@@ -23,6 +20,10 @@
   padding: 1rem 1rem 1rem 2rem;
   width: 100%;
   background-color: var(--pri-1);
+}
+
+.history {
+  opacity: 0.75;
 }
 
 .couponCard img {
@@ -73,7 +74,7 @@
 }
 
 @media screen and (max-width: 480px) {
-  
+
   .couponCardLeft {
     padding: .5rem .75rem .5rem .5rem;
   }
@@ -81,6 +82,7 @@
   .couponCardRight {
     padding: 1rem .625rem 1rem 1rem;
   }
+
   .couponCard img {
     width: 3.5rem;
   }

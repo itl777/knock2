@@ -4,17 +4,35 @@ import moment from "moment-timezone";
 
 const router = express.Router();
 const dateFormat = "YYYY-MM-DD";
-const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
+const dateTimeFormat = "YYYY-MM-DD HH:mm";
 
 // GET member coupons with pagination and status filter
 router.get("/member_coupons", async (req, res) => {
-  const { member_id, page = 1 } = req.query;
+  const { member_id, page = 1, status } = req.query;
   const perPage = 5; // 每頁筆數
   const offset = (page - 1) * perPage;
-  const now = moment().format(dateTimeFormat);
 
   try {
-    // 取得會員名下的優惠券，使用 valid_until 條件過濾
+    let condition;
+    let countCondition;
+
+    switch (status) {
+      case "ongoing":
+        condition = `cm.used_at IS NULL AND c.valid_until >= now()`;
+        countCondition = `cm.used_at IS NULL AND c.valid_until >= now()`;
+        break;
+      case "used":
+        condition = `cm.used_at IS NOT NULL`;
+        countCondition = `cm.used_at IS NOT NULL`;
+        break;
+      case "expired":
+        condition = `cm.used_at IS NULL AND c.valid_until < now()`;
+        countCondition = `cm.used_at IS NULL AND c.valid_until < now()`;
+        break;
+      default:
+        return res.status(400).json({ error: "Invalid status parameter" });
+    }
+
     const sql = `
       SELECT 
         cm.id,
@@ -25,6 +43,7 @@ router.get("/member_coupons", async (req, res) => {
         c.minimum_order,
         c.discount_amount,
         c.discount_percentage,
+        c.discount_max,
         c.valid_from,
         c.valid_until,
         c.max_usage_per_user,
@@ -33,38 +52,30 @@ router.get("/member_coupons", async (req, res) => {
       FROM coupon_member cm
       JOIN coupons c ON c.id = cm.coupon_id
       JOIN coupon_types ct ON ct.id = c.coupon_type_id
-      WHERE cm.member_id = ? AND cm.used_at IS NULL AND c.valid_until >= now()
+      WHERE cm.member_id = ? AND ${condition}
       ORDER BY cm.id DESC
       LIMIT ?, ?;
+    `;
+
+    const countSql = `
+      SELECT COUNT(*) AS count
+      FROM coupon_member cm
+      JOIN coupons c ON c.id = cm.coupon_id
+      WHERE cm.member_id = ? AND ${countCondition}
     `;
 
     const [coupons] = await db.query(sql, [member_id, offset, perPage]);
 
     coupons.forEach((r) => {
-      const m = moment(r.valid_from);
-      if (m.isValid()) {
-        r.valid_from = m.format(dateTimeFormat);
-      } else {
-        r.valid_from = "";
-      }
-    });
-
-    coupons.forEach((r) => {
-      const m = moment(r.valid_until);
-      if (m.isValid()) {
-        r.valid_until = m.format(dateTimeFormat);
-      } else {
-        r.valid_until = "";
-      }
+      r.valid_from = moment(r.valid_from).isValid()
+        ? moment(r.valid_from).format(dateTimeFormat)
+        : "";
+      r.valid_until = moment(r.valid_until).isValid()
+        ? moment(r.valid_until).format(dateTimeFormat)
+        : "";
     });
 
     // 獲取總頁數
-    const countSql = `
-      SELECT COUNT(*) AS count
-      FROM coupon_member cm
-      JOIN coupons c ON c.id = cm.coupon_id
-      WHERE cm.member_id = ? AND cm.used_at IS NULL AND c.valid_until >= now()
-    `;
     const [countResult] = await db.query(countSql, [member_id]);
     const count = countResult[0].count;
     const totalPages = Math.ceil(count / perPage);
