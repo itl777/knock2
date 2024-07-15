@@ -18,3 +18,10 @@
   color: rgb(58, 168, 192);
   background-color: rgb(58, 168, 192, 0.2);
 }
+
+
+.orderStatusGrey {
+  color: rgb(105, 105, 105);
+  background-color: rgb(105, 105, 105, 0.2);
+
+}

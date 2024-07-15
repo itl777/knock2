@@ -2,6 +2,7 @@ import React, { createContext, useContext } from 'react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { PRODUCT_FAVORITE, PRODUCT_LIST } from '@/configs/api-path'
+import { useSnackbar } from '@/context/snackbar-context'
 
 const ProductContext = createContext()
 
@@ -11,6 +12,7 @@ export function useProduct() {
 
 export const ProductProvider = ({ children }) => {
   const router = useRouter()
+  const { openSnackbar } = useSnackbar()
 
   const [cardChange, setCardChange] = useState(true)
 
@@ -71,6 +73,8 @@ export const ProductProvider = ({ children }) => {
       const resData = await res.json()
       if (resData.success) {
         setData(resData)
+      } else {
+        openSnackbar('無此商品', 'error')
       }
     } catch (e) {
       console.error(e)

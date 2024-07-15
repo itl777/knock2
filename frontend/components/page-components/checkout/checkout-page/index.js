@@ -147,6 +147,7 @@ export default function CheckoutPage() {
       recipientMobile: orderAddress.mobile_phone, // 收件人手機號碼
       recipientDistrictId: orderAddress.district_id, // 收件人區域 ID
       recipientAddress: orderAddress.address, // 收件人地址
+      deliverFee,
       orderItems, // 將 orderItems 加入到要提交的數據中
     }
 
@@ -181,6 +182,11 @@ export default function CheckoutPage() {
     }
   }
 
+  // 監聽視窗寬度
+  useEffect(() => {
+    setScreenWidth(userClientWidth)
+  }, [userClientWidth])
+
   // 登入驗證
   useEffect(() => {
     if (router.isReady && authIsReady) {
@@ -196,13 +202,8 @@ export default function CheckoutPage() {
 
   // 未登入顯示的內容
   if (!auth.id && authIsReady) {
-    return <RedirectionGuide text="請先登入" hideBtn={true} />
+    return <RedirectionGuide />
   }
-
-  // 監聽視窗寬度
-  useEffect(() => {
-    setScreenWidth(userClientWidth)
-  }, [userClientWidth])
 
   return (
     <section className={styles.sectionContainer}>

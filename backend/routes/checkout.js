@@ -249,6 +249,7 @@ router.post("/api/checkout", async (req, res) => {
     memberInvoice,
     mobileInvoice,
     recipientTaxId,
+    deliverFee,
     orderItems,
   } = req.body;
 
@@ -265,10 +266,11 @@ router.post("/api/checkout", async (req, res) => {
         member_carrier,
         recipient_invoice_carrier,
         recipient_tax_id,
+        deliver_fee,
         order_status_id,
         created_at,
         last_modified_at
-      ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
+      ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
     `;
 
     const orderValues = [
@@ -280,7 +282,8 @@ router.post("/api/checkout", async (req, res) => {
       memberInvoice,
       mobileInvoice,
       recipientTaxId,
-      5, // order_status_id
+      deliverFee,
+      1, // order_status_id
     ];
 
     const [orderResult] = await db.query(orderSql, orderValues);
@@ -323,12 +326,15 @@ router.post("/api/checkout", async (req, res) => {
     if (success) {
       const deleteCartSql = `DELETE FROM cart_member WHERE cart_member_id = ?`;
       await db.query(deleteCartSql, [memberId]);
+      // 取得綠界訂單需要的資料
+      // const productNames = orderDetailResults.map(({ product_name }) => product_name);
     }
 
     // 返回结果到前端
     res.json({
       success,
       orderId,
+      // productNames,
     });
   } catch (error) {
     console.error("Error while processing checkout:", error);

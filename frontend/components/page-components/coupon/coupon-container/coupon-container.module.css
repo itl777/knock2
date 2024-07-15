@@ -13,6 +13,11 @@
   gap: 2rem;
 }
 
+.span2 {
+  grid-column: span 2;
+  margin-bottom: 0.5rem;
+}
+
 .popupContainer {
   width: 480px;
 }
@@ -33,7 +38,7 @@
 }
 
 @media screen and (max-width: 1280px) {
-  .couponContentBox {
+  .couponBox {
     grid-template-columns: auto;
   }
 }
@@ -45,7 +50,7 @@
     gap: 1rem;
   }
 
-  .couponContentBox {
+  .couponBox {
     grid-template-columns: auto;
   }
 }

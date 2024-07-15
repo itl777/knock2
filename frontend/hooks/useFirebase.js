@@ -27,12 +27,12 @@ const getOAuth = async (callbackFunction) => {
     const result = await getRedirectResult(auth)
     if (result) {
       const user = result.user
-
-      if (user) {
-        callbackFunction(user.providerData[0])
+      if (!user) {
+        return console.error('沒有登入資訊')
       }
-    } else {
-    }
+      callbackFunction(user.providerData[0])
+    } 
+
   } catch (ex) {
     console.error(ex, 'getOAuthError')
   }
@@ -53,8 +53,7 @@ const logoutFirebase = async () => {
 
   try {
     // 登出成功
-    const result = await signOut(auth)
-    console.log(result, 'logoutFirebase')
+    await signOut(auth)
   } catch (ex) {
     // 登出失敗
     console.error(ex)
