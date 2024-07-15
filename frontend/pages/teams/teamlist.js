@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react'
-
-import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
-
 import { TEAM_ALL } from '@/configs/api-path'
 import Card from '@/components/UI/teams-card'
-
 
 export default function TeamList() {
   const [data, setData] = useState({
@@ -13,21 +9,39 @@ export default function TeamList() {
     rows: [],
   })
 
+  const [page, setPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [branchId, setBranchId] = useState('')
+  const [order, setOrder] = useState('')
+  const [teamStatus, setTeamStatus] = useState('')
+  const [perPage] = useState(6)
+
+  const fetchData = async () => {
+    const params = new URLSearchParams({ page })
+
+    if (branchId) {
+      params.append('branch_id', branchId)
+    }
+    if (order) {
+      params.append('order', order)
+    }
+    if (teamStatus) {
+      params.append('team_status', teamStatus)
+    }
+    try {
+      const response = await fetch(`${TEAM_ALL}?${params.toString()}`)
+      const result = await response.json()
+      const { rows, totalPages } = result
+      setData({ success: true, rows })
+      setTotalPages(totalPages)
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
   useEffect(() => {
-    fetch(`${TEAM_ALL}`)
-      .then((r) => {
-        if (!r.ok) {
-          throw new Error('Fetch Failed')
-        }
-        return r.json()
-      })
-      .then((myData) => {
-        setData(myData)
-      })
-      .catch((error) => {
-        console.error('Fetch error:', error)
-      })
-  }, [])
+    fetchData()
+  }, [branchId, order, teamStatus, page])
 
   return (
     <>
@@ -37,8 +51,53 @@ export default function TeamList() {
             <h4>團隊一覽</h4>
             <hr />
           </div>
+
+          {/* 篩選排序 */}
+          <div className="row pb-5">
+            <h4>篩選排序</h4>
+            <div className="col-12 col-md-6 col-lg-4">
+              <label>
+                <select
+                  value={branchId}
+                  onChange={(e) => setBranchId(e.target.value)}
+                >
+                  {/* <select value={location} onChange={(e) => setLocation(e.target.value)}> */}
+                  <option value="">館別篩選</option>
+                  <option value="1">台北館</option>
+                  <option value="2">台中館</option>
+                  <option value="3">高雄館</option>
+                </select>
+              </label>
+            </div>
+            <div className="col-12 col-md-6 col-lg-4">
+              <label>
+                <select
+                  value={order}
+                  onChange={(e) => setOrder(e.target.value)}
+                >
+                  {/* <select value={location} onChange={(e) => setLocation(e.target.value)}> */}
+                  <option value="">日期排序</option>
+                  <option value="DESC">從新到舊</option>
+                  <option value="ASC">從舊到新</option>
+                </select>
+              </label>
+            </div>
+            <div className="col-12 col-md-6 col-lg-4">
+              <label>
+                <select
+                  value={teamStatus}
+                  onChange={(e) => setTeamStatus(e.target.value)}
+                >
+                  {/* <select value={location} onChange={(e) => setLocation(e.target.value)}> */}
+                  <option value="">隊伍狀態</option>
+                  <option value="1">募集中</option>
+                  <option value="2">已成團</option>
+                </select>
+              </label>
+            </div>
+          </div>
           <div className="row">
-            {data.rows.map((r, i) => {
+            {data.rows.map((r) => {
               return (
                 <div className="col-12 col-md-6 col-lg-4" key={r.team_id}>
                   <Card
@@ -58,6 +117,33 @@ export default function TeamList() {
                 </div>
               )
             })}
+          </div>
+
+          <div
+            style={{
+              margin: '0 auto',
+              paddingTop: '10px ',
+              textAlign: 'center',
+            }}
+          >
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page <= 1}
+            >
+              上一頁
+            </button>
+            <span>
+              {' '}
+              Page {page} of {totalPages}{' '}
+            </span>
+            <button
+              onClick={() =>
+                setPage((prev) => (prev < totalPages ? prev + 1 : prev))
+              }
+              disabled={page >= totalPages}
+            >
+              下一頁
+            </button>
           </div>
         </div>
       </div>
