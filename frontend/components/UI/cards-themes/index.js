@@ -21,7 +21,7 @@ export default function Card02({
   min_players = '',
   max_players = '',
   themeTime = 0,
-  theme_id, // 添加主題 ID
+  branch_themes_id,
 }) {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -38,8 +38,7 @@ export default function Card02({
 
   const [clicked, setClicked] = useState(false)
 
-  const handleClick = (e) => {
-    e.preventDefault()
+  const handleClick = () => {
     setClicked(!clicked)
   }
 
@@ -48,6 +47,10 @@ export default function Card02({
     padding: '7px 13px 7px 13px',
     borderRadius: '20px',
     fontWeight: 'normal',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    color: clicked ? 'white' : '#222222',
+    backgroundColor: clicked ? '#222222' : 'white',
   }
 
   return (
@@ -163,7 +166,7 @@ export default function Card02({
             </Typography>
             <Typography
               sx={{
-                display: 'flax',
+                display: 'flex',
                 alignContent: 'center',
                 justifyContent: 'center',
                 position: 'absolute',
@@ -171,7 +174,7 @@ export default function Card02({
               }}
             >
               <Link
-                href={`/themes/themes-details/${theme_id}`} // 修改為對應的主題詳情頁面路徑
+                href={`/themes/themes-details/${branch_themes_id}`}
                 onClick={handleClick}
                 style={style}
                 onMouseEnter={(e) => {
