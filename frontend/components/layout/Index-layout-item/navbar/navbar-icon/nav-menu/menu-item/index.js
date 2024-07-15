@@ -1,11 +1,14 @@
 // components > user-tab
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import styles from './user-tab.module.css'
+
+// styles
+import styles from './menu-item.module.scss'
 import { FaGhost } from 'react-icons/fa'
 
-export default function UserTab() {
+export default function MenuItem() {
   const router = useRouter()
+
   const isActive = (paths) => {
     return paths.some((path) => router.pathname.startsWith(path))
   }
@@ -50,7 +53,7 @@ export default function UserTab() {
   ]
 
   return (
-    <ul className={styles.userTab}>
+    <ul className={styles.menuItem}>
       {tabItems.map((v, i) => (
         <li key={v.key} className={isActive(v.paths) ? styles.active : ''}>
           <Link href={v.link}>

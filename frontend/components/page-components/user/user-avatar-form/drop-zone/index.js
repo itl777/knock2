@@ -1,5 +1,6 @@
 import styles from './drop-zone.module.scss'
 import FilterBtn from '@/components/UI/filter-btn'
+import ColorPicker from '../color-picker'
 import {
   FaRegLightbulb,
   FaCheckCircle,
@@ -8,13 +9,15 @@ import {
 
 export default function DropZone({
   children,
-  openBtn,
+  uploadBtn,
   getRootProps,
   getInputProps,
   isDragActive,
   isDragReject,
   isDragAccept,
   hasImage,
+  backgroundColor,
+  handleColorChange,
 }) {
   return (
     <>
@@ -33,14 +36,12 @@ export default function DropZone({
 
         {isDragAccept && (
           <span>
-            {' '}
             <FaCheckCircle />
             此檔案可以上傳
           </span>
         )}
         {isDragReject && (
           <span>
-            {' '}
             <FaExclamationCircle />
             檔案需請選擇圖片，且需小於2MB
           </span>
@@ -51,12 +52,18 @@ export default function DropZone({
             可拖放檔案至此區域，檔案需小於2MB
           </span>
         )}
-        <FilterBtn
-          href={null}
-          btnText={hasImage ? '更換圖片' : '上傳圖片'}
-          onClick={openBtn}
-          className={styles.btn}
-        ></FilterBtn>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <FilterBtn
+            href={null}
+            btnText={hasImage ? '更換圖片' : '上傳圖片'}
+            onClick={uploadBtn}
+            className={styles.btn}
+          />
+          <ColorPicker
+            color={backgroundColor}
+            colorChange={handleColorChange}
+          />
+        </div>
       </div>
     </>
   )

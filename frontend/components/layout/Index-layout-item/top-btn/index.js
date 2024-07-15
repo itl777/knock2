@@ -8,7 +8,7 @@ export default function TopBtn() {
   const [visible, setVisible] = useState(false)
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY === 0) {
+      if (window.scrollY < 100) {
         setVisible(false)
       } else {
         setVisible(true)
@@ -19,9 +19,6 @@ export default function TopBtn() {
       window.removeEventListener('scroll', handleScroll)
     }
   }, [])
-  if (!visible) {
-    return null
-  }
   // ****************IT
   const scrollToTop = () => {
     window.scrollTo({
@@ -31,23 +28,28 @@ export default function TopBtn() {
   }
   return (
     <>
-      <button onClick={scrollToTop} className={styles['top-btn']}>
-        <Image
-          src="/ghost/ghost_15.png"
-          alt="top-button-default"
-          width={100}
-          height={84}
-          className={`${styles['default']} animate__animated animate__pulse animate__infinite animate__slow`}
-          priority={false}
-        />
-        <Image
-          src="/ghost/ghost_07.png"
-          alt="top-button-hover"
-          width={100}
-          height={84}
-          className={`${styles['hover']} animate__animated animate__tada animate__infinite`}
-          priority={false}
-        />
+      <button
+        onClick={scrollToTop}
+        className={`${styles['top-btn']} ${visible ? styles['visible'] : ''}`}
+      >
+        <>
+          <Image
+            src="/ghost/ghost_15.png"
+            alt="top-button-default"
+            width={100}
+            height={84}
+            className={`${styles['default']} animate__animated animate__pulse animate__infinite animate__slow`}
+            priority={false}
+          />ß
+          <Image
+            src="/ghost/ghost_07.png"
+            alt="top-button-hover"
+            width={100}
+            height={84}
+            className={`${styles['hover']} animate__animated animate__tada animate__infinite`}
+            priority={false}
+          />
+        </>
       </button>
     </>
   )

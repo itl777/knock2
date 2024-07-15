@@ -3,15 +3,14 @@ import Image from 'next/image'
 import { useDropzone } from 'react-dropzone'
 import Cropper from 'cropperjs'
 import 'cropperjs/dist/cropper.css'
-import styles from './avatar-editor.module.scss'
 
 import { useAuth } from '@/context/auth-context'
 import { API_SERVER } from '@/configs/api-path'
 import { useSnackbar } from '@/context/snackbar-context'
 import DropZone from './drop-zone'
 import AvatarDialog from './avatar-dialog'
-import ZoomSlider from './zoom-slider'
 import { FaImage } from 'react-icons/fa6'
+import ZoomSlider from './zoom-slider'
 
 export default function AvatarFormDialogs({ openDialog, closeDialog }) {
   const { openSnackbar } = useSnackbar()
@@ -20,6 +19,7 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
   // cropper
   const [cropper, setCropper] = useState(null)
   const imageRef = useRef(null)
+  const [backgroundColor, setBackgroundColor] = useState('rgb(236, 236, 236,1)')
 
   const onDrop = (acceptedFiles) => {
     if (acceptedFiles[0].size > 2097152) {
@@ -68,49 +68,63 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
     }
   }
 
+  const handleColorChange = (color) => {
+    const { r, g, b, a } = color.rgb
+    setBackgroundColor(`rgba(${r}, ${g}, ${b}, ${a})`)
+  }
+
   const avatarSubmit = () => {
     if (!cropper) return
 
-    cropper.getCroppedCanvas({ width: 250, height: 250 }).toBlob((blob) => {
-      const formData = new FormData()
-      formData.append('user_id', auth.id)
-      formData.append('avatar', blob, 'cropped-image.png')
+    cropper
+      .getCroppedCanvas({ width: 250, height: 250, fillColor: backgroundColor })
+      .toBlob((blob) => {
+        const formData = new FormData()
+        formData.append('user_id', auth.id)
+        formData.append('avatar', blob, 'cropped-image.png')
 
-      const url = `${API_SERVER}/users/upload-avatar`
-      const option = {
-        method: 'POST',
-        body: formData,
-        headers: {
-          ...getAuthHeader(),
-        },
-      }
-      fetch(url, option)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            closeDialog()
-            setImgUrl('')
-            setAuthRefresh(true)
-            openSnackbar('新增成功', 'success')
-          } else {
-            openSnackbar('新增失敗', 'error')
-          }
-        })
-        .catch((err) => {
-          console.error(err)
-          openSnackbar('連線失敗', 'error')
-        })
-      if (cropper) cropper.destroy()
-      setCropper(null)
-      setImgUrl('')
-      imageRef.current = null
-      setZoomValue(0.1)
-    })
+        const url = `${API_SERVER}/users/upload-avatar`
+        const option = {
+          method: 'POST',
+          body: formData,
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
+        fetch(url, option)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              closeDialog()
+              setImgUrl('')
+              setAuthRefresh(true)
+              openSnackbar('新增成功', 'success')
+            } else {
+              openSnackbar('新增失敗', 'error')
+            }
+          })
+          .catch((err) => {
+            console.error(err)
+            openSnackbar('連線失敗', 'error')
+          })
+        resetUploader()
+      })
+  }
+
+  const resetUploader = () => {
+    if (cropper) cropper.destroy()
+    setCropper(null)
+    setImgUrl('')
+    imageRef.current = null
+    setZoomValue(0.1)
+    setBackgroundColor('rgb(236, 236, 236,1)')
   }
 
   useEffect(() => {
+    console.log(111)
     if (imgUrl && imageRef.current) {
       if (cropper) {
+        setZoomValue(0.1)
         cropper.replace(imgUrl)
       } else {
         const cropperInstance = new Cropper(imageRef.current, {
@@ -136,6 +150,7 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
             this.cropper.setCanvasData(cropBoxData)
           },
         })
+        console.log(cropperInstance)
         setCropper(cropperInstance)
       }
     }
@@ -144,25 +159,28 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
   return (
     <>
       <AvatarDialog
-        cropper={cropper}
-        setCropper={setCropper}
-        setImgUrl={setImgUrl}
-        imageRef={imageRef}
+        imgUrl={imgUrl}
+        zoomValue={zoomValue}
+        handleZoomChange={handleZoomChange}
+        backgroundColor={backgroundColor}
+        handleColorChange={handleColorChange}
         openDialog={openDialog}
         closeDialog={closeDialog}
         avatarSubmit={avatarSubmit}
-        setZoomValue={setZoomValue}
+        resetUploader={resetUploader}
       >
         <DropZone
-          openBtn={open}
+          uploadBtn={open}
           getRootProps={getRootProps}
           getInputProps={getInputProps}
           isDragActive={isDragActive}
           isDragReject={isDragReject}
           isDragAccept={isDragAccept}
           hasImage={!!imgUrl}
+          backgroundColor={backgroundColor}
+          handleColorChange={handleColorChange}
         >
-          <div className={styles.cropperContainer}>
+          <div className="cropperContainer">
             {imgUrl ? (
               <Image
                 ref={imageRef}
@@ -172,7 +190,7 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
                 alt="avatar"
                 style={{
                   objectFit: 'contain',
-                  background: '#222222',
+                  background: 'rgb(236, 236, 236,1)',
                   borderRadius: '50%',
                   margin: '0 auto',
                 }}
@@ -188,6 +206,31 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
           zoomChange={handleZoomChange}
         />
       </AvatarDialog>
+
+      <style jsx>{`
+        .cropperContainer {
+          width: 100%;
+          height: 400px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: ${backgroundColor || 'rgb(236, 236, 236,1)'};
+          & :global(.cropper-view-box) {
+            border-radius: 50%;
+            outline: unset;
+            border: 2px solid #ffffff;
+            background-color: ${backgroundColor || 'rgb(236, 236, 236,1)'};
+          }
+          & :global(.cropper-face) {
+            background-color: unset;
+          }
+          & :global(.cropper-modal) {
+            // background-color: unset;
+            // opacity: unset;
+            border-radius: 12px; /* 将裁切框变成圆形 */
+          }
+        }
+      `}</style>
     </>
   )
 }
