@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import Link from 'next/link'
-import axios from 'axios'
 import styles from './order-reviews-page.module.css'
+import axios from 'axios'
+// hooks
+import useFetchOrderData from '@/hooks/fetchOrderDetails'
+// components
 import BlackBtn from '@/components/UI/black-btn'
 import ReviewItemCard from './review-item-card'
-import NoData from '@/components/UI/no-data'
-import { FaArrowLeftLong } from 'react-icons/fa6'
-import HDivider from '@/components/UI/divider/horizontal-divider'
+import UserHeader from '@/components/UI/user-header'
+import OrderDetailInfo from '../order-detail-info'
+import { useSnackbar } from '@/context/snackbar-context'
+
 import {
   PRODUCT_IMG,
   ORDER_REVIEW_POST,
@@ -17,6 +20,9 @@ export default function OrderReviewsSection({ orderId }) {
   const [reviews, setReviews] = useState([])
   const [formData, setFormData] = useState([])
   const [anyReviewed, setAnyReviewed] = useState(false)
+  const { orderData, orderDetails } = useFetchOrderData(orderId)
+  const { openSnackbar } = useSnackbar()
+
   const fetchOrderReviews = async () => {
     try {
       const response = await axios.get(`${ORDER_REVIEW_GET}/${orderId}`)
@@ -84,7 +90,8 @@ export default function OrderReviewsSection({ orderId }) {
       console.log(data)
 
       if (data.success) {
-        alert('儲存成功')
+        openSnackbar('您的評價已送出！', 'success')
+        window.location.reload()
       }
     } catch (error) {
       console.error('提交表單時出錯', error)
@@ -98,54 +105,46 @@ export default function OrderReviewsSection({ orderId }) {
       className={styles.orderDetailBox}
     >
       {/* card header */}
-      <div className={styles.orderDetailHeader}>
-        <Link className={styles.titleBox} href="/user/orders/ongoing">
-          <FaArrowLeftLong />
-          <h5>訂單評價</h5>
-        </Link>
-      </div>
+      <UserHeader type="icon" title="訂單評價" btnHidden={true} />
 
-      <div className="horizontalDividerS" />
+      <OrderDetailInfo
+        order_date={orderData?.order_date}
+        merchant_trade_no={orderData?.merchant_trade_no}
+        total_price={orderData?.total_price}
+        payment_date_hidden={true}
+        full_address_hidden={true}
+        order_status_name_hidden={true}
+      />
 
       {/* card body */}
-      {anyReviewed === false &&
-        !!reviews.length === true &&
-        reviews.map((v) => (
-          <ReviewItemCard
-            key={v.order_product_id}
-            order_product_id={v.order_product_id}
-            product_name={v.product_name}
-            product_img={`${PRODUCT_IMG}/${v.product_img}`}
-            review={
-              formData.find((f) => f.order_product_id === v.order_product_id)
-                ?.review || ''
-            }
-            onChange={(e) => handleInputChange(e, v.order_product_id)}
-            rate={
-              formData.find((f) => f.order_product_id === v.order_product_id)
-                ?.rate || 0
-            }
-            onRatingChange={(rate) =>
-              handleRatingChange(v.order_product_id, rate)
-            }
-          />
-        ))}
+      {reviews.length > 0 &&
+        reviews.map((v) => {
+          const formDataItem = formData.find(
+            (f) => f.order_product_id === v.order_product_id
+          ) || { review: '', rate: 0 }
 
-      {anyReviewed === true &&
-        !!reviews.length === true &&
-        reviews.map((v) => (
-          <ReviewItemCard
-            key={v.order_product_id}
-            order_product_id={v.order_product_id}
-            product_name={v.product_name}
-            product_img={`${PRODUCT_IMG}/${v.product_img}`}
-            placeholder=""
-            review={v.review}
-            rate={v.rate}
-            inputDisabled={true}
-            ratingReadOnly={true}
-          />
-        ))}
+          const isAnyReviewed = anyReviewed === true
+          const review = isAnyReviewed ? v.review : formDataItem.review
+          const rate = isAnyReviewed ? v.rate : formDataItem.rate
+          const readOnly = isAnyReviewed
+
+          return (
+            <ReviewItemCard
+              key={v.order_product_id}
+              order_product_id={v.order_product_id}
+              product_name={v.product_name}
+              product_img={`${PRODUCT_IMG}/${v.product_img}`}
+              review={review}
+              rate={rate}
+              onChange={(e) => handleInputChange(e, v.order_product_id)}
+              onRatingChange={(rate) =>
+                handleRatingChange(v.order_product_id, rate)
+              }
+              review_date={v.review_date}
+              readOnly={readOnly}
+            />
+          )
+        })}
 
       {anyReviewed === false && (
         <div className={styles.btnStack}>

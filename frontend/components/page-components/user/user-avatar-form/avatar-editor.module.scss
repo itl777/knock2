@@ -7,7 +7,7 @@
   justify-content: center;
   align-items: center;
   & :global(.cropper-view-box) {
-    border-radius: 50%; /* 将裁切框变成圆形 */
+    border-radius: 50%; 
     outline: unset;
     border: 2px solid $text-white;
   }

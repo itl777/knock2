@@ -23,7 +23,6 @@ export default function PdCard() {
           <MyPagination />
         </div>
       </div>
-
     </>
   )
 }

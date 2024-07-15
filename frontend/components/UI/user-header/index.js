@@ -8,14 +8,18 @@ export default function UserHeader({
   type = 'def',
   title = '標題',
   btnHref = '/',
+  btnHidden = false,
 }) {
+  const goBack = () => {
+    window.history.back()
+  }
 
   return (
     <div>
       <div className={styles.orderDetailHeader}>
         <div className={styles.headerLeft}>
           {type === 'icon' && (
-            <IconButton href="/user/orders/ongoing">
+            <IconButton onClick={goBack} href={null}>
               <FaArrowLeftLong className={styles.iconStyles} />
             </IconButton>
           )}
@@ -23,7 +27,7 @@ export default function UserHeader({
           <h5>{title}</h5>
         </div>
 
-        <FilterBtn btnText="發票" href={btnHref} />
+        {!btnHidden && <FilterBtn btnText="發票" href={btnHref} />}
       </div>
       <HDivider margin="1.5rem 0" />
     </div>

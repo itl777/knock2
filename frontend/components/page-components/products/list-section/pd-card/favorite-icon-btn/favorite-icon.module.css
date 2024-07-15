@@ -22,6 +22,9 @@
 .unlikeStyle {
   fill: '#fff';
 }
+.addToFavoriteIcon {
+  font-size: 1.25rem;
+}
 
 @keyframes unlike {
   0% {

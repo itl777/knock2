@@ -7,11 +7,33 @@ import { useAuth } from '@/context/auth-context'
 import Avatar from '@mui/joy/Avatar'
 import { FaCircleUser } from 'react-icons/fa6'
 import { TiThMenu } from 'react-icons/ti'
+import ClearButton from '@/components/UI/ClearButton'
 import CheckoutOffcanvas from '@/components/page-components/checkout/checkout-offcanvas'
 import styles from '../nav-styles.module.scss'
+import NavMenu from './nav-menu'
+import { useState } from 'react'
+import { useLoginModal } from '@/context/login-context/index'
 
-export default function NavbarIcon({ handleNavMenuOpen, handleMobileMenu }) {
+export default function NavbarIcon({ handleMobileMenu }) {
   const { auth } = useAuth()
+  const { loginFormSwitch } = useLoginModal()
+
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+
+  const handleNavMenuOpen = (event) => {
+    event.preventDefault()
+    if (open) {
+      setAnchorEl(null)
+    } else {
+      if (!auth.id) {
+        loginFormSwitch('Login')
+      } else {
+        setAnchorEl(event.currentTarget)
+      }
+    }
+  }
+
   return (
     <>
       <ul className={styles['navbar-icon']}>
@@ -27,18 +49,26 @@ export default function NavbarIcon({ handleNavMenuOpen, handleMobileMenu }) {
           </Link>
         </li>
         <li>
-          <Link href="" onClick={handleNavMenuOpen}>
-            {auth.id ? (
-              <Avatar
-                size="md"
-                variant="solid"
-                alt={auth.nickname}
-                src={auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''}
-              />
-            ) : (
-              <FaCircleUser />
-            )}
-          </Link>
+          <ClearButton
+            onClick={handleNavMenuOpen}
+            btnText={
+              auth.id ? (
+                <Avatar
+                  size="md"
+                  variant="solid"
+                  alt={auth.nickname}
+                  src={auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''}
+                />
+              ) : (
+                <FaCircleUser />
+              )
+            }
+          />
+          <NavMenu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleNavMenuOpen}
+          />
           <a>
             <CheckoutOffcanvas />
           </a>

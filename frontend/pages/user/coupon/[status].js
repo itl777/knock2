@@ -12,20 +12,10 @@ export default function CouponPage() {
 
   const tabItems = [
     { key: 'ongoing', name: '未使用', path: '/user/coupon/ongoing' },
-    { key: 'canceled', name: '歷史記錄', path: '/user/coupon/history' },
+    { key: 'used', name: '已使用', path: '/user/coupon/used' },
+    { key: 'expired', name: '已過期', path: '/user/coupon/expired' },
   ]
 
-  // 根據 status 設置 order_status_id
-  const getOrderStatusId = (status) => {
-    switch (status) {
-      case 'ongoing':
-        return 5
-      case 'history':
-        return 4
-      default:
-        return 5
-    }
-  }
 
   useEffect(() => {
     if (!status) {
@@ -33,7 +23,6 @@ export default function CouponPage() {
     }
   }, [status])
 
-  const orderStatusId = getOrderStatusId(status)
 
   return (
     <>
@@ -41,7 +30,7 @@ export default function CouponPage() {
         <UserLayout
           userTab={<UserTab />}
           userTabSec={<UserTabSec tabItems={tabItems} />}
-          sectionRight={<CouponContainer orderStatusId={orderStatusId} />}
+          sectionRight={<CouponContainer status={status} />}
         />
       </IndexLayout>
     </>

@@ -14,9 +14,27 @@
   }
 
 .form{
-    margin-top: 40px;
+    margin-top: 30px;
     /* margin-left: 38px; */
 }
 .p{
-    margin-top: 30px;
+    margin-top: 28px;
+}
+.booking{
+    border: 1px solid var(--sec-1);
+    background-color: var(--pri-1);
+    color: var(--sec-1);
+    padding: 10px 30px;
+    border-radius: 30px;
+}
+.title {
+    color: var(--sec-1);
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.booking:hover{
+    border: 1px solid var(--sec-1);
+    background-color: var(--sec-1);
+    color: rgb(255, 255, 255);
 }

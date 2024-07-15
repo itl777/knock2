@@ -1,13 +1,12 @@
 @import '@/styles/variables.scss';
 
 // default
-$border: #dae2ed;
 $color: #FFFFFF;
 
 // focus
-$box-shadow: #efede8;
+$box-shadow: rgba(238, 236, 231,0.3);
 // hover focus
-$border-color: #bbb29f;
+$border-color: rgba(187, 178, 159,1);
 
 
 .inputDefault {
