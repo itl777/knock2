@@ -2,9 +2,9 @@ import React, { useState, useEffect, useContext } from 'react'
 import dayjs from 'dayjs'
 import { IoIosArrowDropleft, IoIosArrowDropright } from 'react-icons/io'
 import { FaCircle, FaFacebook, FaInstagram } from 'react-icons/fa'
-import Reservation from '../reservation/reservation' // 注意這裡的路徑是否正確
+import Reservation from '../reservation/reservation'
 import myStyle from './calendar.module.css'
-import { DateContext } from '@/context/date-context' // 確保這裡的路徑正確
+import { DateContext } from '@/context/date-context'
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(dayjs())
@@ -165,7 +165,7 @@ const Calendar = () => {
               </div>
             </div>
 
-            <table>
+            <table className={myStyle.table}>
               <thead>
                 <tr>
                   <td>Mo</td>
@@ -177,7 +177,6 @@ const Calendar = () => {
                   <td>Su</td>
                 </tr>
               </thead>
-              <hr className={myStyle.hr} />
               <tbody>{renderWeeks()}</tbody>
             </table>
 
