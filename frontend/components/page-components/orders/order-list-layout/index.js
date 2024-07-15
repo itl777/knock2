@@ -1,52 +1,28 @@
-// 我的訂單頁面
 import React, { useState, useEffect } from 'react'
 import styles from './order-list-layout.module.css'
 import { useRouter } from 'next/router'
 // context
 import { useLoginModal } from '@/context/login-context'
 import { useAuth } from '@/context/auth-context'
+// hooks
+import useFetchAllOrders from '@/hooks/fetchAllOrder'
+import usePayment from '@/hooks/usePayment'
 // components
 import OrderListCard from './order-list-card'
 import NoData from '@/components/UI/no-data'
 import UserPagination from '@/components/UI/user-pagination'
 import RedirectionGuide from '@/components/UI/redirect-guide'
-// api path
-import { ORDER_LIST_GET } from '@/configs/api-path'
 
 export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
-  const [orderData, setOrderData] = useState([])
-  const [orderDetailData, setOrderDetailData] = useState([])
-  const [totalPages, setTotalPages] = useState(1)
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(initialPage)
   const router = useRouter()
   const { auth, authIsReady } = useAuth()
   const { loginFormSwitch } = useLoginModal()
-  const [isLogin, setIsLogin] = useState()
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch(
-          `${ORDER_LIST_GET}?member_id=${auth.id}&order_status_id=${orderStatusId}&page=${page}`
-        )
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch order data')
-        }
-
-        const data = await response.json()
-
-        console.log(data)
-        setOrderData(data.orders) // 取得訂單資料
-        setOrderDetailData(data.orderDetails) // 取得訂單所有商品資料（圖片）
-        setTotalPages(data.totalPages)
-      } catch (error) {
-        console.log('Error fetching orders:', error)
-      }
-    }
-
-    fetchOrders()
-  }, [auth.id, orderStatusId, page])
+  const [isLogin, setIsLogin] = useState(false)
+  const [updateAllOrders, setUpdateAllOrders] = useState(false)
+  const { allOrderData, allOrderDetails, totalPages, fetchAllOrders } =
+    useFetchAllOrders()
+  const { handleCancel, handleEcpaySubmit } = usePayment()
 
   const handlePageChange = (newPage) => {
     setPage(newPage)
@@ -56,25 +32,50 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
     })
   }
 
+  const btnLeftOnClick = (order_status_id, order_id, total_price) => {
+    if (+order_status_id === 1) {
+      return () => {
+        handleEcpaySubmit(order_id, total_price)
+        setUpdateAllOrders(true)
+      }
+    }
+    if (+order_status_id === 2) {
+      return () => {
+        if (window.confirm('確定要取消訂單嗎？')) {
+          handleCancel(order_id)
+          setUpdateAllOrders(true)
+        }
+      }
+    }
+    return null
+  }
+
   // 登入驗證
   useEffect(() => {
     if (router.isReady && authIsReady) {
       if (!auth.id) {
         setIsLogin(false)
         loginFormSwitch('Login')
-      }
-      if (auth.id) {
+      } else {
+        fetchAllOrders(auth.id, orderStatusId, page)
         setIsLogin(true)
       }
     }
-  }, [auth.id, router.isReady, authIsReady])
+  }, [auth.id, router.isReady, authIsReady, orderStatusId, page])
+
+  useEffect(() => {
+    if (updateAllOrders && auth.id) {
+      fetchAllOrders(auth.id, orderStatusId, page)
+      setUpdateAllOrders(false)
+    }
+  }, [updateAllOrders, auth.id])
 
   return (
     <>
       {!isLogin && <RedirectionGuide />}
 
       {/* 如果沒有資料，顯示無訂單記錄圖示，有的話則進行 map */}
-      {isLogin && orderData.length === 0 ? (
+      {isLogin && allOrderData.length === 0 ? (
         <div className={styles.orderBox}>
           <NoData
             text="無訂單記錄"
@@ -83,7 +84,7 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
           />
         </div>
       ) : (
-        orderData.map((v, i) => (
+        allOrderData.map((v, i) => (
           <OrderListCard
             key={v.order_id}
             order_id={v.order_id}
@@ -94,12 +95,19 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
             full_address={v.full_address}
             order_status_id={v.order_status_id}
             order_status_name={v.order_status_name}
-            orderDetailData={orderDetailData}
+            orderDetailData={allOrderDetails}
+            member_id={auth.id}
+            page={page}
+            btnLeftOnClick={btnLeftOnClick(
+              v.order_status_id,
+              v.order_id,
+              v.total_price
+            )}
           />
         ))
       )}
 
-      {isLogin && orderData.length > 0 && (
+      {isLogin && allOrderData.length > 0 && (
         <UserPagination
           page={page}
           totalPages={totalPages}
