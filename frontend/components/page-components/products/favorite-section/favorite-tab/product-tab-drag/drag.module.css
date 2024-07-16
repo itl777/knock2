@@ -16,7 +16,7 @@
   color: gray;
 }
 .pen:hover::after {
-  content: 雙擊可編輯文字;
+  content: '雙擊可編輯文字';
   position: absolute;
   top: -20px;
   left: 50px;
@@ -24,6 +24,9 @@
 }
 .title:hover {
   cursor: pointer;
+}
+.title input{
+width: 50%;
 }
 
 .imgStyle {

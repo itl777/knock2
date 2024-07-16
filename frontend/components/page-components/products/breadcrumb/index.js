@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Breadcrumbs from '@mui/material/Breadcrumbs'
 import Typography from '@mui/material/Typography'
 import Link from '@mui/material/Link'
+import NextLink from 'next/link'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 import myStyle from './bread.module.css'
 import { useRouter } from 'next/router'
@@ -16,23 +17,11 @@ export default function Breadcrumb({ productName = '商品名稱' }) {
     }
   }, [productName])
   let breadcrumbs = [
-    <Link
-      className={myStyle.font}
-      underline="hover"
-      key="1"
-      color="#000"
-      href="http://localhost:3000"
-    >
-      首頁
+    <Link className={myStyle.font} underline="hover" key="1" color="#000">
+      <NextLink href="http://localhost:3000">首頁</NextLink>
     </Link>,
-    <Link
-      className={myStyle.font}
-      underline="hover"
-      key="2"
-      color="#000"
-      href="http://localhost:3000/product"
-    >
-      商品列表
+    <Link className={myStyle.font} underline="hover" key="2" color="#000">
+      <NextLink href="http://localhost:3000/product">商品列表</NextLink>
     </Link>,
     <Link className={myStyle.font} underline="none" key="3" color="#000">
       {name}
