@@ -38,6 +38,9 @@ export const ECPAY_GET = `${API_SERVER}/payments`
 export const GET_MEMBER_COUPON = `${API_SERVER}/coupons`
 export const GET_MEMBER_COUPON_IN_CART = `${API_SERVER}/coupons/in_cart`
 export const UPDATE_MEMBER_COUPON_IN_CART = `${API_SERVER}/coupons/update_in_cart`
+// reservation
+export const GET_RESERVATION_LIST = `${API_SERVER}/reservations`
+
 
 //teams
 export const TEAM_ALL = `${API_SERVER}/teams/apiSearch`

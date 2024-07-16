@@ -27,7 +27,7 @@
   overflow: hidden;
   flex: none;
   width: 100%;
-  height: 100%;
+  height: 208px;
   border-radius: var(--img-radius);
 }
 

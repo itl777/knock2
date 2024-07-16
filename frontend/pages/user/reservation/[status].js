@@ -12,7 +12,8 @@ export default function ReservationSection() {
 
   const tabItems = [
     { key: 'ongoing', name: '進行中', path: '/user/reservation/ongoing' },
-    { key: 'canceled', name: '已完成', path: '/user/reservation/complete' },
+    { key: 'complete', name: '已完成', path: '/user/reservation/complete' },
+    { key: 'canceled', name: '已取消', path: '/user/reservation/canceled' },
   ]
 
   useEffect(() => {

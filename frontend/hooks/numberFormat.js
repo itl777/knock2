@@ -6,9 +6,10 @@ export const formatIntlNumber = (value) => {
 }
 
 export const formatPrice = (value) => {
+  const number = +value
   const IntlNumber = new Intl.NumberFormat('en-IN', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  }).format(value)
-  return `$ ${IntlNumber}`
+  }).format(number)
+  return `$${IntlNumber}`
 }
