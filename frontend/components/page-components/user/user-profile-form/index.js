@@ -289,7 +289,7 @@ export default function UserProfileForm() {
                 type="password"
                 value="PasswordPasswordPassword"
                 btn={true}
-                btnHref="/user/reset-password"
+                href="/user/reset-password"
                 btnText="修改密碼"
                 disabled={true}
               />

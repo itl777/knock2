@@ -1,6 +1,7 @@
 import styles from './item.module.scss'
 import Input01 from '@/components/UI/form-item/input01'
 import FilterBtn from '@/components/UI/filter-btn'
+import { useRouter } from 'next/router'
 
 export default function UserProfileInput({
   label = '',
@@ -10,11 +11,19 @@ export default function UserProfileInput({
   placeholder = '',
   disabled = false,
   btn = false,
-  btnHref = '',
+  href = '',
   btnText = '',
   errorText = '',
   onChange = () => {},
 }) {
+  const router = useRouter()
+
+  const hrefHandler = () => {
+    if (href) {
+      router.push(href)
+    }
+  }
+
   return (
     <>
       <div className={styles.formItem}>
@@ -35,7 +44,7 @@ export default function UserProfileInput({
           </div>
         </div>
         <div className={styles.button}>
-          {btn ? <FilterBtn href={btnHref} btnText={btnText} /> : null}
+          {btn ? <FilterBtn onClick={hrefHandler} btnText={btnText} /> : null}
         </div>
       </div>
     </>
