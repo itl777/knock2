@@ -5,6 +5,7 @@ import BtnGroup from './btn-group'
 import CategoryGroup from './category-group'
 import myStyle from './features.module.css'
 import { useEffect, useState } from 'react'
+import ShareBtn from './share-btn'
 
 export default function PdFeatures({ dbData }) {
   const [productData, setProductData] = useState({
@@ -32,7 +33,7 @@ export default function PdFeatures({ dbData }) {
           <div
             className={`${myStyle['slick']} col-lg-5 px-0 position-relative`}
           >
-            <PdSlick product_id={productData.product_id}/>
+            <PdSlick product_id={productData.product_id} />
           </div>
 
           {/* 詳情右側 */}
@@ -41,9 +42,15 @@ export default function PdFeatures({ dbData }) {
           >
             <div className="d-flex justify-content-between align-items-center">
               <h1 className={myStyle.title}>{productData.product_name}</h1>
-              <div>
+
+              <div className={myStyle.shareStar}>
+                {/* 分享icon */}
+                <ShareBtn />
+
                 {/* 還沒接評價資料 */}
+            
                 <ReviewStar />
+
               </div>
             </div>
 

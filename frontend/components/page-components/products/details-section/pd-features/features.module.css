@@ -45,6 +45,14 @@
   line-height: normal;
   letter-spacing: 3.2px;
 }
+.share > *{
+ margin-right: 5px;
+}
+.shareStar{
+display: flex;
+justify-content: space-between;
+gap: 10px;
+}
 .content {
   font-family: 'Noto Serif JP';
   font-size: 18px;
