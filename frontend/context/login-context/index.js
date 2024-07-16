@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useAuth } from '../auth-context'
 import { useSnackbar } from '../snackbar-context'
 import useFirebase from '@/hooks/useFirebase'
@@ -82,8 +82,12 @@ export function LoginContextProvider({ children }) {
     const newRegisterData = { ...registerData, [name]: value }
     setRegisterData(newRegisterData)
   }
+  const recaptchaRef = useRef()
   const registerSubmit = async (e) => {
     e.preventDefault()
+    // 取得 recaptcha 機器人驗證結果
+    const recaptchaValue = recaptchaRef.current.getValue()
+    // recaptchaRef.current.reset()
 
     // 資料驗證
     const RegisterValidationResult = schemaRegisterForm.safeParse(registerData)
@@ -106,14 +110,14 @@ export function LoginContextProvider({ children }) {
     }
 
     // 包裝
-    const newRegisterData = { ...registerData, nick_name: registerData.name }
+    let newRegisterData = {
+      ...registerData,
+      nick_name: registerData.name,
+      recaptchaToken: recaptchaValue,
+    }
+    delete newRegisterData.reenter_password
 
-    const result = await register(
-      newRegisterData.account,
-      newRegisterData.password,
-      newRegisterData.name,
-      newRegisterData.nick_name
-    )
+    const result = await register(newRegisterData)
 
     if (result.success) {
       // 如果註冊成功
@@ -121,7 +125,7 @@ export function LoginContextProvider({ children }) {
       loginFormSwitch('Login')
     } else {
       // 如果註冊失敗
-      setRegisterErrors({ result: 'Email已被註冊，請試試其他Email' })
+      setRegisterErrors({ result: result.error })
     }
   }
 
@@ -226,6 +230,7 @@ export function LoginContextProvider({ children }) {
     }
   }
 
+  // GoogleLogin
   const callbackGoogleLogin = async (providerData) => {
     // 如果已經登入中，不需要再作登入動作
     if (auth.id !== 0) return
@@ -249,7 +254,6 @@ export function LoginContextProvider({ children }) {
   }, [])
 
   // countdown
-
   const [countdown, setCountdown] = useState(0)
   const [formatTime, setFormatTime] = useState('ok')
 
@@ -308,6 +312,7 @@ export function LoginContextProvider({ children }) {
         forgotForgotPasswordErrors,
         handleForgotPasswordChange,
         forgotPasswordSubmit,
+        recaptchaRef,
         // FormSwitch
         loginFormSwitch,
         //CountdownTimer

@@ -76,7 +76,6 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
 
 // 驗證 jwt token
 router.post("/verify-token", async (req, res) => {
-
   if (!req.body.token) return res.json(output);
   const output = {
     success: false,
@@ -273,6 +272,23 @@ router.post("/register", async (req, res) => {
     error: "",
     result: {},
   };
+
+  // 驗證 recaptcha 驗證碼
+  try {
+    const token = req.body.recaptchaToken;
+    const url = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`;
+    const response = await fetch(url, { method: "POST" });
+    const data = await response.json();
+    if (!data.success) {
+      output.code = 430;
+      output.error = "你是機器人？ 重新請點選下方驗證";
+      return res.json(output);
+    }
+  } catch (ex) {
+    output.code = 430;
+    output.error = "你是機器人？ (ReCAPTCHA驗證失敗)";
+    return res.json(output);
+  }
 
   // TODO 欄位資料的檢查
 

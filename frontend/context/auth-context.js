@@ -95,7 +95,7 @@ export function AuthContextProvider({ children }) {
     setAuth(emptyAuth)
   }
 
-  const register = async (account, password, name, nick_name) => {
+  const register = async (data) => {
     const output = {
       success: false,
       error: '',
@@ -103,7 +103,7 @@ export function AuthContextProvider({ children }) {
     try {
       const r = await fetch(REGISTER_POST, {
         method: 'POST',
-        body: JSON.stringify({ account, password, name, nick_name }),
+        body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json',
         },
