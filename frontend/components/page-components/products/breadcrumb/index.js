@@ -16,12 +16,27 @@ export default function Breadcrumb({ productName = '商品名稱' }) {
       setName(productName)
     }
   }, [productName])
+
   let breadcrumbs = [
-    <Link className={myStyle.font} underline="hover" key="1" color="#000">
-      <NextLink href="http://localhost:3000">首頁</NextLink>
+    <Link
+      className={myStyle.font}
+      underline="hover"
+      key="1"
+      color="#000"
+      component={NextLink}
+      href="/"
+    >
+      首頁
     </Link>,
-    <Link className={myStyle.font} underline="hover" key="2" color="#000">
-      <NextLink href="http://localhost:3000/product">商品列表</NextLink>
+    <Link
+      className={myStyle.font}
+      underline="hover"
+      key="2"
+      color="#000"
+      component={NextLink}
+      href="/product"
+    >
+      商品列表
     </Link>,
     <Link className={myStyle.font} underline="none" key="3" color="#000">
       {name}
