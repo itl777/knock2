@@ -3,12 +3,15 @@ import axios from 'axios'
 import { useAuth } from './auth-context'
 import { useSnackbar } from './snackbar-context'
 import { useRouter } from 'next/router'
-
+import { set } from 'lodash'
 import {
   CHECKOUT_GET_CART,
   CHECKOUT_UPDATE_CART,
   CART_POST,
   CHECKOUT_GET_PROFILE,
+  GET_MEMBER_COUPON,
+  UPDATE_MEMBER_COUPON_IN_CART,
+  GET_MEMBER_COUPON_IN_CART,
 } from '@/configs/api-path'
 
 const CartContext = createContext()
@@ -32,27 +35,30 @@ export const CartProvider = ({ children }) => {
   const router = useRouter()
   const { openSnackbar } = useSnackbar() // success toast
   const [checkoutItems, setCheckoutItems] = useState([]) // 購物車內容
-  const [checkoutTotal, setCheckoutTotal] = useState(0) // 購物車總金額
+  const [checkoutTotal, setCheckoutTotal] = useState(0) // 購物車總金額(含運費)
+  const [subtotal, setSubtotal] = useState(0) // 購物車總金額
   const [cartBadgeQty, setCartBadgeQty] = useState(0) // 購物車商品項目數量
   const [deliverFee, setDeliverFee] = useState(120)
   const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
-    // order submit form 內容
-    const [formData, setFormData] = useState({
-      memberId: 0,
-      recipientName: '',
-      recipientMobile: '',
-      recipientDistrictId: 1,
-      recipientAddress: '',
-      memberInvoice: 0,
-      mobileInvoice: '',
-      recipientTaxId: '',
-      orderItems: [],
-    })
+  const [coupons, setCoupons] = useState([]) // 取得會員可使用優惠券
+  const [selectedCoupons, setSelectedCoupons] = useState([]) // 購物車使用的優惠券
+
+  // order submit form 內容
+  const [formData, setFormData] = useState({
+    memberId: 0,
+    recipientName: '',
+    recipientMobile: '',
+    recipientDistrictId: 1,
+    recipientAddress: '',
+    memberInvoice: 0,
+    mobileInvoice: '',
+    recipientTaxId: '',
+    orderItems: [],
+  })
 
   useEffect(() => {
     setCartBadgeQty(checkoutItems.length)
   }, [checkoutItems])
-
 
   // 取得會員基本資料
   const fetchMemberProfile = async () => {
@@ -75,7 +81,6 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-
   // 取得會員購物車 cart_member 資料
   const fetchMemberCart = async () => {
     const deviceId = +getDeviceId()
@@ -96,15 +101,54 @@ export const CartProvider = ({ children }) => {
     }
   }
 
+  // 取得會員優惠券
+  const fetchMemberCoupons = async () => {
+    try {
+      const response = await axios.get(
+        `${GET_MEMBER_COUPON}?member_id=${auth.id}&page=1&status=ongoing`
+      )
+      setCoupons(response.data.rows)
+    } catch (error) {
+      console.error('Error fetching member coupons: ', error)
+    }
+  }
+
+  // 取得會員購物車優惠券
+  const fetchMemberCartCoupons = async () => {
+    try {
+      const response = await axios.get(
+        `${GET_MEMBER_COUPON_IN_CART}?member_id=${auth.id}`
+      )
+      setSelectedCoupons(response.data.rows)
+    } catch (error) {
+      console.error('Error fetching member coupons: ', error)
+    }
+  }
+
+  // 新增刪除會員購物車優惠券
+  const handelSelectedToggle = async (coupon_id) => {
+    try {
+      await axios.post(UPDATE_MEMBER_COUPON_IN_CART, {
+        member_id: auth.id,
+        coupon_id: coupon_id,
+      })
+      fetchMemberCartCoupons()
+      console.log('handelSelectedToggle')
+    } catch (error) {
+      console.error('Error updating coupons:', error)
+    }
+  }
+
   // 取得訂單總金額
   const calculateTotal = (items) => {
     let newCheckTotal = 0
     items.forEach((item) => {
       newCheckTotal += item.cart_product_quantity * item.price
     })
-    setCheckoutTotal(newCheckTotal)
 
     newCheckTotal >= 1000 ? setDeliverFee(0) : setDeliverFee(120)
+    setSubtotal(newCheckTotal)
+    setCheckoutTotal(newCheckTotal + deliverFee)
   }
 
   // 記錄商品數量異動
@@ -194,7 +238,7 @@ export const CartProvider = ({ children }) => {
 
     try {
       const updateResponse = await axios.post(
-        'http://127.0.0.1:3001/checkout/api/update_cart',
+        'http://localhost:3001/checkout/api/update_cart',
         {
           memberId,
           deviceId,
@@ -203,8 +247,6 @@ export const CartProvider = ({ children }) => {
 
       if (updateResponse.data.success) {
         console.log('Successfully updated cart_member_id')
-        // Update auth state and fetch member cart
-        // setAuth({ id: memberId })
         fetchMemberCart()
       } else {
         console.error('Failed to update cart_member_id')
@@ -220,6 +262,8 @@ export const CartProvider = ({ children }) => {
       if (auth.id) {
         handleLogin()
         fetchMemberCart()
+        fetchMemberCoupons()
+        fetchMemberCartCoupons()
       }
       if (!auth.id) {
         clearCart()
@@ -234,8 +278,15 @@ export const CartProvider = ({ children }) => {
         checkoutItems,
         setCheckoutItems,
         cartBadgeQty,
-        checkoutTotal,
+        subtotal,
         deliverFee,
+        checkoutTotal,
+        coupons,
+        selectedCoupons,
+        setSelectedCoupons,
+        fetchMemberCoupons,
+        fetchMemberCartCoupons,
+        handelSelectedToggle,
         handleAddToCart,
         handleQuantityChange,
         clearCart,

@@ -72,7 +72,9 @@ router.get("/", async (req, res) => {
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
         o.order_status_id,
         os.order_status_name,
-        SUM(od.order_quantity * pm.price) AS total_price
+        o.deliver_fee,
+        SUM(od.order_quantity * pm.price) AS subtotal_price,
+        SUM(od.order_quantity * pm.price + o.deliver_fee) AS total_price
       FROM orders o
       LEFT JOIN order_details od ON od.order_id = o.id
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
@@ -176,7 +178,9 @@ router.get("/:orderId", async (req, res) => {
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
         o.order_status_id,
         os.order_status_name,
-        SUM(od.order_quantity * pm.price + deliver_fee) AS total_price
+        o.deliver_fee,
+        SUM(od.order_quantity * od.order_unit_price) AS subtotal_price,
+        SUM(od.order_quantity * od.order_unit_price + o.deliver_fee) AS total_price
       FROM orders o
       LEFT JOIN order_details od ON od.order_id = o.id
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id

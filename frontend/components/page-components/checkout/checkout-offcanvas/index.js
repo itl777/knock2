@@ -53,6 +53,7 @@ export default function CheckoutOffcanvas() {
   const {
     checkoutItems,
     checkoutTotal,
+    subtotal,
     deliverFee,
     cartBadgeQty,
     handleQuantityChange,
@@ -105,7 +106,8 @@ export default function CheckoutOffcanvas() {
             {cartBadgeQty > 0 && (
               <div className={styles.checkoutBottom}>
                 <CheckoutTotalTable
-                  subtotal={checkoutTotal}
+                  subtotal={subtotal}
+                  checkoutTotal={checkoutTotal}
                   deliverFee={deliverFee}
                   totalDiscount={0}
                 />

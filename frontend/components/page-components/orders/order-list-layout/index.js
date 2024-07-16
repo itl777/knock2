@@ -26,10 +26,10 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
 
   const handlePageChange = (newPage) => {
     setPage(newPage)
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, page: newPage },
-    })
+    // router.push({
+    //   pathname: router.pathname,
+    //   query: { ...router.query, page: newPage },
+    // })
   }
 
   const btnLeftOnClick = (order_status_id, order_id, total_price) => {

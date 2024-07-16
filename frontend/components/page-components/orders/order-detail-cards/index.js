@@ -51,8 +51,10 @@ export default function OrderDetailCards({ orderId }) {
         {/* card body right */}
         <div className={styles.orderDetailRight}>
           <OrderDetailInfo
-            order_date={orderData?.order_status_id}
+            order_date={orderData?.order_date}
             merchant_trade_no={orderData?.merchant_trade_no}
+            subtotal_price={orderData?.subtotal_price}
+            deliver_fee={orderData?.deliver_fee}
             total_price={orderData?.total_price}
             payment_date={orderData?.payment_date}
             full_address={orderData?.full_address}

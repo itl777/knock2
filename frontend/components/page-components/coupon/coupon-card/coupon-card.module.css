@@ -6,12 +6,20 @@
 }
 
 .couponCardLeft {
+  position: relative;
   display: flex;
   align-items: center;
   position: relative;
   padding: 1rem 1.5rem 1rem 1rem;
   background-color: var(--pri-1);
   border-right: 1.5px dashed var(--pri-3);
+}
+
+
+.checkboxContainer {
+  position: absolute;
+  top: 2px;
+  left: 2px;
 }
 
 .couponCardRight {
@@ -72,6 +80,7 @@
   border-bottom-right-radius: .75rem;
   background-color: var(--text-grey);
 }
+
 
 @media screen and (max-width: 480px) {
 
