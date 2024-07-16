@@ -57,6 +57,7 @@ export default function CheckoutOffcanvas() {
     deliverFee,
     cartBadgeQty,
     handleQuantityChange,
+    discountTotal,
   } = useCart()
 
   return (
@@ -109,7 +110,7 @@ export default function CheckoutOffcanvas() {
                   subtotal={subtotal}
                   checkoutTotal={checkoutTotal}
                   deliverFee={deliverFee}
-                  totalDiscount={0}
+                  totalDiscount={discountTotal}
                 />
                 <BlackBtn
                   btnText="前往購物車"

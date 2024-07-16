@@ -81,6 +81,12 @@ export default function CouponMoreInfoModal({
               coupon.discount_percentage
             )}
           />
+          {coupon.products.length > 0 && (
+            <CouponInfoRow
+              label="指定商品詳情"
+              content={coupon.products.map((p) => p.product_name).join(', ')}
+            />
+          )}
         </div>
       </div>
     </ModalLayout>

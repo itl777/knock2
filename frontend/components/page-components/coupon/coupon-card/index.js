@@ -16,6 +16,7 @@ export default function CouponCard({
   coupon,
   selectable = true,
   btnHidden = false,
+  disabled,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [checkedBoolean, setCheckedBoolean] = useState(isChecked)
@@ -53,12 +54,17 @@ export default function CouponCard({
   return (
     <>
       <div className={getStatusClass(styles.couponCard)}>
-        <div className={styles.couponCardLeft}>
+        <div
+          className={`${styles.couponCardLeft} ${
+            isChecked ? styles.couponCardLeftChecked : ''
+          }`}
+        >
           {selectable && (
             <div className={styles.checkboxContainer}>
               <CouponCheckbox
                 checked={checkedBoolean}
                 onChange={handleCheckboxOnChange}
+                disabled={disabled}
               />
             </div>
           )}
@@ -66,22 +72,19 @@ export default function CouponCard({
           <img src="/ghost/ghost_11.png" alt="" />
         </div>
 
-        <div className={styles.couponCardRight}>
+        <div
+          className={`${styles.couponCardRight} ${
+            isChecked ? styles.couponCardRightChecked : ''
+          }`}
+        >
           <div className={styles.couponInfo}>
             <p>{coupon_name}</p>
             <div className={styles.textBox}>
               <p>最低消費金額：{formatPrice(minimum_order)}</p>
               <p>有效期限：{valid_until}</p>
             </div>
-
-            {!btnHidden && (
-              <MoreInfoBtn
-                onClick={handleMoreInfoClick}
-                href={null}
-                btnText="使用說明"
-              />
-            )}
           </div>
+          {!btnHidden && <MoreInfoBtn onClick={handleMoreInfoClick} />}
         </div>
       </div>
 

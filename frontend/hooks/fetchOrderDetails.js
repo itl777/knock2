@@ -3,7 +3,7 @@ import axios from 'axios'
 import { ORDER_DETAILS_GET } from '@/configs/api-path'
 
 const useFetchOrderData = (orderId, shouldFetch = true) => {
-  const [orderData, setOrderData] = useState({})
+  const [orderData, setOrderData] = useState()
   const [orderDetails, setOrderDetails] = useState([])
   const [fetchTrigger, setFetchTrigger] = useState(shouldFetch) // 新增的觸發器狀態
   const [anyReviewed, setAnyReviewed] = useState(false)

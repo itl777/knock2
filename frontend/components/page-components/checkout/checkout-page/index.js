@@ -59,6 +59,7 @@ export default function CheckoutPage() {
     formData,
     setFormData,
     selectedCoupons,
+    discountTotal,
   } = useCart()
 
   // 發票形式
@@ -239,7 +240,7 @@ export default function CheckoutPage() {
               subtotal={subtotal}
               checkoutTotal={checkoutTotal}
               deliverFee={deliverFee}
-              totalDiscount={0}
+              totalDiscount={discountTotal}
             />
           </div>
 

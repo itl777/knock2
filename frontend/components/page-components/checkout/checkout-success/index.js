@@ -53,9 +53,9 @@ export default function CheckoutSuccess() {
             ))}
 
             <CheckoutTotalTable
-              subtotal={orderData.subtotal_price}
-              checkoutTotal={orderData.total_price}
-              deliverFee={orderData.deliver_fee}
+              subtotal={+orderData.subtotal_price}
+              checkoutTotal={+orderData.total_price}
+              deliverFee={+orderData.deliver_fee}
               totalDiscount={0}
             />
           </div>
