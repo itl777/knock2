@@ -5,7 +5,7 @@ import myStyle from './details.module.css'
 export default function DetailSection({ Banner, Item, Step, Calendar }) {
   return (
     <>
-      <div>{Banner}</div>
+      {Banner}
       {Item}
       {Step}
       {Calendar}

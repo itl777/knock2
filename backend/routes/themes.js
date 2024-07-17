@@ -84,6 +84,7 @@ const getThemesDetails = async (branch_themes_id) => {
     t.min_players,
     t.max_players,
     t.theme_time,
+    t.difficulty,
     t.price,
     t.deposit,
     t.theme_desc,
@@ -106,7 +107,7 @@ const getThemesDetails = async (branch_themes_id) => {
     if (rows.length > 0) {
       return {
         success: true,
-        theme: rows[0], // 返回单个主题详情
+        theme: rows[0], // 返回單個主題
       };
     } else {
       return {
