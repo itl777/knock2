@@ -8,9 +8,11 @@ export const VERIFY_TOKEN_POST = `${API_SERVER}/users/verify-token`
 export const GOOGLE_LOGIN_POST = `${API_SERVER}/users/google-login`
 export const REGISTER_POST = `${API_SERVER}/users/register`
 export const OTP_MAIL_POST = `${API_SERVER}/users/otp-mail`
-export const VERIFY_OTP_POST = `${API_SERVER}/users/verify-otp`
+export const VERIFY_OTP_POST = `${API_SERVER}/users/verify-otp-mail`
 export const RESET_PASSWORD_POST = `${API_SERVER}/users/reset-password`
-
+export const GOOGLE_AUTHENTICATOR_SETUP_POST = `${API_SERVER}/users/2fa/request`
+export const GOOGLE_AUTHENTICATOR_VERIFY_POST = `${API_SERVER}/users/2fa/verify-otp`
+export const GOOGLE_AUTHENTICATOR_UNSET_POST = `${API_SERVER}/users/2fa/unset2fa`
 
 // product image path
 export const PRODUCT_IMG = `${API_SERVER}/images`
@@ -38,8 +40,6 @@ export const ORDER_REVIEW_GET = `${API_SERVER}/orders/api/reviews`
 export const GET_COUPON_DETAIL = `${API_SERVER}/coupons/coupon_details`
 export const GET_MEMBER_COUPON = `${API_SERVER}/coupons/member_coupons`
 export const CANCEL_ORDER = `${API_SERVER}/orders/api/cancel_order`
-
-
 
 //teams
 export const TEAM_ALL = `${API_SERVER}/teams/apiSearch`

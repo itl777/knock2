@@ -217,9 +217,9 @@ const InputElement = styled('input')(
   line-height: 1.5;
   padding: 10px 10px;
   text-align: center;
-  color: #ffffff;
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 1px solid #dae2ed;
+  color: #222222;
+  background: '#fff';
+  border: 2px solid #d9d9d9;
   -webkit-appearance: none;
   -moz-appearance:textfield;
 
@@ -231,14 +231,12 @@ const InputElement = styled('input')(
   }
 
   &:hover {
-    border-color: ${blue[400]};
+    border-color: #bbb29f;
   }
 
   &:focus {
-    border-color: ${blue[400]};
-    box-shadow: 0 0 0 3px ${
-      theme.palette.mode === 'dark' ? blue[600] : blue[200]
-    };
+    border-color: #bbb29f;
+    box-shadow: 0 0 0 3px #efede8;
   }
 
   // firefox

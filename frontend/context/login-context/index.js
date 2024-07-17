@@ -87,7 +87,7 @@ export function LoginContextProvider({ children }) {
     e.preventDefault()
     // 取得 recaptcha 機器人驗證結果
     const recaptchaValue = recaptchaRef.current.getValue()
-    // recaptchaRef.current.reset()
+    recaptchaRef.current.reset()
 
     // 資料驗證
     const RegisterValidationResult = schemaRegisterForm.safeParse(registerData)

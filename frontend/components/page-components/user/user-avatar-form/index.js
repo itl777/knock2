@@ -121,7 +121,6 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
   }
 
   useEffect(() => {
-    console.log(111)
     if (imgUrl && imageRef.current) {
       if (cropper) {
         setZoomValue(0.1)
@@ -150,7 +149,6 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
             this.cropper.setCanvasData(cropBoxData)
           },
         })
-        console.log(cropperInstance)
         setCropper(cropperInstance)
       }
     }

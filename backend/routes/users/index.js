@@ -10,6 +10,11 @@ import { createOtp } from "./createOtp.js";
 import { mailHtml } from "./mail-html.js";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
+import {
+  generateGoogleAuthOtp,
+  generateQRCode,
+  verifyGoogleAuthOtp,
+} from "../../configs/otp.js";
 
 const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
@@ -22,6 +27,19 @@ const router = express.Router();
 //     next();
 //   }, ms);
 // });
+
+// 用id提取email帳號
+const getUserData = async (user_id) => {
+  try {
+    const sql = "SELECT * FROM users WHERE user_id=?";
+    const [rows] = await db.query(sql, [user_id]);
+    const userData = rows[0];
+    // 如果沒有提供帳號就返回
+    return userData;
+  } catch (ex) {
+    return null;
+  }
+};
 
 // 登入功能
 router.post("/login-jwt", upload.none(), async (req, res) => {
@@ -55,6 +73,12 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
     return res.json(output);
   }
 
+  // 如果有開啟2步驟驗證
+  if (rows[0].totp_enabled) {
+    //TODO 要通知前端請前端生出2步驟驗證碼欄位
+  }
+
+  // 如果沒2步驟驗證
   output.success = true;
 
   // 沒有要紀錄session狀態，改jwt
@@ -72,6 +96,36 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
   };
 
   res.json(output);
+});
+
+// 登入時的 兩步驟驗證 Google Authenticator
+router.post("/verify-otp", async (req, res) => {
+  const output = {
+    success: false,
+    error: "",
+  };
+  const { id, token } = req.body;
+
+  if (!id || !token) {
+    output.error = "缺少必要資訊";
+    return output;
+  }
+
+  const { account, totp_secret } = await getUserData(id);
+  if (!account || !totp_secret) {
+    output.error = "無法取得帳號資料或沒有申請過2步驟驗證";
+    return res.status(500).json(output);
+  }
+
+  const isValid = verifyGoogleAuthOtp(token, totp_secret, account);
+
+  if (isValid) {
+    output.success = true;
+    res.json(output);
+  } else {
+    output.error = "驗證失敗";
+    res.status(400).json(output);
+  }
 });
 
 // 驗證 jwt token
@@ -139,7 +193,7 @@ router.post("/api", async (req, res) => {
     return res.json(output);
   }
 
-  const sql1 = `SELECT account,name,nick_name,gender,birthday,users.mobile_phone,invoice_carrier_id,tax_id,avatar 
+  const sql1 = `SELECT account,totp_enabled,name,nick_name,gender,birthday,users.mobile_phone,invoice_carrier_id,tax_id,avatar 
   FROM users WHERE users.user_id = ${id}`;
   const [users] = await db.query(sql1);
 
@@ -293,6 +347,7 @@ router.post("/register", async (req, res) => {
   // TODO 欄位資料的檢查
 
   let body = { ...req.body };
+  delete body.recaptchaToken;
   body.password = await bcrypt.hash(body.password, 12);
 
   try {
@@ -336,7 +391,6 @@ router.post("/otp-mail", async (req, res) => {
   const token = jwt.sign(payload, process.env.JWT_KEY);
   const link = `http://localhost:3000/user/reset-password?t=${token}`;
 
-  console.log(token, "token");
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
 
@@ -359,18 +413,16 @@ router.post("/otp-mail", async (req, res) => {
     if (err) {
       output.success = false;
       output.error = err;
-      console.log(output, "false");
       return res.status(400).json(output);
     } else {
       output.success = true;
-      console.log(output, "true");
       return res.json(output);
     }
   });
 });
 
 // reset-password" 重設密碼email的api
-router.post("/verify-otp", async (req, res) => {
+router.post("/verify-otp-mail", async (req, res) => {
   const output = {
     success: false,
     code: 0,
@@ -569,33 +621,6 @@ router.post("/google-login", async (req, res) => {
   return res.json(output);
 });
 
-// 處理刪除的api
-// router.delete("/api/:sid", async (req, res) => {
-//   const output = {
-//     success: false,
-//     code: 0,
-//     result: {},
-//   };
-
-//   if (!req.my_jwt?.id) {
-//     output.code = 470;
-//     return res.json(output);
-//   }
-
-//   const sid = +req.params.sid || 0;
-//   if (!sid) {
-//     output.code = 480;
-//     return res.json(output);
-//   }
-
-//   const sql = `DELETE FROM address_book WHERE sid=${sid}`;
-//   const [result] = await db.query(sql);
-//   output.result = result;
-//   output.success = !!result.affectedRows;
-
-//   res.json(output);
-// });
-
 // 上傳 avatar 的api
 router.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
   const output = {
@@ -603,7 +628,6 @@ router.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
     error: "",
     file: req.file,
   };
-  console.log(req.body, req.file);
   if (!req.file) {
     output.error = "上傳失敗";
     return res.json(output);
@@ -623,6 +647,116 @@ router.post("/upload-avatar", upload.single("avatar"), async (req, res) => {
 
   output.file = req.file;
   return res.json(output);
+});
+
+// 兩步驟驗證 Google Authenticator 取得 TOTP QRcode 的api
+router.post("/2fa/request", async (req, res) => {
+  const output = {
+    success: false,
+    error: "",
+    qrCode: "",
+    secret: "",
+  };
+
+  const user_id = req.body.id;
+
+  const { account } = await getUserData(user_id);
+  if (!account) {
+    output.error = "無法取得帳號資料";
+    return res.status(500).json(output);
+  }
+
+  // 生成 otp
+  const { secret, uri } = await generateGoogleAuthOtp(account);
+
+  try {
+    // 生成 QRcode
+    const qrCode = await generateQRCode(uri);
+    if (!qrCode) {
+      output.error = "無法生成 QRcode ，請重新再試一次1";
+      return res.status(500).json(output);
+    }
+    output.qrCode = qrCode;
+  } catch (error) {
+    output.error = error;
+    res.status(500).json(output);
+  }
+
+  try {
+    // 將 secret 存儲到數據庫
+    const sql = "UPDATE users SET totp_secret=? WHERE user_id=?";
+    const [result] = await db.query(sql, [secret, user_id]);
+    output.success = !!result.affectedRows;
+    output.secret = secret;
+    if (!result.affectedRows) {
+      output.error = "更新失敗";
+      return res.status(500).json(output);
+    }
+  } catch (ex) {
+    output.error = ex;
+    return res.status(500).json(output);
+  }
+
+  res.json(output);
+});
+
+// 兩步驟驗證 Google Authenticator 驗證 TOTP 並設定為已驗證的api
+router.post("/2fa/verify-otp", async (req, res) => {
+  const output = {
+    success: false,
+    error: "",
+  };
+  const { id, token } = req.body;
+
+  if (!id || !token) {
+    output.error = "缺少必要資訊";
+    return output;
+  }
+
+  const { account, totp_secret } = await getUserData(id);
+  if (!account || !totp_secret) {
+    output.error = "無法取得帳號資料或沒有申請過2步驟驗證";
+    return res.status(500).json(output);
+  }
+
+  const isValid = verifyGoogleAuthOtp(token, totp_secret, account);
+
+  if (!isValid) {
+    output.error = "驗證失敗";
+    return res.status(400).json(output);
+  }
+
+  try {
+    const sql = "UPDATE users SET totp_enabled=1 WHERE user_id=?";
+    const [result] = await db.query(sql, id);
+    output.success = !!result.affectedRows;
+    if (!result.affectedRows) {
+      output.error = "更新失敗";
+      return res.status(500).json(output);
+    }
+  } catch (ex) {
+    output.error = ex;
+    return res.status(500).json(output);
+  }
+
+  return res.json(output);
+});
+router.post("/2fa/unset2fa", async (req, res) => {
+  const { id } = req.body;
+  try {
+    const sql = "UPDATE users SET totp_enabled=0 , totp_secret=null WHERE user_id=?";
+    const [result] = await db.query(sql, id);
+    const output = {
+      success: !!result.affectedRows,
+    };
+    return res.json(output);
+  } catch (ex) {
+    const output = {
+      success: false,
+      error: ex,
+    };
+    return res.status(500).json(output);
+  }
 });
 
 export default router;
