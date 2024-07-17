@@ -40,6 +40,7 @@ export const UPDATE_MEMBER_COUPON_IN_CART = `${API_SERVER}/coupons/update_in_car
 // reservation
 export const GET_RESERVATION_LIST = `${API_SERVER}/reservations`
 export const CANCEL_RESERVATION = `${API_SERVER}/reservations/cancel`
+export const GET_RESERVATION_PAYMENT = `${API_SERVER}/reservations/result`
 // payment
 export const ECPAY_GET = `${API_SERVER}/payments`
 export const RESERVATION_ECPAY_GET = `${API_SERVER}/payments/reservation`

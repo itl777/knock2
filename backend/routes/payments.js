@@ -212,7 +212,7 @@ router.get("/reservation", async (req, res) => {
       ChoosePayment: "Credit",
       EncryptType: 1,
       ClientBackURL: `http://localhost:3000/themes`,
-      OrderResultURL: `http://localhost:3000/user/reservation/ongoing`,
+      OrderResultURL: `http://localhost:3000/checkout/reservation/${reservation_id}`,
       NeedExtraPaidInfo: "Y",
     };
 

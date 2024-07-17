@@ -13,3 +13,15 @@ export const formatPrice = (value) => {
   }).format(number)
   return `$${IntlNumber}`
 }
+
+
+export const formatDateWithWeekday = (dateString) => {
+  const date = new Date(dateString)
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }
+  return date.toLocaleDateString('zh-TW', options) // 範例：2024年7月17日 (星期二)
+}

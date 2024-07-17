@@ -177,7 +177,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 router.post("/cancel", async (req, res) => {
   const { reservation_id } = req.query;
 
@@ -195,7 +194,7 @@ router.post("/cancel", async (req, res) => {
       success: true,
     });
 
-    console.log('cancel reservation, reservation_id:', reservation_id);
+    console.log("cancel reservation, reservation_id:", reservation_id);
   } catch (error) {
     console.error("Error while canceling order", error);
     res.status(500).json({
@@ -203,4 +202,72 @@ router.post("/cancel", async (req, res) => {
     });
   }
 });
+
+router.get("/result/:reservation_id", async (req, res) => {
+  const { reservation_id } = req.params;
+  let status = false;
+
+  try {
+    const sql = `
+      SELECT
+        r.reservation_id,
+        r.user_id,
+        r.branch_themes_id,
+        r.participants,
+        r.reservation_date,
+        r.merchant_trade_no,
+        r.payment_type,
+        r.payment_date,
+        r.reservation_status_id,
+        b.branch_name,
+        r.branch_themes_id,
+        t.theme_name,
+        t.theme_img,
+        r.reservation_status_id,
+        rs.reservation_status_name,
+        r.session_id,
+        s.start_time,
+        s.end_time,
+        t.deposit,
+        r.cancel,
+        r.created_at
+        FROM reservations r
+        LEFT JOIN branches b ON b.branch_id = r.branch_themes_id
+        JOIN themes t ON t.theme_id = r.branch_themes_id
+        JOIN reservation_status rs ON rs.id = r.reservation_status_id
+        JOIN sessions s ON s.sessions_id = r.session_id
+      WHERE r.reservation_id = ?;
+    `;
+
+    const [rows] = await db.query(sql, [reservation_id]);
+    formatDateTime(rows, "payment_date");
+    formatDate(rows, "reservation_date");
+    formatDate(rows, "created_at");
+    formatTime(rows, "start_time");
+    formatTime(rows, "end_time");
+
+    let r = rows[0];
+
+    // 格式化 payment_type
+    r.payment_type = getPaymentType(r.payment_type);
+
+    if (rows.length === 0 || r.cancel == 1 || !r.payment_date) {
+      res.json({
+        status: false,
+        message: "查無資料或未通過驗證",
+      });
+      return;
+    }
+
+    // 將查詢結果傳送到前端
+    res.json({
+      status: true,
+      rows: [r],
+    });
+  } catch (error) {
+    console.error("Error fetching reservation: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;
