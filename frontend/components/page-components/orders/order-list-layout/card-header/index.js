@@ -4,8 +4,8 @@ import HDivider from '@/components/UI/divider/horizontal-divider'
 
 export default function CardHeader({
   title = '標題',
-  btnRightHref = '/',
-  btnLeftHref = '/',
+  btnRightHref = null,
+  btnLeftHref = null,
   btnRightText = '按鈕',
   btnLeftText = '按鈕',
   btnRightHidden = false,

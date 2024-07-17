@@ -45,7 +45,29 @@ const usePayment = () => {
     }
   }
 
-  return { handleCancel, handleEcpaySubmit }
+  const handleReservationPayment = async (reservation_id) => {
+    try {
+      const ecpayResponse = await axios.get('http://localhost:3001/payments/reservation', {
+        params: {
+          reservation_id,
+        },
+      })
+
+      if (ecpayResponse.data.success) {
+        // Redirect to a new payment page
+        router.push({
+          pathname: '/ecpay-checkout',
+          query: {
+            html: encodeURIComponent(ecpayResponse.data.html),
+          },
+        })
+      }
+    } catch (error) {
+      console.error('提交表單時出錯', error)
+    }
+  }
+
+  return { handleCancel, handleEcpaySubmit, handleReservationPayment }
 }
 
 export default usePayment

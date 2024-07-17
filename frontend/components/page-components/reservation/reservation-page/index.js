@@ -6,6 +6,7 @@ import axios from 'axios'
 import { useLoginModal } from '@/context/login-context'
 import { useAuth } from '@/context/auth-context'
 // hooks
+import usePayment from '@/hooks/usePayment'
 import { formatPrice } from '@/hooks/numberFormat'
 // components
 import ReservationListCards from '../reservation-list-cards'
@@ -21,6 +22,7 @@ export default function ReservationPage({ status }) {
   const [reservationData, setReservationData] = useState([])
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
+  const {handleReservationPayment } = usePayment() // 綠界
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
@@ -36,6 +38,23 @@ export default function ReservationPage({ status }) {
       setTotalPages(response.data.totalPages)
     } catch (error) {
       console.error('Error fetching member coupons: ', error)
+    }
+  }
+
+  // 重新付款、取消預約操作
+  const btnRightOnClick = (
+    reservation_status_id,
+    reservation_date,
+    reservation_id,
+    deposit
+  ) => {
+    const currentDate = new Date().toJSON().slice(0, 10)
+    
+    // 待付款且還沒到預約日期前一天
+    if (reservation_status_id === 1 &&  reservation_date > currentDate) {
+      return () => {
+        handleReservationPayment(reservation_id)
+      }
     }
   }
 
@@ -67,6 +86,14 @@ export default function ReservationPage({ status }) {
               participants={v.participants}
               deposit={formatPrice(v.deposit)}
               created_at={v.created_at}
+              payment_date={v.payment_date}
+              reservation_status_id={v.reservation_status_id}
+              btnRightOnClick={btnRightOnClick(
+                v.reservation_status_id,
+                v.reservation_date,
+                v.reservation_id,
+                v.deposit
+              )}
             />
           ))}
         </div>
