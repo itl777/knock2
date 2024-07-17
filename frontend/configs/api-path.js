@@ -50,3 +50,4 @@ export const BRANCH_LIST = `${API_SERVER}/themes/branches`
 export const THEME_DETAIL = `${API_SERVER}/themes/`
 export const BRANCH_THEMES = `${API_SERVER}/themes/second`
 export const THEMES_DETAILS = `${API_SERVER}/themes/details`
+export const THEME_IMG = `${API_SERVER}/images`

@@ -38,7 +38,8 @@ export default function Card02({
 
   const [clicked, setClicked] = useState(false)
 
-  const handleClick = () => {
+  const handleClick = (e) => {
+    e.preventDefault()
     setClicked(!clicked)
   }
 
@@ -47,10 +48,6 @@ export default function Card02({
     padding: '7px 13px 7px 13px',
     borderRadius: '20px',
     fontWeight: 'normal',
-    cursor: 'pointer',
-    textDecoration: 'none',
-    color: clicked ? 'white' : '#222222',
-    backgroundColor: clicked ? '#222222' : 'white',
   }
 
   return (
@@ -166,7 +163,7 @@ export default function Card02({
             </Typography>
             <Typography
               sx={{
-                display: 'flex',
+                display: 'flax',
                 alignContent: 'center',
                 justifyContent: 'center',
                 position: 'absolute',
@@ -174,7 +171,8 @@ export default function Card02({
               }}
             >
               <Link
-                href={`/themes/themes-details/${branch_themes_id}`}
+                // href={`/themes/themes-details/${branch_themes_id}`}
+                href={`#?`}
                 onClick={handleClick}
                 style={style}
                 onMouseEnter={(e) => {
