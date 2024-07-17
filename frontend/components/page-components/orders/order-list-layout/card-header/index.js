@@ -4,14 +4,18 @@ import HDivider from '@/components/UI/divider/horizontal-divider'
 
 export default function CardHeader({
   title = '標題',
-  btnRightHref = null,
-  btnLeftHref = null,
-  btnRightText = '按鈕',
-  btnLeftText = '按鈕',
-  btnRightHidden = false,
-  btnLeftHidden = false,
-  btnRightOnClick,
-  btnLeftOnClick,
+  btn1Hidden = false,
+  btn1Text = '按鈕1',
+  btn1Href = null,
+  btn1OnClick,
+  btn2Hidden = false,
+  btn2Text = '按鈕2',
+  btn2Href = null,
+  btn2OnClick,
+  btn3Hidden = false,
+  btn3Text = '按鈕3',
+  btn3Href = null,
+  btn3OnClick,
 }) {
   return (
     <div>
@@ -21,18 +25,26 @@ export default function CardHeader({
         </div>
 
         <div className={styles.btnStack}>
-          {!btnLeftHidden && (
+          {!btn3Hidden && (
             <FilterBtn
-              btnText={btnLeftText}
-              href={btnLeftHref}
-              onClick={btnLeftOnClick}
+              btnText={btn3Text}
+              href={btn3Href}
+              onClick={btn3OnClick}
             />
           )}
-          {!btnRightHidden && (
+
+          {!btn2Hidden && (
             <FilterBtn
-              btnText={btnRightText}
-              href={btnRightHref}
-              onClick={btnRightOnClick}
+              btnText={btn2Text}
+              href={btn2Href}
+              onClick={btn2OnClick}
+            />
+          )}
+          {!btn1Hidden && (
+            <FilterBtn
+              btnText={btn1Text}
+              href={btn1Href}
+              onClick={btn1OnClick}
             />
           )}
         </div>

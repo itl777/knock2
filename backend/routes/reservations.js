@@ -7,9 +7,42 @@ const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 const timeFormat = "HH:mm";
 
+function formatDate(rows, field) {
+  rows.forEach((v) => {
+    const m = moment(v[field]);
+    if (m.isValid()) {
+      v[field] = m.format(dateFormat);
+    } else {
+      v[field] = "";
+    }
+  });
+}
+
+function formatDateTime(rows, field) {
+  rows.forEach((v) => {
+    const m = moment(v[field]);
+    if (m.isValid()) {
+      v[field] = m.format(dateTimeFormat);
+    } else {
+      v[field] = "";
+    }
+  });
+}
+
+function formatTime(rows, field) {
+  rows.forEach((v) => {
+    const m = moment(v[field], "HH:mm:ss");
+    if (m.isValid()) {
+      v[field] = m.format(timeFormat);
+    } else {
+      v[field] = "";
+    }
+  });
+}
+
 const getPaymentType = (payment_type) => {
   if (!payment_type) {
-    return payment_type = "待付款";
+    return (payment_type = "待付款");
   } else {
     // 找到第一個 "_" 的位置
     const underscoreIndex = payment_type.indexOf("_");
@@ -46,28 +79,26 @@ const getPaymentType = (payment_type) => {
 
     return payment_type;
   }
-  
-}
-
+};
 
 router.get("/", async (req, res) => {
   // 從 query 中取得 member_id, status and page
-  const { member_id, status, page=1 } = req.query;
+  const { member_id, status, page = 1 } = req.query;
   const perPage = 5; //每頁筆數
   const offset = (page - 1) * perPage;
 
   try {
     let condition;
-    
+
     switch (status) {
       case "ongoing":
-        condition = `r.reservation_date >= now()`;
+        condition = `r.reservation_date >= curdate() AND r.reservation_status_id != 3`;
         break;
       case "complete":
-        condition = `r.reservation_date < now()`;
+        condition = `r.reservation_date < curdate() AND r.reservation_status_id != 3 AND r.payment_date != NULL`;
         break;
       case "canceled":
-        condition = `r.reservation_status_id = 3`;
+        condition = `r.reservation_status_id = 3 OR( r.payment_date != NULL AND reservation_date < curdate())`;
         break;
       default:
         return res.status(400).json({ error: "Invalid status parameter" });
@@ -105,48 +136,16 @@ router.get("/", async (req, res) => {
         JOIN reservation_status rs ON rs.id = r.reservation_status_id
         JOIN sessions s ON s.sessions_id = r.session_id
       WHERE r.user_id = ? AND ${condition}
-      ORDER BY r.reservation_date DESC
       LIMIT ?, ?;
     `;
 
     const [rows] = await db.query(sql, [member_id, offset, perPage]);
 
-    // 格式化 reservation_date
-    rows.forEach((v) => {
-      const m = moment(v.reservation_date);
-      if (m.isValid()) {
-        v.reservation_date = m.format(dateFormat);
-      } else {
-        v.reservation_date = "";
-      }
-    });
-
-    rows.forEach((v) => {
-      const m = moment(v.created_at);
-      if (m.isValid()) {
-        v.created_at = m.format(dateFormat);
-      } else {
-        v.created_at = "";
-      }
-    });
-
-    rows.forEach((v) => {
-      const m = moment(v.start_time, "HH:mm:ss");
-      if (m.isValid()) {
-        v.start_time = m.format(timeFormat);
-      } else {
-        v.start_time = "";
-      }
-    });
-
-    rows.forEach((v) => {
-      const m = moment(v.end_time, "HH:mm:ss");
-      if (m.isValid()) {
-        v.end_time = m.format(timeFormat);
-      } else {
-        v.end_time = "";
-      }
-    });
+    formatDateTime(rows, "payment_date");
+    formatDate(rows, "reservation_date");
+    formatDate(rows, "created_at");
+    formatTime(rows, "start_time");
+    formatTime(rows, "end_time");
 
     // 格式化 payment_type
     rows.forEach((v) => {
@@ -178,4 +177,30 @@ router.get("/", async (req, res) => {
   }
 });
 
+
+router.post("/cancel", async (req, res) => {
+  const { reservation_id } = req.query;
+
+  try {
+    const sql = `
+      UPDATE reservations SET 
+        reservation_status_id = 3, 
+        last_modified_at = now()
+      WHERE reservation_id = ?;
+    `;
+
+    await db.query(sql, [reservation_id]);
+
+    res.json({
+      success: true,
+    });
+
+    console.log('cancel reservation, reservation_id:', reservation_id);
+  } catch (error) {
+    console.error("Error while canceling order", error);
+    res.status(500).json({
+      error: "An error occurred while canceling order.",
+    });
+  }
+});
 export default router;

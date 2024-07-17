@@ -34,7 +34,7 @@ export default function CheckoutPage() {
   // const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
   const { timeout, errors, validateField } = useOrderValidation() // 訂單驗證
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
-  const { handleEcpaySubmit } = usePayment()
+  const { handleOrderPayment } = usePayment()
   const userClientWidth = useScreenSize()
   const [screenWidth, setScreenWidth] = useState(userClientWidth)
   const {
@@ -164,7 +164,7 @@ export default function CheckoutPage() {
         const orderId = response.data.orderId // 取得後端返回的 order_id
         clearCart()
         // Step 2: 送 orderId, checkoutTotal 給後端
-        handleEcpaySubmit(orderId, checkoutTotal)
+        handleOrderPayment(orderId, checkoutTotal)
       }
     } catch (error) {
       console.error('提交表單時出錯', error)

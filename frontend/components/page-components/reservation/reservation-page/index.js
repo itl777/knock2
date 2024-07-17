@@ -2,9 +2,11 @@ import styles from './reservation-page.module.css'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-// context
+// contexts
 import { useLoginModal } from '@/context/login-context'
 import { useAuth } from '@/context/auth-context'
+import { useConfirmDialog } from '@/context/confirm-dialog-context'
+import { useSnackbar } from '@/context/snackbar-context'
 // hooks
 import usePayment from '@/hooks/usePayment'
 import { formatPrice } from '@/hooks/numberFormat'
@@ -12,6 +14,8 @@ import { formatPrice } from '@/hooks/numberFormat'
 import ReservationListCards from '../reservation-list-cards'
 import RedirectionGuide from '@/components/UI/redirect-guide'
 import UserPagination from '@/components/UI/user-pagination'
+import ConfirmDialog from '@/components/UI/confirm-dialog'
+// api path
 import { GET_RESERVATION_LIST } from '@/configs/api-path'
 
 export default function ReservationPage({ status }) {
@@ -22,7 +26,10 @@ export default function ReservationPage({ status }) {
   const [reservationData, setReservationData] = useState([])
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
-  const {handleReservationPayment } = usePayment() // 綠界
+  const [cancelDialog, setCancelDialog] = useState('')
+  const { handleReservationPayment, handleReservationCancel } = usePayment()
+  const { openConfirmDialog } = useConfirmDialog()
+  const { openSnackbar } = useSnackbar()
 
   const handlePageChange = (page) => {
     setCurrentPage(page)
@@ -41,19 +48,47 @@ export default function ReservationPage({ status }) {
     }
   }
 
-  // 重新付款、取消預約操作
-  const btnRightOnClick = (
+  // 重新付款
+  const handlePayment = (
+    reservation_status_id,
+    reservation_date,
+    reservation_id
+  ) => {
+    const currentDate = new Date().toJSON().slice(0, 10)
+
+    // 未取消預約且還沒到預約日期前一天
+    if (reservation_status_id !== 3 && reservation_date > currentDate) {
+      return () => {
+        handleReservationPayment(reservation_id)
+      }
+    }
+  }
+
+  // 取消訂單
+  const handleCancel = (
     reservation_status_id,
     reservation_date,
     reservation_id,
-    deposit
+    theme_name,
+    branch_name
   ) => {
     const currentDate = new Date().toJSON().slice(0, 10)
-    
-    // 待付款且還沒到預約日期前一天
-    if (reservation_status_id === 1 &&  reservation_date > currentDate) {
-      return () => {
-        handleReservationPayment(reservation_id)
+    // 未取消預約且還沒到預約日期前一天
+    if (reservation_status_id !== 3 && reservation_date > currentDate) {
+      return async () => {
+        setCancelDialog(
+          `確定要取消 ${reservation_date} ${theme_name}（${branch_name}）的預約嗎？`
+        )
+
+        openConfirmDialog(async () => {
+          const result = await handleReservationCancel(reservation_id)
+          if (result.success) {
+            openSnackbar('已取消行程預約', 'success')
+          } else {
+            openSnackbar('取消行程預約失敗', 'error')
+          }
+          fetchReservation(auth.id, currentPage, status)
+        })
       }
     }
   }
@@ -80,7 +115,9 @@ export default function ReservationPage({ status }) {
           {reservationData.map((v) => (
             <ReservationListCards
               reservation_date={v.reservation_date}
-              theme_name={`${v.theme_name} / ${v.branch_name}`}
+              theme_name={`${v.theme_name} / ${
+                v.branch_name ? v.branch_name : ''
+              }`}
               theme_img={`/themes-main/${v.theme_img}`}
               session={`${v.start_time} ~ ${v.end_time}`}
               participants={v.participants}
@@ -88,11 +125,17 @@ export default function ReservationPage({ status }) {
               created_at={v.created_at}
               payment_date={v.payment_date}
               reservation_status_id={v.reservation_status_id}
-              btnRightOnClick={btnRightOnClick(
+              handleCancel={handleCancel(
                 v.reservation_status_id,
                 v.reservation_date,
                 v.reservation_id,
-                v.deposit
+                v.theme_name,
+                v.branch_name
+              )}
+              handlePayment={handlePayment(
+                v.reservation_status_id,
+                v.reservation_date,
+                v.reservation_id
               )}
             />
           ))}
@@ -106,6 +149,12 @@ export default function ReservationPage({ status }) {
           onPageChange={handlePageChange}
         />
       )}
+
+      <ConfirmDialog
+        dialogTitle={cancelDialog}
+        btnTextRight="確定取消"
+        btnTextLeft="取消"
+      />
     </>
   )
 }
