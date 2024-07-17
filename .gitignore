@@ -6,3 +6,4 @@ _trash/
 .DS_Store
 config/
 frontend/pages/teams/draft/
+frontend/configs/team-api-path.js

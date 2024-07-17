@@ -42,9 +42,12 @@ export const CANCEL_ORDER = `${API_SERVER}/orders/api/cancel_order`
 
 
 //teams
-export const TEAM_ALL = `${API_SERVER}/teams/apiSearch`
-export const ONE_TEAM = `${API_SERVER}/teams/api/`
-export const GET_CHAT = `${API_SERVER}/teams/api/chat/`
+export const GET_DATA = `${API_SERVER}/teams/apiSearch`
+export const GET_TEAM_DATA = `${API_SERVER}/teams/apiSearch/team`
+export const GET_USER_DATA = `${API_SERVER}/teams/apiSearch/user`
+export const ONE_TEAM = `${API_SERVER}/teams/api/team/`
+export const NO_TEAM = `${API_SERVER}/teams/api/no_team`
+export const DISPLAY_CHAT = `${API_SERVER}/teams/api/chat/`
 export const ADD_CHAT = `${API_SERVER}/teams/api/chat/add/`
 
 //THEME

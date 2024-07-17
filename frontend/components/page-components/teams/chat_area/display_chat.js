@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react'
 import moment from 'moment-timezone'
-import { GET_CHAT } from '@/configs/api-path'
+import { DISPLAY_CHAT } from '@/configs/api-path'
 import { API_SERVER } from '@/configs/api-path'
-import styles from './teams.module.css'
+import styles from '@/pages/teams/teams.module.css'
+import Image from 'next/image'
 
 const ChatDisplay = ({ chat_at, submissionCount }) => {
   const [chatData, setChatData] = useState([])
 
   const fetchChatData = async (chat_at) => {
-    const url = GET_CHAT + chat_at
+    const url = DISPLAY_CHAT + chat_at
     try {
       const resChat = await fetch(url)
       const resChatData = await resChat.json()
@@ -37,11 +38,17 @@ const ChatDisplay = ({ chat_at, submissionCount }) => {
           <div key={chat.chat_id}>
             <div className="row">
               <div>
-                <img
+                <Image
+                  src={chat.avatar ? `${API_SERVER}/avatar/${chat.avatar}` : ''}
+                  width={26}
+                  height={26}
+                  alt={`${chat.nick_name} avatar`}
+                />
+                {/* <img
                   src={chat.avatar ? `${API_SERVER}/avatar/${chat.avatar}` : ''}
                   style={{ height: 26, width: 26 }}
                   alt={`${chat.nick_name} avatar`}
-                />
+                /> */}
                 {chat.nick_name}
                 <br />
                 {moment(chat.create_at)
