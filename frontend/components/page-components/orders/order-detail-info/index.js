@@ -5,13 +5,13 @@ import OrderDetailRow from '../order-detail-row'
 export default function OrderDetailInfo({
   order_date,
   merchant_trade_no,
-  subtotal_price,
   deliver_fee,
   total_price,
   payment_date,
   full_address,
-  order_status_name,
   order_status_id,
+  order_status_name,
+  paymentHidden = false,
 }) {
   return (
     <div className={styles.orderInfoBox}>
@@ -21,16 +21,19 @@ export default function OrderDetailInfo({
         <OrderDetailRow label="訂單編號" content={merchant_trade_no} />
       )}
 
-      <OrderDetailRow label="折扣" content={formatPrice(0)} />
-
-      <OrderDetailRow label="運費" content={formatPrice(deliver_fee)} />
-      <OrderDetailRow label="合計" content={formatPrice(total_price)} />
-
-      {!!payment_date && (
+      {!paymentHidden && (
+        <OrderDetailRow label="折扣" content={formatPrice(0)} />
+      )}
+      {!paymentHidden && (
+        <OrderDetailRow label="運費" content={formatPrice(deliver_fee)} />
+      )}
+      {!paymentHidden && (
+        <OrderDetailRow label="合計" content={formatPrice(total_price)} />
+      )}
+      {!paymentHidden && !!payment_date && (
         <OrderDetailRow label="付款時間" content={payment_date} />
       )}
-
-      <OrderDetailRow label="地址" content={full_address} />
+      {!paymentHidden && <OrderDetailRow label="地址" content={full_address} />}
 
       <OrderDetailRow status={order_status_name} />
     </div>
