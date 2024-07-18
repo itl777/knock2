@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 // context
 import { useAuth } from '@/context/auth-context'
-import { API_SERVER } from '@/configs/api-path'
+import { API_SERVER, GOOGLE_AUTHENTICATOR_UNSET_POST } from '@/configs/api-path'
 import { useSnackbar } from '@/context/snackbar-context'
+import { useConfirmDialog } from '@/context/confirm-dialog-context'
+
 // styles
 import styles from './user-profile-form.module.scss'
 
@@ -17,11 +20,15 @@ import AvatarFormItem from './avatar'
 import AvatarFormDialogs from '../user-avatar-form'
 import schemaForm from './schema-form'
 import BlackBtn from '@/components/UI/black-btn'
+import ConfirmDialog from '@/components/UI/confirm-dialog'
 
 export default function UserProfileForm() {
+  const router = useRouter()
   // useContext
   const { auth, getAuthHeader } = useAuth()
   const { openSnackbar } = useSnackbar()
+  const { openConfirmDialog } = useConfirmDialog()
+
   // state
   const [profileForm, setProfileForm] = useState({})
   const [addressValue, setAddressValue] = useState({})
@@ -49,6 +56,27 @@ export default function UserProfileForm() {
   const [openAvatarModal, setOpenAvatarModal] = useState(false)
 
   // function
+  const unset2fa = async () => {
+    try {
+      const result = await fetch(GOOGLE_AUTHENTICATOR_UNSET_POST, {
+        method: 'POST',
+        body: JSON.stringify({ id: auth.id }),
+        headers: {
+          ...getAuthHeader(),
+          'Content-type': 'application/json',
+        },
+      })
+      const data = await result.json()
+      if (data.success) {
+        setProfileForm({ ...profileForm, totp_enabled: 0 })
+        openSnackbar('兩步驗證已解除', 'success')
+      } else {
+        openSnackbar('解除兩步驗證失敗，請重試', 'error')
+      }
+    } catch (error) {
+      openSnackbar('解除兩步驗證失敗，請重試', 'error')
+    }
+  }
   const handleChange = (e) => {
     const { name, value } = e.target
     // 修改 address
@@ -260,147 +288,168 @@ export default function UserProfileForm() {
   return (
     <>
       {JSON.stringify(profileForm) !== '{}' ? (
-        <form
-          className={styles['user-profile-form']}
-          onSubmit={UserProfileFormSubmit}
-        >
-          <div className={styles['box1']}>
-            <AvatarFormDialogs
-              openDialog={openAvatarModal}
-              closeDialog={() => setOpenAvatarModal(false)}
-            />
-            <AvatarFormItem
-              avatar={profileForm.avatar}
-              open={() => setOpenAvatarModal(true)}
-            />
-            <div className={styles['account']}>
-              <UserProfileFormTitle text={'帳號資訊'} />
-              <UserProfileInput
-                label="帳號"
-                name="account"
-                type="email"
-                value={profileForm.account}
-                placeholder="請輸入帳號"
-                disabled={true}
+        <>
+          <form
+            className={styles['user-profile-form']}
+            onSubmit={UserProfileFormSubmit}
+          >
+            <div className={styles['box1']}>
+              <AvatarFormDialogs
+                openDialog={openAvatarModal}
+                closeDialog={() => setOpenAvatarModal(false)}
               />
-              <UserProfileInput
-                label="密碼"
-                name="password"
-                type="password"
-                value="PasswordPasswordPassword"
-                btn={true}
-                btnHref="/user/reset-password"
-                btnText="修改密碼"
-                disabled={true}
+              <AvatarFormItem
+                avatar={profileForm.avatar}
+                open={() => setOpenAvatarModal(true)}
+              />
+              <div className={styles['account']}>
+                <UserProfileFormTitle text={'帳號資訊'} />
+                <UserProfileInput
+                  label="帳號"
+                  name="account"
+                  type="email"
+                  value={profileForm.account}
+                  placeholder="請輸入帳號"
+                  disabled={true}
+                />
+                <UserProfileInput
+                  label="密碼"
+                  name="password"
+                  type="password"
+                  value="PasswordPasswordPassword"
+                  btn={true}
+                  btnOnClick={() => router.push('/user/reset-password')}
+                  btnText="修改密碼"
+                  disabled={true}
+                />
+                <UserProfileInput
+                  label="兩步驗證"
+                  name="totp_enabled"
+                  type="text"
+                  value={
+                    profileForm.totp_enabled === 1 ? '已使用驗證' : '未使用驗證'
+                  }
+                  btn={true}
+                  btnOnClick={
+                    profileForm.totp_enabled === 1
+                      ? () => openConfirmDialog(() => unset2fa())
+                      : () => router.push('/user/profile/set-2fa')
+                  }
+                  btnText={
+                    profileForm.totp_enabled === 1 ? '停用驗證' : '新增驗證'
+                  }
+                  disabled={true}
+                />
+              </div>
+            </div>
+            <div className={styles['box2']}>
+              <div>
+                <UserProfileFormTitle text={'個人資料'} />
+                <UserProfileInput
+                  label="姓名"
+                  name="name"
+                  type="text"
+                  value={profileForm.name}
+                  placeholder="請輸入姓名"
+                  disabled={false}
+                  errorText={profileFormErrors.name}
+                  onChange={handleChange}
+                />
+                <UserProfileInput
+                  label="暱稱"
+                  name="nick_name"
+                  type="text"
+                  value={profileForm.nick_name}
+                  placeholder="請輸入暱稱"
+                  errorText={profileFormErrors.nick_name}
+                  onChange={handleChange}
+                />
+                <UserProfileRadio
+                  label="性別"
+                  radios={[
+                    {
+                      value: '0',
+                      label: '男',
+                    },
+                    {
+                      value: '1',
+                      label: '女',
+                    },
+                  ]}
+                  name="gender"
+                  disabled={false}
+                  checked={profileForm.gender}
+                  errorText={profileFormErrors.gender}
+                  onChange={handleChange}
+                />
+                <UserProfileBirthday
+                  options={birthdayOptions}
+                  label="生日"
+                  name="birthday"
+                  value={birthdayValue}
+                  errorText={profileFormErrors.birthday}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className={styles['box2']}>
+              <div>
+                <UserProfileFormTitle text={'聯絡資訊'} />
+                <UserProfileInput
+                  label="電話"
+                  name="mobile_phone"
+                  type="text"
+                  value={profileForm.mobile_phone}
+                  placeholder="請輸入電話"
+                  errorText={profileFormErrors.mobile_phone}
+                  onChange={handleChange}
+                />
+                <UserProfileSelect
+                  label="收件地址"
+                  options={addressForm}
+                  name="address_id"
+                  value={addressValue.address_id}
+                  placeholder="請選擇常用收件地址"
+                  errorText={profileFormErrors.address_id}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className={styles['box2']}>
+              <div>
+                <UserProfileFormTitle text={'其他資訊'} />
+                <UserProfileInput
+                  label="常用載具"
+                  name="invoice_carrier_id"
+                  type="text"
+                  value={profileForm.invoice_carrier_id}
+                  placeholder="請輸入常用載具"
+                  errorText={profileFormErrors.invoice_carrier_id}
+                  onChange={handleChange}
+                />
+                <UserProfileInput
+                  label="常用統編"
+                  name="tax_id"
+                  type="text"
+                  value={profileForm.tax_id}
+                  placeholder="請輸入常用統編"
+                  errorText={profileFormErrors.tax_id}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className={styles['box2']}>
+              <BlackBtn
+                btnText="儲存"
+                type="submit"
+                href={null}
+                onClick={null}
+                paddingType="medium"
               />
             </div>
-          </div>
-          <div className={styles['box2']}>
-            <div>
-              <UserProfileFormTitle text={'個人資料'} />
-              <UserProfileInput
-                label="姓名"
-                name="name"
-                type="text"
-                value={profileForm.name}
-                placeholder="請輸入姓名"
-                disabled={false}
-                errorText={profileFormErrors.name}
-                onChange={handleChange}
-              />
-              <UserProfileInput
-                label="暱稱"
-                name="nick_name"
-                type="text"
-                value={profileForm.nick_name}
-                placeholder="請輸入暱稱"
-                errorText={profileFormErrors.nick_name}
-                onChange={handleChange}
-              />
-              <UserProfileRadio
-                label="性別"
-                radios={[
-                  {
-                    value: '0',
-                    label: '男',
-                  },
-                  {
-                    value: '1',
-                    label: '女',
-                  },
-                ]}
-                name="gender"
-                disabled={false}
-                checked={profileForm.gender}
-                errorText={profileFormErrors.gender}
-                onChange={handleChange}
-              />
-              <UserProfileBirthday
-                options={birthdayOptions}
-                label="生日"
-                name="birthday"
-                value={birthdayValue}
-                errorText={profileFormErrors.birthday}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-          <div className={styles['box2']}>
-            <div>
-              <UserProfileFormTitle text={'聯絡資訊'} />
-              <UserProfileInput
-                label="電話"
-                name="mobile_phone"
-                type="text"
-                value={profileForm.mobile_phone}
-                placeholder="請輸入電話"
-                errorText={profileFormErrors.mobile_phone}
-                onChange={handleChange}
-              />
-              <UserProfileSelect
-                label="收件地址"
-                options={addressForm}
-                name="address_id"
-                value={addressValue.address_id}
-                placeholder="請選擇常用收件地址"
-                errorText={profileFormErrors.address_id}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-          <div className={styles['box2']}>
-            <div>
-              <UserProfileFormTitle text={'其他資訊'} />
-              <UserProfileInput
-                label="常用載具"
-                name="invoice_carrier_id"
-                type="text"
-                value={profileForm.invoice_carrier_id}
-                placeholder="請輸入常用載具"
-                errorText={profileFormErrors.invoice_carrier_id}
-                onChange={handleChange}
-              />
-              <UserProfileInput
-                label="常用統編"
-                name="tax_id"
-                type="text"
-                value={profileForm.tax_id}
-                placeholder="請輸入常用統編"
-                errorText={profileFormErrors.tax_id}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-          <div className={styles['box2']}>
-            <BlackBtn
-              btnText="儲存"
-              type="submit"
-              href={null}
-              onClick={null}
-              paddingType="medium"
-            />
-          </div>
-        </form>
+          </form>
+          <ConfirmDialog dialogTitle="確定要解除兩步驗證嗎" />
+        </>
       ) : (
         ''
       )}

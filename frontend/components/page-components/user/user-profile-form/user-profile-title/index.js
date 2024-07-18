@@ -1,13 +1,19 @@
 import { FaArrowLeftLong } from 'react-icons/fa6'
 import IconButton from '@mui/material/IconButton'
+import { useRouter } from 'next/router'
 
 export default function UserProfileFormTitle({ text = '', href }) {
-  console.log(href)
+  const router = useRouter()
+  const hrefHandler = () => {
+    if (href) {
+      router.push(href)
+    }
+  }
   return (
     <>
       <div className="title">
         {href ? (
-          <IconButton href={href}>
+          <IconButton onClick={hrefHandler}>
             <FaArrowLeftLong />
           </IconButton>
         ) : null}

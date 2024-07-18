@@ -43,6 +43,12 @@ $color: #1c2025;
         flex-direction: column;
       }
     }
+    .row {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
 
     .errorText {
       @include font-small;
@@ -52,6 +58,7 @@ $color: #1c2025;
     }
   }
   .button {
+    white-space: nowrap;
     line-height: 44px;
   }
 }

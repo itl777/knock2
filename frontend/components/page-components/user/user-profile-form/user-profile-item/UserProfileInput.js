@@ -10,10 +10,10 @@ export default function UserProfileInput({
   placeholder = '',
   disabled = false,
   btn = false,
-  btnHref = '',
   btnText = '',
   errorText = '',
   onChange = () => {},
+  btnOnClick = () => {},
 }) {
   return (
     <>
@@ -22,20 +22,24 @@ export default function UserProfileInput({
           {label}
         </label>
         <div className={styles.myDiv}>
-          <Input01
-            name={name}
-            type={type}
-            value={value}
-            placeholder={placeholder}
-            disabled={disabled}
-            onChange={onChange}
-          />
+          <div className={styles.row}>
+            <Input01
+              name={name}
+              type={type}
+              value={value}
+              placeholder={placeholder}
+              disabled={disabled}
+              onChange={onChange}
+            />
+            {btn ? (
+              <div className={styles.button}>
+                <FilterBtn onClick={btnOnClick} btnText={btnText} />
+              </div>
+            ) : null}
+          </div>
           <div className={styles.errorText}>
             {errorText !== '' ? <span>{errorText}</span> : ''}
           </div>
-        </div>
-        <div className={styles.button}>
-          {btn ? <FilterBtn href={btnHref} btnText={btnText} /> : null}
         </div>
       </div>
     </>

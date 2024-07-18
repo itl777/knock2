@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { useAuth } from '../auth-context'
 import { useSnackbar } from '../snackbar-context'
 import useFirebase from '@/hooks/useFirebase'
@@ -12,7 +12,7 @@ const LoginContext = createContext()
 
 export function LoginContextProvider({ children }) {
   // context
-  const { auth, login, googleLogin, register, otpMail } = useAuth()
+  const { auth, login, login2fa, googleLogin, register, otpMail } = useAuth()
   const { openSnackbar } = useSnackbar()
   const { getOAuth } = useFirebase()
 
@@ -24,6 +24,9 @@ export function LoginContextProvider({ children }) {
     password: '',
     result: '',
   })
+  const [totpEnabled, setTotpEnabled] = useState(false)
+  const [userIdData, setUserIdData] = useState(0)
+  const [totpDataState, setTotpDataState] = useState('')
   const handleLoginChange = (e) => {
     const { name, value } = e.target
     const newLoginData = { ...loginData, [name]: value }
@@ -49,17 +52,50 @@ export function LoginContextProvider({ children }) {
 
     // 驗證完成，送出登入
     const result = await login(loginData.account, loginData.password)
+
     if (result.success) {
-      // 如果登入成功
-      setLoginModalState(false)
-      setLoginData({ account: '', password: '' })
-      setLoginErrors({ account: '', password: '', result: '' })
-      openSnackbar('登入成功！', 'success')
+      // 如果帳號密碼驗證成功，判斷是否有2步驟驗證
+      console.log(result)
+      if (result.totp_enabled) {
+        setTotpEnabled(true)
+        setUserIdData(result.user_id)
+        setLoginData({ account: '', password: '' })
+        setLoginErrors({ account: '', password: '', result: '' })
+      } else {
+        // 如果沒有2步驟驗證，直接登入
+        setLoginModalState(false)
+        setLoginData({ account: '', password: '' })
+        setLoginErrors({ account: '', password: '', result: '' })
+        openSnackbar('登入成功！', 'success')
+      }
     } else {
       // 如果登入失敗
       console.error(result.error)
       setLoginErrors({ account: '', password: '', result: '帳號或密碼錯誤' })
     }
+  }
+
+  const login2faSubmit = async (e) => {
+    e.preventDefault()
+    // 後端收 id 跟token
+    const result = await login2fa(userIdData, totpDataState)
+
+    if (result.success) {
+      setLoginModalState(false)
+      setLoginData({ account: '', password: '' })
+      setLoginErrors({ account: '', password: '', result: '' })
+      openSnackbar('登入成功！', 'success')
+      setUserIdData(0)
+    } else {
+      // 如果登入失敗
+      console.error(result.error)
+      setLoginErrors({
+        account: '',
+        password: '',
+        result: '驗證碼錯誤，請重新輸入',
+      })
+    }
+    setTotpDataState('')
   }
 
   // Register
@@ -82,8 +118,12 @@ export function LoginContextProvider({ children }) {
     const newRegisterData = { ...registerData, [name]: value }
     setRegisterData(newRegisterData)
   }
+  const recaptchaRef = useRef()
   const registerSubmit = async (e) => {
     e.preventDefault()
+    // 取得 recaptcha 機器人驗證結果
+    const recaptchaValue = recaptchaRef.current.getValue()
+    recaptchaRef.current.reset()
 
     // 資料驗證
     const RegisterValidationResult = schemaRegisterForm.safeParse(registerData)
@@ -106,14 +146,14 @@ export function LoginContextProvider({ children }) {
     }
 
     // 包裝
-    const newRegisterData = { ...registerData, nick_name: registerData.name }
+    let newRegisterData = {
+      ...registerData,
+      nick_name: registerData.name,
+      recaptchaToken: recaptchaValue,
+    }
+    delete newRegisterData.reenter_password
 
-    const result = await register(
-      newRegisterData.account,
-      newRegisterData.password,
-      newRegisterData.name,
-      newRegisterData.nick_name
-    )
+    const result = await register(newRegisterData)
 
     if (result.success) {
       // 如果註冊成功
@@ -121,7 +161,7 @@ export function LoginContextProvider({ children }) {
       loginFormSwitch('Login')
     } else {
       // 如果註冊失敗
-      setRegisterErrors({ result: 'Email已被註冊，請試試其他Email' })
+      setRegisterErrors({ result: result.error })
     }
   }
 
@@ -183,6 +223,8 @@ export function LoginContextProvider({ children }) {
   const loginFormSwitch = (formName) => {
     stopCountdownTimer(0)
     setLoginData({ account: '', password: '' })
+    setTotpEnabled(false)
+    setTotpDataState('')
     setRegisterData({
       account: '',
       password: '',
@@ -226,6 +268,7 @@ export function LoginContextProvider({ children }) {
     }
   }
 
+  // GoogleLogin
   const callbackGoogleLogin = async (providerData) => {
     // 如果已經登入中，不需要再作登入動作
     if (auth.id !== 0) return
@@ -249,7 +292,6 @@ export function LoginContextProvider({ children }) {
   }, [])
 
   // countdown
-
   const [countdown, setCountdown] = useState(0)
   const [formatTime, setFormatTime] = useState('ok')
 
@@ -296,6 +338,11 @@ export function LoginContextProvider({ children }) {
         loginErrors,
         handleLoginChange,
         loginSubmit,
+        totpEnabled,
+        // 2fa Login
+        totpDataState,
+        setTotpDataState,
+        login2faSubmit,
         // Register
         registerState,
         registerData,
@@ -308,6 +355,7 @@ export function LoginContextProvider({ children }) {
         forgotForgotPasswordErrors,
         handleForgotPasswordChange,
         forgotPasswordSubmit,
+        recaptchaRef,
         // FormSwitch
         loginFormSwitch,
         //CountdownTimer

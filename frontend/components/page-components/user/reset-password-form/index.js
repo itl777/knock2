@@ -66,7 +66,6 @@ export default function ResetPasswordForm({ user_id }) {
         }
         setResetPasswordErrors(newResetPasswordErrors)
       }
-      console.log(result)
       return // 表單資料沒有驗證通過就直接返回
     }
 

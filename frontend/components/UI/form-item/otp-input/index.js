@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { Input as BaseInput } from '@mui/base/Input'
 import { Box, styled } from '@mui/system'
 
-function OTP({ separator, length, value, onChange }) {
+
+function OTP({ separator, length, value, onChange, color }) {
   const inputRefs = useRef(new Array(length).fill(null))
 
   const focusInput = (targetIndex) => {
@@ -148,6 +149,9 @@ function OTP({ separator, length, value, onChange }) {
                 onClick: (event) => handleClick(event, index),
                 onPaste: (event) => handlePaste(event, index),
                 value: value[index] ?? '',
+                sx: {
+                  color: color,
+                },
               },
             }}
           />
@@ -163,9 +167,10 @@ OTP.propTypes = {
   onChange: PropTypes.func.isRequired,
   separator: PropTypes.node,
   value: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
 }
 
-export default function OTPInput({ value, onChange }) {
+export default function OTPInput({ state, setState, color = '#222222' }) {
   return (
     <Box
       sx={{
@@ -176,9 +181,10 @@ export default function OTPInput({ value, onChange }) {
     >
       <OTP
         // separator={<span>-</span>}
-        value={value}
-        onChange={onChange}
+        value={state}
+        onChange={setState}
         length={6}
+        color={color}
       />
       {/* <span>Entered value: {value}</span> */}
     </Box>
@@ -217,9 +223,8 @@ const InputElement = styled('input')(
   line-height: 1.5;
   padding: 10px 10px;
   text-align: center;
-  color: #ffffff;
-  background: ${theme.palette.mode === 'dark' ? grey[900] : '#fff'};
-  border: 1px solid #dae2ed;
+  background: '#fff';
+  border: 2px solid #d9d9d9;
   -webkit-appearance: none;
   -moz-appearance:textfield;
 
@@ -231,14 +236,12 @@ const InputElement = styled('input')(
   }
 
   &:hover {
-    border-color: ${blue[400]};
+    border-color: #bbb29f;
   }
 
   &:focus {
-    border-color: ${blue[400]};
-    box-shadow: 0 0 0 3px ${
-      theme.palette.mode === 'dark' ? blue[600] : blue[200]
-    };
+    border-color: #bbb29f;
+    box-shadow: 0 0 0 3px #efede8;
   }
 
   // firefox
