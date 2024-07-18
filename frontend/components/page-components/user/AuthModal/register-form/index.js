@@ -16,8 +16,10 @@ const dialogTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
+          overflow: 'visible',
           borderRadius: '1rem',
           backgroundColor: '#343434',
+          margin: '10px',
         },
       },
     },

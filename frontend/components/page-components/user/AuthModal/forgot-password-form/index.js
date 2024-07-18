@@ -15,8 +15,10 @@ const dialogTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
+          overflow: 'visible',
           borderRadius: '1rem',
           backgroundColor: '#343434',
+          margin: '10px',
         },
       },
     },
@@ -52,7 +54,7 @@ export default function ForgotPasswordForm() {
                 name="account"
                 type="text"
                 value={forgotPasswordData.account}
-                placeholder="請輸入註冊時填寫的 Email 帳號"
+                placeholder="請輸入 Email"
                 onChange={handleForgotPasswordChange}
               />
               <span className={styles.errorText}>

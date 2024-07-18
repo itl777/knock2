@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import useFirebase from '@/hooks/useFirebase'
 import {
   JWT_LOGIN_POST,
+  VERIFY_OTP_POST,
   GOOGLE_LOGIN_POST,
   VERIFY_TOKEN_POST,
   REGISTER_POST,
@@ -26,6 +27,8 @@ export function AuthContextProvider({ children }) {
   const login = async (account, password) => {
     const output = {
       success: false,
+      totp_enabled: false,
+      user_id: 0,
       error: '',
     }
     try {
@@ -38,13 +41,18 @@ export function AuthContextProvider({ children }) {
       })
       const result = await r.json()
       if (result.success) {
-        // token 和用戶的相關資料存到 localStorage
-        localStorage.setItem(storageKey, JSON.stringify(result.data))
-        // 變更狀態
-        setAuth(result.data)
-
-        // 回傳給登入視窗
+        // 如果帳號密碼驗證成功，判斷是否有申請2步驟驗證
         output.success = true
+        if (result.totp_enabled) {
+          // 如果有申請 2 步驗證，回傳給視窗進行驗證
+          output.totp_enabled = true
+          output.user_id = result.data.id
+        } else {
+          // 如果沒有申請，變更狀態 + 儲存到 localStorage
+          localStorage.setItem(storageKey, JSON.stringify(result.data))
+          setAuth(result.data)
+        }
+        // 回傳給登入視窗
         return output
       } else {
         output.success = false
@@ -52,6 +60,37 @@ export function AuthContextProvider({ children }) {
         return output
       }
     } catch (ex) {
+      return false
+    }
+  }
+
+  const login2fa = async (id, token) => {
+    const output = {
+      success: false,
+      error: '',
+    }
+    try {
+      const r = await fetch(VERIFY_OTP_POST, {
+        method: 'POST',
+        body: JSON.stringify({ id, token }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const result = await r.json()
+      console.log(result)
+      if (result.success) {
+        output.success = true
+        localStorage.setItem(storageKey, JSON.stringify(result.data))
+        setAuth(result.data)
+        return output
+      } else {
+        output.success = false
+        output.error = result.error
+        return output
+      }
+    } catch (ex) {
+      console.error(ex)
       return false
     }
   }
@@ -207,6 +246,7 @@ export function AuthContextProvider({ children }) {
         authIsReady,
         setAuthRefresh,
         login,
+        login2fa,
         googleLogin,
         logout,
         register,

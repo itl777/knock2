@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { VERIFY_OTP_POST } from '@/configs/api-path'
+import { VERIFY_OTP_MAIL_POST } from '@/configs/api-path'
 import IndexLayout from '@/components/layout'
 import UserLayout from '@/components/layout/user-layout'
 import ResetPasswordForm from '@/components/page-components/user/reset-password-form'
@@ -18,7 +18,7 @@ export default function Profile() {
     if (!router.isReady) return
 
     if (!auth.id && !!router.query.t) {
-      fetch(VERIFY_OTP_POST, {
+      fetch(VERIFY_OTP_MAIL_POST, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

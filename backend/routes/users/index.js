@@ -47,6 +47,7 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
     success: false,
     code: 0,
     error: "",
+    totp_enabled: false,
     data: {
       id: 0,
       nickname: "",
@@ -73,64 +74,34 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
     return res.json(output);
   }
 
-  // 如果有開啟2步驟驗證
-  if (rows[0].totp_enabled) {
-    //TODO 要通知前端請前端生出2步驟驗證碼欄位
-  }
-
-  // 如果沒2步驟驗證
+  // 帳號密碼是否有驗證成功
   output.success = true;
 
-  // 沒有要紀錄session狀態，改jwt
-  const payload = {
-    id: rows[0].user_id,
-    account: rows[0].account,
-  };
-  const token = jwt.sign(payload, process.env.JWT_KEY);
+  if (rows[0].totp_enabled) {
+    // 如果有開啟2步驟驗證，通知前端讓用戶輸入驗證碼
+    output.totp_enabled = true;
+    output.data.id = rows[0].user_id;
+  } else {
+    // 如果沒2步驟驗證，可以直接給令牌
+    const payload = {
+      id: rows[0].user_id,
+      account: rows[0].account,
+    };
+    const token = jwt.sign(payload, process.env.JWT_KEY);
 
-  output.data = {
-    id: rows[0].user_id,
-    nickname: rows[0].nick_name,
-    avatar: rows[0].avatar,
-    token,
-  };
+    output.data = {
+      id: rows[0].user_id,
+      nickname: rows[0].nick_name,
+      avatar: rows[0].avatar,
+      token,
+    };
+  }
 
   res.json(output);
 });
 
 // 登入時的 兩步驟驗證 Google Authenticator
 router.post("/verify-otp", async (req, res) => {
-  const output = {
-    success: false,
-    error: "",
-  };
-  const { id, token } = req.body;
-
-  if (!id || !token) {
-    output.error = "缺少必要資訊";
-    return output;
-  }
-
-  const { account, totp_secret } = await getUserData(id);
-  if (!account || !totp_secret) {
-    output.error = "無法取得帳號資料或沒有申請過2步驟驗證";
-    return res.status(500).json(output);
-  }
-
-  const isValid = verifyGoogleAuthOtp(token, totp_secret, account);
-
-  if (isValid) {
-    output.success = true;
-    res.json(output);
-  } else {
-    output.error = "驗證失敗";
-    res.status(400).json(output);
-  }
-});
-
-// 驗證 jwt token
-router.post("/verify-token", async (req, res) => {
-  if (!req.body.token) return res.json(output);
   const output = {
     success: false,
     code: 0,
@@ -142,6 +113,61 @@ router.post("/verify-token", async (req, res) => {
       token: "",
     },
   };
+
+  const { id, token } = req.body;
+
+  if (!id || !token) {
+    output.error = "缺少必要資訊";
+    return res.status(500).json(output);
+  }
+
+  const { user_id, account, nick_name, avatar, totp_secret } =
+    await getUserData(id);
+
+  if (!account || !totp_secret) {
+    output.error = "無法取得帳號資料或沒有申請過2步驟驗證";
+    return res.status(500).json(output);
+  }
+
+  const isValid = verifyGoogleAuthOtp(token, totp_secret, account);
+
+  if (!isValid) {
+    output.error = "驗證失敗";
+    return res.status(400).json(output);
+  }
+
+  // 如果驗證成功，給令牌
+  const payload = {
+    id: user_id,
+    account: account,
+  };
+  const jwtToken = jwt.sign(payload, process.env.JWT_KEY);
+
+  output.data = {
+    id: user_id,
+    nickname: nick_name,
+    avatar: avatar,
+    token: jwtToken,
+  };
+  output.success = true;
+  return res.json(output);
+});
+
+// 驗證 jwt token
+router.post("/verify-token", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    data: {
+      id: 0,
+      nickname: "",
+      avatar: "",
+      token: "",
+    },
+  };
+
+  if (!req.body.token) return res.json(output);
 
   let payload = {};
 
@@ -741,10 +767,13 @@ router.post("/2fa/verify-otp", async (req, res) => {
 
   return res.json(output);
 });
+
+// 解除資料庫的 2fa 驗證
 router.post("/2fa/unset2fa", async (req, res) => {
   const { id } = req.body;
   try {
-    const sql = "UPDATE users SET totp_enabled=0 , totp_secret=null WHERE user_id=?";
+    const sql =
+      "UPDATE users SET totp_enabled=0 , totp_secret=null WHERE user_id=?";
     const [result] = await db.query(sql, id);
     const output = {
       success: !!result.affectedRows,
