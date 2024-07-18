@@ -4,10 +4,23 @@ import axios from "axios";
 import CryptoJS from "crypto-js";
 import moment from "moment-timezone";
 
-
 const router = express.Router();
 const { MERCHANTID_INVOICE, HASHKEY_INVOICE, HASHIV_INVOICE } = process.env;
 const API_URL = "https://einvoice-stage.ecpay.com.tw/B2CInvoice/Issue";
+
+// 綠界時間轉換
+function formatInvoiceDate(dateString) {
+  // 將 "+" 替換為空格
+  const formattedDate = dateString.replace("+", " ");
+  // 創建一個 UTC 日期對象
+  const utcDate = new Date(formattedDate + "Z"); // 添加 'Z' 表示這是 UTC 時間
+
+  // 轉換為台灣時間
+  const taiwanDate = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000); // 加上 8 小時
+
+  // 格式化為 MySQL datetime 格式
+  return taiwanDate.toISOString().slice(0, 19).replace("T", " ");
+}
 
 // 加密函數
 const encrypt = (text) => {
@@ -49,37 +62,31 @@ let RelateNumber;
 
 router.post("/issue-invoice", async (req, res) => {
   const { order_id } = req.body;
+  const { order, items } = await getOrderData(order_id);
+
   RelateNumber = "KI" + new Date().getTime().toString();
+
+  const print = order.recipient_tax_id ? "1" : "0"
+  const carrierType = order.recipient_tax_id ? "" : "3"
 
   try {
     const data = {
       MerchantID: MERCHANTID_INVOICE,
       RelateNumber: RelateNumber,
-      CustomerID: "CUST12345678",
-      CustomerIdentifier: "",
-      CustomerName: "Knock Knock",
-      CustomerAddr: "台北市美麗區帥哥路777號",
-      CustomerPhone: "0987654321",
-      CustomerEmail: "test@example.com",
-      Print: "0",
+      CustomerID: order.member_id.toString(),
+      CustomerIdentifier: order.recipient_tax_id || "",
+      CustomerName: order.name,
+      CustomerAddr: order.full_address,
+      CustomerPhone: order.recipient_mobile,
+      CustomerEmail: order.account,
+      Print: print,
       Donation: "0",
-      CarrierType: "3",
-      CarrierNum: "/A129482",
+      CarrierType: carrierType,
+      CarrierNum: order.recipient_invoice_carrier || "",
       TaxType: "1",
-      SalesAmount: 1000,
+      SalesAmount: order.total_price,
       InvType: "07",
-      Items: [
-        {
-          ItemSeq: 1,
-          ItemName: "item name",
-          ItemCount: 10,
-          ItemWord: "盒",
-          ItemPrice: 100,
-          ItemTaxType: 1,
-          ItemAmount: 1000,
-        },
-      ],
-      // 其他參數根據需要添加
+      Items: items,
     };
 
     const jsonData = JSON.stringify(data);
@@ -121,6 +128,84 @@ router.post("/issue-invoice", async (req, res) => {
   }
 });
 
+async function getOrderData(order_id) {
+  const orderSql = `
+    SELECT
+      o.id order_id,
+      o.order_date,
+      o.member_id,
+      u.name,
+      u.account,
+      CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
+      o.recipient_name,
+      o.recipient_mobile,
+      o.recipient_invoice_carrier,
+      o.recipient_tax_id,
+      o.deliver_fee,
+      SUM(od.order_quantity * od.order_unit_price) + o.deliver_fee AS total_price
+      FROM orders o
+      LEFT JOIN users u ON u.user_id = o.member_id
+      LEFT JOIN district d ON d.id = o.order_district_id
+      LEFT JOIN city c ON c.id = d.city_id
+      LEFT JOIN order_details od ON od.order_id = o.id
+    WHERE o.id = ?
+    GROUP BY o.id
+  `;
+
+  const detailsSql = `
+    SELECT
+      od.order_id,
+      od.order_product_id,
+      pm.product_name,
+      od.order_unit_price,
+      od.order_quantity,
+      (od.order_quantity * od.order_unit_price) AS product_total_price
+      FROM order_details od
+      LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
+    WHERE od.order_id = ?
+  `;
+
+  try {
+    const [orderResult] = await db.query(orderSql, [order_id]);
+    const [detailsResult] = await db.query(detailsSql, [order_id]);
+
+    if (orderResult.length === 0) {
+      throw new Error("Order not found");
+    }
+
+    const order = orderResult[0];
+
+    let items = detailsResult.map((item, index) => ({
+      ItemSeq: index + 1,
+      ItemName: item.product_name,
+      ItemCount: item.order_quantity,
+      ItemWord: "個", // 或其他適當的單位
+      ItemPrice: item.order_unit_price,
+      ItemTaxType: "1", // 假設所有商品都是應稅
+      ItemAmount: item.product_total_price,
+    }));
+
+    // 添加運費項目（如果有運費）
+    if (order.deliver_fee > 0) {
+      items.push({
+        ItemSeq: items.length + 1,
+        ItemName: "運費",
+        ItemCount: 1,
+        ItemWord: "式",
+        ItemPrice: order.deliver_fee,
+        ItemTaxType: "1", // 假設運費也是應稅的
+        ItemAmount: order.deliver_fee,
+      });
+    }
+
+    console.log(order, items);
+    return { order, items };
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
+
 async function saveInvoiceToDatabase(order_id, data) {
   // 轉換日期格式
   const invoiceDate = moment(data.InvoiceDate, "YYYY-MM-DD+HH:mm:ss")
@@ -151,8 +236,8 @@ async function saveInvoiceToDatabase(order_id, data) {
       throw new Error("No rows updated. Order ID might not exist.");
     }
   } catch (error) {
-    console.error("Database error:", error);
-    throw error;  // 重新拋出錯誤，讓調用者知道發生了問題
+    console.error("Database error:", error, data);
+    throw error; // 重新拋出錯誤，讓調用者知道發生了問題
   }
 }
 

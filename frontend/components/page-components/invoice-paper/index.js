@@ -7,6 +7,7 @@ import QRCode from 'react-qr-code'
 import { useRouter } from 'next/router'
 import NoData from '@/components/UI/no-data'
 import BlackBtn from '@/components/UI/black-btn'
+import OutlineBtn from '@/components/UI/outline-btn'
 
 export default function InvoicePaper({ order_id }) {
   const router = useRouter()
@@ -116,7 +117,7 @@ export default function InvoicePaper({ order_id }) {
         </div>
       )}
       <div className={styles.btnStack}>
-        <BlackBtn
+        <OutlineBtn
           btnText="返回"
           href={null}
           onClick={() => {

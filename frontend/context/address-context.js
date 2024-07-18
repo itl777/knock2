@@ -98,6 +98,7 @@ export const AddressProvider = ({ children }) => {
   // 使用會員地址
   const handleSelectAddress = (addressId) => {
     setNewAddressId(addressId)
+    openSnackbar('收件人地址已變更！', 'success')
     closeAddressSelectModal()
   }
 
