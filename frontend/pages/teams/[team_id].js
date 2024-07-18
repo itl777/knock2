@@ -11,6 +11,7 @@ import ChatArea from '@/components/page-components/teams/chat_area'
 import { ONE_TEAM } from '@/configs/api-path'
 import { GET_MEMBER } from '@/configs/api-path'
 import { API_SERVER } from '@/configs/api-path'
+import { JOIN_TEAM } from '@/configs/api-path'
 
 import styles from './teams.module.css'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
@@ -54,7 +55,38 @@ export default function TeamInfo() {
       console.error('Error fetching member data:', error)
     }
   }
+  const handleJoinTeam = async () => {
+    const { team_id } = router.query
 
+    const joinData = {
+      join_team_id: team_id,
+      join_user_id: auth.id,
+    }
+
+    try {
+      const res = await fetch(JOIN_TEAM, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(joinData),
+      })
+
+      const result = await res.json()
+
+      if (result.success) {
+        // 更新成員資料
+        fetchTeamData(team_id)
+        alert('成功加入團隊')
+      } else {
+        console.error('加入團隊失敗:', result.error)
+        alert('加入團隊失敗')
+      }
+    } catch (error) {
+      console.error('Error joining team:', error)
+      alert('加入團隊時發生錯誤')
+    }
+  }
   useEffect(() => {
     if (router.isReady) {
       const { team_id } = router.query
@@ -109,7 +141,7 @@ export default function TeamInfo() {
                       團員：
                       {memberData.map((member) => (
                         <span key={member.join_user_id}>
-                          {member.nick_name} , 
+                          {member.nick_name} ,
                         </span>
                       ))}
                     </div>
@@ -149,7 +181,11 @@ export default function TeamInfo() {
                     {auth.id === teamData.user_id ? (
                       <PdBtnContained btnText="管理團員" color="grey" />
                     ) : (
-                      <PdBtnContained btnText="申請加入" color="grey" />
+                      <PdBtnContained
+                        btnText="申請加入"
+                        color="grey"
+                        onClick={handleJoinTeam}
+                      />
                     )}
                   </div>
                 </div>

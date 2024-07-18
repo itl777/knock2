@@ -25,7 +25,7 @@ export default function PreTeam({ user_id = '' }) {
   useEffect(() => {
     const fetchNoTeamData = async () => {
       try {
-        const res = await fetch(`${NO_TEAM}/${user_id}`)
+        const res = await fetch(`${NO_TEAM}${user_id}`)
         if (!res.ok) {
           throw new Error('Fetch Failed')
         }

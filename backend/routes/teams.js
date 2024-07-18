@@ -54,7 +54,7 @@ const searchData = async (req) => {
   }
 
   const t_sql = `SELECT COUNT(1) totalRows FROM reservations r
-  LEFT JOIN \`teams_list\` team ON team.tour = reservation_id
+  LEFT JOIN \`teams_list\` team ON r_id = reservation_id
   JOIN \`themes\` t ON branch_themes_id = t.theme_id
   JOIN \`users\` u ON r.user_id = u.user_id
   JOIN \`sessions\` s ON r.session_id = s.sessions_id
@@ -293,17 +293,33 @@ router.post("/api/team_join/add", async (req, res) => {
   let body = { ...req.body };
   body.create_at = new Date();
 
-  const { chat_at, chat_by, chat_text } = body;
+  const { join_team_id, join_user_id } = body;
   try {
-  const sql = "INSERT INTO `teams_chats` (`join_team_id`, `join_user_id`, `create_at`, `last_modified_at`, `m_status`) VALUES (?, ?, now(), now(), 0)";
-  const [result] = await db.query(sql, [chat_at, chat_by, chat_text, body.create_at]);
+  const sql = "INSERT INTO `teams_members` (`join_team_id`, `join_user_id`, `create_at`, `last_modified_at`, `m_status`) VALUES (?, ?, now(), now(), 0)";
+  const [result] = await db.query(sql, [join_team_id, join_user_id]);
 
-  }catch (ex) {
+  if (result.affectedRows === 1) {
+
+    output.success = true;
+
+    output.result = result;
+
+  } else {
+
+    output.error = "Failed to insert the record";
+
+  }
+
+
+
+} catch (ex) {
     output.error = ex.message;
   }
 
   res.json(output);
 });
+
+
 // 新增揪團的API
 router.post("/api/teams/add", async (req, res) => {
   const output = {

@@ -11,7 +11,6 @@ export const OTP_MAIL_POST = `${API_SERVER}/users/otp-mail`
 export const VERIFY_OTP_POST = `${API_SERVER}/users/verify-otp`
 export const RESET_PASSWORD_POST = `${API_SERVER}/users/reset-password`
 
-
 // product image path
 export const PRODUCT_IMG = `${API_SERVER}/images`
 export const PRODUCT_LIST = `${API_SERVER}/products`
@@ -39,8 +38,6 @@ export const GET_COUPON_DETAIL = `${API_SERVER}/coupons/coupon_details`
 export const GET_MEMBER_COUPON = `${API_SERVER}/coupons/member_coupons`
 export const CANCEL_ORDER = `${API_SERVER}/orders/api/cancel_order`
 
-
-
 //teams
 export const GET_DATA = `${API_SERVER}/teams/apiSearch`
 export const GET_TEAM_DATA = `${API_SERVER}/teams/apiSearch/team`
@@ -50,6 +47,7 @@ export const NO_TEAM = `${API_SERVER}/teams/api/no_team/no_team_`
 export const DISPLAY_CHAT = `${API_SERVER}/teams/api/chat/get_chat_at_`
 export const ADD_CHAT = `${API_SERVER}/teams/api/chat/add/`
 export const GET_MEMBER = `${API_SERVER}/teams/api/team_member/`
+export const JOIN_TEAM = `${API_SERVER}/teams/api/team_join/add/`
 
 //THEME
 export const THEME_LIST = `${API_SERVER}/themes`
