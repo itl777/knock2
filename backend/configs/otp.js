@@ -29,7 +29,6 @@ export const generateGoogleAuthOtp = async (email = "") => {
       period: 30, // 30 秒
       secret: Secret.fromLatin1(secretString),
     });
-    console.log(otp.secret);
 
     return {
       secret: otp.secret.base32,
