@@ -177,6 +177,7 @@ export default function ThemeBranches() {
                 min_players={theme.min_players}
                 max_players={theme.max_players}
                 themeTime={theme.theme_time}
+                branch_themes_id={theme.branch_themes_id} // 添加这一行
               />
             ))}
           </div>
@@ -211,6 +212,7 @@ export default function ThemeBranches() {
                 min_players={theme.min_players}
                 max_players={theme.max_players}
                 themeTime={theme.theme_time}
+                branch_themes_id={theme.branch_themes_id} // 添加这一行
               />
             ))}
           </div>
@@ -245,6 +247,7 @@ export default function ThemeBranches() {
                 min_players={theme.min_players}
                 max_players={theme.max_players}
                 themeTime={theme.theme_time}
+                branch_themes_id={theme.branch_themes_id} // 添加这一行
               />
             ))}
           </div>

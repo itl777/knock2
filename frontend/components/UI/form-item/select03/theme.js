@@ -6,6 +6,7 @@ const borderRadius = '8px'
 const borderColorHover = '#B99755'
 const borderColorFocus = '#B99755'
 const boxShadowFocus = '#efede8'
+const selectedTextColor = '#B99755'
 const selectedBackgroundColor = ''
 const selectedBackgroundColorHover = ''
 
@@ -20,6 +21,7 @@ const customTheme = createTheme({
           fontFamily: 'Noto Serif JP, serif',
           '& .MuiSelect-select': {
             padding: '8px 16px',
+            color: `${selectedTextColor}`, // 設置選擇後文字顏色
           },
           '& .MuiOutlinedInput-notchedOutline': {
             border: `${borderWidth} solid ${borderColor}`,
@@ -35,6 +37,12 @@ const customTheme = createTheme({
           },
           '& .MuiSelect-icon': {
             transition: '200ms',
+          },
+        },
+        // 調整選中後文字顏色為金色
+        '& .MuiSelect-menu': {
+          '& .Mui-selected': {
+            color: selectedTextColor,
           },
         },
       },
@@ -63,11 +71,11 @@ const customTheme = createTheme({
           fontFamily: 'Noto Serif JP, serif',
           '&.Mui-selected': {
             backgroundColor: selectedBackgroundColor,
-            color: 'black',
+            // color: selectedTextColor,
           },
           '&.Mui-selected:hover': {
             backgroundColor: selectedBackgroundColorHover,
-            color: 'black',
+            color: selectedTextColor, // 設置為金色
           },
         },
       },
