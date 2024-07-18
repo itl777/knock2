@@ -21,7 +21,7 @@ const Banner = () => {
   }, [router.query, getThemeDetails])
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div></div>
   }
 
   if (!themeDetails) {

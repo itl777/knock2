@@ -26,7 +26,7 @@ function ThemeDetailsContent() {
   }, [themeDetails])
 
   if (!themeDetails) {
-    return <div>Loading...</div>
+    return <div></div>
   }
 
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import styles from './cards.module.scss'
 import {
   AspectRatio,
@@ -23,6 +24,8 @@ export default function Card02({
   themeTime = 0,
   branch_themes_id,
 }) {
+  const router = useRouter()
+
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'EASY':
@@ -41,6 +44,7 @@ export default function Card02({
   const handleClick = (e) => {
     e.preventDefault()
     setClicked(!clicked)
+    router.push(`/themes/themes-details/${branch_themes_id}`)
   }
 
   const style = {
@@ -171,8 +175,7 @@ export default function Card02({
               }}
             >
               <Link
-                // href={`/themes/themes-details/${branch_themes_id}`}
-                href={`#?`}
+                href="#"
                 onClick={handleClick}
                 style={style}
                 onMouseEnter={(e) => {

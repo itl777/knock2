@@ -8,22 +8,23 @@ const getThemesList = async (branchId) => {
   let success = false;
 
   const sql = `
-    SELECT 
-      t.theme_id,
-      t.theme_name,
-      t.theme_img,
-      t.difficulty,
-      t.introduction,
-      t.min_players,
-      t.max_players,
-      t.theme_time,
-      b.branch_name
-    FROM themes t
-    LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
-    LEFT JOIN branches b ON bt.branch_id = b.branch_id
-    WHERE b.branch_id = ?
-    ORDER BY t.theme_id DESC
-  `;
+  SELECT 
+    t.theme_id,
+    t.theme_name,
+    t.theme_img,
+    t.difficulty,
+    t.introduction,
+    t.min_players,
+    t.max_players,
+    t.theme_time,
+    b.branch_name,
+    bt.branch_themes_id  
+  FROM themes t
+  LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
+  LEFT JOIN branches b ON bt.branch_id = b.branch_id
+  WHERE b.branch_id = ?
+  ORDER BY t.theme_id DESC
+`;
 
   try {
     const [rows] = await db.query(sql, [branchId]);
@@ -75,7 +76,7 @@ const getSecondThemesList = async () => {
 // 獲取主題的詳情
 const getThemesDetails = async (branch_themes_id) => {
   const sql = `
-  SELECT 
+ SELECT 
     bt.branch_themes_id,
     t.theme_id,
     t.theme_name,
@@ -92,12 +93,24 @@ const getThemesDetails = async (branch_themes_id) => {
     b.branch_name,
     f.storyline,
     f.puzzle_design,
-    f.atmosphere
-  FROM themes t
-  LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
-  LEFT JOIN branches b ON bt.branch_id = b.branch_id
-  LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
-  WHERE bt.branch_themes_id = ?
+    f.atmosphere,
+    JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'sessions_id', s.sessions_id,
+        'start_time', DATE_FORMAT(s.start_time, '%H:%i'), -- 格式化开始时间，只显示时和分
+        'end_time', DATE_FORMAT(s.end_time, '%H:%i'), -- 格式化结束时间，只显示时和分
+        'theme_time', s.theme_time,
+        'intervals', s.intervals
+      )
+    ) AS sessions
+FROM themes t
+LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
+LEFT JOIN branches b ON bt.branch_id = b.branch_id
+LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
+LEFT JOIN sessions s ON t.theme_id = s.theme_id
+WHERE bt.branch_themes_id = ?
+GROUP BY bt.branch_themes_id
+
   `;
 
   try {

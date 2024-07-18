@@ -1,4 +1,6 @@
 // reservation.js
+import { useTheme } from '@/context/theme-context'
+import { useRouter } from 'next/router'
 import React, { useState, useContext, useEffect } from 'react'
 import myStyle from './reservation.module.css'
 import Input02 from '@/components/UI/form-item/input02'
@@ -11,6 +13,7 @@ import Radio02 from '@/components/UI/form-item/radio02'
 import { FaGhost } from 'react-icons/fa'
 import BasicModal02 from '@/components/UI/basic-modal02'
 import schemaForm from './schemaForm'
+import { People } from '@mui/icons-material'
 
 export default function Reservation() {
   const { selectedDate } = useContext(DateContext)
@@ -20,20 +23,38 @@ export default function Reservation() {
   const [radioValue, setRadioValue] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
   const [errors, setErrors] = useState({})
+  const [timeSlot, setTimeSlot] = useState('')
+  const [people, setPeople] = useState('')
+
+  const { themeDetails, getThemeDetails } = useTheme()
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
-    if (selectedDate) {
-      const formattedDate = `${selectedDate.year}-${String(
-        selectedDate.month + 1
-      ).padStart(2, '0')}-${String(selectedDate.day).padStart(2, '0')}`
-      setDate(formattedDate)
+    const { branch_themes_id } = router.query
 
-      // 當選擇日期時，清除日期相關的錯誤
-      setErrors((prev) => ({ ...prev, date: undefined }))
-    } else {
-      setDate('')
+    if (branch_themes_id) {
+      setLoading(true)
+      getThemeDetails(branch_themes_id)
+        .then(() => {
+          setLoading(false)
+          console.log(themeDetails.sessions)
+          if (selectedDate) {
+            const formattedDate = `${selectedDate.year}-${String(
+              selectedDate.month + 1
+            ).padStart(2, '0')}-${String(selectedDate.day).padStart(2, '0')}`
+            setDate(formattedDate)
+            setErrors((prev) => ({ ...prev, date: undefined }))
+          } else {
+            setDate('')
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching theme details:', error)
+          setLoading(false)
+        })
     }
-  }, [selectedDate])
+  }, [router.query, getThemeDetails, selectedDate])
 
   const handleNameChange = (e) => {
     setName(e.target.value)
@@ -101,13 +122,6 @@ export default function Reservation() {
     setModalOpen(false)
   }
 
-  const timeSlots = Array.from(new Array(24 * 2)).map(
-    (_, index) =>
-      `${index < 20 ? '0' : ''}${Math.floor(index / 2)}:${
-        index % 2 === 0 ? '00' : '30'
-      }`
-  )
-
   return (
     <div className={myStyle.reservationrBg}>
       <div className={myStyle.form}>
@@ -169,23 +183,42 @@ export default function Reservation() {
               ))}
           </div>
           <div className={myStyle.p}>
-            <Select03
-              name="timeSlot"
-              value=""
-              placeholder="選擇場次"
-              options={timeSlots}
-              onChange={(e) => console.log(e.target.value)}
-            />
+            <div className={myStyle.p}>
+              <div className={myStyle.p}>
+                <Select03
+                  name="timeSlot"
+                  value={timeSlot}
+                  placeholder="選擇場次"
+                  options={
+                    themeDetails?.sessions?.map((session) => ({
+                      text: `${session.start_time} - ${session.end_time}`,
+                      value: session.sessions_id,
+                    })) || []
+                  }
+                  onChange={(e) => setTimeSlot(e.target.value)}
+                />
+              </div>
+            </div>
           </div>
           <div className={myStyle.p}>
             <Select03
               name="people"
-              value=""
+              value={people} // 確保這裡使用了狀態變量來保存選中的人數
               placeholder="請選擇人數"
-              options={[1, 2, 3, 4, 5]}
-              onChange={(e) => console.log(e.target.value)}
+              options={Array.from(
+                {
+                  length:
+                    themeDetails?.max_players - themeDetails?.min_players + 1,
+                },
+                (_, index) => ({
+                  text: `${themeDetails?.min_players + index} 人`,
+                  value: themeDetails?.min_players + index,
+                })
+              )}
+              onChange={(e) => setPeople(e.target.value)} // 更新所選的人數狀態
             />
           </div>
+
           <div className={myStyle.p}>
             <Select03
               name="discount"
