@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Input as BaseInput } from '@mui/base/Input'
 import { Box, styled } from '@mui/system'
 
-
 function OTP({ separator, length, value, onChange, color }) {
   const inputRefs = useRef(new Array(length).fill(null))
 

@@ -192,8 +192,8 @@ export default function UserSet2fa() {
             <div className={styles.boxColumn}>
               <p>請輸入驗證器上顯示的 6 位數字：</p>
               <OTPInput
-                value={verificationCode}
-                onChange={setVerificationCode}
+                state={verificationCode}
+                setState={setVerificationCode}
               />
               {setup2faError && <p>{setup2faError}</p>}
             </div>
