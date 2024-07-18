@@ -76,7 +76,8 @@ const searchData = async (req) => {
     }
 
 
-  const sql = `SELECT reservation_id, team_id, team_title, theme_name, b.branch_id, difficulty, u.user_id, nick_name, branch_name, reservation_date, s.start_time , theme_img, s.theme_Time, team_status
+  const sql = `SELECT reservation_id, team_id, team_title, theme_name, b.branch_id, difficulty, u.user_id, nick_name, 
+  branch_name, reservation_date, s.start_time , theme_img, s.theme_Time, team_status, team_limit
   FROM reservations r
   JOIN \`teams_list\` team ON team.r_id = reservation_id
   JOIN \`themes\` t ON branch_themes_id = t.theme_id
@@ -119,10 +120,6 @@ router.get("/api/:team_id", async (req, res) => {
     return res.json({ success: false, error: "沒有編號" });
   }});
 
-// router.get("/apiSearch/team/:team_id", async (req, res) => {
-//   const data = await searchData(req);
-//   res.json(data);
-// });
 
 // 取得還沒開團的資料
 
@@ -138,7 +135,8 @@ const noTeamData = async (req) => {
     where += ` AND (u.user_id = ${user_id})`;
   }
 
-  const sql =`SELECT reservation_id, team_id, team_title, theme_name, b.branch_id, difficulty, u.user_id, nick_name, branch_name, reservation_date, s.start_time , theme_img, s.theme_Time, team_status
+  const sql =`SELECT reservation_id, team_id, team_title, theme_name, b.branch_id, difficulty, u.user_id, nick_name, branch_name, 
+  reservation_date, s.start_time , theme_img, s.theme_Time, team_status, team_limit
   FROM reservations r
   LEFT JOIN \`teams_list\` team ON r_id = reservation_id
   JOIN \`themes\` t ON branch_themes_id = t.theme_id
@@ -165,7 +163,7 @@ return {
 }
 }
 
-router.get("/api/no_team/:user_id", async (req, res) => {
+router.get("/api/no_team/no_team_:user_id", async (req, res) => {
   const data = await noTeamData(req)
   res.json(data);
 
@@ -183,9 +181,9 @@ router.get("/api/team/:team_id", async (req, res) => {
   // reservation_id, team_id, u.user_id, team_note, team_title, theme_name, difficulty, nick_name,
   // branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, avatar
   const sql = `SELECT reservation_id, team_id, u.user_id, team_note, team_title, theme_name, difficulty, nick_name,
-              branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, avatar
+              branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, avatar, team_limit
   FROM reservations r
-  JOIN \`teams_list\` team ON team.tour = reservation_id
+  JOIN \`teams_list\` team ON r_id = reservation_id
   JOIN \`themes\` ON branch_themes_id = themes.theme_id
   JOIN \`users\` u ON r.user_id = u.user_id
   JOIN \`sessions\` s ON r.session_id = s.sessions_id
@@ -206,7 +204,7 @@ router.get("/api/team/:team_id", async (req, res) => {
 //--分隔線
 
 // 取得留言資料的 API
-router.get("/api/chat/:team_id", async (req, res) => {
+router.get("/api/chat/get_chat_at_:team_id", async (req, res) => {
   const team_id = +req.params.team_id || 0;
   if (!team_id) {
     return res.json({ success: false, error: "沒有編號" });
@@ -215,7 +213,8 @@ router.get("/api/chat/:team_id", async (req, res) => {
   const sql =`SELECT chat_id, nick_name, avatar, chat_text, create_at 
 FROM \`teams_chats\` 
 JOIN \`users\` ON chat_by = user_id
-WHERE chat_at = ${team_id} AND chat_display = 1`;
+WHERE chat_at = ${team_id} AND chat_display = 1
+ORDER BY create_at DESC`;
 
 //  `SELECT nick_name, chat_text, chat_display, create_at, avatar
 //   FROM teams_chats
@@ -231,6 +230,33 @@ WHERE chat_at = ${team_id} AND chat_display = 1`;
 
   res.json({ success: true, data: rows });
 });
+
+
+
+// 搜尋隊伍有多少人加入的API
+router.get("/api/team_member/:team_id", async (req, res) => {
+  const team_id = +req.params.team_id || 0;
+  if (!team_id) {
+    return res.json({ success: false, error: "沒有編號" });
+  }
+
+  const sql =`SELECT join_team_id, join_user_id, nick_name, avatar
+FROM \`teams_members\` tm
+JOIN \`users\` ON join_user_id = user_id
+JOIN \`teams_list\` ON join_team_id = team_id
+WHERE join_team_id = ${team_id}
+ORDER BY tm.create_at DESC`;
+
+  const [rows] = await db.query(sql);
+
+  if (!rows.length) {
+    // 沒有該筆資料
+    return res.json({ success: false, error: "沒有該筆資料" });
+  }
+
+  res.json({ success: true, members: rows.length ,data: rows });
+});
+
 
 // 新增留言的API
 router.post("/api/chat/add", async (req, res) => {
@@ -255,6 +281,29 @@ router.post("/api/chat/add", async (req, res) => {
   res.json(output);
 });
 
+
+// 申請加入團隊的API
+router.post("/api/team_join/add", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    result: {},
+  };
+
+  let body = { ...req.body };
+  body.create_at = new Date();
+
+  const { chat_at, chat_by, chat_text } = body;
+  try {
+  const sql = "INSERT INTO `teams_chats` (`join_team_id`, `join_user_id`, `create_at`, `last_modified_at`, `m_status`) VALUES (?, ?, now(), now(), 0)";
+  const [result] = await db.query(sql, [chat_at, chat_by, chat_text, body.create_at]);
+
+  }catch (ex) {
+    output.error = ex.message;
+  }
+
+  res.json(output);
+});
 // 新增揪團的API
 router.post("/api/teams/add", async (req, res) => {
   const output = {
@@ -277,6 +326,8 @@ router.post("/api/teams/add", async (req, res) => {
 
   res.json(output);
 });
+
+
 
 export default router;
 

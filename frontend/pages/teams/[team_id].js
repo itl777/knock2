@@ -9,6 +9,7 @@ import { AspectRatio } from '@mui/joy'
 import ChatArea from '@/components/page-components/teams/chat_area'
 
 import { ONE_TEAM } from '@/configs/api-path'
+import { GET_MEMBER } from '@/configs/api-path'
 import { API_SERVER } from '@/configs/api-path'
 
 import styles from './teams.module.css'
@@ -16,14 +17,12 @@ import PdBtnContained from '@/components/UI/pd-btn-contained'
 
 export default function TeamInfo() {
   const router = useRouter()
-
   const { auth } = useAuth()
-
   const [teamData, setTeamData] = useState([])
+  const [memberData, setMemberData] = useState([])
 
   const fetchTeamData = async (team_id) => {
     const url = ONE_TEAM + team_id
-
     try {
       const res = await fetch(url)
       const data = await res.json()
@@ -39,11 +38,29 @@ export default function TeamInfo() {
     }
   }
 
+  const fetchMemberData = async (team_id) => {
+    const url = GET_MEMBER + team_id
+    try {
+      const res = await fetch(url)
+      const data = await res.json()
+
+      if (data.success) {
+        setMemberData(data.data)
+        console.log('Member data set successfully', data.data)
+      } else {
+        console.error('Failed to fetch member data:', data.error)
+      }
+    } catch (error) {
+      console.error('Error fetching member data:', error)
+    }
+  }
+
   useEffect(() => {
     if (router.isReady) {
       const { team_id } = router.query
       if (team_id) {
         fetchTeamData(team_id)
+        fetchMemberData(team_id)
       }
     }
   }, [router.isReady])
@@ -86,8 +103,17 @@ export default function TeamInfo() {
                       <br />
                       地區：{teamData.branch_name}
                       <br />
-                      人數：2 / 6
+                      人數/上限：{memberData.length}/ {teamData.team_limit}
                     </p>
+                    <div>
+                      團員：
+                      {memberData.map((member) => (
+                        <span key={member.join_user_id}>
+                          {member.nick_name} , 
+                        </span>
+                      ))}
+                    </div>
+                    <hr />
                     <p>
                       團長
                       <br />

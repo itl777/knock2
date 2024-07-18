@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
-import tempTour from '@/data/teams/temp-tour-data.json'
 import moment from 'moment-timezone'
 
 import { useAuth } from '@/context/auth-context'
-import { GET_DATA } from '@/configs/api-path'
 import { NO_TEAM } from '@/configs/api-path'
 
 import SubmitBtn from '@/pages/teams/submit-btn'
@@ -28,7 +26,7 @@ export default function TeamsAdd() {
     const fetchNoTeamData = async () => {
       try {
         // const res = await fetch(`${GET_DATA}/${auth.id}`)
-        const res = await fetch(`${NO_TEAM}/${auth.id}`)
+        const res = await fetch(`${NO_TEAM}${auth.id}`)
         if (!res.ok) {
           throw new Error('Fetch Failed')
         }
