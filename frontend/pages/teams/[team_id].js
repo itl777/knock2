@@ -21,6 +21,7 @@ export default function TeamInfo() {
   const { auth } = useAuth()
   const [teamData, setTeamData] = useState([])
   const [memberData, setMemberData] = useState([])
+  const [showMembers, setShowMembers] = useState(false)
 
   const fetchTeamData = async (team_id) => {
     const url = ONE_TEAM + team_id
@@ -55,6 +56,10 @@ export default function TeamInfo() {
       console.error('Error fetching member data:', error)
     }
   }
+  const handleTeamSetting = () => {
+    setShowMembers(!showMembers) // 切换显示状态
+  }
+
   const handleJoinTeam = async () => {
     const { team_id } = router.query
 
@@ -137,14 +142,16 @@ export default function TeamInfo() {
                       <br />
                       人數/上限：{memberData.length}/ {teamData.team_limit}
                     </p>
-                    <div>
-                      團員：
-                      {memberData.map((member) => (
-                        <span key={member.join_user_id}>
-                          {member.nick_name} ,
-                        </span>
-                      ))}
-                    </div>
+                    {showMembers && (
+                      <div>
+                        團員：
+                        {memberData.map((member) => (
+                          <span key={member.join_user_id}>
+                            {member.nick_name} ,
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <hr />
                     <p>
                       團長
@@ -177,17 +184,25 @@ export default function TeamInfo() {
                       </AspectRatio>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'center', paddingTop: '24px' }}>
-                    {auth.id === teamData.user_id ? (
-                      <PdBtnContained btnText="管理團員" color="grey" />
-                    ) : (
-                      <PdBtnContained
-                        btnText="申請加入"
-                        color="grey"
-                        onClick={handleJoinTeam}
-                      />
-                    )}
-                  </div>
+                  {!auth.id ? (
+                    <></>
+                  ) : (
+                    <div style={{ textAlign: 'center', paddingTop: '24px' }}>
+                      {auth.id === teamData.user_id ? (
+                        <PdBtnContained
+                          btnText="管理團員"
+                          color="grey"
+                          onClick={handleTeamSetting}
+                        />
+                      ) : (
+                        <PdBtnContained
+                          btnText="申請加入"
+                          color="grey"
+                          onClick={handleJoinTeam}
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -11,11 +11,15 @@ const ChatArea = ({ chat_at, chat_by }) => {
 
   return (
     <>
-      <AddChatForm
-        chat_at={chat_at}
-        chat_by={chat_by}
-        onSubmit={handleFormSubmit}
-      />
+      {!chat_by ? (
+        <></>
+      ) : (
+        <AddChatForm
+          chat_at={chat_at}
+          chat_by={chat_by}
+          onSubmit={handleFormSubmit}
+        />
+      )}
       <ChatDisplay chat_at={chat_at} submissionCount={submissionCount} />
     </>
   )
