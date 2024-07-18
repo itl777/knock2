@@ -7,19 +7,20 @@ import { FaArrowLeftLong } from 'react-icons/fa6'
 export default function UserHeader({
   type = 'def',
   title = '標題',
-  btnHref = '/',
+  btnHref = null,
   btnHidden = false,
-}) {
-  const goBack = () => {
+  btnText = '按鈕',
+  onClickBtn,
+  onClickBack = () => {
     window.history.back()
-  }
-
+  },
+}) {
   return (
     <div>
       <div className={styles.orderDetailHeader}>
         <div className={styles.headerLeft}>
           {type === 'icon' && (
-            <IconButton onClick={goBack} href={null}>
+            <IconButton onClick={onClickBack} href={null}>
               <FaArrowLeftLong className={styles.iconStyles} />
             </IconButton>
           )}
@@ -27,7 +28,9 @@ export default function UserHeader({
           <h5>{title}</h5>
         </div>
 
-        {!btnHidden && <FilterBtn btnText="發票" href={btnHref} />}
+        {!btnHidden && (
+          <FilterBtn btnText={btnText} href={btnHref} onClick={onClickBtn} />
+        )}
       </div>
       <HDivider margin="1.5rem 0" />
     </div>

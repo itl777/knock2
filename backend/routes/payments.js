@@ -1,11 +1,12 @@
 import express from "express";
 import db from "../utils/connect.js";
 import ecpay_payment from "ecpay_aio_nodejs";
+import moment from "moment-timezone";
 
 const router = express.Router();
 const { MERCHANTID, HASHKEY, HASHIV, BACKEND_HOST, FRONTEND_HOST } =
   process.env;
-const ngrok = 'https://7de2-1-160-26-135.ngrok-free.app/payments';
+const ngrok = 'https://8f47-1-160-26-135.ngrok-free.app/payments';
 
 
 const options = {
@@ -69,7 +70,7 @@ router.get("/", async (req, res) => {
       TotalAmount: checkoutTotal,
       TradeDesc: "knock knock board game",
       ItemName: productItemNames,
-      ReturnURL: `${ngrok}s/return`,
+      ReturnURL: `${ngrok}/return`,
       ChoosePayment: "Credit",
       EncryptType: 1,
       ClientBackURL: `http://localhost:3000/product?page=1`,
@@ -108,11 +109,11 @@ router.post("/return", async (req, res) => {
   const create = new ecpay_payment(options);
   const checkValue = create.payment_client.helper.gen_chk_mac_value(data);
   // 轉換 TradeDate 為 MySQL datetime 格式
-  const formatPaymentDate = new Date(PaymentDate)
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
 
+  const formatPaymentDate = moment(PaymentDate, "YYYY-MM-DD+HH:mm:ss")
+    .tz("Asia/Taipei")
+    .format("YYYY-MM-DD HH:mm:ss");
+  
   console.log(
     "確認交易正確性：",
     CheckMacValue === checkValue,
@@ -247,10 +248,9 @@ router.post("/reservation/return", async (req, res) => {
   const create = new ecpay_payment(options);
   const checkValue = create.payment_client.helper.gen_chk_mac_value(data);
   // 轉換 TradeDate 為 MySQL datetime 格式
-  const formatPaymentDate = new Date(PaymentDate)
-    .toISOString()
-    .slice(0, 19)
-    .replace("T", " ");
+    const formatPaymentDate = moment(PaymentDate, "YYYY-MM-DD+HH:mm:ss")
+    .tz("Asia/Taipei")
+    .format("YYYY-MM-DD HH:mm:ss");
 
   console.log(
     "確認交易正確性：",

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from './order-detail-cards.module.css'
+import { useRouter } from 'next/router'
 import useFetchOrderData from '@/hooks/fetchOrderDetails'
 import OrderItemDetail from '../order-item-detail'
 import OrderReviewDialog from '../order-review-dialog'
@@ -8,8 +9,17 @@ import OrderDetailInfo from '../order-detail-info'
 import { PRODUCT_IMG } from '@/configs/api-path'
 
 export default function OrderDetailCards({ order_id }) {
+  const router = useRouter()
   const { order, detail, anyReviewed, fetchOrderData } = useFetchOrderData()
   const [showReviewDialog, setShowReviewDialog] = useState(false)
+
+  const handleInvoice = () => {
+    router.push(`/user/orders/details/invoice/${order_id}`)
+  }
+
+  const hideInvoice = () => {
+    return order.invoice_rtn_code === 1 ? false : true
+  }
 
   useEffect(() => {
     fetchOrderData(order_id)
@@ -24,7 +34,13 @@ export default function OrderDetailCards({ order_id }) {
 
   return (
     <div className={styles.orderDetailContainer}>
-      <UserHeader type="icon" title="訂單明細" btnHref={null} />
+      <UserHeader
+        type="icon"
+        title="訂單明細"
+        btnText="發票"
+        btnHidden={hideInvoice()}
+        onClickBtn={handleInvoice}
+      />
 
       {/* card body */}
       <div className={styles.orderDetailContent}>

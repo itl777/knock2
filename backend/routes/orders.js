@@ -72,6 +72,10 @@ router.get("/", async (req, res) => {
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
         o.order_status_id,
         os.order_status_name,
+        o.invoice_rtn_code,
+        o.invoice_no,
+        o.invoice_date,
+        o.invoice_random_number,
         o.deliver_fee,
         SUM(od.order_quantity * pm.price) AS subtotal_price,
         SUM(od.order_quantity * pm.price + o.deliver_fee) AS total_price
@@ -179,6 +183,10 @@ router.get("/:orderId", async (req, res) => {
         o.order_status_id,
         os.order_status_name,
         o.deliver_fee,
+        o.invoice_rtn_code,
+        o.invoice_no,
+        o.invoice_date,
+        o.invoice_random_number,
         SUM(od.order_quantity * od.order_unit_price) AS subtotal_price,
         SUM(od.order_quantity * od.order_unit_price + o.deliver_fee) AS total_price
       FROM orders o
@@ -203,6 +211,16 @@ router.get("/:orderId", async (req, res) => {
       }
     });
 
+    // 格式化 order_date
+    orders.forEach((order) => {
+      const m = moment(order.invoice_date);
+      if (m.isValid()) {
+        order.invoice_date = m.format(dateTimeFormat);
+      } else {
+        order.invoice_date = "";
+      }
+    });
+
     // 格式化 payment_date
     orders.forEach((order) => {
       const m = moment(order.payment_date);
@@ -222,6 +240,7 @@ router.get("/:orderId", async (req, res) => {
     // 取得訂單詳細資料
     const orderDetailsSql = `
       SELECT 
+        od.id,
         od.order_id,
         od.order_product_id AS product_id,
         pm.product_name,
