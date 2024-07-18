@@ -1,7 +1,12 @@
+.sectionContainer {
+  width: 100%;
+  min-height: 640px;
+}
+
 .taiwanInvoice {
   width: 80mm;
-  padding: 1rem;
-  font-family: "Microsoft JhengHei", "Apple LiGothic";
+  margin: 0 auto;
+  padding: 1.875rem;
   border: 1px solid var(--pri-3);
   background-color: white;
 }
@@ -11,25 +16,28 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
 .invoiceHeader img {
-  height: 2.25rem;
+  height: 2.375rem;
+  margin-bottom: 6px;
 }
 
 
 .invoiceTitle {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: bold;
 }
 
 .invoiceSubTitle {
-  font-size: 18px;
+  font-size: 20px;
+  font-weight: bold;
+
 }
 
 .invoiceInfo {
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .row{
@@ -37,22 +45,20 @@
   justify-content: space-between;
 }
 
-
-.invoiceFooter {
-  display: flex;
-  justify-content: space-between;
-}
-
 .qrcodeBox {
   display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 12px;
 }
 
-
+.btnStack {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 48px;
+}
 @media print {
-  /* body * {
-    visibility: hidden;
-  } */
-
   .taiwanInvoice,
   .taiwanInvoice * {
     visibility: visible;

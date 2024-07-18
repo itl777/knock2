@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './checkout-offcanvas.module.css'
+import { useRouter } from 'next/router'
 // mui
 import Drawer from '@mui/material/Drawer'
 import Badge from '@mui/material/Badge'
@@ -45,10 +46,10 @@ const drawerTheme = createTheme({
 })
 
 export default function CheckoutOffcanvas() {
+  const router = useRouter()
   const [show, setShow] = useState(false)
   const handleClose = () => setShow(false)
   const toggleShow = () => setShow((s) => !s)
-
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
   const {
     checkoutItems,
@@ -59,6 +60,10 @@ export default function CheckoutOffcanvas() {
     handleQuantityChange,
     discountTotal,
   } = useCart()
+
+  const handleGoToCart = () => {
+    router.push('/checkout')
+  }
 
   return (
     <>
@@ -114,7 +119,8 @@ export default function CheckoutOffcanvas() {
                 />
                 <BlackBtn
                   btnText="前往購物車"
-                  href="/checkout"
+                  href={null}
+                  onClick={handleGoToCart}
                   paddingType="medium"
                 />
               </div>

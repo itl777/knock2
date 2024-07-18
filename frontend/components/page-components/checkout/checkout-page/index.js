@@ -24,6 +24,7 @@ import CheckoutTotalTable from '../checkout-total-table'
 import EmptyCart from '@/components/page-components/checkout/empty-cart'
 import RedirectionGuide from '@/components/UI/redirect-guide'
 import CouponSelectModal from '../../coupon/coupon-select-modal'
+import SuccessModal from '@/components/UI/success-modal'
 // api path
 import { PRODUCT_IMG, CHECKOUT_POST } from '@/configs/api-path'
 
@@ -36,6 +37,7 @@ export default function CheckoutPage() {
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
   const { handleOrderPayment } = usePayment()
   const userClientWidth = useScreenSize()
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [screenWidth, setScreenWidth] = useState(userClientWidth)
   const {
     isAddressSelectModalOpen,
@@ -156,15 +158,19 @@ export default function CheckoutPage() {
       orderItems, // 將 orderItems 加入到要提交的數據中
     }
 
-
     try {
       // Step 1: 提交訂單和商品資料到後端
       const response = await axios.post(CHECKOUT_POST, dataToSubmit)
       if (response.data.success) {
         const orderId = response.data.orderId // 取得後端返回的 order_id
+        setShowSuccessModal(true)
         clearCart()
-        // Step 2: 送 orderId, checkoutTotal 給後端
-        handleOrderPayment(orderId, checkoutTotal)
+        await handleOrderPayment(orderId, checkoutTotal)
+
+        // 2秒後處理支付
+        setTimeout(async () => {
+          setShowSuccessModal(false)
+        }, 2000)
       }
     } catch (error) {
       console.error('提交表單時出錯', error)
@@ -197,8 +203,7 @@ export default function CheckoutPage() {
   return (
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
-
-      {cartBadgeQty <= 0 && (
+      {cartBadgeQty <= 0 && !showSuccessModal && (
         <div className={styles.contentContainer}>
           <EmptyCart />
         </div>
@@ -232,8 +237,8 @@ export default function CheckoutPage() {
                 />
               ))}
             </div>
-            
-            <CouponSelectModal/>
+
+            <CouponSelectModal />
 
             {/* 訂單金額 */}
             <CheckoutTotalTable
@@ -310,6 +315,7 @@ export default function CheckoutPage() {
           </div>
         </form>
       )}
+      <SuccessModal show={showSuccessModal} msg="訂單已成立" />
     </section>
   )
 }
