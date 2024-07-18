@@ -5,18 +5,16 @@ import HDivider from '@/components/UI/divider/horizontal-divider'
 export default function CheckoutTotalTable({
   subtotal,
   deliverFee,
+  checkoutTotal,
   totalDiscount,
 }) {
-  const total = +subtotal + +deliverFee - +totalDiscount
-
   return (
-
     <div className={styles.totalBox}>
-      <CheckoutTotalRow label='小計' content={subtotal}/>
-      <CheckoutTotalRow label='折扣' content={totalDiscount}/>
-      <CheckoutTotalRow label='運費' content={deliverFee}/>
+      <CheckoutTotalRow label="小計" content={subtotal} />
+      <CheckoutTotalRow label="折扣" content={totalDiscount} />
+      <CheckoutTotalRow label="運費" content={deliverFee} />
       <HDivider margin="0.75rem 0" />
-      <CheckoutTotalRow label='合計' content={total}/>
+      <CheckoutTotalRow label="合計" content={checkoutTotal} />
     </div>
   )
 }

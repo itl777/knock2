@@ -11,6 +11,7 @@ import { useAddress } from '@/context/address-context'
 import useScreenSize from '@/hooks/useScreenSize'
 // hooks
 import { useOrderValidation } from '@/hooks/orderValidation'
+import usePayment from '@/hooks/usePayment'
 // components
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import BlackBtn from '@/components/UI/black-btn'
@@ -22,9 +23,9 @@ import OrderSelectBox from '../order-select-box'
 import CheckoutTotalTable from '../checkout-total-table'
 import EmptyCart from '@/components/page-components/checkout/empty-cart'
 import RedirectionGuide from '@/components/UI/redirect-guide'
-
+import CouponSelectModal from '../../coupon/coupon-select-modal'
 // api path
-import { PRODUCT_IMG, CHECKOUT_POST, ECPAY_GET } from '@/configs/api-path'
+import { PRODUCT_IMG, CHECKOUT_POST } from '@/configs/api-path'
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -33,6 +34,7 @@ export default function CheckoutPage() {
   // const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
   const { timeout, errors, validateField } = useOrderValidation() // 訂單驗證
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
+  const { handleOrderPayment } = usePayment()
   const userClientWidth = useScreenSize()
   const [screenWidth, setScreenWidth] = useState(userClientWidth)
   const {
@@ -48,6 +50,7 @@ export default function CheckoutPage() {
   const {
     checkoutItems,
     checkoutTotal,
+    subtotal,
     cartBadgeQty,
     handleQuantityChange,
     clearCart,
@@ -55,6 +58,8 @@ export default function CheckoutPage() {
     fetchMemberProfile,
     formData,
     setFormData,
+    selectedCoupons,
+    discountTotal,
   } = useCart()
 
   // 發票形式
@@ -151,31 +156,15 @@ export default function CheckoutPage() {
       orderItems, // 將 orderItems 加入到要提交的數據中
     }
 
+
     try {
       // Step 1: 提交訂單和商品資料到後端
       const response = await axios.post(CHECKOUT_POST, dataToSubmit)
       if (response.data.success) {
         const orderId = response.data.orderId // 取得後端返回的 order_id
-
-        // Step 2: 送 orderId, checkoutTotal 給後端
-        const ecpayResponse = await axios.get(ECPAY_GET, {
-          params: {
-            orderId,
-            checkoutTotal,
-          },
-        })
-
-        if (ecpayResponse.data.success) {
-          // Step 3: 導向新的支付頁面
-          router.push({
-            pathname: '/ecpay-checkout',
-            query: {
-              html: encodeURIComponent(ecpayResponse.data.html),
-            },
-          })
-          console.log('ECPay URL: ', ecpayResponse.data.html)
-        }
         clearCart()
+        // Step 2: 送 orderId, checkoutTotal 給後端
+        handleOrderPayment(orderId, checkoutTotal)
       }
     } catch (error) {
       console.error('提交表單時出錯', error)
@@ -243,12 +232,15 @@ export default function CheckoutPage() {
                 />
               ))}
             </div>
+            
+            <CouponSelectModal/>
 
             {/* 訂單金額 */}
             <CheckoutTotalTable
-              subtotal={checkoutTotal}
+              subtotal={subtotal}
+              checkoutTotal={checkoutTotal}
               deliverFee={deliverFee}
-              totalDiscount={0}
+              totalDiscount={discountTotal}
             />
           </div>
 

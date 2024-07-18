@@ -1,6 +1,5 @@
 // COMPONENT Recipient button edit
 import styles from './recipient-button-edit.module.css'
-import { useState } from 'react'
 import { styled } from '@mui/material/styles'
 // contexts
 import { useAddress } from '@/context/address-context'

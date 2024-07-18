@@ -1,0 +1,66 @@
+.taiwanInvoice {
+  width: 80mm;
+  padding: 1rem;
+  font-family: "Microsoft JhengHei", "Apple LiGothic";
+  border: 1px solid var(--pri-3);
+  background-color: white;
+}
+
+.invoiceHeader {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.invoiceHeader img {
+  height: 2.25rem;
+}
+
+
+.invoiceTitle {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.invoiceSubTitle {
+  font-size: 18px;
+}
+
+.invoiceInfo {
+  margin-bottom: 10px;
+}
+
+.row{
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.invoiceFooter {
+  display: flex;
+  justify-content: space-between;
+}
+
+.qrcodeBox {
+  display: flex;
+}
+
+
+@media print {
+  /* body * {
+    visibility: hidden;
+  } */
+
+  .taiwanInvoice,
+  .taiwanInvoice * {
+    visibility: visible;
+  }
+
+  .taiwanInvoice {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}

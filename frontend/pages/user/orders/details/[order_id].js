@@ -8,14 +8,14 @@ import OrderDetailCards from '@/components/page-components/orders/order-detail-c
 export default function OrderDetailsPage() {
   // 取得 order id
   const router = useRouter()
-  const orderId = router.query
-  
+  const { order_id } = router.query
+
   return (
     <>
       <IndexLayout title="訂單詳情" background="light">
         <UserLayout
           userTab={<UserTab />}
-          sectionRight={<OrderDetailCards orderId={orderId} />}
+          sectionRight={<OrderDetailCards order_id={order_id} />}
         />
       </IndexLayout>
     </>

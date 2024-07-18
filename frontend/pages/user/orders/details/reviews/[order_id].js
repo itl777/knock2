@@ -10,14 +10,14 @@ import OrderReviewsSection from '@/components/page-components/orders/order-revie
 export default function OrderReviewsPage() {
 
   const router = useRouter()
-  const orderId = router.query.order_id
+  const {order_id} = router.query
   
   return (
     <>
       <IndexLayout title="訂單評價" background="light">
         <UserLayout
           userTab={<UserTab />}
-          sectionRight={<OrderReviewsSection orderId={orderId} />}
+          sectionRight={<OrderReviewsSection order_id={order_id} />}
         />
       </IndexLayout>
     </>

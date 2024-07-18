@@ -16,22 +16,23 @@ import {
   ORDER_REVIEW_GET,
 } from '@/configs/api-path'
 
-export default function OrderReviewsSection({ orderId }) {
+export default function OrderReviewsSection({ order_id }) {
   const [reviews, setReviews] = useState([])
   const [formData, setFormData] = useState([])
   const [anyReviewed, setAnyReviewed] = useState(false)
-  const { orderData, orderDetails } = useFetchOrderData(orderId)
+  // const { orderData, orderDetails } = useFetchOrderData(orderId)
+  const { order, detail, fetchOrderData } = useFetchOrderData()
   const { openSnackbar } = useSnackbar()
 
   const fetchOrderReviews = async () => {
     try {
-      const response = await axios.get(`${ORDER_REVIEW_GET}/${orderId}`)
+      const response = await axios.get(`${ORDER_REVIEW_GET}/${order_id}`)
       if (response.data.success) {
         setReviews(response.data.rows)
 
         // 初始化 formData
         const initialFormData = response.data.rows.map((v) => ({
-          order_id: +orderId,
+          order_id: +order_id,
           order_product_id: v.order_product_id,
           review: v.review || '',
           rate: v.rate || 0,
@@ -52,11 +53,11 @@ export default function OrderReviewsSection({ orderId }) {
   }
 
   useEffect(() => {
-    if (orderId > 0) {
+    if (order_id > 0) {
+      fetchOrderData(order_id)
       fetchOrderReviews()
-      console.log('fetch order reviews', orderId, anyReviewed)
     }
-  }, [orderId])
+  }, [order_id])
 
   // 控制表單輸入欄位，更新 formData
   const handleInputChange = (e, order_product_id) => {
@@ -108,12 +109,9 @@ export default function OrderReviewsSection({ orderId }) {
       <UserHeader type="icon" title="訂單評價" btnHidden={true} />
 
       <OrderDetailInfo
-        order_date={orderData?.order_date}
-        merchant_trade_no={orderData?.merchant_trade_no}
-        total_price={orderData?.total_price}
-        payment_date_hidden={true}
-        full_address_hidden={true}
-        order_status_name_hidden={true}
+        order_date={order?.order_date}
+        merchant_trade_no={order?.merchant_trade_no}
+        paymentHidden={true}
       />
 
       {/* card body */}
