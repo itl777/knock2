@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react'
 import { PRODUCT_FAVORITE } from '@/configs/api-path'
 import { useSnackbar } from '@/context/snackbar-context'
 import 'hover.css/css/hover-min.css'
+import { useAuth } from '@/context/auth-context'
 
 export const useFavoriteProduct = (product_id) => {
+  const { auth, authIsReady } = useAuth()
   const { openSnackbar } = useSnackbar()
 
   const [animate, setAnimate] = useState(false)
@@ -24,8 +26,10 @@ export const useFavoriteProduct = (product_id) => {
     setData(newData)
   }
 
-  const getFavoriteArray = async () => {
-    const url = `${PRODUCT_FAVORITE}/api`
+  const getFavoriteArray = async (user_id) => {
+    user_id = user_id || 1
+
+    const url = `${PRODUCT_FAVORITE}/api?user_id=${user_id}`
     let newData = []
     try {
       const res = await fetch(url)
@@ -45,16 +49,18 @@ export const useFavoriteProduct = (product_id) => {
   }
 
   useEffect(() => {
-    getFavoriteArray()
-  }, [product_id])
+    getFavoriteArray(auth.id)
+  }, [product_id, authIsReady])
 
   const toggleButton = async (e) => {
-
     if (!likeMe) {
       try {
-        const r = await fetch(`${PRODUCT_FAVORITE}/add/${product_id}`, {
-          method: 'POST',
-        })
+        const r = await fetch(
+          `${PRODUCT_FAVORITE}/add/${product_id}?user_id=${auth.id}`,
+          {
+            method: 'POST',
+          }
+        )
         dataChange(product_id) //改顯示狀態
         openSnackbar('成功加入收藏')
       } catch (ex) {
@@ -62,9 +68,12 @@ export const useFavoriteProduct = (product_id) => {
       }
     } else {
       try {
-        const r = await fetch(`${PRODUCT_FAVORITE}/delete/${product_id}`, {
-          method: 'DELETE',
-        })
+        const r = await fetch(
+          `${PRODUCT_FAVORITE}/delete/${product_id}?user_id=${auth.id}`,
+          {
+            method: 'DELETE',
+          }
+        )
         dataChange(product_id) //改顯示狀態
         openSnackbar('已取消收藏', 'error')
         setAnimate(true)

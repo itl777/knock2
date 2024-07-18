@@ -7,7 +7,7 @@ import DeleteIconBtn from '../product-tab-list/delete-icon-btn'
 import { useProductImg } from '@/hooks/useProductImg'
 import { PRODUCT_IMG } from '@/configs/api-path'
 
-export default function FavCard({ dbData }) {
+export default function FavCard({ dbData, onDragEnd, onDragStart }) {
   const { cardChange, setCardChange } = useProduct()
   const [isId, setIsId] = useState(0)
 
@@ -19,6 +19,8 @@ export default function FavCard({ dbData }) {
   return (
     <>
       <div
+        onDragEnd={onDragEnd}
+        onDragStart={onDragStart}
         draggable="true"
         id={dbData.favorite_id}
         className="pd-card d-flex position-relative mb-2"
@@ -34,14 +36,6 @@ export default function FavCard({ dbData }) {
               alt="..."
             />
           )}
-          {/* <Image
-            src="/products/tea3.jpg"
-            width={81}
-            height={113}
-            className={myStyle.imgStyle}
-            draggable="false"
-            alt=""
-          /> */}
           <div className={myStyle.xStyle}>
             <DeleteIconBtn
               cardChange={cardChange}
@@ -66,7 +60,8 @@ export default function FavCard({ dbData }) {
             border-radius: 12px;
           }
           .pd-card:hover {
-            transform: rotate(10deg);
+            transform: rotate(8deg) scale(1.1);
+            box-shadow: 5px 4px 3px rgba(0, 0, 0, 0.2);
           }
           .img-div {
             width: 82px;

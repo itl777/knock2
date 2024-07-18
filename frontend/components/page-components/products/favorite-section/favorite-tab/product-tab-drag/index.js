@@ -3,10 +3,18 @@ import { useEffect, useState, useRef } from 'react'
 import { FaMarker } from 'react-icons/fa6'
 import myStyle from './drag.module.css'
 import { useDragFavorite } from '@/hooks/useDragFavorite'
-import { logging } from '@/next.config'
+import EmptyFavorite from '../empty-favorite'
+import { PRODUCT_LIST } from '@/configs/api-path'
+import { useAuth } from '@/context/auth-context'
 
 export default function ProductTabDrag({ favData }) {
   let favDataRows = favData['rows'] || []
+  const { auth, authIsReady } = useAuth()
+
+  useEffect(() => {
+    getFavoriteTitle(auth.id)
+  }, [authIsReady])
+
   const { changeDragCard } = useDragFavorite()
 
   // 三個狀態紀錄section三欄資料
@@ -15,11 +23,14 @@ export default function ProductTabDrag({ favData }) {
     2: [],
     3: [],
   })
+
+  const [targetDrag, setTargetDrag] = useState('')
+
   useEffect(() => {
     let new1 = []
     let new2 = []
     let new3 = []
-    favDataRows.map((v, i) => {
+    favDataRows.map((v) => {
       if (v.section === 1) {
         new1.push(v)
       } else if (v.section === 2) {
@@ -31,10 +42,83 @@ export default function ProductTabDrag({ favData }) {
     setSections({ 1: new1, 2: new2, 3: new3 })
   }, [favData])
 
-  const [title, setTitle] = useState(['馬上買', '考慮中', '禮物區'])
+  // 標題
+  const [title, setTitle] = useState([])
   const inpRef1 = useRef(null)
   const inpRef2 = useRef(null)
   const inpRef3 = useRef(null)
+
+  const getFavoriteTitle = async (title_user_id) => {
+    title_user_id = +title_user_id || 1
+    const url = `${PRODUCT_LIST}/favorite_title/api/${title_user_id}`
+    try {
+      const res = await fetch(url)
+      const resData = await res.json()
+      if (resData.success) {
+        // console.log('會員有資料')
+        setTitle(resData.rows[0].title.split(','))
+      } else {
+        // console.log('會員沒有資料')
+        setTitle(['收藏夾1', '收藏夾2', '收藏夾3'])
+        // db新增收藏標題資料
+        setFavoriteTitle(auth.id, '收藏夾1,收藏夾2,收藏夾3')
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  //  將資料設定到資料庫
+  const setFavoriteTitle = async (title_user_id, newTitle) => {
+    const url = `${PRODUCT_LIST}/favorite_title/add/${title_user_id}`
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: newTitle }),
+      })
+      const resData = await res.json()
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const editFavoriteTitle = async (title_user_id, newTitle) => {
+    const url = `${PRODUCT_LIST}/favorite_title/edit/${title_user_id}`
+    try {
+      const res = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: newTitle }),
+      })
+      const resData = await res.json()
+
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  // *********** localStorage **************
+  // useEffect(() => {
+  //   console.log(localStorage.getItem('titles')) //null
+  //   if (localStorage.getItem('titles') === null) {
+  //     setTitle(['收藏夾1', '收藏夾2', '收藏夾3'])
+  //   } else {
+  //     const localItem = localStorage.getItem('titles')
+  //     console.log('localItem', localItem)
+  //     console.log('split:', localItem.split(','))
+  //     setTitle(localItem.split(','))
+  //   }
+  // }, [])
+
+  // useEffect(() => {
+  //   localStorage.setItem('titles', title)
+  // }, [title])
+  // *********** localStorage **************
 
   function handleClick(index) {
     const input = document.createElement('input')
@@ -43,9 +127,11 @@ export default function ProductTabDrag({ favData }) {
     input.addEventListener('blur', () => {
       const newTitle = [...title]
       newTitle[index] = input.value
-      localStorage.setItem('titles', newTitle)
 
       setTitle(newTitle)
+      // 新增收藏標題
+      editFavoriteTitle(auth.id, newTitle.join(','))
+
       if (index === 0) {
         inpRef1.current.innerHTML = input.value
       } else if (index === 1) {
@@ -68,63 +154,12 @@ export default function ProductTabDrag({ favData }) {
     input.focus()
   }
 
-  useEffect(() => {
-    setTitle(localStorage.getItem('titles').split(','))
+  const handleDragDown = (e, section, fav_id) => {
+    e.currentTarget.style.backgroundColor = '#f2f2f2'
 
-    // drag JS
-    let dragTarget = null
-    const pdCard = document.querySelectorAll('.pd-card')
-    // console.log('pdCard', pdCard)
-    const bgGray = document.querySelectorAll('.bg-gray')
-    // console.log('bgGray', bgGray)
-
-    pdCard.forEach((card) => {
-      card.addEventListener('dragstart', (e) => {
-        dragTarget = e.currentTarget
-      })
-
-      card.addEventListener('dragend', (e) => {
-        card.classList.add('animate__animated', 'animate__swing')
-        dragTarget = null
-        setTimeout(() => {
-          card.classList.remove('animate__animated', 'animate__swing')
-        }, 2000)
-      })
-    })
-
-    bgGray.forEach((bg) => {
-      bg.addEventListener('dragenter', (e) => {
-        e.currentTarget.style.backgroundColor = 'rgba(185, 151, 85, 0.5)'
-      })
-      bg.addEventListener('dragover', (e) => e.preventDefault())
-      bg.addEventListener('dragleave', (e) => {
-        e.currentTarget.style.backgroundColor = '#f2f2f2'
-      })
-      bg.addEventListener('drop', (e) => {
-        if (dragTarget) {
-          //                    放入的區塊         拿起的元素
-          handleDragDown(e.currentTarget.id, dragTarget.id)
-          // e.currentTarget.append(dragTarget)
-          e.currentTarget.style.backgroundColor = '#f2f2f2'
-          // 將元素放到另一欄，修改db
-          console.log('section, fav_id', e.currentTarget.id, dragTarget.id)
-        }
-      })
-    })
-
-    const titlesDOM = document.querySelectorAll('.title')
-    titlesDOM.forEach((v) => {
-      v.addEventListener('dblclick', (event) => {
-        console.log(event.currentTarget)
-      })
-    })
-  }, [sections])
-  
-  const handleDragDown = (section, fav_id) => {
     setSections((prevSections) => {
       // 創建一個新的 sections 對象
       const newSections = { ...prevSections }
-      console.log('newSections前', newSections)
       // 找到要移動的項目
       const itemToMove = Object.values(prevSections)
         .flat()
@@ -146,36 +181,78 @@ export default function ProductTabDrag({ favData }) {
       // 修改後端
       changeDragCard(section, fav_id)
 
-      console.log('newSections後', newSections)
       return newSections
     })
   }
 
-  const handleDragEnd = (e) => {
-    console.log('handleDragEnd進');
-    e.target.classList.add('animate__animated', 'animate__swing')
-    setTimeout(() => {
-      e.target.classList.remove('animate__animated', 'animate__swing')
-    }, 2000)
+  const handleDragstart = (e) => {
+    // 將drag放到TargetDrag
+    setTargetDrag(e.currentTarget)
+  }
+  const handleDragEnter = (e) => {
+    e.currentTarget.style.backgroundColor = 'rgba(185, 151, 85, 0.5)'
+  }
+  const handleDragLeave = (e) => {
+    e.currentTarget.style.backgroundColor = '#f2f2f2'
+  }
+
+  // const handleDragEnd = (e) => {
+  //   console.log('handleDragEnd進')
+  //   e.target.classList.add('animate__animated', 'animate__swing')
+  //   console.log('classList',e.target.classList)
+  //   setTimeout(() => {
+  //     e.target.classList.remove('animate__animated', 'animate__swing')
+  //   }, 2000)
+  // }
+  // const handleDragEnd = useCallback(() => {
+  //   if (targetDrag.id) {
+  //     const element = document.getElementById(targetDrag.id)
+
+  //     if (element) {
+  //       element.classList.add('animate__animated', 'animate__swing')
+  //       console.log('e.target.classList', element.classList)
+  //       setTimeout(() => {
+  //         element.classList.remove('animate__animated', 'animate__swing')
+  //       }, 2000)
+  //     }
+  //   }
+  // }, [targetDrag.id])
+
+  // useEffect(() => {
+  //   const container = document.querySelector('.container')
+  //   if (targetDrag.id) {
+  //     container.addEventListener('dragend', handleDragEnd)
+  //     return () => {
+  //       container.removeEventListener('dragend', handleDragEnd)
+  //     }
+  //   }
+  // }, [targetDrag.id, handleDragEnd])
+
+  // 無收藏顯示頁面
+  if (favDataRows.length === 0) {
+    return <EmptyFavorite />
   }
 
   return (
     <div>
-      <div className="container p-4">
+      <div className="container">
         <div className="d-flex justify-content-between"></div>
 
         {/* 卡片區 最外層*/}
-        <div className="d-grid gap-4">
+        <div className={`${myStyle.grid}`}>
           {/* 欄 */}
           <div
             id="1"
-            //onDrop={(e) => handleDrop(e, '1')}
+            onDrop={(e) => handleDragDown(e, e.currentTarget.id, targetDrag.id)}
+            onDragOver={(e) => e.preventDefault()}
+            onDragLeave={handleDragLeave}
+            onDragEnter={handleDragEnter}
             className="text-center bg-gray d-flex align-items-center flex-column"
           >
-            <div className="d-flex position-relative">
+            <div className={`${myStyle['top-title']} d-flex position-relative`}>
               <h4
                 className={myStyle.title}
-                // onDoubleClick={() => handleClick(0)}
+                onDoubleClick={() => handleClick(0)}
                 ref={inpRef1}
               >
                 {title[0]}
@@ -189,8 +266,8 @@ export default function ProductTabDrag({ favData }) {
               {Array.isArray(sections[1]) &&
                 sections[1].map((v, i) => (
                   <FavCard
-                    onDragEnd={handleDragEnd}
-                    // onDragStart={(e) => handleDragStart(e, v)}
+                    // onDragEnd={(e) => handleDragEnd(e)}
+                    onDragStart={(e) => handleDragstart(e)}
                     key={v.product_id}
                     dbData={v}
                   />
@@ -201,13 +278,16 @@ export default function ProductTabDrag({ favData }) {
           {/* 欄 */}
           <div
             id="2"
-            // onDrop={(e) => handleDrop(e, '2')}
+            onDrop={(e) => handleDragDown(e, e.currentTarget.id, targetDrag.id)}
+            onDragOver={(e) => e.preventDefault()}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
             className="text-center bg-gray d-flex align-items-center flex-column"
           >
-            <div className="d-flex position-relative">
+            <div className={`${myStyle['top-title']} d-flex position-relative`}>
               <h4
                 className={myStyle.title}
-                // onDoubleClick={() => handleClick(1)}
+                onDoubleClick={() => handleClick(1)}
                 ref={inpRef2}
               >
                 {title[1]}
@@ -220,8 +300,8 @@ export default function ProductTabDrag({ favData }) {
             {Array.isArray(sections[2]) &&
               sections[2].map((v, i) => (
                 <FavCard
-                  onDragEnd={handleDragEnd}
-                  // onDragStart={(e) => handleDragStart(e, v)}
+                  // onDragEnd={(e) => handleDragEnd(e)}
+                  onDragStart={(e) => handleDragstart(e)}
                   key={v.product_id}
                   dbData={v}
                 />
@@ -231,13 +311,16 @@ export default function ProductTabDrag({ favData }) {
           {/* 欄 */}
           <div
             id="3"
-            // onDrop={(e) => handleDrop(e, '3')}
+            onDrop={(e) => handleDragDown(e, e.currentTarget.id, targetDrag.id)}
+            onDragOver={(e) => e.preventDefault()}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
             className="text-center bg-gray d-flex align-items-center flex-column"
           >
-            <div className="d-flex position-relative">
+            <div className={`${myStyle['top-title']} d-flex position-relative`}>
               <h4
                 className={myStyle.title}
-                // onDoubleClick={() => handleClick(2)}
+                onDoubleClick={() => handleClick(2)}
                 ref={inpRef3}
               >
                 {title[2]}
@@ -250,8 +333,8 @@ export default function ProductTabDrag({ favData }) {
             {Array.isArray(sections[3]) &&
               sections[3].map((v, i) => (
                 <FavCard
-                  onDragEnd={handleDragEnd}
-                  // onDragStart={(e) => handleDragStart(e, v)}
+                  // onDragEnd={(e) => handleDragEnd(e)}
+                  onDragStart={(e) => handleDragstart(e)}
                   key={v.product_id}
                   dbData={v}
                 />
@@ -274,9 +357,6 @@ export default function ProductTabDrag({ favData }) {
             border-radius: 20px;
             padding: 20px 0;
             height: 100%;
-          }
-          .d-grid {
-            grid-template-columns: auto auto auto;
           }
         `}
       </style>

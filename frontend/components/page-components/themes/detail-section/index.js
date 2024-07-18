@@ -1,15 +1,14 @@
-import Banner from './banner/banner'
-import Item from './item/item'
-import Step from './step/step'
-import Calendar from './calendar/calendar'
+// components/page-components/themes/detail-section.js
+import React from 'react'
+import myStyle from './details.module.css'
 
-export default function DetailSection() {
+export default function DetailSection({ Banner, Item, Step, Calendar }) {
   return (
     <>
-      <Banner />
-      <Item />
-      <Step />
-      <Calendar />
+      {Banner}
+      {Item}
+      {Step}
+      {Calendar}
     </>
   )
 }

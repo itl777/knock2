@@ -3,6 +3,7 @@ import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import ThirdPartyLoginButton from '../third-party-login-button'
 import { useLoginModal } from '@/context/login-context/index'
+import ReCAPTCHA from 'react-google-recaptcha'
 
 // styles
 import styles from '../login-form.module.scss'
@@ -15,8 +16,10 @@ const dialogTheme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
+          overflow: 'visible',
           borderRadius: '1rem',
           backgroundColor: '#343434',
+          margin: '10px',
         },
       },
     },
@@ -31,7 +34,9 @@ export default function RegisterForm() {
     handleRegisterChange,
     registerSubmit,
     loginFormSwitch,
+    recaptchaRef,
   } = useLoginModal()
+
   return (
     <>
       <ThemeProvider theme={dialogTheme}>
@@ -85,6 +90,13 @@ export default function RegisterForm() {
                 {registerErrors.name}
                 {registerErrors.result}
               </span>
+            </div>
+            <div className={styles.links}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                theme="dark"
+                sitekey="6Le-2xAqAAAAADHbVaVe5nndmuEYZZ7Uyw0FclUU"
+              />
             </div>
             <div className={styles.box}>
               <input type="submit" value="註冊" />

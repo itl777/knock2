@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useTheme } from '@/context/theme-context'
+import { useRouter } from 'next/router'
 import myStyle from './step.module.css'
 import { CgNotes } from 'react-icons/cg'
 import { RiMoneyDollarCircleLine } from 'react-icons/ri'
@@ -6,10 +8,23 @@ import { FaCheckCircle } from 'react-icons/fa'
 import { IoIosArrowForward } from 'react-icons/io'
 
 export default function Step() {
+  const { themeDetails, getThemeDetails } = useTheme()
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
+
+  useEffect(() => {
+    const { branch_themes_id } = router.query
+    if (branch_themes_id) {
+      setLoading(true)
+      getThemeDetails(branch_themes_id).finally(() => setLoading(false))
+    }
+  }, [router.query, getThemeDetails])
   return (
     <>
       <div className="container">
-        <h2 className={myStyle.h1}>遺失的寶藏 - 台北店</h2>
+        <h2 className={myStyle.h1}>
+          {themeDetails.theme_name} - {themeDetails.branch_name}{' '}
+        </h2>
         <hr className={myStyle.line} />
         <div className="row mt-5 d-flex justify-content-center">
           <div className="col-2 d-flex flex-column align-items-center">

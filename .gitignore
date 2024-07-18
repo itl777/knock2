@@ -6,3 +6,5 @@ _trash/
 .DS_Store
 config/
 frontend/pages/teams/draft/
+frontend/configs/team-api-path.js
+frontend/components/page-components/teams/user_team/_mui_style_example.js

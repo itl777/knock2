@@ -9,7 +9,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import theme from '@/context/theme'
 import { useProduct } from '@/context/product-context'
 
-export default function MyPagination({ totalPages }) {
+export default function MyPagination({ totalPages, favoriteData }) {
   const { router, data } = useProduct()
 
   const handlePageChange = (event, value) => {
@@ -33,7 +33,7 @@ export default function MyPagination({ totalPages }) {
           <Pagination
             onChange={handlePageChange}
             size="large"
-            count={data.totalPages}
+            count={favoriteData ? favoriteData.totalPages : data.totalPages}
             defaultPage={1}
             color="primary"
             renderItem={(item) => (

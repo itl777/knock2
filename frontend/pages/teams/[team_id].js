@@ -3,32 +3,104 @@ import { useRouter } from 'next/router'
 import moment from 'moment-timezone'
 import IndexLayout from '@/components/layout'
 import { useAuth } from '@/context/auth-context'
+import Image from 'next/image'
+import { AspectRatio } from '@mui/joy'
 
-import AddChatForm from '@/pages/teams/add_chat'
-import ChatDisplay from '@/pages/teams/display_chat'
+import ChatArea from '@/components/page-components/teams/chat_area'
 
 import { ONE_TEAM } from '@/configs/api-path'
+import { GET_MEMBER } from '@/configs/api-path'
+import { API_SERVER } from '@/configs/api-path'
+import { JOIN_TEAM } from '@/configs/api-path'
 
 import styles from './teams.module.css'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
 
 export default function TeamInfo() {
   const router = useRouter()
+  const { auth } = useAuth()
+  const [teamData, setTeamData] = useState([])
+  const [memberData, setMemberData] = useState([])
+  const [showMembers, setShowMembers] = useState(false)
 
-  const { login, logout, auth } = useAuth()
+  const fetchTeamData = async (team_id) => {
+    const url = ONE_TEAM + team_id
+    try {
+      const res = await fetch(url)
+      const data = await res.json()
 
-  const [oneTeam, setOneTeam] = useState({
-    team_id: 0,
-    theme_name: '',
-    team_title: '',
-    nick_name: '',
-    difficulty: '',
-    branch_name: '',
-    reservation_date: '',
-    themeTime: 0,
-  })
+      if (data.success) {
+        setTeamData(data.data)
+        console.log('Team data set successfully', data.data)
+      } else {
+        console.error('Failed to fetch team data:', data.error)
+      }
+    } catch (error) {
+      console.error('Error fetching team data:', error)
+    }
+  }
 
-  const [submissionCount, setSubmissionCount] = useState(0)
+  const fetchMemberData = async (team_id) => {
+    const url = GET_MEMBER + team_id
+    try {
+      const res = await fetch(url)
+      const data = await res.json()
+
+      if (data.success) {
+        setMemberData(data.data)
+        console.log('Member data set successfully', data.data)
+      } else {
+        console.error('Failed to fetch member data:', data.error)
+      }
+    } catch (error) {
+      console.error('Error fetching member data:', error)
+    }
+  }
+  const handleTeamSetting = () => {
+    setShowMembers(!showMembers) // 切换显示状态
+  }
+
+  const handleJoinTeam = async () => {
+    const { team_id } = router.query
+
+    const joinData = {
+      join_team_id: team_id,
+      join_user_id: auth.id,
+    }
+
+    try {
+      const res = await fetch(JOIN_TEAM, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(joinData),
+      })
+
+      const result = await res.json()
+
+      if (result.success) {
+        // 更新成員資料
+        fetchTeamData(team_id)
+        alert('成功加入團隊')
+      } else {
+        console.error('加入團隊失敗:', result.error)
+        alert('加入團隊失敗')
+      }
+    } catch (error) {
+      console.error('Error joining team:', error)
+      alert('加入團隊時發生錯誤')
+    }
+  }
+  useEffect(() => {
+    if (router.isReady) {
+      const { team_id } = router.query
+      if (team_id) {
+        fetchTeamData(team_id)
+        fetchMemberData(team_id)
+      }
+    }
+  }, [router.isReady])
 
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
@@ -37,71 +109,8 @@ export default function TeamInfo() {
   const formatTime = (timeString) => {
     return moment(timeString, 'HH:mm:ss').format('A hh:mm')
   }
-
-  const getDifficulty = (difficulty) => {
-    switch (difficulty) {
-      case 'EASY':
-        return styles.diffeasy
-      case 'MEDIUM':
-        return styles.diffmedium
-      case 'HARD':
-        return styles.diffhard
-      default:
-        return styles.difficulty
-    }
-  }
-
-  const getTeam = async (team_id) => {
-    const url = ONE_TEAM + team_id
-
-    try {
-      const res = await fetch(url)
-      //
-      const resData = await res.json()
-
-      // if (resData.status === 'success') {
-      //   // 檢查是否為物件資料類型(基本保護)
-      //   if (resData.data.oneTeam.team_id) {
-      //     // 設定到狀態中 ===> 進入update階段，觸發重新渲染(re-render)
-      //     setOneTeam(resData.data.oneTeam)
-      //   }
-      // }
-      if (resData.success) {
-        const teamData = resData.data
-        if (teamData && teamData.team_id) {
-          setOneTeam({
-            branch_name: teamData.branch_name || '',
-            difficulty: teamData.difficulty || '',
-            end_time: teamData.end_time || '',
-            nick_name: teamData.nick_name || '',
-            reservation_date: teamData.reservation_date || '',
-            start_time: teamData.start_time || '',
-            team_id: teamData.team_id || 0,
-            team_title: teamData.team_title || '',
-            theme_name: teamData.theme_name || '',
-            themeImg: teamData.theme_img || '',
-            themeTime: teamData.theme_Time || '',
-          })
-          console.log('Team data set successfully', teamData)
-        }
-      }
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  useEffect(() => {
-    if (router.isReady) {
-      console.log(router.query)
-      const { team_id } = router.query
-      getTeam(team_id)
-      console.log(oneTeam)
-    }
-    //
-  }, [router.isReady, submissionCount])
-
-  const handleFormSubmit = () => {
-    setSubmissionCount((prevCount) => prevCount + 1)
+  if (!teamData) {
+    return <p>Loading...</p>
   }
 
   return (
@@ -113,67 +122,92 @@ export default function TeamInfo() {
               <h2>團隊內頁</h2>
             </div>
             <div className={`${styles.teamsSection} row`}>
-              <div className={styles.borderbox} key={oneTeam.team_id}>
+              <div className={styles.borderbox} key={teamData.team_id}>
                 <div className="row">
-                  <div className="col-9">
+                  <div className="col-12 col-md-6">
                     <div className="teamTitle">
-                      <h3>{oneTeam.theme_name}</h3>
-                      <span className={`${getDifficulty(oneTeam.difficulty)}`}>
-                        {oneTeam.difficulty}
-                      </span>
+                      <h3>{teamData.theme_name}</h3>
+                      {/* <span className={`${getDifficulty(teamData.difficulty)}`}>
+                        {teamData.difficulty}
+                      </span> */}
                     </div>
-                    <h5>團名：{oneTeam.team_title}</h5>
+                    <h5>團名：{teamData.team_title}</h5>
                     <p>
-                      團長：{oneTeam.nick_name}
+                      冒險時間：{formatDateToTaiwan(teamData.reservation_date)}{' '}
+                      {formatTime(teamData.start_time)}
                       <br />
-                      日期時間：{formatDateToTaiwan(
-                        oneTeam.reservation_date
-                      )}{' '}
-                      {formatTime(oneTeam.start_time)}
+                      冒險長度：{teamData.theme_Time} 分鐘
                       <br />
-                      時間長度：{oneTeam.themeTime} 分鐘
+                      地區：{teamData.branch_name}
                       <br />
-                      場次：{oneTeam.branch_name}
-                      <br />
-                      人數：2 / 6
+                      人數/上限：{memberData.length}/ {teamData.team_limit}
                     </p>
+                    {showMembers && (
+                      <div>
+                        團員：
+                        {memberData.map((member) => (
+                          <span key={member.join_user_id}>
+                            {member.nick_name} ,
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <hr />
                     <p>
-                      團長的話
+                      團長
                       <br />
+                      {teamData.nick_name}
+                      <br />
+                      <Image
+                        src={
+                          teamData.avatar
+                            ? `${API_SERVER}/avatar/${teamData.avatar}`
+                            : ''
+                        }
+                        height={40}
+                        width={40}
+                        alt={`${teamData.nick_name} avatar`}
+                      />
+                      ：{teamData.team_note}
                     </p>
                   </div>
-                  <div className="col-3">
+                  <div className="col-12 col-md-6">
                     {' '}
                     <div className="teamPhoto">
-                      {/* <img src={catImage} alt="cat" /> */}
-                      <img
-                        src={`/themes-main/${oneTeam.themeImg}`}
-                        alt=""
-                        width={'100%'}
-                      />
+                      <AspectRatio ratio="375/240">
+                        <Image
+                          src={`/themes-main/${teamData.theme_img}`}
+                          alt=""
+                          width={'579'}
+                          height={'415'}
+                        />
+                      </AspectRatio>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <PdBtnContained
-                      btnText="申請加入 / 管理團員"
-                      color="grey"
-                    />
-                  </div>
+                  {!auth.id ? (
+                    <></>
+                  ) : (
+                    <div style={{ textAlign: 'center', paddingTop: '24px' }}>
+                      {auth.id === teamData.user_id ? (
+                        <PdBtnContained
+                          btnText="管理團員"
+                          color="grey"
+                          onClick={handleTeamSetting}
+                        />
+                      ) : (
+                        <PdBtnContained
+                          btnText="申請加入"
+                          color="grey"
+                          onClick={handleJoinTeam}
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
             <>
-              <AddChatForm
-                chat_at={oneTeam.team_id}
-                chat_by={auth.id}
-                onSubmit={handleFormSubmit}
-              />
-            </>
-            <>
-              <ChatDisplay
-                chat_at={oneTeam.team_id}
-                submissionCount={submissionCount}
-              />
+              <ChatArea chat_at={teamData.team_id} chat_by={auth.id} />
             </>
           </div>
         </div>

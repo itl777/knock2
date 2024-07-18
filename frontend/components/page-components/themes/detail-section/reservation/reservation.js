@@ -1,3 +1,6 @@
+// reservation.js
+import { useTheme } from '@/context/theme-context'
+import { useRouter } from 'next/router'
 import React, { useState, useContext, useEffect } from 'react'
 import myStyle from './reservation.module.css'
 import Input02 from '@/components/UI/form-item/input02'
@@ -8,43 +11,116 @@ import Checkbox from '@mui/joy/Checkbox'
 import Textarea01 from '@/components/UI/form-item/textarea01'
 import Radio02 from '@/components/UI/form-item/radio02'
 import { FaGhost } from 'react-icons/fa'
-import BasicModal from '@/components/UI/basic-modal'
+import BasicModal02 from '@/components/UI/basic-modal02'
+import schemaForm from './schemaForm'
+import { People } from '@mui/icons-material'
 
 export default function Reservation() {
   const { selectedDate } = useContext(DateContext)
   const [name, setName] = useState('')
-  const [mobile, setMobile] = useState('')
+  const [mobile_phone, setMobilePhone] = useState('')
   const [date, setDate] = useState('')
   const [radioValue, setRadioValue] = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [timeSlot, setTimeSlot] = useState('')
+  const [people, setPeople] = useState('')
+
+  const { themeDetails, getThemeDetails } = useTheme()
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
-    if (selectedDate) {
-      const formattedDate = `${selectedDate.year}-${selectedDate.month + 1}-${
-        selectedDate.day
-      }`
-      setDate(formattedDate)
+    const { branch_themes_id } = router.query
+
+    if (branch_themes_id) {
+      setLoading(true)
+      getThemeDetails(branch_themes_id)
+        .then(() => {
+          setLoading(false)
+          console.log(themeDetails.sessions)
+          if (selectedDate) {
+            const formattedDate = `${selectedDate.year}-${String(
+              selectedDate.month + 1
+            ).padStart(2, '0')}-${String(selectedDate.day).padStart(2, '0')}`
+            setDate(formattedDate)
+            setErrors((prev) => ({ ...prev, date: undefined }))
+          } else {
+            setDate('')
+          }
+        })
+        .catch((error) => {
+          console.error('Error fetching theme details:', error)
+          setLoading(false)
+        })
     }
-  }, [selectedDate])
+  }, [router.query, getThemeDetails, selectedDate])
 
   const handleNameChange = (e) => {
     setName(e.target.value)
+    const result = schemaForm.safeParse({ name: e.target.value })
+    if (!result.success) {
+      setErrors((prev) => ({ ...prev, name: result.error.format().name }))
+    } else {
+      setErrors((prev) => ({ ...prev, name: undefined }))
+    }
   }
 
   const handleMobileChange = (e) => {
-    setMobile(e.target.value)
+    setMobilePhone(e.target.value)
+    const result = schemaForm.safeParse({ mobile_phone: e.target.value })
+    if (!result.success) {
+      setErrors((prev) => ({
+        ...prev,
+        mobile_phone: result.error.format().mobile_phone,
+      }))
+    } else {
+      setErrors((prev) => ({ ...prev, mobile_phone: undefined }))
+    }
   }
 
   const handleRadioChange = (e) => {
     setRadioValue(e.target.value)
-    console.log(`Name: ${e.target.name}, Value: ${e.target.value}`)
+    setModalOpen(true)
   }
 
-  const timeSlots = Array.from(new Array(24 * 2)).map(
-    (_, index) =>
-      `${index < 20 ? '0' : ''}${Math.floor(index / 2)}:${
-        index % 2 === 0 ? '00' : '30'
-      }`
-  )
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const formData = { name, mobile_phone, date }
+
+    // 分別驗證每個字段
+    const nameResult = schemaForm.shape.name.safeParse(name)
+    const mobileResult = schemaForm.shape.mobile_phone.safeParse(mobile_phone)
+
+    // 日期驗證
+    let dateResult
+    if (!date) {
+      dateResult = {
+        success: false,
+        error: { format: () => ({ _errors: ['請選擇預約日期'] }) },
+      }
+    } else {
+      dateResult = schemaForm.shape.date.safeParse(date)
+    }
+
+    const newErrors = {}
+    if (!nameResult.success) newErrors.name = nameResult.error.format()
+    if (!mobileResult.success)
+      newErrors.mobile_phone = mobileResult.error.format()
+    if (!dateResult.success) newErrors.date = dateResult.error.format()
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+    } else {
+      setErrors({})
+      console.log('表單數據:', formData)
+      // 提交表單數據
+    }
+  }
+
+  const closeModal = () => {
+    setModalOpen(false)
+  }
 
   return (
     <div className={myStyle.reservationrBg}>
@@ -53,83 +129,173 @@ export default function Reservation() {
           <FaGhost />
           &ensp; 請先 登入/註冊會員 再預約
         </div>
-        <div className={myStyle.p}>
-          <Input02
-            className={myStyle.p}
-            name="name"
-            type="text"
-            value={name}
-            placeholder="姓名"
-            onChange={handleNameChange}
-          />
-        </div>
-        <div className={myStyle.p}>
-          <Input02
-            className={myStyle.p}
-            name="mobile"
-            type="text"
-            value={mobile}
-            placeholder="手機號碼"
-            onChange={handleMobileChange}
-          />
-        </div>
-        <Box sx={{ display: 'flex', gap: 3 }}>
-          <Checkbox label="同會員資料" sx={{ color: '#B99755', mt: 3 }} />
-        </Box>
-        <div className={myStyle.p}>
-          <Input02
-            className={myStyle.p}
-            name="date"
-            type="text"
-            value={date}
-            placeholder="預約日期(請點選日曆)"
-            readOnly
-          />
-        </div>
-        <div className={myStyle.p}>
-          <Select03
-            name="timeSlot"
-            value=""
-            placeholder="選擇場次"
-            options={timeSlots}
-            onChange={(e) => console.log(e.target.value)}
-          />
-        </div>
-        <div className={myStyle.p}>
-          <Select03
-            name="people"
-            value=""
-            placeholder="請選擇人數"
-            options={[1, 2, 3, 4, 5]}
-            onChange={(e) => console.log(e.target.value)}
-          />
-        </div>
-        <div className={myStyle.p}>
-          <Select03
-            name="discount"
-            value=""
-            placeholder="優惠項目"
-            options={['無', '學生', '會員', 'VIP']}
-            onChange={(e) => console.log(e.target.value)}
-          />
-        </div>
-        <div className={myStyle.p}>
-          <Textarea01 />
-        </div>
-        <div className={myStyle.p}>
-          <Radio02
-            radios={[{ value: 'check', label: '請閱讀注意事項' }]}
-            name="readNotice"
-            value={radioValue}
-            onChange={handleRadioChange}
-          />
-        </div>
-        <div style={{ textAlign: 'center', marginTop: '10px' }}>
-          <button className={myStyle.booking} type="submit">
-            我要預約
-          </button>
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className={myStyle.p}>
+            <Input02
+              className={myStyle.p}
+              name="name"
+              type="text"
+              value={name}
+              placeholder="姓名"
+              onChange={handleNameChange}
+            />
+            {(errors.name?._errors || []).map((error, index) => (
+              <span key={index} className={myStyle.error}>
+                {error}
+              </span>
+            ))}
+          </div>
+          <div className={myStyle.p}>
+            <Input02
+              className={myStyle.p}
+              name="mobile_phone"
+              type="text"
+              value={mobile_phone}
+              placeholder="手機號碼"
+              onChange={handleMobileChange}
+            />
+            {errors.mobile_phone &&
+              errors.mobile_phone._errors &&
+              errors.mobile_phone._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
+          </div>
+          <Box sx={{ display: 'flex', gap: 3 }}>
+            <Checkbox label="同會員資料" sx={{ color: '#B99755', mt: 3 }} />
+          </Box>
+          <div className={myStyle.p}>
+            <Input02
+              className={myStyle.p}
+              name="date"
+              type="text"
+              value={date}
+              placeholder="預約日期(請點選日曆)"
+              readOnly
+            />
+            {errors.date &&
+              errors.date._errors &&
+              errors.date._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
+          </div>
+          <div className={myStyle.p}>
+            <div className={myStyle.p}>
+              <div className={myStyle.p}>
+                <Select03
+                  name="timeSlot"
+                  value={timeSlot}
+                  placeholder="選擇場次"
+                  options={
+                    themeDetails?.sessions?.map((session) => ({
+                      text: `${session.start_time} - ${session.end_time}`,
+                      value: session.sessions_id,
+                    })) || []
+                  }
+                  onChange={(e) => setTimeSlot(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          <div className={myStyle.p}>
+            <Select03
+              name="people"
+              value={people} // 確保這裡使用了狀態變量來保存選中的人數
+              placeholder="請選擇人數"
+              options={Array.from(
+                {
+                  length:
+                    themeDetails?.max_players - themeDetails?.min_players + 1,
+                },
+                (_, index) => ({
+                  text: `${themeDetails?.min_players + index} 人`,
+                  value: themeDetails?.min_players + index,
+                })
+              )}
+              onChange={(e) => setPeople(e.target.value)} // 更新所選的人數狀態
+            />
+          </div>
+
+          <div className={myStyle.p}>
+            <Select03
+              name="discount"
+              value=""
+              placeholder="優惠項目"
+              options={['無', '學生', '會員', 'VIP']}
+              onChange={(e) => console.log(e.target.value)}
+            />
+          </div>
+          <div className={myStyle.p}>
+            <Textarea01 />
+          </div>
+          <div className={myStyle.p}>
+            <Radio02
+              radios={[{ value: 'check', label: '請閱讀注意事項' }]}
+              name="readNotice"
+              value={radioValue}
+              onChange={handleRadioChange}
+            />
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '10px' }}>
+            <button className={myStyle.booking} type="submit">
+              我要預約
+            </button>
+          </div>
+        </form>
       </div>
+
+      {/* 注意事項彈跳視窗 */}
+      <BasicModal02
+        open={modalOpen}
+        onClose={closeModal}
+        modalTitle="注意事項"
+        modalBody={
+          <div>
+            <p>1. 活動採包場制，不協助並團，預約須達「遊戲最低人數」。</p>
+            <p>
+              2.
+              變更或取消預訂日期，請於預約日前一日來電通知。臨時取消將會影響您下次預約的優先權利。
+            </p>
+            <p>
+              3.
+              在遊戲人數範圍內可以臨時追加人數，不需與客服聯繫，當日將以現場人數收費。遇天災或不可抗力因素取消或變更場次，以網站公告為準。
+            </p>
+            <p>
+              4. 請「準時到場」集合報到，現場以{' '}
+              <span style={{ color: '#B99755', fontWeight: 'bold' }}>
+                現金收費
+              </span>{' '}
+              並進行事前說明。超過表定時間未報到入場，即取消場次，開放給現場玩家預約。
+            </p>
+            <p>
+              5.
+              活動流程包含事前說明、進行密室逃脫、遊戲後故事解說（無全程謎題講解）。
+            </p>
+            <p>
+              6.
+              遊玩人數低於建議人數時難度較高，不足開場人數時將導致活動無法進行。本遊戲因場景及遊戲設計，{' '}
+              <span style={{ color: '#B99755', fontWeight: 'bold' }}>
+                未滿12歲、孕婦及行動不便者不得入場
+              </span>
+              。
+            </p>
+            <p>
+              8.
+              如因年齡未達遊戲主題限制，本工作室有權拒絕玩家入場，並不得將未成年孩童托管在場館內。如有特殊需求（嬰兒車、寵物等），請先來電詢問。
+            </p>
+            <p>9. 遊戲期間請勿飲食、攝影及錄音。</p>
+            <p>10. 場內設置各項活動機關，請「穿著方便活動的衣物」。</p>
+            <p style={{ color: '#B99755', fontWeight: 'bold' }}>
+              遊戲過程中如有毀損道具及場景之行為，造成本工作室損失，將提出求償。（包含道具維修、場景修復、營業損失之費用等等）。
+            </p>
+          </div>
+        }
+        buttonLabel="我已閱讀"
+        onButtonClick={closeModal}
+      />
     </div>
   )
 }

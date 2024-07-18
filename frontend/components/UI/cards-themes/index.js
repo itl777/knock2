@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import styles from './cards.module.scss'
 import {
   AspectRatio,
@@ -11,7 +12,6 @@ import {
   Box,
 } from '@mui/joy'
 import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
-import { Padding } from '@mui/icons-material'
 
 export default function Card02({
   branchName = '',
@@ -22,17 +22,20 @@ export default function Card02({
   min_players = '',
   max_players = '',
   themeTime = 0,
+  branch_themes_id,
 }) {
+  const router = useRouter()
+
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'EASY':
-        return '#63AA90' // 黑色
+        return '#63AA90'
       case 'MEDIUM':
-        return '#B99755' // 白色
+        return '#B99755'
       case 'HARD':
-        return '#A43131' // 藍色
+        return '#A43131'
       default:
-        return '#222222' // 默認顏色
+        return '#222222'
     }
   }
 
@@ -41,6 +44,7 @@ export default function Card02({
   const handleClick = (e) => {
     e.preventDefault()
     setClicked(!clicked)
+    router.push(`/themes/themes-details/${branch_themes_id}`)
   }
 
   const style = {
@@ -171,8 +175,7 @@ export default function Card02({
               }}
             >
               <Link
-                // href={`themes/themes-details/${theme_id}`}
-                href={`#?`}
+                href="#"
                 onClick={handleClick}
                 style={style}
                 onMouseEnter={(e) => {
@@ -185,13 +188,6 @@ export default function Card02({
                 }}
               >
                 立即預訂
-                {/* <Image
-                src="/components/arrow-special.svg"
-                alt=""
-                width={49}
-                height={16}
-                className={styles['arrow']}
-              /> */}
               </Link>
             </Typography>
           </Box>
