@@ -22,7 +22,7 @@ export default function FavoriteTab() {
   }
   // ----MUI
 
-  const { data } = useProduct()
+  const { favoriteData,cardChange } = useProduct()
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -48,13 +48,13 @@ export default function FavoriteTab() {
         </Box>
         <TabPanel value="1">
           {/* 一般卡片列表 */}
-          <ProductTabList favData={data} />
-          <MyPagination />
+          <ProductTabList favData={favoriteData} />
+          <MyPagination favoriteData={favoriteData}/>
         </TabPanel>
 
         <TabPanel value="2">
           {/* 有分類的卡片列表 */}
-          <ProductTabDrag favData={data}/>
+          <ProductTabDrag favData={favoriteData}/>
         </TabPanel>
       </TabContext>
     </Box>

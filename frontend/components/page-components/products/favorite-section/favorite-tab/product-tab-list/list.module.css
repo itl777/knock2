@@ -1,7 +1,7 @@
 .grid {
   display: grid;
   grid-template-columns: auto auto auto;
-  justify-content: space-around;
+  justify-content: center;
   gap: 32px;
 }
 .pd-card {
