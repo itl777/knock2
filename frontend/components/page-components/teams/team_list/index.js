@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import styles from './teams.module.css'
-import { TEAM_ALL } from '@/configs/api-path'
+import { useRouter } from 'next/router'
+
+import { GET_DATA } from '@/configs/api-path'
+
+import styles from '@/pages/teams/teams.module.css'
 import Card from '@/components/UI/teams-card'
+import MyPagination from './pagination'
 
 export default function TeamList() {
+  const router = useRouter()
+
   const [data, setData] = useState({
     success: false,
     rows: [],
@@ -14,7 +20,7 @@ export default function TeamList() {
   const [branchId, setBranchId] = useState('')
   const [order, setOrder] = useState('')
   const [teamStatus, setTeamStatus] = useState('')
-  const [perPage] = useState(6)
+  // const [perPage] = useState(6)
 
   const fetchData = async () => {
     const params = new URLSearchParams({ page })
@@ -29,7 +35,7 @@ export default function TeamList() {
       params.append('team_status', teamStatus)
     }
     try {
-      const response = await fetch(`${TEAM_ALL}?${params.toString()}`)
+      const response = await fetch(`${GET_DATA}?${params.toString()}`)
       const result = await response.json()
       const { rows, totalPages } = result
       setData({ success: true, rows })
@@ -118,32 +124,8 @@ export default function TeamList() {
               )
             })}
           </div>
-
-          <div
-            style={{
-              margin: '0 auto',
-              paddingTop: '10px ',
-              textAlign: 'center',
-            }}
-          >
-            <button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-              disabled={page <= 1}
-            >
-              上一頁
-            </button>
-            <span>
-              {' '}
-              Page {page} of {totalPages}{' '}
-            </span>
-            <button
-              onClick={() =>
-                setPage((prev) => (prev < totalPages ? prev + 1 : prev))
-              }
-              disabled={page >= totalPages}
-            >
-              下一頁
-            </button>
+          <div>
+          <MyPagination totalPages={totalPages} />
           </div>
         </div>
       </div>

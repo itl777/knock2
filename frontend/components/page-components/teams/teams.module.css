@@ -1,0 +1,82 @@
+.teamsPage {
+    /* max-width: 1440px; */
+    margin: auto;
+    /* border: 1px solid #B99755; */
+    color: #B99755;
+    /* background-color: #000; */
+    /* background: url('/bg-dark.png') no-repeat; */
+    /* background-size: cover; */
+}
+
+.pageTitle {
+    text-align: center;
+    padding: 36px 0;
+}
+
+.borderbox {
+    padding: 24px 16px;
+    border: 3px solid #B99755;
+    border-radius: 10px;
+    background-color: #222222;
+    color:#B99755;
+}
+
+.tourInfo {
+    padding: 16px 0;
+
+}
+
+.teamsSection {
+    padding: 30px 12px;
+    line-height: 2;
+}
+
+.teamUnite {
+    display: inline-grid;
+    padding: 6px 20px;
+}
+
+.teamCard {
+    border: 1px solid #B99755;
+    background-color: #FFF;
+}
+
+.teamTourInfo {
+    display: inline-block;
+    margin: -40px 0 0 10px;
+    padding: 16px;
+    background-color: #000;
+}
+
+.teamTitle {
+    background-color: #000;
+    color: #bbb;
+}
+
+.teamContent {
+    padding: 26px;
+}
+
+.diffeasy {
+    color: #FFFFFF;
+    background-color: #63AA90;
+}
+
+.diffmedium {
+    color: #FFFFFF;
+    background-color: #B99755;
+}
+
+.diffhard {
+    color: #FFFFFF;
+    background-color: #A43131;
+}
+
+.MuiAccordionActions-spacing{
+    background:none;
+}
+
+.avatarImg{
+    width:24px;
+    height:24px;
+}

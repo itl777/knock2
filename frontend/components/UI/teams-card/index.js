@@ -42,7 +42,7 @@ export default function Card01({
   }
 
   const formatDateToTaiwan = (dateString) => {
-    return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
+    return moment(dateString).tz('Asia/Taipei').format('YYYY/MM/DD')
   }
   const formatTime = (timeString) => {
     return moment(timeString, 'HH:mm:ss').format('A hh:mm')
@@ -124,15 +124,19 @@ export default function Card01({
       {/* 文字 title-md body-sm */}
       <CardContent
         sx={{
-          py: 3,
-          px: { xs: 4, sm: 6 },
+          pt: 3,
+          pb: 0,
+          px: { xs: 2, sm: 4 },
           justifyContent: 'center',
           color: '#B99755',
         }}
       >
-        <span>團隊名稱：{team_title}</span>
+        <span>
+          團隊名稱：
+          <br />
+          {team_title}
+        </span>
         <span>團長：{rick_name}</span>
-        <br />
         <span>
           時間：{formatDateToTaiwan(reservation_date)} {formatTime(start_time)}
         </span>
@@ -142,7 +146,7 @@ export default function Card01({
         <CardContent
           orientation="horizontal"
           sx={{
-            px: 6,
+            px: 3,
             pb: 2,
             gap: {
               xs: 1,
@@ -150,10 +154,10 @@ export default function Card01({
             },
           }}
         >
-          <div style={{ margin: '0 auto', paddingTop: '10px ' }}>
+          <div style={{ margin: '0 auto', paddingTop: '0px ' }}>
             {' '}
             <Link href={`/teams/${team_id}`}>
-              <PdBtnContained btnText="查看詳情" color="black" />
+              <PdBtnContained btnText="更多詳情" color="black" />
             </Link>
           </div>
         </CardContent>

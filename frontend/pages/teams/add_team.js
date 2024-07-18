@@ -1,11 +1,55 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import IndexLayout from '@/components/layout'
 import styles from './teams.module.css'
-import tempTour from '@/data/teams/temp-tour-data.json'
+import moment from 'moment-timezone'
+
+import { useAuth } from '@/context/auth-context'
+import { NO_TEAM } from '@/configs/api-path'
 
 import SubmitBtn from '@/pages/teams/submit-btn'
 
 export default function TeamsAdd() {
+  const { login, logout, auth } = useAuth()
+
+  const [userData, setUserData] = useState({
+    success: false,
+    rows: [],
+  })
+
+  const [noTeamData, setNoTeamData] = useState({
+    success: false,
+    rows: [],
+  })
+  const [selectedReservation, setSelectedReservation] = useState(null)
+
+  useEffect(() => {
+    const fetchNoTeamData = async () => {
+      try {
+        // const res = await fetch(`${GET_DATA}/${auth.id}`)
+        const res = await fetch(`${NO_TEAM}${auth.id}`)
+        if (!res.ok) {
+          throw new Error('Fetch Failed')
+        }
+
+        const myData = await res.json()
+        setNoTeamData(myData)
+        // setIsLoading(false)
+      } catch (error) {
+        console.error('Fetch error:', error)
+        // setIsLoading(false)
+      }
+    }
+    fetchNoTeamData()
+  }, [auth.id])
+
+  const handleSelectChange = (e) => {
+    const reservation_id = e.target.value
+    const selectedReservation = noTeamData.rows.find(
+      (r) => r.reservation_id === parseInt(reservation_id)
+    )
+    setSelectedReservation(selectedReservation)
+  }
+
   return (
     <>
       <IndexLayout title="糾團" background="dark">
@@ -15,33 +59,47 @@ export default function TeamsAdd() {
         <div className={styles.teamsPage}>
           <div className="container">
             <div className="row">
-              <div className="col-6">
+              <div className="col-12 col-md-6">
                 <div className={styles.borderbox}>
                   <h3 className="boxTitle">創立團隊</h3>
                   <form>
                     <div className="mb-3">
                       <label htmlFor={'lead_name'} className="form-label">
-                        團長： {tempTour.leader_id}
+                        團長： {auth.nickname}
                       </label>
                     </div>
                     <div className="mb-3">
                       <select
                         className="form-select"
                         aria-label="Default select example"
+                        name="reservation_id"
+                        onChange={handleSelectChange}
                       >
                         <option selected>請選擇已預約的行程</option>
-                        <option value="1">{tempTour.tour_name}</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
+                        {noTeamData.rows.map((r) => (
+                          <option
+                            key={r.reservation_id}
+                            value={r.reservation_id}
+                          >
+                            {r.theme_name}
+                          </option>
+                        ))}
                       </select>
                     </div>
-                    <div className={styles.tourInfo}>
-                      時間：{tempTour.tour_time}
-                      <br />
-                      場次：{tempTour.location}
-                      <br />
-                      人數：
-                    </div>
+
+                    {selectedReservation && (
+                      <div className="displayDetail">
+                        <p>主題名稱: {selectedReservation.theme_name}</p>
+                        <p>
+                          預約日期:{' '}
+                          {moment(selectedReservation.reservation_date).format(
+                            'YYYY年MM月DD日'
+                          )}
+                        </p>
+                        <p>開始時間: {selectedReservation.start_time}</p>
+                      </div>
+                    )}
+                    <hr />
                     <div className="mb-3">
                       <label htmlFor={'team_name'} className="form-label">
                         團隊名稱
@@ -96,7 +154,7 @@ export default function TeamsAdd() {
                   </form>
                 </div>
               </div>
-              <div className="col-6">
+              <div className="col-12 col-md-6">
                 <div className={styles.borderbox}>
                   <h3 className="boxTitle">注意事項</h3>
                   <ol>
