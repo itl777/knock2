@@ -16,13 +16,11 @@ export default function CouponPage() {
     { key: 'expired', name: '已過期', path: '/user/coupon/expired' },
   ]
 
-
   useEffect(() => {
     if (!status) {
       router.push('/user/coupon/ongoing') // 如果沒有狀態，默認跳轉到 ongoing
     }
   }, [status])
-
 
   return (
     <>

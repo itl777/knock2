@@ -4,11 +4,14 @@ import { useRouter } from 'next/router'
 // context
 import { useLoginModal } from '@/context/login-context'
 import { useAuth } from '@/context/auth-context'
+import { useConfirmDialog } from '@/context/confirm-dialog-context'
+import { useSnackbar } from '@/context/snackbar-context'
 // hooks
 import useFetchAllOrders from '@/hooks/fetchAllOrder'
 import usePayment from '@/hooks/usePayment'
 // components
 import OrderListCard from './order-list-card'
+import ConfirmDialog from '@/components/UI/confirm-dialog'
 import NoData from '@/components/UI/no-data'
 import UserPagination from '@/components/UI/user-pagination'
 import RedirectionGuide from '@/components/UI/redirect-guide'
@@ -22,32 +25,44 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
   const [updateAllOrders, setUpdateAllOrders] = useState(false)
   const { allOrderData, allOrderDetails, totalPages, fetchAllOrders } =
     useFetchAllOrders()
-  const { handleCancel, handleEcpaySubmit } = usePayment()
+  const { handleOrderCancel, handleOrderPayment } = usePayment()
+  const { openConfirmDialog } = useConfirmDialog()
+  const { openSnackbar } = useSnackbar()
+  const [cancelDialog, setCancelDialog] = useState('')
 
   const handlePageChange = (newPage) => {
     setPage(newPage)
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, page: newPage },
-    })
+    // router.push({
+    //   pathname: router.pathname,
+    //   query: { ...router.query, page: newPage },
+    // })
   }
 
-  const btnLeftOnClick = (order_status_id, order_id, total_price) => {
-    if (+order_status_id === 1) {
+  const handleCancel = (order_id, order_status_id, merchant_trade_no) => {
+    if (order_status_id === 1 || order_status_id === 2) {
+      return async () => {
+        setCancelDialog(`確定要取消訂單編號 ${merchant_trade_no} 嗎？`)
+
+        openConfirmDialog(async () => {
+          const result = await handleOrderCancel(order_id)
+          if (result.success) {
+            openSnackbar('已取消訂單', 'success')
+          } else {
+            openSnackbar('取消訂單失敗', 'error')
+          }
+          setUpdateAllOrders(true)
+        })
+      }
+    }
+  }
+
+  const handlePayment = (order_id, payment_type, total_price) => {
+    if (payment_type === '待付款') {
       return () => {
-        handleEcpaySubmit(order_id, total_price)
+        handleOrderPayment(order_id, total_price)
         setUpdateAllOrders(true)
       }
     }
-    if (+order_status_id === 2) {
-      return () => {
-        if (window.confirm('確定要取消訂單嗎？')) {
-          handleCancel(order_id)
-          setUpdateAllOrders(true)
-        }
-      }
-    }
-    return null
   }
 
   // 登入驗證
@@ -98,11 +113,8 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
             orderDetailData={allOrderDetails}
             member_id={auth.id}
             page={page}
-            btnLeftOnClick={btnLeftOnClick(
-              v.order_status_id,
-              v.order_id,
-              v.total_price
-            )}
+            handleCancel={handleCancel(v.order_id, v.order_status_id, v.merchant_trade_no)}
+            handlePayment={handlePayment(v.order_id, v.payment_type, v.total_price)}
           />
         ))
       )}
@@ -114,6 +126,12 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
           onPageChange={handlePageChange}
         />
       )}
+
+      <ConfirmDialog
+        dialogTitle={cancelDialog}
+        btnTextRight="確定取消"
+        btnTextLeft="取消"
+      />
     </>
   )
 }

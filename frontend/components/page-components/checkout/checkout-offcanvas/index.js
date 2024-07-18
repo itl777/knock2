@@ -53,9 +53,11 @@ export default function CheckoutOffcanvas() {
   const {
     checkoutItems,
     checkoutTotal,
+    subtotal,
     deliverFee,
     cartBadgeQty,
     handleQuantityChange,
+    discountTotal,
   } = useCart()
 
   return (
@@ -105,9 +107,10 @@ export default function CheckoutOffcanvas() {
             {cartBadgeQty > 0 && (
               <div className={styles.checkoutBottom}>
                 <CheckoutTotalTable
-                  subtotal={checkoutTotal}
+                  subtotal={subtotal}
+                  checkoutTotal={checkoutTotal}
                   deliverFee={deliverFee}
-                  totalDiscount={0}
+                  totalDiscount={discountTotal}
                 />
                 <BlackBtn
                   btnText="前往購物車"

@@ -119,7 +119,7 @@ export const AddressProvider = ({ children }) => {
         closeAddressSelectModal()
         openSnackbar('新增地址成功！', 'success')
       } else {
-        alert('新增失敗！')
+        openSnackbar('新增地址失敗！', 'error')
       }
 
       console.log('new added id', response.data.addressId)

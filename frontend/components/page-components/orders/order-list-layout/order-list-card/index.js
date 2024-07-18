@@ -6,7 +6,7 @@ import IconTextRow from '../icon-text-row'
 import OrderStatusTag from '../../order-status-tag'
 import OrderProductImgBox from '../../order-product-img-box'
 import { HiOutlineCreditCard, HiOutlineCube } from 'react-icons/hi'
-
+import { useRouter } from 'next/router'
 
 export default function OrderListCard({
   order_id,
@@ -18,29 +18,35 @@ export default function OrderListCard({
   order_status_id,
   order_status_name,
   orderDetailData,
-  btnLeftOnClick,
+  handlePayment, // 接收父層 order list layout 
+  handleCancel, // 接收父層 order list layout 
 }) {
+  const router = useRouter()
 
-  const btnLeftText = () => {
-    if (+order_status_id === 1) return '重新付款'
-    if (+order_status_id === 2) return '取消訂單'
-    return ''
+  const goToDetail = () => {
+    router.push(`/user/orders/details/${order_id}`)
   }
 
-  const isBtnLeftHidden = () => {
-    return ![1, 2].includes(+order_status_id)
+  const showCancelBtn = () => {
+    return order_status_id === 1 || order_status_id === 2 ? false : true
+  }
+
+  const showPaymentBtn = () => {
+    return payment_type === '待付款' ? false : true
   }
 
   return (
     <div className={styles.orderBox}>
       <CardHeader
         title={order_date}
-        btnRightText="詳情"
-        btnRightHref={`/user/orders/details/${order_id}`}
-        btnLeftText={btnLeftText()}
-        btnLeftHref={null}
-        btnLeftHidden={isBtnLeftHidden()}
-        btnLeftOnClick={btnLeftOnClick}
+        btn1Text="詳情"
+        btn1OnClick={goToDetail}
+        btn2Hidden={showPaymentBtn()}
+        btn2Text="重新付款"
+        btn2OnClick={handlePayment}
+        btn3Hidden={showCancelBtn()}
+        btn3Text="取消訂單"
+        btn3OnClick={handleCancel}
       />
       <div className={styles.orderBody}>
         <div>

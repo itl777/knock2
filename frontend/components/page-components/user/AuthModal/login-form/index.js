@@ -8,8 +8,9 @@ import { useLoginModal } from '@/context/login-context/index'
 // styles
 import styles from '../login-form.module.scss'
 // components
-import AuthFormInput from '../auth-form-input'
 import ClearButton from '@/components/UI/ClearButton'
+import LoginInput from './login-input'
+import OTPInput from '@/components/UI/form-item/otp-input'
 
 const dialogTheme = createTheme({
   components: {
@@ -19,6 +20,7 @@ const dialogTheme = createTheme({
           overflow: 'visible',
           borderRadius: '1rem',
           backgroundColor: '#343434',
+          margin: '10px',
         },
       },
     },
@@ -33,6 +35,10 @@ export default function LoginForm() {
     handleLoginChange,
     loginSubmit,
     loginFormSwitch,
+    totpEnabled, // 2FA
+    totpDataState,
+    setTotpDataState,
+    login2faSubmit,
   } = useLoginModal()
 
   return (
@@ -48,27 +54,32 @@ export default function LoginForm() {
             <Image src="/ghost/ghost_04.png" alt="" width={133} height={138} />
             <Image src="/ghost/ghost_13.png" alt="" width={115} height={115} />
           </figure>
-          <form className={styles.forms} onSubmit={loginSubmit}>
+          <form
+            className={styles.forms}
+            onSubmit={totpEnabled ? login2faSubmit : loginSubmit}
+          >
             <div className={styles.title}>
               <h3>會員登入</h3>
             </div>
             <div className={styles.box}>
-              <AuthFormInput
-                name="account"
-                type="text"
-                value={loginData.account}
-                placeholder="請輸入Email"
-                onChange={handleLoginChange}
-              />
-              <span className={styles.errorText}>{loginErrors.account}</span>
-              <AuthFormInput
-                name="password"
-                type="password"
-                value={loginData.password}
-                placeholder="請輸入密碼"
-                onChange={handleLoginChange}
-              />
-              <span className={styles.errorText}>{loginErrors.password}</span>
+              {totpEnabled === true ? (
+                <>
+                  <span style={{ paddingBottom: '10px' }}>
+                    請輸入兩步驗證的驗證碼
+                  </span>
+                  <OTPInput
+                    state={totpDataState}
+                    setState={setTotpDataState}
+                    color="#fff"
+                  />
+                </>
+              ) : (
+                <LoginInput
+                  loginData={loginData}
+                  handleLoginChange={handleLoginChange}
+                  loginErrors={loginErrors}
+                />
+              )}
               <div className={styles.box2}>
                 <span className={styles.errorText}>{loginErrors.result}</span>
                 <ClearButton
@@ -79,7 +90,6 @@ export default function LoginForm() {
                 />
               </div>
             </div>
-
             <div className={styles.box}>
               <input type="submit" value="登入" />
             </div>

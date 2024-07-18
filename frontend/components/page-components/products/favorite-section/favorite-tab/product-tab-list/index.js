@@ -5,6 +5,7 @@ import FavCard from '../product-tab-drag/fav-card'
 import { useEffect, useState } from 'react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import EmptyFavorite from '../empty-favorite'
 
 export default function ProductTabList({ favData }) {
   let favDataRows = favData['rows'] || []
@@ -18,6 +19,11 @@ export default function ProductTabList({ favData }) {
   useEffect(() => {
     AOS.init()
   }, [])
+
+// 無收藏顯示頁面
+  if (favDataRows.length === 0) {
+    return <EmptyFavorite />
+  }
 
   return (
     <div data-aos="fade-up" className={myStyle['grid']}>

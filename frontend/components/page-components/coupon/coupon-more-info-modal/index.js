@@ -7,7 +7,7 @@ import { formatIntlNumber } from '@/hooks/numberFormat'
 
 export default function CouponMoreInfoModal({
   coupon,
-  couponDetails,
+  coupon_id,
   handleClose,
 }) {
   const getCouponIntro = (discount_amount, discount_percentage) => {
@@ -59,9 +59,10 @@ export default function CouponMoreInfoModal({
       <div className={styles.couponModalBody}>
         <CouponCard
           coupon_name={coupon.coupon_name}
-          restrict={coupon.minimum_order}
-          expire_date={coupon.valid_until}
+          minimum_order={coupon.minimum_order}
+          valid_until={coupon.valid_until}
           btnHidden={true}
+          selectable={false}
         />
         <div className={styles.couponTable}>
           <CouponInfoRow label="有效期限" content={coupon.valid_until} />
@@ -80,12 +81,12 @@ export default function CouponMoreInfoModal({
               coupon.discount_percentage
             )}
           />
-          <div>
-            <small>適用商品：**** 待處理 ****</small>
-            {couponDetails.map((v) => (
-              <small key={v.product_id}>{v.product_name}, </small>
-            ))}
-          </div>
+          {coupon.products.length > 0 && (
+            <CouponInfoRow
+              label="指定商品詳情"
+              content={coupon.products.map((p) => p.product_name).join(', ')}
+            />
+          )}
         </div>
       </div>
     </ModalLayout>

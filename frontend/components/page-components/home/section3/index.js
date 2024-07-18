@@ -1,4 +1,4 @@
-import { THEME_LIST, BRANCH_THEMES } from '@/configs/api-path'
+import { BRANCH_THEMES } from '@/configs/api-path'
 import { useEffect, useState } from 'react'
 import Slider from 'react-slick'
 import Card02 from '@/components/UI/cards-themes'
@@ -22,7 +22,7 @@ export default function HomeSection3() {
       .catch((error) => {
         console.error('Error fetching themes:', error)
       })
-  }, []) // 添加依賴數組
+  }, [])
 
   const settings = {
     className: 'center',

@@ -157,9 +157,13 @@ router.get("/api/cart", async (req, res) => {
       FROM cart_member AS cm
       JOIN product_management AS pm
       ON pm.product_id = cm.cart_product_id
-      JOIN product_img AS pi
+      JOIN (
+        SELECT img_product_id, MIN(product_img) as product_img
+        FROM product_img
+        GROUP BY img_product_id
+      ) AS pi
       ON pi.img_product_id = cm.cart_product_id
-      WHERE cm.cart_member_id = ?;
+      WHERE cm.cart_member_id = ?
     `;
 
     const [rows] = await db.query(sql, [member_id]);
