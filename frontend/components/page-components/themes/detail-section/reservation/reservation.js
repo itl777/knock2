@@ -13,7 +13,6 @@ import Radio02 from '@/components/UI/form-item/radio02'
 import { FaGhost } from 'react-icons/fa'
 import BasicModal02 from '@/components/UI/basic-modal02'
 import schemaForm from './schemaForm'
-import { People } from '@mui/icons-material'
 
 export default function Reservation() {
   const { selectedDate } = useContext(DateContext)
@@ -25,11 +24,12 @@ export default function Reservation() {
   const [errors, setErrors] = useState({})
   const [timeSlot, setTimeSlot] = useState('')
   const [people, setPeople] = useState('')
-
+  const [discount, setDiscount] = useState('')
   const { themeDetails, getThemeDetails } = useTheme()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
+  // 連後端資料跟資料驗證
   useEffect(() => {
     const { branch_themes_id } = router.query
 
@@ -56,6 +56,7 @@ export default function Reservation() {
     }
   }, [router.query, getThemeDetails, selectedDate])
 
+  // 姓名、電話、select資料驗證
   const handleNameChange = (e) => {
     setName(e.target.value)
     const result = schemaForm.safeParse({ name: e.target.value })
@@ -84,13 +85,47 @@ export default function Reservation() {
     setModalOpen(true)
   }
 
+  const clearError = (field) => {
+    setErrors((prev) => ({ ...prev, [field]: undefined }))
+  }
+
+  const handleSelectChange = (e, field) => {
+    const value = e.target.value
+    switch (field) {
+      case 'timeSlot':
+        setTimeSlot(value.toString())
+        break
+      case 'people':
+        setPeople(value.toString()) // 确保将人数字段的值转换为字符串
+        break
+      case 'discount':
+        setDiscount(value.toString())
+        break
+      default:
+        break
+    }
+    clearError(field)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    const formData = { name, mobile_phone, date }
+    const formData = {
+      name,
+      mobile_phone: mobile_phone.toString(),
+      date,
+      timeSlot: timeSlot.toString(),
+      people: people.toString(),
+      discount: discount.toString(),
+    }
 
-    // 分別驗證每個字段
+    // 驗證每個字段
     const nameResult = schemaForm.shape.name.safeParse(name)
-    const mobileResult = schemaForm.shape.mobile_phone.safeParse(mobile_phone)
+    const mobileResult = schemaForm.shape.mobile_phone.safeParse(
+      mobile_phone.toString()
+    )
+    const timeSlotResult = schemaForm.shape.timeSlot.safeParse(timeSlot)
+    const peopleResult = schemaForm.shape.people.safeParse(people.toString())
+    const discountResult = schemaForm.shape.discount.safeParse(discount)
 
     // 日期驗證
     let dateResult
@@ -103,11 +138,25 @@ export default function Reservation() {
       dateResult = schemaForm.shape.date.safeParse(date)
     }
 
+    // 驗證是否選擇了「閱讀注意事項」
+    const radioResult = radioValue
+      ? { success: true }
+      : {
+          success: false,
+          error: { format: () => ({ _errors: ['請閱讀並同意注意事項'] }) },
+        }
+
     const newErrors = {}
     if (!nameResult.success) newErrors.name = nameResult.error.format()
     if (!mobileResult.success)
       newErrors.mobile_phone = mobileResult.error.format()
     if (!dateResult.success) newErrors.date = dateResult.error.format()
+    if (!timeSlotResult.success)
+      newErrors.timeSlot = timeSlotResult.error.format()
+    if (!peopleResult.success) newErrors.people = peopleResult.error.format()
+    if (!discountResult.success)
+      newErrors.discount = discountResult.error.format()
+    if (!radioResult.success) newErrors.readNotice = radioResult.error.format() // 添加閱讀注意事項的錯誤
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
@@ -118,6 +167,7 @@ export default function Reservation() {
     }
   }
 
+  // 視窗彈出
   const closeModal = () => {
     setModalOpen(false)
   }
@@ -195,8 +245,15 @@ export default function Reservation() {
                       value: session.sessions_id,
                     })) || []
                   }
-                  onChange={(e) => setTimeSlot(e.target.value)}
+                  onChange={(e) => handleSelectChange(e, 'timeSlot')}
                 />
+                {errors.timeSlot &&
+                  errors.timeSlot._errors &&
+                  errors.timeSlot._errors.map((error, index) => (
+                    <span key={index} className={myStyle.error}>
+                      {error}
+                    </span>
+                  ))}
               </div>
             </div>
           </div>
@@ -215,18 +272,41 @@ export default function Reservation() {
                   value: themeDetails?.min_players + index,
                 })
               )}
-              onChange={(e) => setPeople(e.target.value)} // 更新所選的人數狀態
+              onChange={(e) => handleSelectChange(e, 'people')} // 更新所選的人數狀態
             />
+            {errors.people &&
+              errors.people._errors &&
+              errors.people._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
           </div>
 
           <div className={myStyle.p}>
             <Select03
               name="discount"
-              value=""
+              value={discount}
               placeholder="優惠項目"
-              options={['無', '學生', '會員', 'VIP']}
-              onChange={(e) => console.log(e.target.value)}
+              options={
+                themeDetails.coupon_name && themeDetails.discount_percentage
+                  ? [
+                      {
+                        text: `${themeDetails.coupon_name} ${themeDetails.discount_percentage}折`,
+                        value: themeDetails.coupon_name,
+                      },
+                    ]
+                  : []
+              }
+              onChange={(e) => handleSelectChange(e, 'discount')}
             />
+            {errors.discount &&
+              errors.discount._errors &&
+              errors.discount._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
           </div>
           <div className={myStyle.p}>
             <Textarea01 />

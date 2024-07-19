@@ -76,51 +76,50 @@ const getSecondThemesList = async () => {
 // 獲取主題的詳情
 const getThemesDetails = async (branch_themes_id) => {
   const sql = `
- SELECT 
-    bt.branch_themes_id,
-    t.theme_id,
-    t.theme_name,
-    t.theme_img,
-    t.theme_banner,
-    t.min_players,
-    t.max_players,
-    t.theme_time,
-    t.difficulty,
-    t.price,
-    t.deposit,
-    t.theme_desc,
-    t.theme_time,
-    b.branch_name,
-    f.storyline,
-    f.puzzle_design,
-    f.atmosphere,
-    JSON_ARRAYAGG(
-      JSON_OBJECT(
-        'sessions_id', s.sessions_id,
-        'start_time', DATE_FORMAT(s.start_time, '%H:%i'), -- 格式化开始时间，只显示时和分
-        'end_time', DATE_FORMAT(s.end_time, '%H:%i'), -- 格式化结束时间，只显示时和分
-        'theme_time', s.theme_time,
-        'intervals', s.intervals
-      )
-    ) AS sessions
-FROM themes t
-LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
-LEFT JOIN branches b ON bt.branch_id = b.branch_id
-LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
-LEFT JOIN sessions s ON t.theme_id = s.theme_id
-WHERE bt.branch_themes_id = ?
-GROUP BY bt.branch_themes_id
-
+    SELECT 
+      bt.branch_themes_id,
+      t.theme_id,
+      t.theme_name,
+      t.theme_img,
+      t.theme_banner,
+      t.min_players,
+      t.max_players,
+      t.theme_time,
+      t.difficulty,
+      t.price,
+      t.deposit,
+      t.theme_desc,
+      b.branch_name,
+      f.storyline,
+      f.puzzle_design,
+      f.atmosphere,
+      c.coupon_name,
+      c.discount_percentage,
+      JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'sessions_id', s.sessions_id,
+          'start_time', DATE_FORMAT(s.start_time, '%H:%i'),
+          'end_time', DATE_FORMAT(s.end_time, '%H:%i'),
+          'theme_time', s.theme_time,
+          'intervals', s.intervals
+        )
+      ) AS sessions
+    FROM themes t
+    LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
+    LEFT JOIN branches b ON bt.branch_id = b.branch_id
+    LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
+    LEFT JOIN sessions s ON t.theme_id = s.theme_id
+    LEFT JOIN coupons c ON bt.id = c.id
+    WHERE bt.branch_themes_id = ?
   `;
 
   try {
     const [rows] = await db.query(sql, [branch_themes_id]);
 
-    // 如果查詢结果有紀錄，則成功
     if (rows.length > 0) {
       return {
         success: true,
-        theme: rows[0], // 返回單個主題
+        theme: rows[0],
       };
     } else {
       return {
@@ -130,7 +129,8 @@ GROUP BY bt.branch_themes_id
       };
     }
   } catch (err) {
-    console.error("Error fetching theme details:", err);
+    console.error("Error fetching theme details:", err.message);
+    console.error("SQL Query:", sql);
     return {
       success: false,
       theme: null,
