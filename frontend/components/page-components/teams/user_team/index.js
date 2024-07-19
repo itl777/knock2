@@ -38,7 +38,7 @@ export default function UserTeam() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await fetch(`${GET_USER_DATA}/${auth.id}`)
+        const res = await fetch(`${GET_USER_DATA}${auth.id}`)
         if (!res.ok) {
           throw new Error('Fetch Failed')
         }

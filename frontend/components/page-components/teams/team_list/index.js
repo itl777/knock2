@@ -46,7 +46,7 @@ export default function TeamList() {
   }
 
   useEffect(() => {
-    fetchData()
+    fetchData(page)
   }, [branchId, order, teamStatus, page])
 
   return (
@@ -125,7 +125,11 @@ export default function TeamList() {
             })}
           </div>
           <div>
-            <MyPagination totalPages={totalPages} />
+            <MyPagination
+              totalPages={totalPages}
+              fetchData={fetchData}
+              setPage={setPage}
+            />
           </div>
         </div>
       </div>

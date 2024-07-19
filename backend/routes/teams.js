@@ -109,12 +109,12 @@ router.get("/apiSearch/", async (req, res) => {
   res.json(data);
 });
 
-router.get("/apiSearch/user/:user_id", async (req, res) => {
+router.get("/apiSearch/user/have_team_:user_id", async (req, res) => {
   const data = await searchData(req);
   res.json(data);
 });
 
-router.get("/api/:team_id", async (req, res) => {
+router.get("/apiSearch/team/:team_id", async (req, res) => {
   const team_id = +req.params.team_id || 0;
   if (!team_id) {
     return res.json({ success: false, error: "沒有編號" });
@@ -234,7 +234,7 @@ ORDER BY create_at DESC`;
 
 
 // 搜尋隊伍有多少人加入的API
-router.get("/api/team_member/:team_id", async (req, res) => {
+router.get("/api/team_member_at_:team_id", async (req, res) => {
   const team_id = +req.params.team_id || 0;
   if (!team_id) {
     return res.json({ success: false, error: "沒有編號" });
@@ -251,7 +251,7 @@ ORDER BY tm.create_at DESC`;
 
   if (!rows.length) {
     // 沒有該筆資料
-    return res.json({ success: false, error: "沒有該筆資料" });
+    return res.json({ success: false, error: "此隊伍還沒有人申請加入" });
   }
 
   res.json({ success: true, members: rows.length ,data: rows });
@@ -299,42 +299,39 @@ router.post("/api/team_join/add", async (req, res) => {
   const [result] = await db.query(sql, [join_team_id, join_user_id]);
 
   if (result.affectedRows === 1) {
-
     output.success = true;
-
     output.result = result;
-
   } else {
-
-    output.error = "Failed to insert the record";
-
+    output.error = "加入團隊失敗";
   }
-
-
-
 } catch (ex) {
     output.error = ex.message;
   }
-
   res.json(output);
 });
 
 
 // 新增揪團的API
-router.post("/api/teams/add", async (req, res) => {
+router.post("/api/create_team/", async (req, res) => {
   const output = {
     success: false,
     code: 0,
     result: {},
   };
 
-  let body = { ...req.body };
-  body.create_at = new Date();
-
-  const { chat_at, chat_by, chat_text } = body;
+  // let body = { ...req.body };
+  const { reservation_id, team_title, team_limit, team_note } = req.body;
   try {
-  const sql = "INSERT INTO `teams_chats` (`chat_at`, `chat_by`, `chat_text`, `create_at`) VALUES (?, ?, ?, ?)";
-  const [result] = await db.query(sql, [chat_at, chat_by, chat_text, body.create_at]);
+  const sql = "INSERT INTO `teams_list` (`r_id`, `team_title`, `team_limit`, `team_note`, `create_at`, `last_modified_at`) VALUES (?, ?, ?, ?, now(), now())";
+
+  // const [result] = await db.query(sql);
+  const [result] = await db.query(sql, [reservation_id, team_title, team_limit, team_note]);
+  if (result.affectedRows === 1) {
+    output.success = true;
+    output.result = result;
+  } else {
+    output.error = "建立資料失敗";
+  }
 
   }catch (ex) {
     output.error = ex.message;

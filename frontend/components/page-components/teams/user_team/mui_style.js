@@ -8,7 +8,7 @@ import { PiTextAlignCenter } from 'react-icons/pi'
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
-  background: `#3333337a`,
+  background: `#333333`,
   color: `#B99755`,
   border: `1px solid ${theme.palette.divider}`,
   '&:not(:last-child)': {

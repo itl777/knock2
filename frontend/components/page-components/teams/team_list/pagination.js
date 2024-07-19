@@ -1,23 +1,21 @@
 import { useRouter } from 'next/router'
 import { Pagination, PaginationItem } from '@mui/material'
-// 箭頭圖
-import arrowLeft from '@/public/products/arrow-left.svg'
-import arrowRight from '@/public/products/arrow-right.svg'
+import arrowLeft from '@/public/teams/arrow-left.svg'
+import arrowRight from '@/public/teams/arrow-right.svg'
 import Image from 'next/image'
-// 改顏色
 import { ThemeProvider } from '@mui/material/styles'
 import theme from '@/context/theme'
 
-export default function MyPagination({ totalPages }) {
+export default function MyPagination({ totalPages, setPage }) {
   const router = useRouter()
-
-  // const { router, data } = useProduct()
+  const { query } = router
 
   const handlePageChange = (event, value) => {
     router.push({
       pathname: router.pathname,
-      query: { ...router.query, page: value },
+      query: { ...query, page: value },
     })
+    setPage(value)
   }
 
   const CustomPrevious = () => (

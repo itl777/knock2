@@ -8,10 +8,7 @@ import { AspectRatio } from '@mui/joy'
 
 import ChatArea from '@/components/page-components/teams/chat_area'
 
-import { ONE_TEAM } from '@/configs/api-path'
-import { GET_MEMBER } from '@/configs/api-path'
-import { API_SERVER } from '@/configs/api-path'
-import { JOIN_TEAM } from '@/configs/api-path'
+import { API_SERVER, ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
 
 import styles from './teams.module.css'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
@@ -22,6 +19,7 @@ export default function TeamInfo() {
   const [teamData, setTeamData] = useState([])
   const [memberData, setMemberData] = useState([])
   const [showMembers, setShowMembers] = useState(false)
+  const [isMember, setIsMember] = useState(false)
 
   const fetchTeamData = async (team_id) => {
     const url = ONE_TEAM + team_id
@@ -31,12 +29,12 @@ export default function TeamInfo() {
 
       if (data.success) {
         setTeamData(data.data)
-        console.log('Team data set successfully', data.data)
+        console.log('成功取得團隊資料', data.data)
       } else {
-        console.error('Failed to fetch team data:', data.error)
+        console.error('取得團隊資料失敗:', data.error)
       }
     } catch (error) {
-      console.error('Error fetching team data:', error)
+      console.error('取得團隊資料時發生錯誤:', error)
     }
   }
 
@@ -48,16 +46,21 @@ export default function TeamInfo() {
 
       if (data.success) {
         setMemberData(data.data)
-        console.log('Member data set successfully', data.data)
+        console.log('成功取得團員資料', data.data)
+
+        const isUserMember = data.data.some(
+          (member) => member.join_user_id === auth.id
+        )
+        setIsMember(isUserMember)
       } else {
-        console.error('Failed to fetch member data:', data.error)
+        console.error('團員資料取得失敗:', data.error)
       }
     } catch (error) {
-      console.error('Error fetching member data:', error)
+      console.error('取得團員資料時發生錯誤:', error)
     }
   }
   const handleTeamSetting = () => {
-    setShowMembers(!showMembers) // 切换显示状态
+    setShowMembers(!showMembers)
   }
 
   const handleJoinTeam = async () => {
@@ -81,7 +84,7 @@ export default function TeamInfo() {
 
       if (result.success) {
         // 更新成員資料
-        fetchTeamData(team_id)
+        await fetchMemberData(team_id)
         alert('成功加入團隊')
       } else {
         console.error('加入團隊失敗:', result.error)
@@ -194,6 +197,8 @@ export default function TeamInfo() {
                           color="grey"
                           onClick={handleTeamSetting}
                         />
+                      ) : isMember ? (
+                        <p>您已申請加入此團隊</p>
                       ) : (
                         <PdBtnContained
                           btnText="申請加入"

@@ -4,28 +4,34 @@ import styles from './teams.module.css'
 import moment from 'moment-timezone'
 
 import { useAuth } from '@/context/auth-context'
-import { NO_TEAM } from '@/configs/api-path'
+import { NO_TEAM, CREATE_TEAM } from '@/configs/api-path'
 
 import SubmitBtn from '@/pages/teams/submit-btn'
 
 export default function TeamsAdd() {
-  const { login, logout, auth } = useAuth()
-
-  const [userData, setUserData] = useState({
-    success: false,
-    rows: [],
-  })
+  const { auth } = useAuth()
+  // const [userData, setUserData] = useState({
+  //   success: false,
+  //   rows: [],
+  // })
 
   const [noTeamData, setNoTeamData] = useState({
     success: false,
     rows: [],
   })
+  const [createTeam, setCreateTeam] = useState({
+    success: false,
+    reservation_id: 0,
+    team_title: '',
+    team_limit: '1',
+    team_note: '',
+  })
+
   const [selectedReservation, setSelectedReservation] = useState(null)
 
   useEffect(() => {
     const fetchNoTeamData = async () => {
       try {
-        // const res = await fetch(`${GET_DATA}/${auth.id}`)
         const res = await fetch(`${NO_TEAM}${auth.id}`)
         if (!res.ok) {
           throw new Error('Fetch Failed')
@@ -33,21 +39,63 @@ export default function TeamsAdd() {
 
         const myData = await res.json()
         setNoTeamData(myData)
-        // setIsLoading(false)
       } catch (error) {
         console.error('Fetch error:', error)
-        // setIsLoading(false)
       }
     }
     fetchNoTeamData()
   }, [auth.id])
 
   const handleSelectChange = (e) => {
-    const reservation_id = e.target.value
+    const reservation_id = parseInt(e.target.value)
     const selectedReservation = noTeamData.rows.find(
-      (r) => r.reservation_id === parseInt(reservation_id)
+      (r) => r.reservation_id === reservation_id
     )
+    setCreateTeam((prevCreateTeam) => ({
+      ...prevCreateTeam,
+      reservation_id,
+    }))
     setSelectedReservation(selectedReservation)
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setCreateTeam((prevCreateTeam) => ({
+      ...prevCreateTeam,
+      [name]: name === 'team_limit' ? parseInt(value) : value,
+    }))
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    try {
+      const res = await fetch(CREATE_TEAM, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(createTeam),
+        // {
+        // team_id,
+        // r_id: createTeam.reservation_id,
+        // team_title: createTeam.team_title,
+        // team_limit: createTeam.team_limit,
+        // team_note: createTeam.team_note,
+        // }
+      })
+
+      const result = await res.json()
+
+      if (result.success) {
+        alert('成功創建團隊')
+      } else {
+        console.error('創建團隊失敗:', result.error)
+        alert('創建團隊失敗')
+      }
+    } catch (error) {
+      console.error('創建團隊時發生錯誤:', error)
+      alert('創建團隊時發生錯誤')
+    }
   }
 
   return (
@@ -62,7 +110,7 @@ export default function TeamsAdd() {
               <div className="col-12 col-md-6">
                 <div className={styles.borderbox}>
                   <h3 className="boxTitle">創立團隊</h3>
-                  <form>
+                  <form name="createTeam" onSubmit={handleSubmit}>
                     <div className="mb-3">
                       <label htmlFor={'lead_name'} className="form-label">
                         團長： {auth.nickname}
@@ -73,9 +121,12 @@ export default function TeamsAdd() {
                         className="form-select"
                         aria-label="Default select example"
                         name="reservation_id"
+                        value={createTeam.reservation_id}
                         onChange={handleSelectChange}
                       >
-                        <option selected>請選擇已預約的行程</option>
+                        <option value="" selected>
+                          請選擇已預約的行程
+                        </option>
                         {noTeamData.rows.map((r) => (
                           <option
                             key={r.reservation_id}
@@ -86,7 +137,6 @@ export default function TeamsAdd() {
                         ))}
                       </select>
                     </div>
-
                     {selectedReservation && (
                       <div className="displayDetail">
                         <p>主題名稱: {selectedReservation.theme_name}</p>
@@ -101,38 +151,43 @@ export default function TeamsAdd() {
                     )}
                     <hr />
                     <div className="mb-3">
-                      <label htmlFor={'team_name'} className="form-label">
+                      <label htmlFor={'team_title'} className="form-label">
                         團隊名稱
                       </label>
                       <input
                         type="text"
                         className="form-control"
-                        id="team_name"
+                        id="team_title"
+                        name="team_title"
+                        value={createTeam.team_title}
+                        onChange={handleInputChange}
                         aria-describedby="enterteamname"
                       />
                     </div>
                     <div className="mb-3">
-                      <label htmlFor={'team_name'} className="form-label">
+                      <label htmlFor={'team_limit'} className="form-label">
                         募集人數
                       </label>
-                      <select
-                        className="form-select"
-                        aria-label="Default select example"
-                      >
-                        <option value="1" selected>
-                          1人
-                        </option>
-                        <option value="2">2人</option>
-                        <option value="3">3人</option>
-                      </select>
+                      <input
+                        type="number"
+                        className="form-control"
+                        id="team_limit"
+                        name="team_limit"
+                        value={createTeam.team_limit}
+                        onChange={handleInputChange}
+                        aria-label="enterteamlimit"
+                      />
                     </div>
                     <div className="mb-3">
-                      <label htmlFor={'team_name'} className="form-label">
+                      <label htmlFor={'team_note'} className="form-label">
                         開團備註（200字以內）
                       </label>
                       <textarea
                         className="form-control"
                         id="floatingTextarea"
+                        name="team_note"
+                        value={createTeam.team_note}
+                        onChange={handleInputChange}
                       ></textarea>
                     </div>
                     <div className="mb-3 form-check">
