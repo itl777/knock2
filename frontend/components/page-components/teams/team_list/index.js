@@ -125,7 +125,7 @@ export default function TeamList() {
             })}
           </div>
           <div>
-          <MyPagination totalPages={totalPages} />
+            <MyPagination totalPages={totalPages} />
           </div>
         </div>
       </div>
