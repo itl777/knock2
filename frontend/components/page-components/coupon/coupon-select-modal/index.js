@@ -1,5 +1,5 @@
 import styles from './coupon-select-modal.module.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // context
 import { useCart } from '@/context/cart-context'
 // components
@@ -7,18 +7,22 @@ import ModalLayout from '../../checkout/address/modal-layout'
 import CouponCard from '@/components/page-components/coupon/coupon-card'
 import FilterBtn from '@/components/UI/filter-btn'
 import NoData from '@/components/UI/no-data'
+import TinyButton from '@/components/UI/tiny-button'
 import CouponTag from './coupon-tag'
 
-export default function CouponSelectModal() {
+export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
   const {
-    coupons,
+    // coupons,
     usableCoupons,
+    usableProductCoupons,
+    handleAddCouponToCart,
+    handleRemoveCouponFromCart,
     // subtotal,
     // discountTotal,
     // checkoutItems,
     // setDiscountTotal,
-    selectedCoupons,
-    handelSelectedToggle,
+    // selectedCoupons,
+    // handelSelectedToggle,
   } = useCart()
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
@@ -29,34 +33,56 @@ export default function CouponSelectModal() {
     return usableCoupons.find((v) => v.coupon_id === coupon_id) || {}
   }
 
-  // coupons coupon_id 是否已存在 selectedCoupon coupon_id 裡面（回傳 true or false）
-  // const isChecked = (coupon_id) => {
-  //   return selectedCoupons.some((v) => v.coupon_id === coupon_id)
-  // }
+  const modalCoupons = type === 'product' ? usableProductCoupons : usableCoupons
 
-
-  const isChecked = (coupon_id) => {
-    // 檢查是否存在可用的優惠券且已被選中
-    return usableCoupons.some((coupon) => {
-      return (
-        coupon.coupon_id === coupon_id &&
-        coupon.usable &&
-        selectedCoupons.some((selected) => selected.coupon_id === coupon_id)
-      )
-    })
+  const getInCartValue = (products) => {
+    const product = products.find((v) => v.product_id === product_id)
+    return product ? product.in_cart : 0
   }
-  
+
+  const isChecked = (products, in_cart) => {
+    if (!products) {
+      return in_cart === 1 ? true : false
+    } else {
+      return getInCartValue(products) === 1 ? true : false
+    }
+  }
+
+  const handleToggleCoupon = (coupon_id, isChecked) => {
+    if (isChecked) {
+      handleRemoveCouponFromCart(coupon_id, product_id)
+    } else {
+      handleAddCouponToCart(coupon_id, product_id)
+    }
+    console.log(coupon_id, product_id)
+  }
+
+  useEffect(() => {}, [])
+
   return (
     <>
-      <div className={styles.couponBox}>
-        {selectedCoupons.map((v) => (
-          <CouponTag key={v.coupon_id} text={v.coupon_name} />
-        ))}
-      </div>
+      {/* {type === 'all' && (
+        <div className={styles.couponBox}>
+          {usableCoupons.map((v) => (
+            <CouponTag key={v.coupon_id} text={v.coupon_name} />
+          ))}
+        </div>
+      )} */}
+      {type === 'product' ? (
+        <TinyButton
+          type="button"
+          btnText="優惠券"
+          href={null}
+          onClick={handleOpen}
+        />
+      ) : (
+        <div>
+          <FilterBtn btnText="請選擇優惠券" href={null} onClick={handleOpen} />
+          {/* <CouponTag key={v.coupon_id} text={v.coupon_name} /> */}
+        </div>
+      )}
 
-      <FilterBtn btnText="請選擇優惠券" href={null} onClick={handleOpen} />
-
-      {usableCoupons.length >= 0 && (
+      {modalCoupons.length >= 0 && (
         <ModalLayout
           title="選擇優惠券"
           modalHeight="720px"
@@ -66,10 +92,10 @@ export default function CouponSelectModal() {
           isOpen={open}
         >
           <div className={styles.modalContentBox}>
-            {usableCoupons.length === 0 ? (
+            {modalCoupons.length === 0 ? (
               <NoData text="無優惠券" />
             ) : (
-              usableCoupons.map((v) => (
+              modalCoupons.map((v) => (
                 <CouponCard
                   key={v.coupon_id}
                   status="ongoing"
@@ -77,10 +103,15 @@ export default function CouponSelectModal() {
                   coupon_name={v.coupon_name}
                   minimum_order={v.minimum_order}
                   valid_until={v.valid_until}
-                  isChecked={isChecked(v.coupon_id)}
-                  handelSelectedToggle={() => handelSelectedToggle(v.coupon_id)}
+                  isChecked={isChecked(v.products, v.in_cart)}
+                  handelSelectedToggle={() =>
+                    handleToggleCoupon(
+                      v.coupon_id,
+                      isChecked(v.products, v.in_cart)
+                    )
+                  }
                   coupon={getCoupon(v.coupon_id)} // 傳遞這張 coupon card 的單一優惠券資訊到子層（coupon more info modal）
-                  disabled={!v.usable}
+                  disabled={false}
                 />
               ))
             )}

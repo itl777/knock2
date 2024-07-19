@@ -15,8 +15,6 @@ import OrderItemCheckout from '../../orders/order-item-checkout'
 import EmptyCart from '../empty-cart'
 // icons
 import { FaCartShopping } from 'react-icons/fa6'
-// api path
-import { PRODUCT_IMG } from '@/configs/api-path'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -91,20 +89,7 @@ export default function CheckoutOffcanvas() {
               {/* 如果購物車有商品： */}
               {cartBadgeQty > 0 && (
                 <div className={styles.checkoutList}>
-                  {checkoutItems.map((v, i) => (
-                    <OrderItemCheckout
-                      type="small"
-                      cartId={v.cart_id}
-                      key={v.product_id}
-                      productId={v.product_id}
-                      productName={v.product_name}
-                      productOriginalPrice={v.price}
-                      productDiscountedPrice={v.price}
-                      productImg={`${PRODUCT_IMG}/${v.product_img}`}
-                      orderQty={v.cart_product_quantity}
-                      onQuantityChange={handleQuantityChange}
-                    />
-                  ))}
+                  <OrderItemCheckout />
                 </div>
               )}
             </div>

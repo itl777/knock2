@@ -32,7 +32,6 @@ export default function CheckoutPage() {
   const router = useRouter()
   const { auth, authIsReady } = useAuth() // 取得 auth.id, authIsReady
   const { loginFormSwitch } = useLoginModal() // 取得登入視窗開關
-  // const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
   const { timeout, errors, validateField } = useOrderValidation() // 訂單驗證
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
   const { handleOrderPayment } = usePayment()
@@ -54,13 +53,15 @@ export default function CheckoutPage() {
     checkoutTotal,
     subtotal,
     cartBadgeQty,
-    handleQuantityChange,
     clearCart,
     deliverFee,
     fetchMemberProfile,
     formData,
     setFormData,
-    selectedCoupons,
+    calculateDiscountTotal,
+    usableCoupons,
+    useableProductCoupons,
+    // selectedCoupons,
     discountTotal,
   } = useCart()
 
@@ -92,6 +93,7 @@ export default function CheckoutPage() {
     validateField(name, value)
   }
 
+  // 辨識發票類別
   const handleInvoiceTypeChange = (e) => {
     const value = e.target.value
     setInvoiceTypeValue(value)
@@ -159,18 +161,12 @@ export default function CheckoutPage() {
     }
 
     try {
-      // Step 1: 提交訂單和商品資料到後端
       const response = await axios.post(CHECKOUT_POST, dataToSubmit)
       if (response.data.success) {
         const orderId = response.data.orderId // 取得後端返回的 order_id
-        // setShowSuccessModal(true)
         clearCart()
         openSnackbar('訂單已成立', 'success')
         await handleOrderPayment(orderId, checkoutTotal)
-
-        // setTimeout(async () => {
-        //   setShowSuccessModal(false)
-        // }, 2000)
       }
     } catch (error) {
       console.error('提交表單時出錯', error)
@@ -203,7 +199,7 @@ export default function CheckoutPage() {
   return (
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
-      {cartBadgeQty <= 0 && !showSuccessModal && (
+      {cartBadgeQty <= 0 && (
         <div className={styles.contentContainer}>
           <EmptyCart />
         </div>
@@ -222,20 +218,7 @@ export default function CheckoutPage() {
             <h5>訂購資訊</h5>
             {/* OrderItemCheckout */}
             <div className={styles.itemList}>
-              {checkoutItems.map((v, i) => (
-                <OrderItemCheckout
-                  key={v.product_id}
-                  type={screenWidth < 640 ? 'small' : 'def'}
-                  cartId={v.cart_id}
-                  productId={v.product_id}
-                  productName={v.product_name}
-                  productOriginalPrice={v.price}
-                  productDiscountedPrice={v.price}
-                  productImg={`${PRODUCT_IMG}/${v.product_img}`}
-                  orderQty={v.cart_product_quantity}
-                  onQuantityChange={handleQuantityChange}
-                />
-              ))}
+              <OrderItemCheckout type={screenWidth < 640 ? 'small' : 'def'} />
             </div>
 
             <CouponSelectModal />

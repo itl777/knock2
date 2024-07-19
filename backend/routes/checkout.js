@@ -153,7 +153,13 @@ router.get("/api/cart", async (req, res) => {
         pm.product_name,
         pm.price,
         pi.product_img,
-        cm.cart_product_quantity
+        cm.cart_product_quantity,
+        cm.cart_product_coupon_id,
+        c.coupon_type_id,
+        c.minimum_order,
+        c.discount_amount,
+        c.discount_percentage,
+        c.discount_max
       FROM cart_member AS cm
       JOIN product_management AS pm
       ON pm.product_id = cm.cart_product_id
@@ -163,6 +169,8 @@ router.get("/api/cart", async (req, res) => {
         GROUP BY img_product_id
       ) AS pi
       ON pi.img_product_id = cm.cart_product_id
+      LEFT JOIN coupons AS c
+      ON c.id = cm.cart_product_coupon_id
       WHERE cm.cart_member_id = ?
     `;
 
@@ -377,7 +385,6 @@ router.get("/api/member_profile", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // CHECKOUT_GET_ADDRESS member address
 router.get("/api/member_address", async (req, res) => {

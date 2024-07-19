@@ -42,7 +42,9 @@ export const CartProvider = ({ children }) => {
   const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
   const [coupons, setCoupons] = useState([]) // 取得會員可使用優惠券
   const [usableCoupons, setUsableCoupons] = useState([]) // 取得會員可使用優惠券
-  const [selectedCoupons, setSelectedCoupons] = useState([]) // 購物車使用的優惠券
+  const [usableProductCoupons, setUsableProductCoupons] = useState([]) // 取得會員可使用優惠券
+  // const [selectedCoupons, setSelectedCoupons] = useState([]) // 購物車使用的優惠券
+  // const [selectedProductCoupons, setSelectedProductCoupons] = useState([]) // 購物車使用的優惠券
 
   // order submit form 內容
   const [formData, setFormData] = useState({
@@ -110,29 +112,60 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // 取得會員購物車優惠券
+  // 取得會員可以使用的優惠券(所有商品)
   const fetchMemberCartCoupons = async () => {
     try {
       const response = await axios.get(
         `${GET_MEMBER_COUPON_IN_CART}?member_id=${auth.id}`
       )
-      setSelectedCoupons(response.data.rows)
+      setUsableCoupons(response.data.rows)
+    } catch (error) {
+      console.error('Error fetching member coupons: ', error)
+    }
+  }
+
+  // 取得會員可以使用的優惠券(指定商品)
+  const fetchMemberCartProductCoupons = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/coupons/product?member_id=${auth.id}`
+      )
+      setUsableProductCoupons(response.data.rows)
     } catch (error) {
       console.error('Error fetching member coupons: ', error)
     }
   }
 
   // 新增刪除會員購物車優惠券
-  const handelSelectedToggle = async (coupon_id) => {
+  const handleAddCouponToCart = async (coupon_id, product_id) => {
     try {
-      await axios.post(UPDATE_MEMBER_COUPON_IN_CART, {
+      await axios.post('http://localhost:3001/coupons/use', {
         member_id: auth.id,
         coupon_id: coupon_id,
+        product_id: product_id,
       })
+      fetchMemberCart()
       fetchMemberCartCoupons()
-      console.log('handelSelectedToggle')
+      fetchMemberCartProductCoupons()
+      calculateDiscountTotal()
     } catch (error) {
-      console.error('Error updating coupons:', error)
+      console.error('Error adding coupon to cart:', error)
+    }
+  }
+
+  const handleRemoveCouponFromCart = async (coupon_id, product_id) => {
+    try {
+      await axios.post('http://localhost:3001/coupons/remove', {
+        member_id: auth.id,
+        coupon_id: coupon_id,
+        product_id: product_id,
+      })
+      fetchMemberCart()
+      fetchMemberCartCoupons()
+      fetchMemberCartProductCoupons()
+      calculateDiscountTotal()
+    } catch (error) {
+      console.error('Error removing coupon from cart:', error)
     }
   }
 
@@ -147,6 +180,99 @@ export const CartProvider = ({ children }) => {
     setSubtotal(newCheckTotal)
     setCheckoutTotal(newCheckTotal + deliverFee - discountTotal)
   }
+
+  // 取得折扣金額
+  const calculateDiscountTotal = () => {
+    let productDiscountTotal = 0
+    let discountTotal = 0
+    let discountMaxTotal = 0
+    let discountMinTotal = 0
+    let discountPercentage = 0
+    let checkoutTotal = 0
+    let productDiscountOriginalPrice = 0
+
+    checkoutItems.forEach((item) => {
+      let productDiscount = 0
+      checkoutTotal += item.cart_product_quantity * item.price
+
+      if (item.coupon_type_id === 2) {
+        const originalPrice = item.price * item.cart_product_quantity
+
+        if (item.discount_amount) {
+          if (
+            originalPrice >= item.minimum_order &&
+            originalPrice >= item.discount_amount
+          ) {
+            productDiscount = item.discount_amount
+            productDiscountOriginalPrice +=
+              item.cart_product_quantity * item.price
+          }
+        } else if (item.discount_percentage) {
+          if (originalPrice >= item.minimum_order) {
+            productDiscount = Math.floor(
+              originalPrice * (1 - item.discount_percentage / 100)
+            )
+            productDiscount =
+              productDiscount >= item.discount_max
+                ? item.discount_max
+                : productDiscount
+            productDiscountOriginalPrice +=
+              item.cart_product_quantity * item.price
+          }
+        }
+        productDiscountTotal += productDiscount
+      }
+    })
+
+    usableCoupons.forEach((item) => {
+      if (item.in_cart === 1) {
+        if (item.discount_amount) {
+          discountTotal += item.discount_amount
+          discountMaxTotal += item.discount_max
+          discountMinTotal += item.minimum_order
+        } else if (item.discount_percentage) {
+          discountPercentage = 1 - item.discount_percentage / 100
+          discountMaxTotal += item.discount_max
+          discountMinTotal += item.minimum_order
+        }
+      }
+    })
+
+    let finalDiscount = 0
+    const excludeProductTotal = checkoutTotal - productDiscountOriginalPrice
+    if (excludeProductTotal > discountMinTotal) {
+      const excludeProductDiscount =
+        discountTotal + Math.floor(discountPercentage * excludeProductTotal)
+      finalDiscount =
+        excludeProductDiscount > discountMaxTotal
+          ? discountMaxTotal
+          : excludeProductDiscount
+    }
+    finalDiscount += productDiscountTotal
+    setDiscountTotal(finalDiscount)
+  }
+
+  // 已選擇的優惠券（指定商品）
+  // const handleSelectedProductCoupons = () => {
+  //   const filteredItems = usableCoupons
+  //     .filter((v) => v.cart_product_coupon_id > 0)
+  //     .map((item) => ({
+  //       coupon_id: item.cart_product_coupon_id,
+  //       product_id: item.product_id,
+  //     }))
+
+  //   setSelectedProductCoupons(filteredItems)
+  // }
+
+  // // 已選擇的優惠券（所有商品）
+  // const handleSelectedCoupons = () => {
+  //   const filteredItems = checkoutItems
+  //     .filter((v) => v.in_cart === 1)
+  //     .map((item) => ({
+  //       coupon_id: item.coupon_id,
+  //     }))
+  //   setSelectedCoupons(filteredItems)
+  // }
 
   // 記錄商品數量異動
   const handleQuantityChange = async (productId, newQuantity) => {
@@ -228,202 +354,6 @@ export const CartProvider = ({ children }) => {
     // localStorage.removeItem('kkCart')
   }
 
-  // 取得折扣金額
-  const requirementChecked = () => {
-    setDiscountTotal(0)
-    let discountTotal = 0
-    let specificDiscountTotal = 0
-    let excludedTotal = 0
-
-    selectedCoupons.forEach((v) => {
-      if (v.coupon_type_id === 2) {
-        // 指定商品
-        // 檢查是否有符合的產品
-        const eligibleProducts = checkoutItems.filter((item) =>
-          v.products.some((p) => p.product_id === item.product_id)
-        )
-
-        // 計算符合優惠券條件的總價
-        const eligibleTotal = eligibleProducts.reduce(
-          (total, item) => total + item.price * item.cart_product_quantity,
-          0
-        )
-
-        // 符合最低訂單金額
-        if (eligibleTotal >= v.minimum_order) {
-          if (v.discount_amount && eligibleTotal >= v.discount_amount) {
-            specificDiscountTotal += v.discount_amount
-          } else if (v.discount_percentage) {
-            // 計算百分比
-            const percentageSpecificDiscount = Math.floor(
-              eligibleTotal * (1 - v.discount_percentage / 100)
-            )
-            specificDiscountTotal += percentageSpecificDiscount
-          }
-          if (v.discount_max) {
-            specificDiscountTotal = Math.min(
-              specificDiscountTotal,
-              v.discount_max
-            )
-          }
-          excludedTotal += eligibleTotal // 排除符合指定商品優惠券的商品總額
-        }
-      }
-    })
-
-    // 計算所有商品的折扣時排除符合指定商品優惠券的商品
-    const adjustedSubtotal = subtotal - excludedTotal
-
-    selectedCoupons.forEach((v) => {
-      if (v.coupon_type_id === 1) {
-        // 所有商品皆可以折扣
-        if (adjustedSubtotal >= v.minimum_order) {
-          // 所有商品大於最低總額
-          if (v.discount_amount && adjustedSubtotal >= v.discount_amount) {
-            discountTotal += v.discount_amount
-          } else if (v.discount_percentage) {
-            // 計算百分比
-            const percentageDiscount = Math.floor(
-              adjustedSubtotal * (1 - v.discount_percentage / 100)
-            )
-            discountTotal += percentageDiscount
-          }
-          if (v.discount_max) {
-            discountTotal = Math.min(discountTotal, v.discount_max)
-          }
-        }
-      }
-    })
-
-    setDiscountTotal(discountTotal + specificDiscountTotal)
-    setCheckoutTotal(
-      subtotal + deliverFee - discountTotal - specificDiscountTotal
-    )
-  }
-
-  const deleteSelectedCoupon = async (coupon_id) => {
-    try {
-      const response = await axios.post(
-        'http://localhost:3001/coupons/delete_in_cart',
-        {
-          member_id: auth.id,
-          coupon_id: coupon_id,
-        }
-      )
-      console.log('Unusable coupons updated successfully:', response.data)
-    } catch (error) {
-      console.error('Error updating unusable coupons:', error)
-    }
-  }
-
-  const couponChecked = () => {
-    const updatedCoupons = coupons.map((coupon) => {
-      let discountTotal = 0
-      let specificTotal = 0 // 符合 coupon_type_id = 2 的商品總價
-      let excludedTotal = 0 // 用於排除已計算的商品總價
-      let usable = true // 初始假定可用
-
-      if (coupon.coupon_type_id === 1) {
-        // 所有商品皆可折扣
-
-        // 檢查是否符合最低訂單金額條件
-        if (subtotal < coupon.minimum_order) {
-          usable = false // 不符合條件，設為不可用
-          deleteSelectedCoupon(coupon.coupon_id)
-        }
-
-        // 檢查折扣金額
-        if (coupon.discount_amount && subtotal >= coupon.minimum_order) {
-          discountTotal += coupon.discount_amount
-        }
-
-        // 檢查折扣百分比
-        if (coupon.discount_percentage && subtotal >= coupon.minimum_order) {
-          const percentageDiscount = Math.floor(
-            subtotal * (coupon.discount_percentage / 100)
-          )
-          discountTotal += percentageDiscount
-        }
-      }
-
-      if (coupon.coupon_type_id === 2) {
-        // 指定商品
-
-        // 檢查是否有符合的產品
-        const eligibleProducts = checkoutItems.filter((item) =>
-          coupon.products.some((p) => p.product_id === item.product_id)
-        )
-
-        // 計算符合優惠券條件的總價
-        const eligibleTotal = eligibleProducts.reduce(
-          (total, item) => total + item.price * item.cart_product_quantity,
-          0
-        )
-
-        // 符合指定商品的最低訂單金額條件
-        if (eligibleTotal < coupon.minimum_order) {
-          usable = false // 不符合條件，設為不可用
-          deleteSelectedCoupon(coupon.coupon_id)
-        }
-
-        // 計算 specificTotal，用於後續計算 coupon_type_id = 1 的 subtotal
-        specificTotal += eligibleTotal
-
-        // 檢查折扣金額
-        if (coupon.discount_amount && eligibleTotal >= coupon.minimum_order) {
-          specificTotal -= coupon.discount_amount
-        }
-
-        // 檢查折扣百分比
-        if (
-          coupon.discount_percentage &&
-          eligibleTotal >= coupon.minimum_order
-        ) {
-          const percentageSpecificDiscount = Math.floor(
-            eligibleTotal * (coupon.discount_percentage / 100)
-          )
-          specificTotal -= percentageSpecificDiscount
-        }
-      }
-
-      // 如果已經選擇了優惠券，檢查剩餘的 coupon_id 是否仍滿足 minimum_order 條件
-      if (
-        selectedCoupons.length > 0 &&
-        selectedCoupons.some(
-          (selected) => selected.coupon_id !== coupon.coupon_id
-        )
-      ) {
-        // 模擬已經選擇的優惠券對應的商品總價（adjustedSubtotal）
-        const adjustedSubtotal = subtotal - specificTotal
-
-        // 如果這個 coupon 仍不符合條件，設置為不可用
-        if (
-          coupon.coupon_type_id === 1 &&
-          adjustedSubtotal < coupon.minimum_order
-        ) {
-          usable = false
-          deleteSelectedCoupon(coupon.coupon_id)
-        }
-
-        if (
-          coupon.coupon_type_id === 2 &&
-          specificTotal < coupon.minimum_order
-        ) {
-          usable = false
-          deleteSelectedCoupon(coupon.coupon_id)
-        }
-      }
-
-      // 返回更新後的 coupon 對象，包含 usable 屬性
-      return {
-        ...coupon,
-        usable,
-      }
-    })
-    setUsableCoupons(updatedCoupons)
-  }
-
-
   // 登入後，更新 cart_member cart 將原本未登入的 device_id 改成 auth.id
   const handleLogin = async () => {
     const deviceId = +getDeviceId()
@@ -448,15 +378,22 @@ export const CartProvider = ({ children }) => {
     }
   }
 
+  // useEffect(() => {
+  //   handleSelectedCoupons()
+  //   handleSelectedProductCoupons()
+  // }, [checkoutItems, usableCoupons])
+
   // 登入判斷
   useEffect(() => {
     if (router.isReady && authIsReady) {
       if (auth.id) {
         handleLogin()
         fetchMemberCart()
+        calculateDiscountTotal()
         fetchMemberCoupons()
         fetchMemberCartCoupons()
-        couponChecked()
+        fetchMemberCartProductCoupons()
+        // couponChecked()
       }
       if (!auth.id) {
         clearCart()
@@ -467,18 +404,17 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     setCartBadgeQty(checkoutItems.length)
-    couponChecked()
   }, [checkoutItems])
 
   useEffect(() => {
-    couponChecked()
-    requirementChecked()
-  }, [subtotal, checkoutItems])
+    setCartBadgeQty(checkoutItems.length)
+    calculateDiscountTotal()
+  }, [checkoutItems, usableCoupons, usableProductCoupons])
 
-  useEffect(() => {
-    couponChecked()
-    requirementChecked()
-  }, [selectedCoupons])
+  // useEffect(() => {
+  //   // couponChecked()
+  //   requirementChecked()
+  // }, [selectedCoupons])
 
   return (
     <CartContext.Provider
@@ -492,12 +428,14 @@ export const CartProvider = ({ children }) => {
         discountTotal,
         setDiscountTotal,
         coupons,
-        selectedCoupons,
+        // selectedCoupons,
         usableCoupons,
-        setSelectedCoupons,
+        usableProductCoupons,
+        // setSelectedCoupons,
         fetchMemberCoupons,
-        fetchMemberCartCoupons,
-        handelSelectedToggle,
+
+        // fetchMemberCartCoupons,
+        // handelSelectedToggle,
         handleAddToCart,
         handleQuantityChange,
         clearCart,
@@ -505,32 +443,13 @@ export const CartProvider = ({ children }) => {
         fetchMemberProfile,
         formData,
         setFormData,
+        // selectedCoupons,
+        // selectedProductCoupons,
+        handleAddCouponToCart,
+        handleRemoveCouponFromCart,
       }}
     >
       {children}
     </CartContext.Provider>
   )
 }
-
-// const deleteSelectedCoupon = async ()=> {
-//   // 篩選出不可用的優惠券
-//   const unusableCoupons = usableCoupons.filter((coupon) => !coupon.usable)
-
-//   // 構造要傳送給後端的數據
-//   const dataToSend = {
-//     member_id: auth.id, // 替換成你的會員 ID
-//     coupon_ids: unusableCoupons.map((coupon) => coupon.coupon_id),
-//   }
-
-//   if (dataToSend.length > 0) {
-//     try {
-//       const response = await axios.post(
-//         'http://localhost:3001/coupons/delete_in_cart',
-//         dataToSend
-//       )
-//       console.log('Unusable coupons updated successfully:', response.data)
-//     } catch (error) {
-//       console.error('Error updating unusable coupons:', error)
-//     }
-//   }
-// }
