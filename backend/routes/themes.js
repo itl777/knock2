@@ -269,4 +269,33 @@ router.get("/img/:theme_id", async (req, res) => {
   }
 });
 
+// 取得用戶資料
+router.get("/api/member_profile", async (req, res) => {
+  // 從 query 中取得 member_id, order_status_id
+  const { member_id } = req.query;
+
+  try {
+    const sql = `
+      SELECT
+        name,
+        mobile_phone
+
+      FROM users
+      WHERE user_id =  ?;
+    `;
+
+    const [rows] = await db.query(sql, [member_id]);
+
+    console.log("member profile: ", rows);
+
+    res.json({
+      status: true,
+      rows,
+    });
+  } catch (error) {
+    console.error("Error fetching member profile: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 export default router;

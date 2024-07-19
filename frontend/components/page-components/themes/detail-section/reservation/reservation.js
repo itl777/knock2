@@ -5,6 +5,8 @@ import { DateContext } from '@/context/date-context'
 import { useLoginModal } from '@/context/login-context'
 import { useAuth } from '@/context/auth-context'
 import React, { useState, useContext, useEffect } from 'react'
+import { useUserProfile } from '@/hooks/useUserProfile'
+import axios from 'axios'
 
 import myStyle from './reservation.module.css'
 import Input02 from '@/components/UI/form-item/input02'
@@ -31,38 +33,75 @@ export default function Reservation() {
   const { themeDetails, getThemeDetails } = useTheme()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const { auth, authIsReady } = useAuth()
   const { loginFormSwitch } = useLoginModal()
+  const { auth } = useAuth()
+  const [useProfileData, setUseProfileData] = useState(false)
+  const { userProfile, loading: profileLoading } = useUserProfile(auth?.id)
 
-  // 檢查使用者是否登入
+  useEffect(() => {
+    console.log(
+      'Effect triggered, auth?.id:',
+      auth?.id,
+      'userProfile:',
+      userProfile
+    )
+    if (auth?.id && userProfile) {
+      setUseProfileData(false)
+      // 只在 userProfile 存在時設置初始值
+      setName(userProfile.name || userProfile.nickname || '')
+      setMobilePhone(userProfile.mobile_phone || '')
+    }
+  }, [auth?.id, userProfile])
   useEffect(() => {
     const { branch_themes_id } = router.query
+    console.log('branch_themes_id changed:', branch_themes_id)
 
-    if (branch_themes_id) {
+    if (branch_themes_id && !loading) {
       setLoading(true)
       getThemeDetails(branch_themes_id)
         .then(() => {
           setLoading(false)
-          if (selectedDate) {
-            const formattedDate = `${selectedDate.year}-${String(
-              selectedDate.month + 1
-            ).padStart(2, '0')}-${String(selectedDate.day).padStart(2, '0')}`
-            setDate(formattedDate)
-            setErrors((prev) => ({ ...prev, date: undefined }))
-          } else {
-            setDate('')
-          }
+          updateDateFromSelection()
         })
         .catch((error) => {
+          console.error('Error fetching theme details:', error)
           setLoading(false)
         })
     }
-  }, [router.query, getThemeDetails, selectedDate, themeDetails])
+  }, [router.query.branch_themes_id])
+
+  useEffect(() => {
+    updateDateFromSelection()
+  }, [selectedDate])
+
+  const updateDateFromSelection = () => {
+    if (selectedDate) {
+      const formattedDate = `${selectedDate.year}-${String(
+        selectedDate.month + 1
+      ).padStart(2, '0')}-${String(selectedDate.day).padStart(2, '0')}`
+      setDate(formattedDate)
+      setErrors((prev) => ({ ...prev, date: undefined }))
+    } else {
+      setDate('')
+    }
+  }
+  const handleCheckboxChange = (event) => {
+    const checked = event.target.checked
+    setUseProfileData(checked)
+    if (checked && userProfile) {
+      setName(userProfile.name || userProfile.nickname || '')
+      setMobilePhone(userProfile.mobile_phone || '')
+    } else {
+      setName('')
+      setMobilePhone('')
+    }
+  }
 
   // 姓名、電話、select資料驗證
   const handleNameChange = (e) => {
-    setName(e.target.value)
-    const result = schemaForm.safeParse({ name: e.target.value })
+    const value = e.target.value
+    setName(value)
+    const result = schemaForm.safeParse({ name: value })
     if (!result.success) {
       setErrors((prev) => ({ ...prev, name: result.error.format().name }))
     } else {
@@ -71,8 +110,9 @@ export default function Reservation() {
   }
 
   const handleMobileChange = (e) => {
-    setMobilePhone(e.target.value)
-    const result = schemaForm.safeParse({ mobile_phone: e.target.value })
+    const value = e.target.value
+    setMobilePhone(value)
+    const result = schemaForm.safeParse({ mobile_phone: value })
     if (!result.success) {
       setErrors((prev) => ({
         ...prev,
@@ -215,19 +255,28 @@ export default function Reservation() {
               name="mobile_phone"
               type="text"
               value={mobile_phone}
-              placeholder="手機號碼"
+              placeholder="手機"
               onChange={handleMobileChange}
             />
-            {errors.mobile_phone &&
-              errors.mobile_phone._errors &&
-              errors.mobile_phone._errors.map((error, index) => (
-                <span key={index} className={myStyle.error}>
-                  {error}
-                </span>
-              ))}
+            {(errors.mobile_phone?._errors || []).map((error, index) => (
+              <span key={index} className={myStyle.error}>
+                {error}
+              </span>
+            ))}
           </div>
-          <Box sx={{ display: 'flex', gap: 3 }}>
-            <Checkbox label="同會員資料" sx={{ color: '#B99755', mt: 3 }} />
+          <Box>
+            {profileLoading ? (
+              <p>載入中...</p>
+            ) : auth?.id && userProfile ? (
+              <Checkbox
+                label="同會員資料"
+                sx={{ color: '#B99755', mt: 3 }}
+                checked={useProfileData}
+                onChange={handleCheckboxChange}
+              />
+            ) : (
+              <p>請先登入並完成會員資料</p>
+            )}
           </Box>
           <div className={myStyle.p}>
             <Input02
@@ -256,7 +305,7 @@ export default function Reservation() {
                   options={
                     themeDetails?.sessions?.map((session) => ({
                       text: `${session.start_time} - ${session.end_time}`,
-                      value: session.sessions_id,
+                      value: `${session.start_time} - ${session.end_time}`,
                     })) || []
                   }
                   onChange={(e) => handleSelectChange(e, 'timeSlot')}
@@ -314,13 +363,6 @@ export default function Reservation() {
               }
               onChange={(e) => handleSelectChange(e, 'discount')}
             />
-            {errors.discount &&
-              errors.discount._errors &&
-              errors.discount._errors.map((error, index) => (
-                <span key={index} className={myStyle.error}>
-                  {error}
-                </span>
-              ))}
           </div>
           <div className={myStyle.p}>
             <Textarea01 />
