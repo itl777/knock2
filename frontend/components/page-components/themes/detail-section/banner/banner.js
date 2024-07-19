@@ -1,32 +1,45 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useTheme } from '@/context/theme-context'
 import { useRouter } from 'next/router'
 import myStyle from './banner.module.css'
 import { FaStar } from 'react-icons/fa'
 import BasicModal02 from '@/components/UI/basic-modal02'
 import { motion } from 'framer-motion'
+import { FaPlay, FaPause } from 'react-icons/fa'
 
 const Banner = () => {
   const { themeDetails, getThemeDetails } = useTheme()
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef(null)
+  const [soundBars, setSoundBars] = useState([])
 
+  const togglePlay = () => {
+    if (audioRef.current.paused) {
+      audioRef.current.play()
+      setIsPlaying(true)
+    } else {
+      audioRef.current.pause()
+      setIsPlaying(false)
+    }
+  }
   useEffect(() => {
     const { branch_themes_id } = router.query
     if (branch_themes_id) {
       setLoading(true)
       getThemeDetails(branch_themes_id).finally(() => setLoading(false))
     }
+
+    setSoundBars(
+      Array.from({ length: 20 }, () => ({
+        minHeight: Math.floor(Math.random() * 3) + 3,
+        maxHeight: Math.floor(Math.random() * 7) + 20,
+        delay: Math.random() * 0.5,
+      }))
+    )
   }, [router.query, getThemeDetails])
-
-  if (loading) {
-    return <div></div>
-  }
-
-  if (!themeDetails) {
-    return <div>No theme data available</div>
-  }
 
   const openModal = () => setModalOpen(true)
   const closeModal = () => setModalOpen(false)
@@ -78,6 +91,34 @@ const Banner = () => {
                   </button>
                 </div>
               </div>
+            </div>
+            <div className="col-6 d-flex justify-content-end align-items-end">
+              <div className="d-flex justify-content-center align-items-center">
+                {isPlaying && (
+                  <div className={myStyle.soundBarsContainer}>
+                    {soundBars.map((bar, i) => (
+                      <div
+                        key={i}
+                        className={myStyle.soundBar}
+                        style={{
+                          '--min-height': `${bar.minHeight}px`,
+                          '--max-height': `${bar.maxHeight}px`,
+                          animationDelay: `${bar.delay}s`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+                <button onClick={togglePlay} className={myStyle.playerButton}>
+                  {isPlaying ? <FaPause /> : <FaPlay />}
+                </button>
+              </div>
+
+              {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+              <audio ref={audioRef} loop>
+                <source src="/music/music01.mp3" type="audio/mpeg" />
+                您的瀏覽器不支持 audio 元素。
+              </audio>
             </div>
           </div>
         </div>
@@ -134,3 +175,4 @@ const Banner = () => {
 }
 
 export default Banner
+/* eslint-disable @next/next/no-img-element */

@@ -63,3 +63,36 @@
   letter-spacing: 2px;
   font-weight: bold;
 }
+/* audioPlayer.module.css */
+/* audioPlayer.module.css */
+@keyframes sound {
+  0% {
+    height: var(--min-height);
+  }
+  100% {
+    height: var(--max-height);
+  }
+}
+
+.soundBar {
+  width: 3px;
+  background: white;
+  margin: 0 1px;
+  animation: sound 0.5s linear infinite alternate;
+}
+
+.playerButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 30px;
+  color: white;
+}
+
+.soundBarsContainer {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  margin-right: 35px;
+  height: 60px; /* 設置一個固定高度 */
+}

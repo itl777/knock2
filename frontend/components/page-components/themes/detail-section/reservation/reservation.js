@@ -30,6 +30,8 @@ export default function Reservation() {
   const [timeSlot, setTimeSlot] = useState('')
   const [people, setPeople] = useState('')
   const [discount, setDiscount] = useState('')
+  const [remark, setRemark] = useState('')
+
   const { themeDetails, getThemeDetails } = useTheme()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -149,18 +151,14 @@ export default function Reservation() {
     }
     clearError(field)
   }
-
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    // 檢查用户是否已登入
     if (!auth.id) {
-      // 用户未登入，顯示登入提示
       loginFormSwitch('Login')
       return
     }
 
-    //處理表單
     const formData = {
       name,
       mobile_phone: mobile_phone.toString(),
@@ -168,9 +166,9 @@ export default function Reservation() {
       timeSlot: timeSlot.toString(),
       people: people.toString(),
       discount: discount.toString(),
+      remark, // 包括 remark
     }
 
-    // 分別驗證每個字段
     const nameResult = schemaForm.shape.name.safeParse(name)
     const mobileResult = schemaForm.shape.mobile_phone.safeParse(
       mobile_phone.toString()
@@ -179,7 +177,6 @@ export default function Reservation() {
     const peopleResult = schemaForm.shape.people.safeParse(people.toString())
     const discountResult = schemaForm.shape.discount.safeParse(discount)
 
-    // 日期驗證
     let dateResult
     if (!date) {
       dateResult = {
@@ -190,7 +187,6 @@ export default function Reservation() {
       dateResult = schemaForm.shape.date.safeParse(date)
     }
 
-    // 驗證“請閱讀並同意注意事项”
     const radioResult = radioValue
       ? { success: true }
       : {
@@ -275,7 +271,7 @@ export default function Reservation() {
                 onChange={handleCheckboxChange}
               />
             ) : (
-              <p>請先登入並完成會員資料</p>
+              <p></p>
             )}
           </Box>
           <div className={myStyle.p}>
@@ -365,7 +361,10 @@ export default function Reservation() {
             />
           </div>
           <div className={myStyle.p}>
-            <Textarea01 />
+            <Textarea01
+              value={remark}
+              onChange={(e) => setRemark(e.target.value)} // 更新 remark
+            />
           </div>
           <div className={myStyle.p}>
             <Radio02
