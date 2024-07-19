@@ -118,7 +118,7 @@ export default function Reservation() {
       discount: discount.toString(),
     }
 
-    // 驗證每個字段
+    // 分別驗證每個字段
     const nameResult = schemaForm.shape.name.safeParse(name)
     const mobileResult = schemaForm.shape.mobile_phone.safeParse(
       mobile_phone.toString()
@@ -156,7 +156,7 @@ export default function Reservation() {
     if (!peopleResult.success) newErrors.people = peopleResult.error.format()
     if (!discountResult.success)
       newErrors.discount = discountResult.error.format()
-    if (!radioResult.success) newErrors.readNotice = radioResult.error.format() // 添加閱讀注意事項的錯誤
+    if (!radioResult.success) newErrors.readNotice = radioResult.error.format()
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors)
@@ -170,6 +170,8 @@ export default function Reservation() {
   // 視窗彈出
   const closeModal = () => {
     setModalOpen(false)
+    // 隐藏警告信息
+    setErrors((prev) => ({ ...prev, readNotice: undefined }))
   }
 
   return (
@@ -318,6 +320,13 @@ export default function Reservation() {
               value={radioValue}
               onChange={handleRadioChange}
             />
+            {errors.readNotice &&
+              errors.readNotice._errors &&
+              errors.readNotice._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
           </div>
           <div style={{ textAlign: 'center', marginTop: '10px' }}>
             <button className={myStyle.booking} type="submit">
