@@ -1,11 +1,14 @@
 // reservation.js
 import { useTheme } from '@/context/theme-context'
 import { useRouter } from 'next/router'
+import { DateContext } from '@/context/date-context'
+import { useLoginModal } from '@/context/login-context'
+import { useAuth } from '@/context/auth-context'
 import React, { useState, useContext, useEffect } from 'react'
+
 import myStyle from './reservation.module.css'
 import Input02 from '@/components/UI/form-item/input02'
 import Select03 from '@/components/UI/form-item/select03'
-import { DateContext } from '@/context/date-context'
 import Box from '@mui/joy/Box'
 import Checkbox from '@mui/joy/Checkbox'
 import Textarea01 from '@/components/UI/form-item/textarea01'
@@ -28,8 +31,10 @@ export default function Reservation() {
   const { themeDetails, getThemeDetails } = useTheme()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const { auth, authIsReady } = useAuth()
+  const { loginFormSwitch } = useLoginModal()
 
-  // 連後端資料跟資料驗證
+  // 檢查使用者是否登入
   useEffect(() => {
     const { branch_themes_id } = router.query
 
@@ -38,7 +43,6 @@ export default function Reservation() {
       getThemeDetails(branch_themes_id)
         .then(() => {
           setLoading(false)
-          console.log(themeDetails.sessions)
           if (selectedDate) {
             const formattedDate = `${selectedDate.year}-${String(
               selectedDate.month + 1
@@ -50,11 +54,10 @@ export default function Reservation() {
           }
         })
         .catch((error) => {
-          console.error('Error fetching theme details:', error)
           setLoading(false)
         })
     }
-  }, [router.query, getThemeDetails, selectedDate])
+  }, [router.query, getThemeDetails, selectedDate, themeDetails])
 
   // 姓名、電話、select資料驗證
   const handleNameChange = (e) => {
@@ -109,6 +112,15 @@ export default function Reservation() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    // 檢查用户是否已登入
+    if (!auth.id) {
+      // 用户未登入，顯示登入提示
+      loginFormSwitch('Login')
+      return
+    }
+
+    //處理表單
     const formData = {
       name,
       mobile_phone: mobile_phone.toString(),
@@ -132,18 +144,18 @@ export default function Reservation() {
     if (!date) {
       dateResult = {
         success: false,
-        error: { format: () => ({ _errors: ['請選擇預約日期'] }) },
+        error: { format: () => ({ _errors: ['請選取預約日期'] }) },
       }
     } else {
       dateResult = schemaForm.shape.date.safeParse(date)
     }
 
-    // 驗證是否選擇了「閱讀注意事項」
+    // 驗證“請閱讀並同意注意事项”
     const radioResult = radioValue
       ? { success: true }
       : {
           success: false,
-          error: { format: () => ({ _errors: ['請閱讀並同意注意事項'] }) },
+          error: { format: () => ({ _errors: ['請閱讀並同意注意事项'] }) },
         }
 
     const newErrors = {}
@@ -162,8 +174,8 @@ export default function Reservation() {
       setErrors(newErrors)
     } else {
       setErrors({})
-      console.log('表單數據:', formData)
-      // 提交表單數據
+      console.log('表单数据:', formData)
+      // 提交表单数据
     }
   }
 
