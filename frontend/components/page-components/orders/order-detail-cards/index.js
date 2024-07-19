@@ -18,7 +18,9 @@ export default function OrderDetailCards({ order_id }) {
   }
 
   const hideInvoice = () => {
-    return order.invoice_rtn_code === 1 ? false : true
+    if (order) {
+      return order.invoice_rtn_code === 1 ? false : true
+    }
   }
 
   useEffect(() => {

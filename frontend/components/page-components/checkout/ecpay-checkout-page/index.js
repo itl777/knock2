@@ -1,50 +1,35 @@
-// import React, { useEffect } from 'react';
-// import { useRouter } from 'next/router';
-
-// export default function ECPayCheckout() {
-//   const router = useRouter();
-//   const { html } = router.query;
-
-//   useEffect(() => {
-//     if (html) {
-//       // 將返回的表單 HTML 放入 DOM
-//       document.getElementById('payment-form-container').innerHTML = decodeURIComponent(html);
-//       // 自動提交表單
-//       document.getElementById('_form_aiochk').submit();
-//     }
-//   }, [html]);
-
-//   return <div id="payment-form-container"></div>;
-// }
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import React, { useEffect } from 'react'
+import { useRouter } from 'next/router'
+import styles from './ecpay-checkout-page.module.css'
 
 export default function ECPayCheckout() {
-  const router = useRouter();
-  const { html } = router.query;
+  const router = useRouter()
+  const { html } = router.query
 
   useEffect(() => {
     const handlePaymentSubmission = () => {
       if (html) {
         // Decode the HTML received from the query parameter
-        const decodedHtml = decodeURIComponent(html);
-        
+        const decodedHtml = decodeURIComponent(html)
+
         // Render the payment form HTML received from the server
-        const paymentFormContainer = document.getElementById('payment-form-container');
+        const paymentFormContainer = document.getElementById(
+          'payment-form-container'
+        )
         if (paymentFormContainer) {
-          paymentFormContainer.innerHTML = decodedHtml;
+          paymentFormContainer.innerHTML = decodedHtml
 
           // Auto-submit the form using JavaScript
-          const paymentForm = document.getElementById('_form_aiochk');
+          const paymentForm = document.getElementById('_form_aiochk')
           if (paymentForm) {
-            paymentForm.submit();
+            paymentForm.submit()
           }
         }
       }
-    };
+    }
 
-    handlePaymentSubmission();
-  }, [html]);
+    handlePaymentSubmission()
+  }, [html])
 
-  return <div id="payment-form-container"></div>;
+  return <div id="payment-form-container" className={styles.container}></div>
 }

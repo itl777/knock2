@@ -24,7 +24,7 @@ import CheckoutTotalTable from '../checkout-total-table'
 import EmptyCart from '@/components/page-components/checkout/empty-cart'
 import RedirectionGuide from '@/components/UI/redirect-guide'
 import CouponSelectModal from '../../coupon/coupon-select-modal'
-import SuccessModal from '@/components/UI/success-modal'
+import { useSnackbar } from '@/context/snackbar-context'
 // api path
 import { PRODUCT_IMG, CHECKOUT_POST } from '@/configs/api-path'
 
@@ -37,7 +37,7 @@ export default function CheckoutPage() {
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
   const { handleOrderPayment } = usePayment()
   const userClientWidth = useScreenSize()
-  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const { openSnackbar } = useSnackbar()
   const [screenWidth, setScreenWidth] = useState(userClientWidth)
   const {
     isAddressSelectModalOpen,
@@ -163,14 +163,14 @@ export default function CheckoutPage() {
       const response = await axios.post(CHECKOUT_POST, dataToSubmit)
       if (response.data.success) {
         const orderId = response.data.orderId // 取得後端返回的 order_id
-        setShowSuccessModal(true)
+        // setShowSuccessModal(true)
         clearCart()
+        openSnackbar('訂單已成立', 'success')
         await handleOrderPayment(orderId, checkoutTotal)
 
-        // 2秒後處理支付
-        setTimeout(async () => {
-          setShowSuccessModal(false)
-        }, 2000)
+        // setTimeout(async () => {
+        //   setShowSuccessModal(false)
+        // }, 2000)
       }
     } catch (error) {
       console.error('提交表單時出錯', error)
@@ -257,7 +257,6 @@ export default function CheckoutPage() {
               {isAddressSelectModalOpen && (
                 <SelectAddressModal onClose={closeAddressSelectModal} />
               )}
-
               {!!orderAddress ? (
                 <RecipientButtonSelected
                   key={orderAddress.id}
@@ -272,7 +271,6 @@ export default function CheckoutPage() {
               ) : (
                 <RecipientButton onClick={openAddressSelectModal} />
               )}
-
               <OrderSelectBox
                 name="invoice_type"
                 label="發票形式"
@@ -281,7 +279,6 @@ export default function CheckoutPage() {
                 options={invoiceTypeOption}
                 onChange={handleInvoiceTypeChange}
               />
-
               {invoiceTypeValue === 'mobile' && (
                 <OrderInputBox
                   name="mobileInvoice"
@@ -292,7 +289,6 @@ export default function CheckoutPage() {
                   onBlur={handleBlur}
                 />
               )}
-
               {invoiceTypeValue === 'tax' && (
                 <OrderInputBox
                   name="recipientTaxId"
@@ -315,7 +311,6 @@ export default function CheckoutPage() {
           </div>
         </form>
       )}
-      <SuccessModal show={showSuccessModal} msg="訂單已成立" />
     </section>
   )
 }

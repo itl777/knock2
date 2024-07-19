@@ -2,12 +2,20 @@ import express from "express";
 import db from "../utils/connect.js";
 import ecpay_payment from "ecpay_aio_nodejs";
 import moment from "moment-timezone";
+import axios from "axios";
 
 const router = express.Router();
-const { MERCHANTID, HASHKEY, HASHIV, BACKEND_HOST, FRONTEND_HOST } =
-  process.env;
-const ngrok = 'https://8f47-1-160-26-135.ngrok-free.app/payments';
-
+const API_URL = "https://einvoice-stage.ecpay.com.tw/B2CInvoice/Issue"; // 綠界發票 url
+const {
+  MERCHANTID,
+  HASHKEY,
+  HASHIV,
+  MERCHANTID_INVOICE,
+  HASHKEY_INVOICE,
+  HASHIV_INVOICE,
+} = process.env;
+const ngrok =
+  "https://3909-2001-b400-e258-2bc6-e55b-77bf-751c-f3e0.ngrok-free.app/payments";
 
 const options = {
   OperationMode: "Test",
@@ -23,26 +31,27 @@ const options = {
     "CVS",
     "BARCODE",
     "AndroidPay",
-    "BNPL"
+    "BNPL",
   ],
   IsProjectContractor: false,
 };
 
 let TradeNo;
 
+// 訂單付款
 router.get("/", async (req, res) => {
   const { orderId, checkoutTotal } = req.query;
   TradeNo = "KK" + new Date().getTime().toString();
-  const MerchantTradeDate = new Date().toLocaleString("zh-TW", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false,
-    timeZone: "Asia/Taipei",
-  });
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = `0${now.getMonth() + 1}`.slice(-2); // 月份需補0
+  const day = `0${now.getDate()}`.slice(-2); // 日需補0
+  const hour = `0${now.getHours()}`.slice(-2); // 小時需補0
+  const minute = `0${now.getMinutes()}`.slice(-2); // 分鐘需補0
+  const second = `0${now.getSeconds()}`.slice(-2); // 秒鐘需補0
+
+  const MerchantTradeDate = `${year}/${month}/${day} ${hour}:${minute}:${second}`;
 
   try {
     const sql = `
@@ -93,6 +102,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// 訂單付款結果
 router.post("/return", async (req, res) => {
   console.log("req.body:", req.body);
   const data = { ...req.body };
@@ -113,7 +123,7 @@ router.post("/return", async (req, res) => {
   const formatPaymentDate = moment(PaymentDate, "YYYY-MM-DD+HH:mm:ss")
     .tz("Asia/Taipei")
     .format("YYYY-MM-DD HH:mm:ss");
-  
+
   console.log(
     "確認交易正確性：",
     CheckMacValue === checkValue,
@@ -139,6 +149,11 @@ router.post("/return", async (req, res) => {
         orderStatus,
         MerchantTradeNo,
       ]);
+
+      // 當資料庫更新成功後，呼叫發票開立函式
+      if (+RtnCode === 1) {
+        await issueInvoice(MerchantTradeNo);
+      }
       console.log("資料庫更新成功");
     } catch (error) {
       console.error("資料庫更新失敗:", error);
@@ -159,7 +174,7 @@ router.post("/return", async (req, res) => {
   // }
 });
 
-// 行程
+// 行程付款
 router.get("/reservation", async (req, res) => {
   const { reservation_id } = req.query;
   TradeNo = "KR" + new Date().getTime().toString();
@@ -232,6 +247,7 @@ router.get("/reservation", async (req, res) => {
   }
 });
 
+// 行程付款結果
 router.post("/reservation/return", async (req, res) => {
   console.log("req.body:", req.body);
   const data = { ...req.body };
@@ -248,7 +264,7 @@ router.post("/reservation/return", async (req, res) => {
   const create = new ecpay_payment(options);
   const checkValue = create.payment_client.helper.gen_chk_mac_value(data);
   // 轉換 TradeDate 為 MySQL datetime 格式
-    const formatPaymentDate = moment(PaymentDate, "YYYY-MM-DD+HH:mm:ss")
+  const formatPaymentDate = moment(PaymentDate, "YYYY-MM-DD+HH:mm:ss")
     .tz("Asia/Taipei")
     .format("YYYY-MM-DD HH:mm:ss");
 
@@ -297,7 +313,266 @@ router.post("/reservation/return", async (req, res) => {
   // }
 });
 
+// 加密函數（發票用）
+const encrypt = (text) => {
+  const key = CryptoJS.enc.Utf8.parse(HASHKEY_INVOICE);
+  const iv = CryptoJS.enc.Utf8.parse(HASHIV_INVOICE);
+  const encrypted = CryptoJS.AES.encrypt(text, key, {
+    iv: iv,
+    padding: CryptoJS.pad.Pkcs7,
+    mode: CryptoJS.mode.CBC,
+  });
+  return encrypted.toString();
+};
+
+// 解密函數（發票用）
+const decrypt = (text) => {
+  const key = CryptoJS.enc.Utf8.parse(HASHKEY_INVOICE);
+  const iv = CryptoJS.enc.Utf8.parse(HASHIV_INVOICE);
+  const decrypted = CryptoJS.AES.decrypt(text, key, {
+    iv: iv,
+    padding: CryptoJS.pad.Pkcs7,
+    mode: CryptoJS.mode.CBC,
+  });
+  return decrypted.toString(CryptoJS.enc.Utf8);
+};
+
+let RelateNumber;
+
+// 新增發票
+const issueInvoice = async (merchant_trade_no) => {
+  const { order, items } = await getOrderData(merchant_trade_no);
+
+  if (order.rtn_code === 1) {
+    RelateNumber = "KI" + new Date().getTime().toString();
+
+    let carrierType = "1";
+    let print = "1";
+
+    if (order.recipient_invoice_carrier) {
+      carrierType = "3"; // 手機條碼載具
+      print = "0";
+    }
+    if (order.member_carrier === 1) {
+      carrierType = "1"; // 綠界電子發票載具
+      print = "1";
+    }
+    if (order.recipient_tax_id) {
+      carrierType = ""; // 統一編號
+      print = "1";
+    }
+
+    try {
+      const data = {
+        MerchantID: MERCHANTID_INVOICE,
+        RelateNumber: RelateNumber,
+        CustomerID: order.member_id.toString(),
+        CustomerIdentifier: order.recipient_tax_id || "",
+        CustomerName: order.name,
+        CustomerAddr: order.full_address,
+        CustomerPhone: order.recipient_mobile,
+        CustomerEmail: order.account,
+        Print: print,
+        Donation: "0",
+        CarrierType: carrierType,
+        CarrierNum: order.recipient_invoice_carrier || "",
+        TaxType: "1",
+        SalesAmount: order.total_price,
+        InvType: "07",
+        Items: items,
+      };
+
+      const jsonData = JSON.stringify(data);
+      const encodedData = encodeURIComponent(jsonData);
+      const encryptedData = encrypt(encodedData);
+
+      const requestData = {
+        MerchantID: MERCHANTID_INVOICE,
+        RqHeader: {
+          Timestamp: Math.floor(Date.now() / 1000),
+        },
+        Data: encryptedData,
+      };
+
+      const response = await axios.post(API_URL, requestData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const decryptedData = decrypt(response.data.Data);
+      const decodedData = decodeURIComponent(decryptedData);
+      const resultData = JSON.parse(decodedData);
+
+      // 儲存發票資訊到數據庫
+      await saveInvoiceToDatabase(order_id, resultData);
+
+      res.json({
+        status: true,
+        message: "Invoice issued and saved successfully",
+        data: resultData,
+        order_id: order_id,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while processing the request" });
+    }
+  } else {
+    res.json({
+      status: false,
+      message: "尚未付款",
+      order_id: order_id,
+    });
+  }
+};
+
+// 新增發票時須取得訂單資料
+async function getOrderData(merchant_trade_no) {
+  const orderSql = `
+    SELECT
+      o.id order_id,
+      o.order_date,
+      o.member_id,
+      u.name,
+      u.account,
+      o.rtn_code,
+      CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
+      o.recipient_name,
+      o.member_carrier,
+      o.recipient_mobile,
+      o.recipient_invoice_carrier,
+      o.recipient_tax_id,
+      o.deliver_fee,
+      SUM(od.order_quantity * od.order_unit_price) + o.deliver_fee AS total_price
+      FROM orders o
+      LEFT JOIN users u ON u.user_id = o.member_id
+      LEFT JOIN district d ON d.id = o.order_district_id
+      LEFT JOIN city c ON c.id = d.city_id
+      LEFT JOIN order_details od ON od.order_id = o.id
+    WHERE o.merchant_trade_no = ?
+    GROUP BY o.merchant_trade_no
+  `;
+
+  const detailsSql = `
+    SELECT
+      od.order_id,
+      o.merchant_trade_no,
+      od.order_product_id,
+      pm.product_name,
+      od.order_unit_price,
+      od.order_quantity,
+      (od.order_quantity * od.order_unit_price) AS product_total_price
+      FROM order_details od
+      LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
+      LEFT JOIN orders o ON o.id = od.order_id
+    WHERE o.merchant_trade_no = ?
+  `;
+
+  try {
+    const [orderResult] = await db.query(orderSql, [merchant_trade_no]);
+    const [detailsResult] = await db.query(detailsSql, [merchant_trade_no]);
+
+    if (orderResult.length === 0) {
+      throw new Error("Order not found");
+    }
+
+    const order = orderResult[0];
+
+    let items = detailsResult.map((item, index) => ({
+      ItemSeq: index + 1,
+      ItemName: item.product_name,
+      ItemCount: item.order_quantity,
+      ItemWord: "個", // 或其他適當的單位
+      ItemPrice: item.order_unit_price,
+      ItemTaxType: "1", // 假設所有商品都是應稅
+      ItemAmount: item.product_total_price,
+    }));
+
+    // 添加運費項目（如果有運費）
+    if (order.deliver_fee > 0) {
+      items.push({
+        ItemSeq: items.length + 1,
+        ItemName: "運費",
+        ItemCount: 1,
+        ItemWord: "式",
+        ItemPrice: order.deliver_fee,
+        ItemTaxType: "1", // 假設運費也是應稅的
+        ItemAmount: order.deliver_fee,
+      });
+    }
+
+    console.log(order, items);
+    return { order, items };
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
+
+// 新增發票後需存入資料庫
+async function saveInvoiceToDatabase(merchant_trade_no, data) {
+  // 轉換日期格式
+  const invoiceDate = moment(data.InvoiceDate, "YYYY-MM-DD+HH:mm:ss")
+    .tz("Asia/Taipei")
+    .format("YYYY-MM-DD HH:mm:ss");
+
+  const sql = `
+    UPDATE orders
+    SET
+      invoice_rtn_code = ?,
+      invoice_no = ?,
+      invoice_date = ?,
+      invoice_random_number = ?,
+      last_modified_at = NOW()
+    WHERE merchant_trade_no = ?
+  `;
+
+  try {
+    const [result] = await db.query(sql, [
+      data.RtnCode,
+      data.InvoiceNo,
+      invoiceDate,
+      data.RandomNumber,
+      merchant_trade_no,
+    ]);
+    console.log("Update result:", result);
+    if (result.affectedRows === 0) {
+      throw new Error("No rows updated. Order ID might not exist.");
+    }
+  } catch (error) {
+    console.error("Database error:", error, data);
+    throw error; // 重新拋出錯誤，讓調用者知道發生了問題
+  }
+}
+
+// 產生 CheckMacValue
+const generateCheckMacValue = (data) => {
+  const sortedKeys = Object.keys(data).sort();
+  let checkString = `HashKey=${HASHKEY_INVOICE}`;
+  sortedKeys.forEach((key) => {
+    checkString += `&${key}=${data[key]}`;
+  });
+  checkString += `&HashIV=${HASHIV_INVOICE}`;
+  const encodedString = encodeURIComponent(checkString).toLowerCase();
+  return CryptoJS.SHA256(encodedString).toString().toUpperCase();
+};
 export default router;
+
+// 綠界時間轉換
+function formatInvoiceDate(dateString) {
+  // 將 "+" 替換為空格
+  const formattedDate = dateString.replace("+", " ");
+  // 創建一個 UTC 日期對象
+  const utcDate = new Date(formattedDate + "Z"); // 添加 'Z' 表示這是 UTC 時間
+
+  // 轉換為台灣時間
+  const taiwanDate = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000); // 加上 8 小時
+
+  // 格式化為 MySQL datetime 格式
+  return taiwanDate.toISOString().slice(0, 19).replace("T", " ");
+}
 
 // ReturnURL為付款結果通知回傳網址，為特店server或主機的URL，用來接收綠界後端回傳的付款結果通知。
 // ClientBackURL 消費者點選此按鈕後，會將頁面導回到此設定的網址
