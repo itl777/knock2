@@ -3,6 +3,7 @@ import { useTheme } from '@/context/theme-context'
 import { useRouter } from 'next/router'
 import myStyle from './banner.module.css'
 import { FaStar } from 'react-icons/fa'
+import BasicModal03 from '@/components/UI/basic-modal03'
 import BasicModal02 from '@/components/UI/basic-modal02'
 import { motion } from 'framer-motion'
 import { FaPlay, FaPause } from 'react-icons/fa'
@@ -15,21 +16,53 @@ const Banner = () => {
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef(null)
   const [soundBars, setSoundBars] = useState([])
+  const [autoplayFailed, setAutoplayFailed] = useState(false)
+  const [showMusicPrompt, setShowMusicPrompt] = useState(true)
 
   const togglePlay = () => {
     if (audioRef.current.paused) {
-      audioRef.current.play()
-      setIsPlaying(true)
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true)
+        })
+        .catch((error) => {
+          setIsPlaying(false)
+        })
     } else {
       audioRef.current.pause()
       setIsPlaying(false)
     }
   }
+  const MusicPrompt = ({ onAccept, onDecline }) => (
+    <div className={myStyle.musicPrompt}>
+      <p>是否播放背景音樂？</p>
+      <button onClick={onAccept}>是</button>
+      <button onClick={onDecline}>否</button>
+    </div>
+  )
+  const handleAcceptMusic = () => {
+    setShowMusicPrompt(false)
+    audioRef.current
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch((error) => {
+        console.log('播放失敗:', error)
+        setIsPlaying(false)
+      })
+  }
+
+  const handleDeclineMusic = () => {
+    setShowMusicPrompt(false)
+  }
   useEffect(() => {
     const { branch_themes_id } = router.query
     if (branch_themes_id) {
       setLoading(true)
-      getThemeDetails(branch_themes_id).finally(() => setLoading(false))
+      getThemeDetails(branch_themes_id).finally(() => {
+        setLoading(false)
+        setShowMusicPrompt(true) // 顯示音樂播放提示
+      })
     }
 
     setSoundBars(
@@ -52,6 +85,30 @@ const Banner = () => {
 
   return (
     <>
+      <BasicModal03
+        open={showMusicPrompt}
+        onClose={handleDeclineMusic}
+        modalTitle="背景音樂"
+        modalBody={
+          <div className={myStyle.musicPrompt}>
+            <p>是否播放背景音樂來增強您的體驗？</p>
+            <div className={myStyle.musicPromptButtons}>
+              <button
+                className={myStyle.acceptButton}
+                onClick={handleAcceptMusic}
+              >
+                播放音樂
+              </button>
+              <button
+                className={myStyle.declineButton}
+                onClick={handleDeclineMusic}
+              >
+                不要播放
+              </button>
+            </div>
+          </div>
+        }
+      />
       <div
         style={{
           position: 'relative',
@@ -92,8 +149,8 @@ const Banner = () => {
                 </div>
               </div>
             </div>
-            <div className="col-6 d-flex justify-content-end align-items-end">
-              <div className="d-flex justify-content-center align-items-center">
+            <div className="col-6 d-flex justify-content-end align-items-end ">
+              <div className="d-flex align-items-end">
                 {isPlaying && (
                   <div className={myStyle.soundBarsContainer}>
                     {soundBars.map((bar, i) => (
@@ -109,9 +166,14 @@ const Banner = () => {
                     ))}
                   </div>
                 )}
-                <button onClick={togglePlay} className={myStyle.playerButton}>
-                  {isPlaying ? <FaPause /> : <FaPlay />}
-                </button>
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ height: '100%' }}
+                >
+                  <button onClick={togglePlay} className={myStyle.playerButton}>
+                    {isPlaying ? <FaPause /> : <FaPlay />}
+                  </button>
+                </div>
               </div>
 
               {/* eslint-disable-next-line jsx-a11y/media-has-caption */}

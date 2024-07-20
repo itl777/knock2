@@ -39,21 +39,19 @@ export default function Reservation() {
   const { auth } = useAuth()
   const [useProfileData, setUseProfileData] = useState(false)
   const { userProfile, loading: profileLoading } = useUserProfile(auth?.id)
+  const [showProfileCheckbox, setShowProfileCheckbox] = useState(false)
 
+  // 在 useEffect 中檢查用戶是否已登入
   useEffect(() => {
-    console.log(
-      'Effect triggered, auth?.id:',
-      auth?.id,
-      'userProfile:',
-      userProfile
-    )
     if (auth?.id && userProfile) {
+      setShowProfileCheckbox(true)
+    } else {
+      setShowProfileCheckbox(false)
       setUseProfileData(false)
-      // 只在 userProfile 存在時設置初始值
-      setName(userProfile.name || userProfile.nickname || '')
-      setMobilePhone(userProfile.mobile_phone || '')
     }
   }, [auth?.id, userProfile])
+
+  // 帶入資料
   useEffect(() => {
     const { branch_themes_id } = router.query
     console.log('branch_themes_id changed:', branch_themes_id)
@@ -72,6 +70,7 @@ export default function Reservation() {
     }
   }, [router.query.branch_themes_id])
 
+  // 選單
   useEffect(() => {
     updateDateFromSelection()
   }, [selectedDate])
@@ -87,6 +86,8 @@ export default function Reservation() {
       setDate('')
     }
   }
+
+  // 修改 handleCheckboxChange 函數
   const handleCheckboxChange = (event) => {
     const checked = event.target.checked
     setUseProfileData(checked)
@@ -260,20 +261,16 @@ export default function Reservation() {
               </span>
             ))}
           </div>
-          <Box>
-            {profileLoading ? (
-              <p>載入中...</p>
-            ) : auth?.id && userProfile ? (
+          {showProfileCheckbox && (
+            <Box>
               <Checkbox
                 label="同會員資料"
                 sx={{ color: '#B99755', mt: 3 }}
                 checked={useProfileData}
                 onChange={handleCheckboxChange}
               />
-            ) : (
-              <p></p>
-            )}
-          </Box>
+            </Box>
+          )}
           <div className={myStyle.p}>
             <Input02
               className={myStyle.p}
