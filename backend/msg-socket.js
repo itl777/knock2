@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-
+var socket_list = []
 const app = express();
 // 註冊樣板引擎
 app.set("view engine", "ejs");
@@ -24,12 +24,14 @@ app.get("/", (req, res) => {
 
 
 io.on("connection", (socket) => {
-  console.log("有人連上了");
+  socket_list.push(socket)
+  console.log("有人連上了", socket_list.length);
 
-  // 監聽加入房間
+  // 監聽加入房間j
   socket.on("joinRoom",async ({ room, username }) => {
     try {
       const [results] = await db.query('SELECT * FROM messages WHERE room = ?', [room]);
+      io.emit('joinRoom', { room, username });
       socket.emit('history', results);
     } catch (error) {
       console.error('Error fetching chat history:', error);
@@ -50,16 +52,7 @@ io.on("connection", (socket) => {
       const [results] = await db.query('INSERT INTO messages (room, username, message) VALUES (?, ?, ?)', [room, username, message]);
       io.to(room).emit("chat message", { username, message }); // 发送消息给指定房间的所有客户端
         console.log("INSERT INTO OK");
-        // INSERT INTO OK ResultSetHeader {
-        //   fieldCount: 0,
-        //   affectedRows: 1,
-        //   insertId: 33,
-        //   info: '',
-        //   serverStatus: 2,
-        //   warningStatus: 0,
-        //   changedRows: 0
-        // }
-        
+
     } catch (error) {
       console.error('Error fetching chat history:', error);
       socket.emit('error', { message: 'Failed to fetch chat history' });
@@ -70,10 +63,7 @@ io.on("connection", (socket) => {
     // 多人不分房
     // io.emit("chat message", {username,message});
   });
-  // 當發生離線事件
-  socket.on("disconnect", () => {
-    io.emit("chat message", { username: "廣播訊息", message: "Bye~~~~" });
-  });
+  
 });
 
 server.listen(4040, () => {

@@ -1,6 +1,8 @@
 .section{
 display: flex;
 flex-direction: column;
+position: relative;
 /* padding-top: 82px; */
 /* gap: 82px; */
 }
+

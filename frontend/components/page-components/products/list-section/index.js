@@ -1,3 +1,4 @@
+import Message from '../message'
 import myStyle from './list.module.css'
 
 export default function ListSection({ top, filter, card }) {
@@ -6,6 +7,9 @@ export default function ListSection({ top, filter, card }) {
       {top}
       {filter}
       {card}
+     
+        <Message />
+  
     </div>
   )
 }

@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+}
+h5,p{
+  margin: 0;
+}
+#form {
+  background: rgba(0, 0, 0, 0.15);
+  padding: 0.25rem;
+  position: absolute;
+  bottom: 0;
+
+  right: 0;
+  display: flex;
+  width: 100%;
+  height: 3rem;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+}
+#input {
+  border: none;
+  padding: 0 1rem;
+  flex-grow: 1;
+  border-radius: 2rem;
+  margin: 0.25rem;
+}
+#input:focus {
+  outline: none;
+}
+#form > button {
+  background: #333;
+  border: none;
+  padding: 0 1rem;
+  margin: 0.25rem;
+  border-radius: 3px;
+  outline: none;
+  color: #fff;
+}
+
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow:auto;
+}
+#messages > li {
+  padding: 0.5rem 1rem;
+}
+#messages > li:nth-child(odd) {
+  background: #efefef;
+}
+.container {
+  display: flex;
+}
+.right {
+  width: 100%;
+  border: #333 solid 1px;
+  position: relative;
+  height: 100vh;
+}
+.sidebar {
+  width: 12.5rem;
+  height: 100%;
+}
+.card-left{
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-body{
+  margin: 0;
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.card {
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+.card-left .fa-user {
+  font-size: 40px;
+}
+
+h3{
+  display: flex;
+  justify-content: center;
+}
