@@ -85,7 +85,7 @@ export default function ReservationSuccessSection() {
         />
         <BlackBtn
           btnText="檢視行程"
-          onClick={() => router.push('user/reservation/ongoing')}
+          onClick={() => router.push('/user/reservation/ongoing')}
           href={null}
           paddingType="medium"
         />

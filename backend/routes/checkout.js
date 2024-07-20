@@ -262,6 +262,7 @@ router.post("/api/checkout", async (req, res) => {
     mobileInvoice,
     recipientTaxId,
     deliverFee,
+    orderCouponId,
     orderItems,
   } = req.body;
 
@@ -279,10 +280,11 @@ router.post("/api/checkout", async (req, res) => {
         recipient_invoice_carrier,
         recipient_tax_id,
         deliver_fee,
+        order_coupon_id,
         order_status_id,
         created_at,
         last_modified_at
-      ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
+      ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
     `;
 
     const orderValues = [
@@ -295,6 +297,7 @@ router.post("/api/checkout", async (req, res) => {
       mobileInvoice,
       recipientTaxId,
       deliverFee,
+      orderCouponId,
       1, // order_status_id
     ];
 
@@ -309,18 +312,20 @@ router.post("/api/checkout", async (req, res) => {
         order_product_id,
         order_quantity,
         order_unit_price,
+        product_coupon_id,
         created_at,
         last_modified_at
-      ) VALUES (?, ?, ?, ?, now(), now());
+      ) VALUES (?, ?, ?, ?, ?, now(), now());
     `;
 
     const orderDetailPromises = orderItems.map(
-      ({ productId, productOriginalPrice, orderQty }) => {
+      ({ productId, productOriginalPrice, orderQty, cartProductCouponId }) => {
         const orderDetailValues = [
           orderId,
           productId,
           orderQty,
           productOriginalPrice,
+          cartProductCouponId,
         ];
         return db
           .query(orderDetailSql, orderDetailValues)
@@ -329,6 +334,29 @@ router.post("/api/checkout", async (req, res) => {
     );
 
     const orderDetailResults = await Promise.all(orderDetailPromises);
+
+    // order_coupon
+    const updateCouponSql = `
+      UPDATE coupon_member SET
+        in_cart = 0,
+        used_at = now()
+        WHERE member_id = ? AND coupon_id = ?
+      `;
+
+    // 提取 cartProductCouponId
+    const cartProductCouponIds = orderItems
+      .map((item) => item.cartProductCouponId)
+      .filter((id) => id !== null);
+
+    // 合併 orderCouponId 和 cartProductCouponId
+    const allCouponIds = [orderCouponId, ...cartProductCouponIds];
+
+    const updateCouponPromises = allCouponIds.map(couponId => {
+      return db.query(updateCouponSql, [memberId, couponId])
+        .then(([result]) => result);
+    });
+
+    const updateCouponResults = await Promise.all(updateCouponPromises);
 
     const success =
       orderResult.affectedRows === 1 &&
@@ -348,6 +376,7 @@ router.post("/api/checkout", async (req, res) => {
       orderId,
       // productNames,
     });
+    console.log(orderResult, orderDetailResults, updateCouponResults);
   } catch (error) {
     console.error("Error while processing checkout:", error);
     res

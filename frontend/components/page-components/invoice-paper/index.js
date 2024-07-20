@@ -90,7 +90,7 @@ export default function InvoicePaper({ order_id }) {
             </div>
             <div className={styles.row}>
               <div>隨機碼：{order.invoice_random_number}</div>
-              <div>總計：{order.total_price}</div>
+              <div>總計：{order.subtotal_price+order.deliver_fee-order.discountTotal}</div>
             </div>
             <div>賣方：66666666</div>
           </div>

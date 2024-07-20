@@ -53,9 +53,6 @@ export default function CouponCard({
     setCheckedBoolean(isChecked)
   }, [isChecked])
 
-  useEffect(() => {
-    console.log(coupon)
-  }, [])
 
   return (
     <>

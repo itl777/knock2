@@ -3,6 +3,7 @@ import db from "../utils/connect.js";
 import ecpay_payment from "ecpay_aio_nodejs";
 import moment from "moment-timezone";
 import axios from "axios";
+import CryptoJS from "crypto-js";
 
 const router = express.Router();
 const API_URL = "https://einvoice-stage.ecpay.com.tw/B2CInvoice/Issue"; // 綠界發票 url
@@ -346,20 +347,33 @@ const issueInvoice = async (merchant_trade_no) => {
   if (order.rtn_code === 1) {
     RelateNumber = "KI" + new Date().getTime().toString();
 
-    let carrierType = "1";
-    let print = "1";
+    let carrierType = ""; //載具類別
+    let print = "1"; // 是否列印
+    let customerIdentifier = ""; // 統一編號
+    let carrierNum = ""; // 載具編號
+
+    //當統一編號[CustomerIdentifier]有值時
+    // 2.a 載具類別[CarrierType]為空值時，此參數print請帶1
+    // 2.b 載具類別[CarrierType]=1或2時，此參數print請帶0
+    // 2.c 載具類別[CarrierType]=3時，此參數print可帶0或1
 
     if (order.recipient_invoice_carrier) {
-      carrierType = "3"; // 手機條碼載具
+      carrierType = "3"; // 綠界電子發票載具
       print = "0";
+      customerIdentifier = "";
+      carrierNum = order.recipient_invoice_carrier;
     }
     if (order.member_carrier === 1) {
-      carrierType = "1"; // 綠界電子發票載具
-      print = "1";
+      carrierType = ""; // 綠界電子發票載具
+      print = "0";
+      customerIdentifier = ""; // 統一編號
+      carrierNum = "";
     }
     if (order.recipient_tax_id) {
-      carrierType = ""; // 統一編號
+      carrierType = ""; // 載具類別
       print = "1";
+      customerIdentifier = order.recipient_tax_id; // 統一編號
+      carrierNum = "";
     }
 
     try {
@@ -367,7 +381,7 @@ const issueInvoice = async (merchant_trade_no) => {
         MerchantID: MERCHANTID_INVOICE,
         RelateNumber: RelateNumber,
         CustomerID: order.member_id.toString(),
-        CustomerIdentifier: order.recipient_tax_id || "",
+        CustomerIdentifier: customerIdentifier,
         CustomerName: order.name,
         CustomerAddr: order.full_address,
         CustomerPhone: order.recipient_mobile,
@@ -375,9 +389,9 @@ const issueInvoice = async (merchant_trade_no) => {
         Print: print,
         Donation: "0",
         CarrierType: carrierType,
-        CarrierNum: order.recipient_invoice_carrier || "",
+        CarrierNum: carrierNum,
         TaxType: "1",
-        SalesAmount: order.total_price,
+        SalesAmount: order.checkoutTotal,
         InvType: "07",
         Items: items,
       };
@@ -405,7 +419,7 @@ const issueInvoice = async (merchant_trade_no) => {
       const resultData = JSON.parse(decodedData);
 
       // 儲存發票資訊到數據庫
-      await saveInvoiceToDatabase(order_id, resultData);
+      await saveInvoiceToDatabase(merchant_trade_no, resultData);
 
       res.json({
         status: true,
@@ -413,11 +427,11 @@ const issueInvoice = async (merchant_trade_no) => {
         data: resultData,
         order_id: order_id,
       });
+
+      console.log("invoice submit", data, "invoice result data", resultData);
     } catch (error) {
       console.error("Error:", error);
-      res
-        .status(500)
-        .json({ error: "An error occurred while processing the request" });
+      res.status(500).json({ success: false, message: "Error adding invoice" });
     }
   } else {
     res.json({
@@ -445,14 +459,17 @@ async function getOrderData(merchant_trade_no) {
       o.recipient_invoice_carrier,
       o.recipient_tax_id,
       o.deliver_fee,
-      SUM(od.order_quantity * od.order_unit_price) + o.deliver_fee AS total_price
+      o.order_coupon_id coupon_id,
+      coupons.discount_amount,
+      coupons.discount_percentage,
+      coupons.discount_max
       FROM orders o
       LEFT JOIN users u ON u.user_id = o.member_id
       LEFT JOIN district d ON d.id = o.order_district_id
       LEFT JOIN city c ON c.id = d.city_id
       LEFT JOIN order_details od ON od.order_id = o.id
+      LEFT JOIN coupons ON coupons.id = o.order_coupon_id
     WHERE o.merchant_trade_no = ?
-    GROUP BY o.merchant_trade_no
   `;
 
   const detailsSql = `
@@ -463,10 +480,14 @@ async function getOrderData(merchant_trade_no) {
       pm.product_name,
       od.order_unit_price,
       od.order_quantity,
-      (od.order_quantity * od.order_unit_price) AS product_total_price
+      od.product_coupon_id,
+      coupons.discount_amount,
+      coupons.discount_percentage,
+      coupons.discount_max
       FROM order_details od
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
       LEFT JOIN orders o ON o.id = od.order_id
+      LEFT JOIN coupons ON coupons.id = od.product_coupon_id
     WHERE o.merchant_trade_no = ?
   `;
 
@@ -480,6 +501,43 @@ async function getOrderData(merchant_trade_no) {
 
     const order = orderResult[0];
 
+    let subtotal = 0;
+    let productDiscount = 0;
+    let orderDiscount = 0;
+    let discountedProductOriginalTotal = 0;
+
+    detailsResult.forEach((item) => {
+      const total = item.order_quantity * item.order_unit_price;
+      subtotal += total;
+      if (item.discount_percentage) {
+        const percentage = 1 - item.discount_percentage / 100;
+        const discount = Math.floor(total * percentage);
+        productDiscount +=
+          discount >= item.discount_max ? item.discount_max : discount;
+        discountedProductOriginalTotal += total;
+      } else if (item.discount_amount) {
+        productDiscount += item.discount_amount;
+        discountedProductOriginalTotal += total;
+      }
+    });
+
+    order.subtotal = subtotal;
+
+    const excludeProductTotal = subtotal - discountedProductOriginalTotal;
+    if (order.discount_percentage) {
+      const percentage = 1 - order.discount_percentage / 100;
+      const discount = Math.floor(excludeProductTotal * percentage);
+      orderDiscount +=
+        discount > order.discount_max ? order.discount_max : discount;
+    }
+    if (order.discount_amount) {
+      orderDiscount = order.discount_amount;
+    }
+
+    const discountTotal = productDiscount + orderDiscount;
+
+    order.checkoutTotal = subtotal + order.deliver_fee - discountTotal;
+
     let items = detailsResult.map((item, index) => ({
       ItemSeq: index + 1,
       ItemName: item.product_name,
@@ -487,8 +545,21 @@ async function getOrderData(merchant_trade_no) {
       ItemWord: "個", // 或其他適當的單位
       ItemPrice: item.order_unit_price,
       ItemTaxType: "1", // 假設所有商品都是應稅
-      ItemAmount: item.product_total_price,
+      ItemAmount: item.order_unit_price * item.order_quantity,
     }));
+
+    // 添加運費項目（如果有折扣）
+    if (discountTotal > 0) {
+      items.push({
+        ItemSeq: items.length + 1,
+        ItemName: "折扣",
+        ItemCount: 1,
+        ItemWord: "式",
+        ItemPrice: -discountTotal,
+        ItemTaxType: "1", // 假設運費也是應稅的
+        ItemAmount: -discountTotal,
+      });
+    }
 
     // 添加運費項目（如果有運費）
     if (order.deliver_fee > 0) {

@@ -44,7 +44,8 @@ export const CartProvider = ({ children }) => {
   const [usableProductCoupons, setUsableProductCoupons] = useState([]) // 取得會員可使用優惠券(指定商品)
   const [selectedCoupons, setSelectedCoupons] = useState([])
   const [selectedProductCoupons, setSelectedProductCoupons] = useState([])
-  
+  const [excludeProductCouponTotal, setExcludeProductCouponTotal] = useState(0)
+
   // order submit form 內容
   const [formData, setFormData] = useState({
     memberId: 0,
@@ -99,18 +100,6 @@ export const CartProvider = ({ children }) => {
     }
   }
 
-  // 取得會員優惠券
-  // const fetchMemberCoupons = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `${GET_MEMBER_COUPON}?member_id=${auth.id}&page=1&status=ongoing`
-  //     )
-  //     setCoupons(response.data.rows)
-  //   } catch (error) {
-  //     console.error('Error fetching member coupons: ', error)
-  //   }
-  // }
-
   // 取得會員可以使用的優惠券(所有商品)
   const fetchMemberCartCoupons = async () => {
     try {
@@ -150,7 +139,7 @@ export const CartProvider = ({ children }) => {
       fetchMemberCartProductCoupons()
       calculateDiscountTotal()
       getSelectedCoupons()
-      getSelectedProductCoupons
+      getSelectedProductCoupons()
     } catch (error) {
       console.error('Error adding coupon to cart:', error)
     }
@@ -188,29 +177,31 @@ export const CartProvider = ({ children }) => {
   //     .filter((product) => product.in_cart > 0)
   //   setSelectedProductCoupons(newSelectedProductCoupons)
   // }
-  
+
   const getSelectedProductCoupons = () => {
-    const newSelectedProductCoupons = usableProductCoupons.flatMap(coupon => 
-      coupon.products.map(product => ({
-        coupon_id: coupon.coupon_id,
-        used_at: coupon.used_at,
-        coupon_name: coupon.coupon_name,
-        coupon_type_id: coupon.coupon_type_id,
-        minimum_order: coupon.minimum_order,
-        discount_amount: coupon.discount_amount,
-        discount_percentage: coupon.discount_percentage,
-        discount_max: coupon.discount_max,
-        valid_from: coupon.valid_from,
-        valid_until: coupon.valid_until,
-        max_usage_per_user: coupon.max_usage_per_user,
-        total_limit: coupon.total_limit,
-        coupon_type_name: coupon.coupon_type_name,
-        product_id: product.product_id,
-        product_name: product.product_name,
-        price: product.price,
-        in_cart: product.in_cart
-      }))
-    ).filter(product => product.in_cart > 0)
+    const newSelectedProductCoupons = usableProductCoupons
+      .flatMap((coupon) =>
+        coupon.products.map((product) => ({
+          coupon_id: coupon.coupon_id,
+          used_at: coupon.used_at,
+          coupon_name: coupon.coupon_name,
+          coupon_type_id: coupon.coupon_type_id,
+          minimum_order: coupon.minimum_order,
+          discount_amount: coupon.discount_amount,
+          discount_percentage: coupon.discount_percentage,
+          discount_max: coupon.discount_max,
+          valid_from: coupon.valid_from,
+          valid_until: coupon.valid_until,
+          max_usage_per_user: coupon.max_usage_per_user,
+          total_limit: coupon.total_limit,
+          coupon_type_name: coupon.coupon_type_name,
+          product_id: product.product_id,
+          product_name: product.product_name,
+          price: product.price,
+          in_cart: product.in_cart,
+        }))
+      )
+      .filter((product) => product.in_cart > 0)
     setSelectedProductCoupons(newSelectedProductCoupons)
   }
   // 取得訂單總金額
@@ -270,14 +261,12 @@ export const CartProvider = ({ children }) => {
 
     usableCoupons.forEach((item) => {
       if (item.in_cart === 1) {
+        discountMaxTotal += item.discount_max
+        discountMinTotal += item.minimum_order
         if (item.discount_amount) {
           discountTotal += item.discount_amount
-          discountMaxTotal += item.discount_max
-          discountMinTotal += item.minimum_order
         } else if (item.discount_percentage) {
           discountPercentage = 1 - item.discount_percentage / 100
-          discountMaxTotal += item.discount_max
-          discountMinTotal += item.minimum_order
         }
       }
     })
@@ -287,13 +276,12 @@ export const CartProvider = ({ children }) => {
     if (excludeProductTotal > discountMinTotal) {
       const excludeProductDiscount =
         discountTotal + Math.floor(discountPercentage * excludeProductTotal)
-      finalDiscount =
-        excludeProductDiscount > discountMaxTotal
-          ? discountMaxTotal
-          : excludeProductDiscount
+      finalDiscount = excludeProductDiscount > discountMaxTotal ? discountMaxTotal : excludeProductDiscount
     }
+    console.log("discountTotal", discountTotal, 'percentage', Math.floor(discountPercentage * excludeProductTotal),finalDiscount  );
     finalDiscount += productDiscountTotal
     setDiscountTotal(finalDiscount)
+    setExcludeProductCouponTotal(excludeProductTotal)
   }
 
   // 記錄商品數量異動
@@ -411,7 +399,6 @@ export const CartProvider = ({ children }) => {
         handleLogin()
         fetchMemberCart()
         calculateDiscountTotal()
-        // fetchMemberCoupons()
         fetchMemberCartCoupons()
         fetchMemberCartProductCoupons()
         getSelectedCoupons()
@@ -429,18 +416,10 @@ export const CartProvider = ({ children }) => {
   }, [checkoutItems])
 
   useEffect(() => {
-    setCartBadgeQty(checkoutItems.length)
     calculateDiscountTotal()
     getSelectedCoupons()
     getSelectedProductCoupons()
-
   }, [checkoutItems, usableCoupons, usableProductCoupons])
-
-
-  useEffect(() => {
-    getSelectedCoupons()
-    getSelectedProductCoupons()
-  }, [usableCoupons])
 
   return (
     <CartContext.Provider
@@ -453,10 +432,8 @@ export const CartProvider = ({ children }) => {
         checkoutTotal,
         discountTotal,
         setDiscountTotal,
-        // coupons,
         usableCoupons,
         usableProductCoupons,
-        // fetchMemberCoupons,
         handleAddToCart,
         handleQuantityChange,
         clearCart,
@@ -468,6 +445,7 @@ export const CartProvider = ({ children }) => {
         handleRemoveCouponFromCart,
         selectedCoupons,
         selectedProductCoupons,
+        excludeProductCouponTotal,
       }}
     >
       {children}

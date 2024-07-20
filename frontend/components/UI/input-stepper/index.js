@@ -58,8 +58,8 @@ export default function InputStepper({
 
   const StepperButton = styled(IconButton)(({ theme }) => ({
     backgroundColor: 'white',
-    width: '1.5rem',
-    height: '1.5rem',
+    width: '1.4rem',
+    height: '1.4rem',
     border: '1px solid var(--input-grey)',
     padding: '4px',
     '&:hover': {

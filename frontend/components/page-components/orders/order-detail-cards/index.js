@@ -70,7 +70,8 @@ export default function OrderDetailCards({ order_id }) {
             merchant_trade_no={order?.merchant_trade_no}
             subtotal_price={order?.subtotal_price}
             deliver_fee={order?.deliver_fee}
-            total_price={order?.total_price}
+            discount_total={order?.discountTotal}
+            total_price={order?.subtotal_price + order?.deliver_fee - order?.discountTotal}
             payment_date={order?.payment_date}
             full_address={order?.full_address}
             order_status_name={order?.order_status_name}

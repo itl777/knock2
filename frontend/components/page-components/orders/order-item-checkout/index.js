@@ -8,8 +8,6 @@ import CartFavoriteIcon from '../../products/cart-favorite-icon'
 import CouponSelectModal from '../../coupon/coupon-select-modal'
 import { PRODUCT_IMG } from '@/configs/api-path'
 import { useEffect } from 'react'
-import AOS from 'aos'
-import 'aos/dist/aos.css'
 
 export default function OrderItemCheckout({ type = 'def' }) {
   const { checkoutItems, usableProductCoupons, handleQuantityChange } =
@@ -37,8 +35,8 @@ export default function OrderItemCheckout({ type = 'def' }) {
         }
       } else if (discount_percentage) {
         if (productOriginalTotal >= minimum_order) {
-          discountPrice = Math.floor(price * (1 - discount_amount / 100))
-          discountPrice = discountPrice >= discount_max ? discountPrice : price
+          discountPrice = Math.floor(price * (1 - discount_percentage / 100))
+          // discountPrice = discountPrice >= discount_max ? discountPrice : price
         }
       }
     }
@@ -63,7 +61,7 @@ export default function OrderItemCheckout({ type = 'def' }) {
             )
         )
         return (
-          <div className={styles.itemBox} key={v.product_id}   data-aos="zoom-in">
+          <div className={styles.itemBox} key={v.product_id}>
             <OrderProductImgBox
               imgSrc={`${PRODUCT_IMG}/${v.product_img}`}
               productId={v.product_id}

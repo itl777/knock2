@@ -58,6 +58,7 @@ export default function CheckoutPage() {
     fetchMemberProfile,
     formData,
     setFormData,
+    selectedCoupons,
     calculateDiscountTotal,
     usableCoupons,
     useableProductCoupons,
@@ -111,6 +112,8 @@ export default function CheckoutPage() {
       productId: item.product_id,
       productOriginalPrice: item.price,
       orderQty: item.cart_product_quantity,
+      cartProductCouponId: item.cart_product_coupon_id,
+      
     }))
 
     // 根據發票形式設置 formData
@@ -149,6 +152,13 @@ export default function CheckoutPage() {
       alert('請確認欄位')
       return
     }
+
+    let orderCouponId = null
+
+    if (selectedCoupons.length > 0) {
+      orderCouponId = selectedCoupons[0].coupon_id
+    }
+
     const dataToSubmit = {
       ...updatedFormData,
       memberId: auth.id,
@@ -157,6 +167,7 @@ export default function CheckoutPage() {
       recipientDistrictId: orderAddress.district_id, // 收件人區域 ID
       recipientAddress: orderAddress.address, // 收件人地址
       deliverFee,
+      orderCouponId: orderCouponId,
       orderItems, // 將 orderItems 加入到要提交的數據中
     }
 
@@ -226,9 +237,10 @@ export default function CheckoutPage() {
             {/* 訂單金額 */}
             <CheckoutTotalTable
               subtotal={subtotal}
-              checkoutTotal={checkoutTotal}
               deliverFee={deliverFee}
               totalDiscount={discountTotal}
+              checkoutTotal={checkoutTotal}
+
             />
           </div>
 

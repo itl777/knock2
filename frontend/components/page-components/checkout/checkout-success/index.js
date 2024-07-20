@@ -29,7 +29,7 @@ export default function CheckoutSuccess() {
   return (
     <>
       <section className={styles.sectionContainer}>
-        <h3 className={styles.titleStyles}>訂單已成立</h3>
+        <h3 className={styles.titleStyles}>訂單付款完成</h3>
 
         <div className={styles.contentContainer}>
           <img className={styles.ghostImg} src="/ghost/ghost_03.png" alt="" />
@@ -45,10 +45,10 @@ export default function CheckoutSuccess() {
           ))}
 
           <CheckoutTotalTable
-            subtotal={+order.subtotal_price}
-            checkoutTotal={+order.total_price}
-            deliverFee={+order.deliver_fee}
-            totalDiscount={0}
+            subtotal={order.subtotal_price}
+            deliverFee={order.deliver_fee}
+            totalDiscount={order.discountTotal}
+            checkoutTotal={order.subtotal_price + order.deliver_fee - order.discountTotal}
           />
         </div>
 

@@ -8,7 +8,7 @@ const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
 
 const getPaymentType = (payment_type) => {
   if (!payment_type) {
-    return payment_type = "待付款";
+    return (payment_type = "待付款");
   } else {
     // 找到第一個 "_" 的位置
     const underscoreIndex = payment_type.indexOf("_");
@@ -45,9 +45,7 @@ const getPaymentType = (payment_type) => {
 
     return payment_type;
   }
-  
-}
-
+};
 
 // GET orders data
 router.get("/", async (req, res) => {
@@ -187,55 +185,40 @@ router.get("/:orderId", async (req, res) => {
         o.invoice_no,
         o.invoice_date,
         o.invoice_random_number,
-        SUM(od.order_quantity * od.order_unit_price) AS subtotal_price,
-        SUM(od.order_quantity * od.order_unit_price + o.deliver_fee) AS total_price
+        o.order_coupon_id coupon_id,
+        discount_amount,
+        discount_percentage,
+        discount_max,
+        CAST(SUM(od.order_quantity * od.order_unit_price) AS UNSIGNED) AS subtotal_price,
+        CAST(SUM(od.order_quantity * od.order_unit_price + o.deliver_fee) AS UNSIGNED) AS total_price
       FROM orders o
       LEFT JOIN order_details od ON od.order_id = o.id
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
       LEFT JOIN district d ON d.id = o.order_district_id
       LEFT JOIN city c ON c.id = d.city_id
       LEFT JOIN order_status os ON os.id = o.order_status_id
+      LEFT JOIN coupons ON coupons.id = o.order_coupon_id
       WHERE o.id = ?
       GROUP BY o.id;
     `;
 
     const [orders] = await db.query(orderSql, [orderId]);
 
-    // 格式化 order_date
-    orders.forEach((order) => {
-      const m = moment(order.order_date);
-      if (m.isValid()) {
-        order.order_date = m.format(dateFormat);
-      } else {
-        order.order_date = "";
-      }
-    });
+    const order = orders[0];
 
-    // 格式化 order_date
-    orders.forEach((order) => {
-      const m = moment(order.invoice_date);
-      if (m.isValid()) {
-        order.invoice_date = m.format(dateTimeFormat);
-      } else {
-        order.invoice_date = "";
-      }
-    });
+    if (orders.length === 0) {
+      return res.status(404).json({ error: "Order not found" });
+    }
 
-    // 格式化 payment_date
-    orders.forEach((order) => {
-      const m = moment(order.payment_date);
-      if (m.isValid()) {
-        order.payment_date = m.format(dateTimeFormat);
-      } else {
-        order.payment_date = "";
-      }
-    });
-    
-    // 格式化 payment_type
-    orders.forEach((v) => {
-      v.payment_type = getPaymentType(v.payment_type);
-    });
+    // 格式化日期
+    const formatOrderDate = (date, format) => {
+      const m = moment(date);
+      return m.isValid() ? m.format(format) : "";
+    };
 
+    order.order_date = formatOrderDate(order.order_date, dateFormat);
+    order.invoice_date = formatOrderDate(order.invoice_date, dateTimeFormat);
+    order.payment_date = formatOrderDate(order.payment_date, dateTimeFormat);
 
     // 取得訂單詳細資料
     const orderDetailsSql = `
@@ -247,9 +230,14 @@ router.get("/:orderId", async (req, res) => {
         od.order_unit_price,
         od.order_quantity,
         img.product_img,
+        od.product_coupon_id,
+        discount_amount,
+        discount_percentage,
+        discount_max,
         od.review_status
       FROM order_details od
       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
+      LEFT JOIN coupons ON coupons.id = od.product_coupon_id
       LEFT JOIN (
         SELECT img_product_id, product_img,
           ROW_NUMBER() OVER (PARTITION BY img_product_id ORDER BY img_id) AS rn
@@ -259,6 +247,38 @@ router.get("/:orderId", async (req, res) => {
     `;
 
     const [orderDetails] = await db.query(orderDetailsSql, [orderId]);
+
+    let productDiscount = 0;
+    let discountedProductOriginalTotal = 0;
+
+    orderDetails.forEach((item) => {
+      const total = item.order_quantity * item.order_unit_price;
+      if (item.discount_percentage) {
+        const percentage = 1 - item.discount_percentage / 100;
+        const discount = Math.floor(total * percentage);
+        productDiscount +=
+          discount >= item.discount_max ? item.discount_max : discount;
+        discountedProductOriginalTotal += total;
+      } else if (item.discount_amount) {
+        productDiscount += item.discount_amount;
+        discountedProductOriginalTotal += total;
+      }
+    });
+
+    let orderDiscount = 0;
+    const excludeProductTotal = order.subtotal_price - discountedProductOriginalTotal;
+    if (order.discount_percentage) {
+      const percentage = 1 - order.discount_percentage / 100;
+      const discount = Math.floor(excludeProductTotal * percentage);
+      orderDiscount +=
+        discount > order.discount_max ? order.discount_max : discount;
+    }
+    if (order.discount_amount) {
+      orderDiscount = order.discount_amount;
+    }
+
+    const discountTotal = productDiscount + orderDiscount;
+    orders[0].discountTotal = discountTotal;
 
     console.log("orders data: ", orders);
     console.log("order details data: ", orderDetails);
@@ -385,7 +405,7 @@ router.post("/api/cancel_order", async (req, res) => {
       WHERE id = ?;
     `;
 
-    await db.query(sql, [order_id])
+    await db.query(sql, [order_id]);
 
     res.json({
       success: true,
@@ -397,6 +417,5 @@ router.post("/api/cancel_order", async (req, res) => {
     });
   }
 });
-
 
 export default router;
