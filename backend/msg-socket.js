@@ -5,7 +5,7 @@ import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 var socket_list = [];
-var onLine = [];
+var online = [];
 const app = express();
 // 註冊樣板引擎
 app.set("view engine", "ejs");
@@ -26,13 +26,17 @@ io.on("connection", (socket) => {
   socket_list.push(socket);
   console.log("有人連上了", socket_list.length);
 
-  // 監聽加入房間j
   socket.on("joinRoom", async ({ room, username }) => {
-
-    if (!onLine.some(item => item.room === room && item.username === username) && username !== '管理員') {
-      onLine.push({ room, username });
-      console.log("'中online", onLine);
+    if (
+      !online.some(
+        (item) => item.room === room && item.username === username
+      ) &&
+      username !== "管理員"
+    ) {
+      online.push({ room, username });
+      console.log("'中online", online);
     }
+
     try {
       const [results] = await db.query(
         "SELECT * FROM messages WHERE room = ?",
@@ -45,45 +49,46 @@ io.on("connection", (socket) => {
       socket.emit("error", { message: "Failed to fetch chat history" });
     }
 
-    socket.join(room); // 將 socket 加入指定的房間
+    socket.join(room);
     console.log(`${username} joined room: ${room}`);
-    console.log(`-------joined room--------`);
+    io.to("AllRoom").emit("AllRoom", online);
+
+    socket.on("disconnect", () => {
+      console.log(room, "用戶斷開連接");
+      online = online.filter((value) => value.room !== room);
+      console.log("inline", online);
+      io.to("AllRoom").emit("AllRoom", online);
+
+      console.log(`-------joined room--------`);
+    });
   });
 
   // 傳給後台
   socket.on("AllRoom", (data) => {
+    console.log("AllRoom", data);
     socket.join("AllRoom");
     io.to("AllRoom").emit("AllRoom", data);
   });
-  // 在连接时发射消息到客户端
-  socket.emit("AllRoom", onLine);
+
+  socket.emit("AllRoom", online);
 
   socket.on("chat message", async (data) => {
     const { room, username, message } = data;
     console.log(`${username} : ${message}`);
-    // 存入資料庫
     try {
       const [results] = await db.query(
         "INSERT INTO messages (room, username, message) VALUES (?, ?, ?)",
         [room, username, message]
       );
-      io.to(room).emit("chat message", { username, message }); // 发送消息给指定房间的所有客户端
+      io.to(room).emit("chat message", { username, message });
       console.log("INSERT INTO OK");
     } catch (error) {
       console.error("Error fetching chat history:", error);
       socket.emit("error", { message: "Failed to fetch chat history" });
     }
 
-    // 單人房
-    // io.to(room).emit("chat message", { username, message }); // 將訊息發送到指定的房間
-    // 多人不分房
-    // io.emit("chat message", {username,message});
   });
 
-  socket.on("disconnecting", (reason) => {
-    console.log("Socket is about to disconnect:", reason);
-    // 可以在這裡執行一些清理操作
-  });
 });
 
 server.listen(4040, () => {

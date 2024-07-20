@@ -4,17 +4,20 @@ import { useAuth } from '@/context/auth-context'
 import myStyle from './message.module.css'
 import { IoIosArrowBack } from 'react-icons/io'
 import { GoPaperAirplane } from 'react-icons/go'
+import { AiFillMessage } from 'react-icons/ai'
 
 const socket = io('http://localhost:4040')
 
 export default function Message() {
+  //toggle
+  const [toggleButton, setToggleButton] = useState(false)
   // 使用者名稱
   const [username, setUsername] = useState('')
   // 訊息
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
   // 新房間
-  const [room, setRoom] = useState('') //
+  const [room, setRoom] = useState('')
 
   // 取得會員id
   const { auth, authIsReady } = useAuth()
@@ -38,6 +41,10 @@ export default function Message() {
       console.log('history 監聽', history)
       setMessages(history)
     })
+    socket.on('disconnect', () => {
+      console.log('用戶斷開連接')
+      // socket.emit('user_offline', room)
+    })
 
     return () => {
       socket.off('chat message')
@@ -58,24 +65,28 @@ export default function Message() {
     }
   }
 
-  const messageEndRef = useRef(null);
+  const messageEndRef = useRef(null)
 
   const scrollToBottom = () => {
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]); 
+    scrollToBottom()
+  }, [messages])
 
-  return (
+  const handleButton = () => {
+    setToggleButton(!toggleButton)
+  }
+
+  return toggleButton ? (
     // 最外層
     <div className={myStyle.fix}>
       {/* 頂端區 */}
       <div className={myStyle.top}>
-        <div className={myStyle.topArrow}>
+        <button className={myStyle.topArrow} onClick={handleButton}>
           <IoIosArrowBack />
-        </div>
+        </button>
         <h5>目前位置 : {room}</h5>
       </div>
 
@@ -110,5 +121,9 @@ export default function Message() {
         </form>
       </div>
     </div>
+  ) : (
+    <button className={myStyle.openButton} onClick={handleButton}>
+      <AiFillMessage />
+    </button>
   )
 }

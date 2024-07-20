@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>Socket.IO chat</title>
+    <title>客服聊天室</title>
     <link rel="stylesheet" href="/CSS/msg.css" />
     <link
       rel="stylesheet"
@@ -22,13 +22,11 @@
             <i class="fa-solid fa-user"></i>
           </div>
           <div class="card-body">
-            <h5 class="card-title">範例卡片</h5>
+            <h3 class="card-title">範例卡片</h3>
             <p class="card-text">聊天訊息</p>
-            <a href="#" class="btn btn-primary">進入聊天</a>
+            <button class="btn btn-primary">進入聊天</button>
           </div>
         </div>
-
-      
       </div>
 
       <div class="rightArea">
@@ -38,12 +36,9 @@
           <form id="form" action="">
             <input id="input" autocomplete="off" /><button>Send</button>
           </form>
-
-          
         </div>
       </div>
     </div>
-
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -59,10 +54,13 @@
       let room = "room_0";
       const roomToJoin = "someRoomName";
       var online = [];
+      var newOnline = [];
       const username = "管理員";
 
       socket.on("AllRoom", (data) => {
         console.log("AllRoom", data);
+        userCard.textContent = "";
+
         online = data;
         data.forEach((itemData) => {
           // 創建 <li> 元素
@@ -70,25 +68,24 @@
 
           // 設置 <li> 元素的 HTML 內容
           li.innerHTML = `
-          <div class="card">
-            <div class="card-left">
-              <i class="fa-solid fa-user"></i>
+            <div class="card">
+              <div class="card-left">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <div class="card-body">
+                <h3 class="card-title">${itemData.username || "用戶名稱"}</h3>
+                <p class="card-text">${itemData.room}</p>
+                <button onClick="joinRoom(event,'${
+                  itemData.room
+                }')" class="btn btn-primary">進入聊天</button>
+              </div>
             </div>
-            <div class="card-body">
-              <h3 class="card-title">${itemData.username || "用戶名稱"}</h3>
-              <p class="card-text">${itemData.room
-              }</p>
-              <button onClick="joinRoom(event,'${itemData.room
-              }')" class="btn btn-primary">進入聊天</button>
-            </div>
-          </div>
-        `;
+          `;
           // 將 <li> 添加到 <ul>
           userCard.appendChild(li);
+          console.log("----------append li");
         });
       });
-
-      socket.emit("AllRoom", online);
 
       socket.on("joinRoom", (data) => {
         console.log("jjj HTML", data);
@@ -98,32 +95,21 @@
       function joinRoom(e, selectedRoom) {
         console.log("進入joinRoom fun---");
         e.preventDefault();
-        socket.emit(
-          "joinRoom",
-          { room: selectedRoom, username },
-          (response) => {
-            if (response.success) {
-              room = selectedRoom;
-              console.log(`Successfully joined room ${room}`);
-              // 啟用消息發送功能或更新 UI
-            } else {
-              console.error("Failed to join room:", response.error);
-            }
-          }
-        );
-      //  清空原本留言
-      messages.textContent = '';
-      window.scrollTo(0, document.body.scrollHeight);
+        socket.emit("joinRoom",{ room: selectedRoom, username });
+        //  清空原本留言
+        messages.textContent = "";
+        window.scrollTo(0, document.body.scrollHeight);
       }
 
-      //  socket.emit("joinRoom", { room:roomToJoin, username }, (response) => {
-      //   if (response.success) {
-      //     console.log(`Successfully joined room ${room}`);
-      //     // 可以在這裡更新UI，顯示已成功加入房間
-      //   } else {
-      //     console.error("Failed to join room:", response.error);
-      //   }
-      // });
+      socket.on("user_offline", (data) => {
+        console.log("後端前台用戶離線:", data);
+      });
+
+      // 定期更新
+      setInterval(()=>{
+        console.log('更新---------------');
+        socket.emit("AllRoom", online);
+      }, 3000)
 
       console.log("前台join", { room, username });
 
