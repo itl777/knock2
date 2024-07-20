@@ -7,6 +7,9 @@ import OrderStatusTag from '../../order-status-tag'
 import OrderProductImgBox from '../../order-product-img-box'
 import { HiOutlineCreditCard, HiOutlineCube } from 'react-icons/hi'
 import { useRouter } from 'next/router'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+import { useEffect } from 'react'
 
 export default function OrderListCard({
   order_id,
@@ -35,8 +38,12 @@ export default function OrderListCard({
     return payment_type === '待付款' ? false : true
   }
 
+  useEffect(() => {
+    AOS.init()
+  }, [])
+
   return (
-    <div className={styles.orderBox}>
+    <div className={styles.orderBox}  data-aos="fade-right">
       <CardHeader
         title={order_date}
         btn1Text="詳情"

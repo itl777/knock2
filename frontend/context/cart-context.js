@@ -9,7 +9,6 @@ import {
   CART_POST,
   CHECKOUT_GET_PROFILE,
   GET_MEMBER_COUPON,
-  UPDATE_MEMBER_COUPON_IN_CART,
   GET_MEMBER_COUPON_IN_CART,
 } from '@/configs/api-path'
 
@@ -37,15 +36,15 @@ export const CartProvider = ({ children }) => {
   const [checkoutTotal, setCheckoutTotal] = useState(0) // 購物車總金額(含運費)
   const [discountTotal, setDiscountTotal] = useState(0) // 購物車總金額
   const [subtotal, setSubtotal] = useState(0) // 購物車總金額
-  const [cartBadgeQty, setCartBadgeQty] = useState(0) // 購物車商品項目數量
   const [deliverFee, setDeliverFee] = useState(120)
+  const [cartBadgeQty, setCartBadgeQty] = useState(0) // 購物車商品項目數量
   const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
-  const [coupons, setCoupons] = useState([]) // 取得會員可使用優惠券
-  const [usableCoupons, setUsableCoupons] = useState([]) // 取得會員可使用優惠券
-  const [usableProductCoupons, setUsableProductCoupons] = useState([]) // 取得會員可使用優惠券
-  // const [selectedCoupons, setSelectedCoupons] = useState([]) // 購物車使用的優惠券
-  // const [selectedProductCoupons, setSelectedProductCoupons] = useState([]) // 購物車使用的優惠券
-
+  // const [coupons, setCoupons] = useState([]) // 取得會員可使用優惠券
+  const [usableCoupons, setUsableCoupons] = useState([]) // 取得會員可使用優惠券（所有商品）
+  const [usableProductCoupons, setUsableProductCoupons] = useState([]) // 取得會員可使用優惠券(指定商品)
+  const [selectedCoupons, setSelectedCoupons] = useState([])
+  const [selectedProductCoupons, setSelectedProductCoupons] = useState([])
+  
   // order submit form 內容
   const [formData, setFormData] = useState({
     memberId: 0,
@@ -101,16 +100,16 @@ export const CartProvider = ({ children }) => {
   }
 
   // 取得會員優惠券
-  const fetchMemberCoupons = async () => {
-    try {
-      const response = await axios.get(
-        `${GET_MEMBER_COUPON}?member_id=${auth.id}&page=1&status=ongoing`
-      )
-      setCoupons(response.data.rows)
-    } catch (error) {
-      console.error('Error fetching member coupons: ', error)
-    }
-  }
+  // const fetchMemberCoupons = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `${GET_MEMBER_COUPON}?member_id=${auth.id}&page=1&status=ongoing`
+  //     )
+  //     setCoupons(response.data.rows)
+  //   } catch (error) {
+  //     console.error('Error fetching member coupons: ', error)
+  //   }
+  // }
 
   // 取得會員可以使用的優惠券(所有商品)
   const fetchMemberCartCoupons = async () => {
@@ -119,6 +118,7 @@ export const CartProvider = ({ children }) => {
         `${GET_MEMBER_COUPON_IN_CART}?member_id=${auth.id}`
       )
       setUsableCoupons(response.data.rows)
+      getSelectedCoupons()
     } catch (error) {
       console.error('Error fetching member coupons: ', error)
     }
@@ -131,12 +131,13 @@ export const CartProvider = ({ children }) => {
         `http://localhost:3001/coupons/product?member_id=${auth.id}`
       )
       setUsableProductCoupons(response.data.rows)
+      getSelectedProductCoupons()
     } catch (error) {
       console.error('Error fetching member coupons: ', error)
     }
   }
 
-  // 新增刪除會員購物車優惠券
+  // 新增會員購物車優惠券
   const handleAddCouponToCart = async (coupon_id, product_id) => {
     try {
       await axios.post('http://localhost:3001/coupons/use', {
@@ -148,11 +149,14 @@ export const CartProvider = ({ children }) => {
       fetchMemberCartCoupons()
       fetchMemberCartProductCoupons()
       calculateDiscountTotal()
+      getSelectedCoupons()
+      getSelectedProductCoupons
     } catch (error) {
       console.error('Error adding coupon to cart:', error)
     }
   }
 
+  // 刪除會員購物車優惠券
   const handleRemoveCouponFromCart = async (coupon_id, product_id) => {
     try {
       await axios.post('http://localhost:3001/coupons/remove', {
@@ -164,11 +168,51 @@ export const CartProvider = ({ children }) => {
       fetchMemberCartCoupons()
       fetchMemberCartProductCoupons()
       calculateDiscountTotal()
+      getSelectedCoupons()
+      getSelectedProductCoupons()
     } catch (error) {
       console.error('Error removing coupon from cart:', error)
     }
   }
 
+  // 取得已選擇的全站優惠券
+  const getSelectedCoupons = () => {
+    const newSelectedCoupons = usableCoupons.filter((v) => v.in_cart === 1)
+    setSelectedCoupons(newSelectedCoupons)
+  }
+
+  // 取得已選擇的商品優惠券
+  // const getSelectedProductCoupons = () => {
+  //   const newSelectedProductCoupons = usableProductCoupons
+  //     .flatMap((coupon) => coupon.products)
+  //     .filter((product) => product.in_cart > 0)
+  //   setSelectedProductCoupons(newSelectedProductCoupons)
+  // }
+  
+  const getSelectedProductCoupons = () => {
+    const newSelectedProductCoupons = usableProductCoupons.flatMap(coupon => 
+      coupon.products.map(product => ({
+        coupon_id: coupon.coupon_id,
+        used_at: coupon.used_at,
+        coupon_name: coupon.coupon_name,
+        coupon_type_id: coupon.coupon_type_id,
+        minimum_order: coupon.minimum_order,
+        discount_amount: coupon.discount_amount,
+        discount_percentage: coupon.discount_percentage,
+        discount_max: coupon.discount_max,
+        valid_from: coupon.valid_from,
+        valid_until: coupon.valid_until,
+        max_usage_per_user: coupon.max_usage_per_user,
+        total_limit: coupon.total_limit,
+        coupon_type_name: coupon.coupon_type_name,
+        product_id: product.product_id,
+        product_name: product.product_name,
+        price: product.price,
+        in_cart: product.in_cart
+      }))
+    ).filter(product => product.in_cart > 0)
+    setSelectedProductCoupons(newSelectedProductCoupons)
+  }
   // 取得訂單總金額
   const calculateTotal = (items) => {
     let newCheckTotal = 0
@@ -252,28 +296,6 @@ export const CartProvider = ({ children }) => {
     setDiscountTotal(finalDiscount)
   }
 
-  // 已選擇的優惠券（指定商品）
-  // const handleSelectedProductCoupons = () => {
-  //   const filteredItems = usableCoupons
-  //     .filter((v) => v.cart_product_coupon_id > 0)
-  //     .map((item) => ({
-  //       coupon_id: item.cart_product_coupon_id,
-  //       product_id: item.product_id,
-  //     }))
-
-  //   setSelectedProductCoupons(filteredItems)
-  // }
-
-  // // 已選擇的優惠券（所有商品）
-  // const handleSelectedCoupons = () => {
-  //   const filteredItems = checkoutItems
-  //     .filter((v) => v.in_cart === 1)
-  //     .map((item) => ({
-  //       coupon_id: item.coupon_id,
-  //     }))
-  //   setSelectedCoupons(filteredItems)
-  // }
-
   // 記錄商品數量異動
   const handleQuantityChange = async (productId, newQuantity) => {
     const updatedItems = checkoutItems.map((v) =>
@@ -351,7 +373,6 @@ export const CartProvider = ({ children }) => {
     setCheckoutItems([])
     setCheckoutTotal(0)
     setDeliverFee(120)
-    // localStorage.removeItem('kkCart')
   }
 
   // 登入後，更新 cart_member cart 將原本未登入的 device_id 改成 auth.id
@@ -390,10 +411,11 @@ export const CartProvider = ({ children }) => {
         handleLogin()
         fetchMemberCart()
         calculateDiscountTotal()
-        fetchMemberCoupons()
+        // fetchMemberCoupons()
         fetchMemberCartCoupons()
         fetchMemberCartProductCoupons()
-        // couponChecked()
+        getSelectedCoupons()
+        getSelectedProductCoupons()
       }
       if (!auth.id) {
         clearCart()
@@ -409,12 +431,16 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     setCartBadgeQty(checkoutItems.length)
     calculateDiscountTotal()
+    getSelectedCoupons()
+    getSelectedProductCoupons()
+
   }, [checkoutItems, usableCoupons, usableProductCoupons])
 
-  // useEffect(() => {
-  //   // couponChecked()
-  //   requirementChecked()
-  // }, [selectedCoupons])
+
+  useEffect(() => {
+    getSelectedCoupons()
+    getSelectedProductCoupons()
+  }, [usableCoupons])
 
   return (
     <CartContext.Provider
@@ -427,15 +453,10 @@ export const CartProvider = ({ children }) => {
         checkoutTotal,
         discountTotal,
         setDiscountTotal,
-        coupons,
-        // selectedCoupons,
+        // coupons,
         usableCoupons,
         usableProductCoupons,
-        // setSelectedCoupons,
-        fetchMemberCoupons,
-
-        // fetchMemberCartCoupons,
-        // handelSelectedToggle,
+        // fetchMemberCoupons,
         handleAddToCart,
         handleQuantityChange,
         clearCart,
@@ -443,10 +464,10 @@ export const CartProvider = ({ children }) => {
         fetchMemberProfile,
         formData,
         setFormData,
-        // selectedCoupons,
-        // selectedProductCoupons,
         handleAddCouponToCart,
         handleRemoveCouponFromCart,
+        selectedCoupons,
+        selectedProductCoupons,
       }}
     >
       {children}

@@ -40,7 +40,6 @@ export const CHECKOUT_ADD_ADDRESS = `${API_SERVER}/checkout/api/add_address`
 export const CHECKOUT_UPDATE_CART = `${API_SERVER}/checkout/api/cart/update`
 export const GET_MEMBER_COUPON = `${API_SERVER}/coupons`
 export const GET_MEMBER_COUPON_IN_CART = `${API_SERVER}/coupons/in_cart`
-export const UPDATE_MEMBER_COUPON_IN_CART = `${API_SERVER}/coupons/update_in_cart`
 // reservation
 export const GET_RESERVATION_LIST = `${API_SERVER}/reservations`
 export const CANCEL_RESERVATION = `${API_SERVER}/reservations/cancel`

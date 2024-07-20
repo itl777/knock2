@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from './coupon-card.module.css'
+import { useCart } from '@/context/cart-context'
+import { motion } from 'framer-motion'
 import MoreInfoBtn from './more-info-text-btn'
 import { formatPrice } from '@/hooks/numberFormat'
 import CouponCheckbox from './coupon-checkbox'
@@ -20,10 +22,6 @@ export default function CouponCard({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [checkedBoolean, setCheckedBoolean] = useState(isChecked)
-
-  useEffect(() => {
-    setCheckedBoolean(isChecked)
-  }, [isChecked])
 
   const getStatusClass = (baseClass) => {
     switch (status) {
@@ -51,50 +49,64 @@ export default function CouponCard({
     handelSelectedToggle(coupon_id)
   }
 
+  useEffect(() => {
+    setCheckedBoolean(isChecked)
+  }, [isChecked])
+
+  useEffect(() => {
+    console.log(coupon)
+  }, [])
+
   return (
     <>
-      <div className={getStatusClass(styles.couponCard)}>
-        <div
-          className={`${styles.couponCardLeft} ${
-            isChecked ? styles.couponCardLeftChecked : ''
-          }`}
-        >
-          {selectable && (
-            <div className={styles.checkboxContainer}>
-              <CouponCheckbox
-                checked={checkedBoolean}
-                onChange={handleCheckboxOnChange}
-                disabled={disabled}
-              />
-            </div>
-          )}
+      <motion.div
+        className="box"
+        whileHover={{ scale: 1.03 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+      >
+        <div className={getStatusClass(styles.couponCard)}>
+          <div
+            className={`${styles.couponCardLeft} ${
+              isChecked ? styles.couponCardLeftChecked : ''
+            }`}
+          >
+            {selectable && (
+              <div className={styles.checkboxContainer}>
+                <CouponCheckbox
+                  checked={checkedBoolean}
+                  onChange={handleCheckboxOnChange}
+                  disabled={disabled}
+                />
+              </div>
+            )}
 
-          <img src="/ghost/ghost_11.png" alt="" />
-        </div>
-
-        <div
-          className={`${styles.couponCardRight} ${
-            isChecked ? styles.couponCardRightChecked : ''
-          }`}
-        >
-          <div className={styles.couponInfo}>
-            <p>{coupon_name}</p>
-            <div className={styles.textBox}>
-              <p>最低消費金額：{formatPrice(minimum_order)}</p>
-              <p>有效期限：{valid_until}</p>
-            </div>
+            <img src="/ghost/ghost_11.png" alt="" />
           </div>
-          {!btnHidden && <MoreInfoBtn onClick={handleMoreInfoClick} />}
-        </div>
-      </div>
 
-      {isModalOpen && (
-        <CouponMoreInfoModal
-          coupon_id={coupon_id} // 將 coupon card 的 coupon_id, coupon 內容傳遞給 CouponMoreInfoModal
-          coupon={coupon}
-          handleClose={handleCloseModal}
-        />
-      )}
+          <div
+            className={`${styles.couponCardRight} ${
+              isChecked ? styles.couponCardRightChecked : ''
+            }`}
+          >
+            <div className={styles.couponInfo}>
+              <p>{coupon_name}</p>
+              <div className={styles.textBox}>
+                <p>最低消費金額：{formatPrice(minimum_order)}</p>
+                <p>有效期限：{valid_until}</p>
+              </div>
+            </div>
+            {!btnHidden && <MoreInfoBtn onClick={handleMoreInfoClick} />}
+          </div>
+        </div>
+
+        {isModalOpen && (
+          <CouponMoreInfoModal
+            coupon_id={coupon_id} // 將 coupon card 的 coupon_id, coupon 內容傳遞給 CouponMoreInfoModal
+            coupon={coupon}
+            handleClose={handleCloseModal}
+          />
+        )}
+      </motion.div>
     </>
   )
 }

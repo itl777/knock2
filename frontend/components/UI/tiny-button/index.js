@@ -2,15 +2,16 @@ import { styled } from '@mui/material/styles'
 import Button from '@mui/material/Button'
 
 const TextBtn = styled(Button)(({ type }) => ({
-  color: 'var(--text-grey)',
+  color: 'var(--sec-1)',
   fontFamily: '"Noto Serif JP", serif',
-  fontSize: '11.5px',
+  fontSize: '13px',
   minWidth: '2rem',
   padding: '1px 6px',
-  backgroundColor: '#f2f2f2',
+  border: '1px solid var(--sec-1)',
   '&:hover': {
-    color: 'var(--text-dark)',
-    backgroundColor: 'var(--pri-3)',
+    color: '#8C764C',
+    border: '1px solid #8C764C',
+    backgroundColor: '#F8F5F2',
   },
 }))
 

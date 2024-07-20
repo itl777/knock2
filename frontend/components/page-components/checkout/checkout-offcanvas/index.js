@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from './checkout-offcanvas.module.css'
 import { useRouter } from 'next/router'
+import { motion } from 'framer-motion'
 // mui
 import Drawer from '@mui/material/Drawer'
 import Badge from '@mui/material/Badge'
@@ -18,8 +19,8 @@ import { FaCartShopping } from 'react-icons/fa6'
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
-    right: -3,
-    top: -3,
+    right: -24,
+    top: -20,
     color: 'white',
     backgroundColor: 'var(--sec-1)',
   },
@@ -50,12 +51,12 @@ export default function CheckoutOffcanvas() {
   const toggleShow = () => setShow((s) => !s)
   // 取得會員購物車資料、更新訂單總金額、接收商品數量變化
   const {
-    checkoutItems,
+    // checkoutItems,
     checkoutTotal,
     subtotal,
     deliverFee,
     cartBadgeQty,
-    handleQuantityChange,
+    // handleQuantityChange,
     discountTotal,
   } = useCart()
 
@@ -66,10 +67,31 @@ export default function CheckoutOffcanvas() {
   return (
     <>
       <IconButton aria-label="cart" onClick={toggleShow}>
-        <StyledBadge badgeContent={cartBadgeQty} color="secondary" max={99}>
-          <FaCartShopping />
-        </StyledBadge>
+        <motion.div
+          key={subtotal} // 使用 key 屬性強制重新渲染
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            duration: 0.3,
+            ease: [0, 0.71, 0.2, 1.01],
+            scale: {
+              type: 'spring',
+              damping: 5,
+              stiffness: 50,
+              restDelta: 0.001,
+            },
+          }}
+        >
+          <StyledBadge
+            badgeContent={cartBadgeQty}
+            color="secondary"
+            max={99}
+            // sx={{ top: '-12px', right: '-24px' }}
+          ></StyledBadge>
+        </motion.div>
+        <FaCartShopping />
       </IconButton>
+
       <ThemeProvider theme={drawerTheme}>
         <Drawer open={show} onClose={handleClose} anchor="right">
           {/* drawer header */}
@@ -80,6 +102,7 @@ export default function CheckoutOffcanvas() {
               {/* title */}
               <div className={styles.checkoutTitle}>
                 <h5>購物車</h5>
+
                 <div className={styles.cartItemCount}>{cartBadgeQty}</div>
               </div>
 

@@ -8,6 +8,8 @@ import CartFavoriteIcon from '../../products/cart-favorite-icon'
 import CouponSelectModal from '../../coupon/coupon-select-modal'
 import { PRODUCT_IMG } from '@/configs/api-path'
 import { useEffect } from 'react'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 export default function OrderItemCheckout({ type = 'def' }) {
   const { checkoutItems, usableProductCoupons, handleQuantityChange } =
@@ -61,7 +63,7 @@ export default function OrderItemCheckout({ type = 'def' }) {
             )
         )
         return (
-          <div className={styles.itemBox} key={v.product_id}>
+          <div className={styles.itemBox} key={v.product_id}   data-aos="zoom-in">
             <OrderProductImgBox
               imgSrc={`${PRODUCT_IMG}/${v.product_img}`}
               productId={v.product_id}
