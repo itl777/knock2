@@ -1,3 +1,4 @@
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
@@ -6,64 +7,28 @@ body {
 h5,p{
   margin: 0;
 }
-#form {
-  background: rgba(0, 0, 0, 0.15);
-  padding: 0.25rem;
-  position: absolute;
-  bottom: 0;
-
-  right: 0;
+h3{
   display: flex;
-  width: 100%;
-  height: 3rem;
-  box-sizing: border-box;
-  backdrop-filter: blur(10px);
-}
-#input {
-  border: none;
-  padding: 0 1rem;
-  flex-grow: 1;
-  border-radius: 2rem;
-  margin: 0.25rem;
-}
-#input:focus {
-  outline: none;
-}
-#form > button {
-  background: #333;
-  border: none;
-  padding: 0 1rem;
-  margin: 0.25rem;
-  border-radius: 3px;
-  outline: none;
-  color: #fff;
-}
-
-#messages {
-  list-style-type: none;
+  justify-content: center;
   margin: 0;
-  padding: 0;
-  overflow:auto;
+  /* padding: .625rem; */
+
 }
-#messages > li {
-  padding: 0.5rem 1rem;
-}
-#messages > li:nth-child(odd) {
-  background: #efefef;
+ul,li{
+  list-style-type:none;
+  margin: 0;
+  padding:0;
 }
 .container {
   display: flex;
-}
-.right {
-  width: 100%;
-  border: #333 solid 1px;
-  position: relative;
-  height: 100vh;
+
 }
 .sidebar {
   width: 12.5rem;
   height: 100%;
 }
+
+
 .card-left{
   width: 30%;
   display: flex;
@@ -86,8 +51,73 @@ h5,p{
 .card-left .fa-user {
   font-size: 40px;
 }
+.card-text{
+  font-size: 14px;
+}
 
-h3{
+
+.rightArea {
+  width: 100%;
+  border: #333 solid 1px;
+  position: relative;
+  /* max-height: calc(100vh - 83px); */
+
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+}
+.rightArea h3{
+  display: flex;
+  align-items: center;
+}
+
+
+#messages {
+  list-style-type: none;
+  position: relative;
+  height: 100%;
+  min-height: calc(100vh - 100px);
+  padding: 0 12px;
+  overflow: scroll;
+  scrollbar-width: none;
+}
+#messages > li {
+  padding: 0.5rem 1rem;
+}
+#messages > li:nth-child(odd) {
+  background: #efefef;
+}
+
+.bottom{
+  display: flex;
+  box-sizing: border-box;
+  align-items: flex-end;
+  width: 100%;
+  height: auto;
+  padding: 12px;
+  border-top: 1px solid #eef1f6;
+}
+#form {
+  /* background: rgba(0, 0, 0, 0.15);
+  padding: 0.25rem; */
+  width: 100%;
+  /* backdrop-filter: blur(10px);
+*/  display: flex;
+  box-sizing: border-box;
+  align-items: flex-end; 
+}
+#input {
+  width: 100%;
+}
+
+#input:focus {
+  outline: none;
+}
+#form > button {
+  background: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  margin: 0.25rem;
+  border-radius: 3px;
+  outline: none;
+  color: #fff;
 }

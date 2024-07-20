@@ -4,13 +4,13 @@ import { Server } from "socket.io";
 import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-var socket_list = []
+var socket_list = [];
+var onLine = [];
 const app = express();
 // 註冊樣板引擎
 app.set("view engine", "ejs");
 const server = createServer(app);
 const io = new Server(server, {
-  connectionStateRecovery: {},
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
@@ -22,20 +22,27 @@ app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "index.html"));
 });
 
-
 io.on("connection", (socket) => {
-  socket_list.push(socket)
+  socket_list.push(socket);
   console.log("有人連上了", socket_list.length);
 
   // 監聽加入房間j
-  socket.on("joinRoom",async ({ room, username }) => {
+  socket.on("joinRoom", async ({ room, username }) => {
+
+    if (!onLine.some(item => item.room === room && item.username === username) && username !== '管理員') {
+      onLine.push({ room, username });
+      console.log("'中online", onLine);
+    }
     try {
-      const [results] = await db.query('SELECT * FROM messages WHERE room = ?', [room]);
-      io.emit('joinRoom', { room, username });
-      socket.emit('history', results);
+      const [results] = await db.query(
+        "SELECT * FROM messages WHERE room = ?",
+        [room]
+      );
+      io.emit("joinRoom", { room, username });
+      socket.emit("history", results);
     } catch (error) {
-      console.error('Error fetching chat history:', error);
-      socket.emit('error', { message: 'Failed to fetch chat history' });
+      console.error("Error fetching chat history:", error);
+      socket.emit("error", { message: "Failed to fetch chat history" });
     }
 
     socket.join(room); // 將 socket 加入指定的房間
@@ -43,19 +50,28 @@ io.on("connection", (socket) => {
     console.log(`-------joined room--------`);
   });
 
+  // 傳給後台
+  socket.on("AllRoom", (data) => {
+    socket.join("AllRoom");
+    io.to("AllRoom").emit("AllRoom", data);
+  });
+  // 在连接时发射消息到客户端
+  socket.emit("AllRoom", onLine);
+
   socket.on("chat message", async (data) => {
     const { room, username, message } = data;
     console.log(`${username} : ${message}`);
-
     // 存入資料庫
     try {
-      const [results] = await db.query('INSERT INTO messages (room, username, message) VALUES (?, ?, ?)', [room, username, message]);
+      const [results] = await db.query(
+        "INSERT INTO messages (room, username, message) VALUES (?, ?, ?)",
+        [room, username, message]
+      );
       io.to(room).emit("chat message", { username, message }); // 发送消息给指定房间的所有客户端
-        console.log("INSERT INTO OK");
-
+      console.log("INSERT INTO OK");
     } catch (error) {
-      console.error('Error fetching chat history:', error);
-      socket.emit('error', { message: 'Failed to fetch chat history' });
+      console.error("Error fetching chat history:", error);
+      socket.emit("error", { message: "Failed to fetch chat history" });
     }
 
     // 單人房
@@ -63,7 +79,11 @@ io.on("connection", (socket) => {
     // 多人不分房
     // io.emit("chat message", {username,message});
   });
-  
+
+  socket.on("disconnecting", (reason) => {
+    console.log("Socket is about to disconnect:", reason);
+    // 可以在這裡執行一些清理操作
+  });
 });
 
 server.listen(4040, () => {

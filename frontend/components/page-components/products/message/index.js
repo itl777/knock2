@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { io } from 'socket.io-client'
 import { useAuth } from '@/context/auth-context'
 import myStyle from './message.module.css'
+import { IoIosArrowBack } from 'react-icons/io'
+import { GoPaperAirplane } from 'react-icons/go'
 
 const socket = io('http://localhost:4040')
 
@@ -23,7 +25,7 @@ export default function Message() {
     setUsername(auth.nickname)
     setRoom(roomName)
 
-    socket.emit('joinRoom', { room: roomName, username })
+    socket.emit('joinRoom', { room: roomName, username: auth.nickname })
   }, [authIsReady, auth])
 
   useEffect(() => {
@@ -40,6 +42,7 @@ export default function Message() {
     return () => {
       socket.off('chat message')
       socket.off('history')
+      socket.off('joinRoom')
     }
   }, [])
 
@@ -55,15 +58,29 @@ export default function Message() {
     }
   }
 
+  const messageEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]); 
+
   return (
+    // 最外層
     <div className={myStyle.fix}>
-      {/* 頂端返回 商店名稱 */}
+      {/* 頂端區 */}
       <div className={myStyle.top}>
+        <div className={myStyle.topArrow}>
+          <IoIosArrowBack />
+        </div>
         <h5>目前位置 : {room}</h5>
       </div>
 
       {/* 文字區 */}
-      <div className={myStyle.messageArea}>
+      <div id={myStyle.messageArea}>
         <div className={myStyle.msgtext}>
           {messages.map((msg, index) => (
             <p key={index}>
@@ -71,10 +88,12 @@ export default function Message() {
               {msg.message}
             </p>
           ))}
+          <div ref={messageEndRef} />
         </div>
+      </div>
 
-        
-        {/* 按鈕 */}
+      {/* 按鈕區 */}
+      <div className={myStyle.bottom}>
         <form
           id={myStyle.form}
           className={myStyle.input}
@@ -85,7 +104,9 @@ export default function Message() {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <button type="submit">Send</button>
+          <button type="submit">
+            <GoPaperAirplane />
+          </button>
         </form>
       </div>
     </div>
