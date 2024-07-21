@@ -5,6 +5,7 @@ import { FaCircle, FaFacebook, FaInstagram } from 'react-icons/fa'
 import Reservation from '../reservation/reservation'
 import myStyle from './calendar.module.css'
 import { DateContext } from '@/context/date-context'
+import axios from 'axios'
 
 const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(dayjs())
@@ -13,6 +14,21 @@ const Calendar = () => {
   const [month, setMonth] = useState(currentDate.month())
   const [year, setYear] = useState(currentDate.year())
   const { updateSelectedDate } = useContext(DateContext)
+  const [calendarData, setCalendarData] = useState({})
+
+  const fetchCalendarData = async (year, month, branchThemesId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/themes/calendar`,
+        {
+          params: { year, month, branch_themes_id: branchThemesId },
+        }
+      )
+      setCalendarData(response.data)
+    } catch (error) {
+      console.error('Error fetching calendar data:', error)
+    }
+  }
 
   useEffect(() => {
     const updateDaysInMonth = () => {
@@ -34,10 +50,14 @@ const Calendar = () => {
       // 加入當月的天數
       for (let i = 1; i <= endOfMonth.date(); i++) {
         const date = dayjs(`${year}-${month + 1}-${i}`)
+        const dateString = date.format('YYYY-MM-DD')
+        const dayData = calendarData[dateString] || {}
         days.push({
           day: i,
           currentMonth: true,
-          status: date.isBefore(dayjs(), 'day') ? 'disabled' : 'open',
+          status: date.isBefore(dayjs(), 'day')
+            ? 'disabled'
+            : dayData.status || 'open',
         })
       }
 
@@ -54,7 +74,11 @@ const Calendar = () => {
     }
 
     updateDaysInMonth()
-  }, [currentDate, month, year])
+  }, [currentDate, month, year, calendarData])
+
+  useEffect(() => {
+    fetchCalendarData(year, month + 1, 1) // 假設 branch_themes_id 為 1
+  }, [year, month])
 
   const handlePrevMonth = () => {
     const newDate = currentDate.subtract(1, 'month')
