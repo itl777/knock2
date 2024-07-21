@@ -1,4 +1,4 @@
-// components/page-components/themes/detail-section.js
+// @/components/page-components/themes/detail-section.js
 import React from 'react'
 import myStyle from './details.module.css'
 

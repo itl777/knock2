@@ -6,8 +6,13 @@ import Reservation from '../reservation/reservation'
 import myStyle from './calendar.module.css'
 import { DateContext } from '@/context/date-context'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
-const Calendar = () => {
+const Calendar = ({ branch_themes_id }) => {
+  const router = useRouter()
+  const { id } = router.query
+  const isReady = router.isReady
+
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [daysInMonth, setDaysInMonth] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
@@ -16,12 +21,14 @@ const Calendar = () => {
   const { updateSelectedDate } = useContext(DateContext)
   const [calendarData, setCalendarData] = useState({})
 
-  const fetchCalendarData = async (year, month, branchThemesId) => {
+  const fetchCalendarData = async (year, month) => {
+    if (!branch_themes_id) return
+
     try {
       const response = await axios.get(
         `http://localhost:3001/themes/calendar`,
         {
-          params: { year, month, branch_themes_id: branchThemesId },
+          params: { year, month, branch_themes_id },
         }
       )
       setCalendarData(response.data)
@@ -29,6 +36,19 @@ const Calendar = () => {
       console.error('Error fetching calendar data:', error)
     }
   }
+
+  useEffect(() => {
+    console.log('Calendar component:', { year, month, branch_themes_id })
+    if (branch_themes_id) {
+      fetchCalendarData(year, month + 1)
+    }
+  }, [year, month, branch_themes_id])
+
+  useEffect(() => {
+    if (branch_themes_id) {
+      fetchCalendarData(year, month + 1)
+    }
+  }, [year, month, branch_themes_id])
 
   useEffect(() => {
     const updateDaysInMonth = () => {
@@ -75,10 +95,6 @@ const Calendar = () => {
 
     updateDaysInMonth()
   }, [currentDate, month, year, calendarData])
-
-  useEffect(() => {
-    fetchCalendarData(year, month + 1, 1) // 假設 branch_themes_id 為 1
-  }, [year, month])
 
   const handlePrevMonth = () => {
     const newDate = currentDate.subtract(1, 'month')
@@ -235,7 +251,7 @@ const Calendar = () => {
             </div>
           </div>
         </div>
-        <Reservation />
+        <Reservation id={id} />
       </div>
     </div>
   )
