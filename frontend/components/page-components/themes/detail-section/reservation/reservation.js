@@ -173,9 +173,10 @@ export default function Reservation() {
       timeSlot: timeSlot.toString(),
       people: people.toString(),
       discount: discount.toString(),
-      remark, // 包括 remark
+      remark,
     }
 
+    // 保持现有的验证逻辑不变
     const nameResult = schemaForm.shape.name.safeParse(name)
     const mobileResult = schemaForm.shape.mobile_phone.safeParse(
       mobile_phone.toString()
@@ -218,7 +219,15 @@ export default function Reservation() {
     } else {
       setErrors({})
       console.log('表单数据:', formData)
-      // 提交表单数据
+
+      // 使用 router.push 导航到订单页面，并传递表单数据
+      router.push({
+        pathname: '/themes/checkout"',
+        query: {
+          ...formData,
+          themeId: themeDetails.id, // 假设你有主题ID
+        },
+      })
     }
   }
 

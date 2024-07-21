@@ -48,9 +48,9 @@ const Calendar = ({ branch_themes_id }) => {
 
   useEffect(() => {
     if (branch_themes_id) {
-      fetchCalendarData(year, month + 1)
+      fetchCalendarData(currentDate.year(), currentDate.month() + 1)
     }
-  }, [year, month, branch_themes_id])
+  }, [currentDate, branch_themes_id])
 
   useEffect(() => {
     const updateDaysInMonth = () => {
@@ -75,11 +75,13 @@ const Calendar = ({ branch_themes_id }) => {
         const date = dayjs(`${year}-${month + 1}-${i}`)
         const dateString = date.format('YYYY-MM-DD')
         const dayData = calendarData[dateString] || {}
+        const isPastOrToday =
+          date.isBefore(dayjs(), 'day') || date.isSame(dayjs(), 'day')
         days.push({
           day: i,
           currentMonth: true,
-          status: dayData.status || 'open',
-          clickable: !date.isBefore(today, 'day') && dayData.status !== 'full',
+          status: isPastOrToday ? 'disabled' : dayData.status || 'open',
+          clickable: !isPastOrToday && dayData.status !== 'full',
         })
       }
 
