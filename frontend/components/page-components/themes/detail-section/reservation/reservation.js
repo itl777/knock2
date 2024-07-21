@@ -7,6 +7,7 @@ import { useAuth } from '@/context/auth-context'
 import React, { useState, useContext, useEffect } from 'react'
 import { useUserProfile } from '@/hooks/useUserProfile'
 import axios from 'axios'
+import { useSession } from '@/context/sessionContext'
 
 import myStyle from './reservation.module.css'
 import Input02 from '@/components/UI/form-item/input02'
@@ -20,6 +21,7 @@ import BasicModal02 from '@/components/UI/basic-modal02'
 import schemaForm from './schemaForm'
 
 export default function Reservation() {
+  const { dateSessionsStatus } = useSession()
   const { selectedDate } = useContext(DateContext)
   const [name, setName] = useState('')
   const [mobile_phone, setMobilePhone] = useState('')
@@ -86,6 +88,10 @@ export default function Reservation() {
       setDate('')
     }
   }
+
+  useEffect(() => {
+    updateDateFromSelection()
+  }, [selectedDate])
 
   // 修改 handleCheckboxChange 函數
   const handleCheckboxChange = (event) => {
@@ -296,10 +302,19 @@ export default function Reservation() {
                   value={timeSlot}
                   placeholder="選擇場次"
                   options={
-                    themeDetails?.sessions?.map((session) => ({
-                      text: `${session.start_time} - ${session.end_time}`,
-                      value: `${session.start_time} - ${session.end_time}`,
-                    })) || []
+                    themeDetails?.sessions
+                      ?.filter(
+                        (session) =>
+                          !dateSessionsStatus.some(
+                            (s) =>
+                              s.sessions_id === session.sessions_id &&
+                              s.is_booked === 1
+                          )
+                      )
+                      .map((session) => ({
+                        text: `${session.start_time} - ${session.end_time}`,
+                        value: session.sessions_id,
+                      })) || []
                   }
                   onChange={(e) => handleSelectChange(e, 'timeSlot')}
                 />

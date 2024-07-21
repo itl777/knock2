@@ -74,55 +74,77 @@ const getSecondThemesList = async () => {
   }
 };
 
-// 獲取主題的詳情
-const getThemesDetails = async (branch_themes_id) => {
+// 主題詳情
+const getThemesDetails = async (branch_themes_id, selectedDate) => {
   const sql = `
-    SELECT 
-      bt.branch_themes_id,
-      t.theme_id,
-      t.theme_name,
-      t.theme_img,
-      t.theme_banner,
-      t.min_players,
-      t.max_players,
-      t.theme_time,
-      t.difficulty,
-      t.price,
-      t.deposit,
-      t.theme_desc,
-      b.branch_name,
-      f.storyline,
-      f.puzzle_design,
-      f.atmosphere,
-      c.coupon_name,
-      c.discount_percentage,
-      JSON_ARRAYAGG(
-        JSON_OBJECT(
-          'sessions_id', s.sessions_id,
-          'start_time', DATE_FORMAT(s.start_time, '%H:%i'),
-          'end_time', DATE_FORMAT(s.end_time, '%H:%i'),
-          'theme_time', s.theme_time,
-          'intervals', s.intervals
-        )
-      ) AS sessions
-    FROM themes t
-    LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
-    LEFT JOIN branches b ON bt.branch_id = b.branch_id
-    LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
-    LEFT JOIN sessions s ON t.theme_id = s.theme_id
-    LEFT JOIN coupons c ON bt.id = c.id
-    WHERE bt.branch_themes_id = ?
+SELECT 
+  bt.branch_themes_id,
+  t.theme_id,
+  t.theme_name,
+  t.theme_img,
+  t.theme_banner,
+  t.min_players,
+  t.max_players,
+  t.theme_time,
+  t.difficulty,
+  t.price,
+  t.deposit,
+  t.theme_desc,
+  b.branch_name,
+  f.storyline,
+  f.puzzle_design,
+  f.atmosphere,
+  c.coupon_name,
+  c.discount_percentage,
+  JSON_ARRAYAGG(
+    JSON_OBJECT(
+      'sessions_id', s.sessions_id,
+      'start_time', DATE_FORMAT(s.start_time, '%H:%i'),
+      'end_time', DATE_FORMAT(s.end_time, '%H:%i'),
+      'theme_time', s.theme_time,
+      'intervals', s.intervals,
+      'is_booked', IF(EXISTS (
+        SELECT 1 FROM reservations r 
+        WHERE r.session_id = s.sessions_id 
+        AND r.branch_themes_id = bt.branch_themes_id
+        AND r.reservation_date = ?
+        AND r.reservation_status_id = 1
+        AND r.cancel = 0
+      ), 1, 0)
+    )
+  ) AS sessions
+FROM branch_themes bt
+JOIN themes t ON bt.theme_id = t.theme_id
+JOIN branches b ON bt.branch_id = b.branch_id
+LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
+JOIN sessions s ON bt.theme_id = s.theme_id
+LEFT JOIN coupons c ON bt.id = c.id
+WHERE bt.branch_themes_id = ?
+GROUP BY bt.branch_themes_id, t.theme_id, t.theme_name, t.theme_img, t.theme_banner, t.min_players, t.max_players, t.theme_time, t.difficulty, t.price, t.deposit, t.theme_desc, b.branch_name, f.storyline, f.puzzle_design, f.atmosphere, c.coupon_name, c.discount_percentage;
   `;
 
   try {
-    const [rows] = await db.query(sql, [branch_themes_id]);
+    const [rows] = await db.query(sql, [selectedDate, branch_themes_id]);
 
-    if (rows.length > 0) {
+    if (rows && rows.length > 0) {
+      // 確保 sessions 是一個數組
+      if (typeof rows[0].sessions === "string") {
+        try {
+          rows[0].sessions = JSON.parse(rows[0].sessions);
+        } catch (parseError) {
+          console.error("Error parsing sessions JSON:", parseError);
+          rows[0].sessions = []; // 如果解析失敗，設置為空數組
+        }
+      }
+
+      console.log("Sessions data:", JSON.stringify(rows[0].sessions, null, 2));
+
       return {
         success: true,
         theme: rows[0],
       };
     } else {
+      console.log("No rows returned from query");
       return {
         success: false,
         theme: null,
@@ -130,40 +152,35 @@ const getThemesDetails = async (branch_themes_id) => {
       };
     }
   } catch (err) {
-    console.error("Error fetching theme details:", err.message);
-    console.error("SQL Query:", sql);
+    console.error("Error fetching theme details:", err);
     return {
       success: false,
       theme: null,
-      message: "Error fetching theme details",
+      message: "Error fetching theme details: " + err.message,
     };
   }
 };
 
-const getImg = async (req) => {
-  let success = false;
-  let rows = [];
-  const theme_id = +req.params.theme_id || 0;
+router.get("/details/:branch_themes_id", async (req, res) => {
+  const { branch_themes_id } = req.params;
+  const date = req.query.date
+    ? new Date(req.query.date).toISOString().split("T")[0]
+    : new Date().toISOString().split("T")[0];
+  console.log("Received request for branch_themes_id:", branch_themes_id);
+  console.log("Formatted date:", date);
 
   try {
-    const sql = `
-      SELECT t.theme_img, t.theme_banner 
-      FROM themes t 
-      LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id 
-      WHERE t.theme_id = ${theme_id}
-    `;
-    [rows] = await db.query(sql);
-
-    success = true;
+    const data = await getThemesDetails(branch_themes_id, date);
+    console.log("getThemesDetails result:", JSON.stringify(data, null, 2));
+    res.json(data);
   } catch (error) {
-    console.error("Error fetching image:", error);
+    console.error("Error in /details route:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error: " + error.message,
+    });
   }
-
-  return {
-    success,
-    rows,
-  };
-};
+});
 
 // 獲取分店列表的函數
 const getBranchesList = async () => {
@@ -251,12 +268,6 @@ router.get("/branch-themes", async (req, res) => {
     status: "success",
     branch_themes: data.branch_themes,
   });
-});
-
-router.get("/details/:branch_themes_id", async (req, res) => {
-  const { branch_themes_id } = req.params;
-  const data = await getThemesDetails(branch_themes_id);
-  res.json(data);
 });
 
 // 圖片
@@ -430,6 +441,41 @@ router.get("/calendar", async (req, res) => {
   } catch (error) {
     console.error("獲取日曆數據時出錯：", error);
     res.status(500).json({ error: "內部服務器錯誤", details: error.message });
+  }
+});
+
+router.get("/sessions-status", async (req, res) => {
+  const { date, branch_themes_id } = req.query;
+
+  try {
+    const query = `
+      SELECT 
+        s.sessions_id,
+        s.start_time,
+        s.end_time,
+        CASE WHEN r.reservation_id IS NOT NULL THEN 1 ELSE 0 END AS is_booked
+      FROM sessions s
+      JOIN branch_themes bt ON s.theme_id = bt.theme_id
+      LEFT JOIN reservations r ON s.sessions_id = r.session_id 
+        AND r.reservation_date = ? 
+        AND r.branch_themes_id = ?
+        AND r.reservation_status_id = 1
+        AND r.cancel = 0
+      WHERE bt.branch_themes_id = ?
+      ORDER BY s.start_time
+    `;
+
+    const [rows] = await db.query(query, [
+      date,
+      branch_themes_id,
+      branch_themes_id,
+    ]);
+    console.log("Query result:", rows);
+
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching sessions status:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

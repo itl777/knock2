@@ -105,9 +105,31 @@
     color: white;
   }
   
+  .notClickable {
+    pointer-events: none;
+    cursor: default;
+  }
+  
   .full {
     background: #963029; /* 紅色表示已額滿 */
     color: white;
+  }
+  
+  .full.notClickable {
+    opacity: 0.8; /* 稍微降低不可點擊的滿額日期的不透明度，以視覺上區分 */
+  }
+  
+  .disabled {
+    color: #7c7c7c;
+  }
+  
+  .disabled.notClickable {
+    opacity: 0.5; /* 降低不可點擊的禁用日期的不透明度 */
+  }
+  
+  .prevMonth.notClickable,
+  .nextMonth.notClickable {
+    opacity: 0.3; /* 降低不可點擊的其他月份日期的不透明度 */
   }
   
   .event {

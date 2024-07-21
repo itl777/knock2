@@ -7,8 +7,10 @@ import myStyle from './calendar.module.css'
 import { DateContext } from '@/context/date-context'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import { useSession } from '@/context/sessionContext'
 
 const Calendar = ({ branch_themes_id }) => {
+  const { setDateSessionsStatus } = useSession()
   const router = useRouter()
   const { id } = router.query
   const isReady = router.isReady
@@ -57,13 +59,14 @@ const Calendar = ({ branch_themes_id }) => {
       const startDayOfWeek = startOfMonth.day()
       const endDayOfWeek = endOfMonth.day()
       const days = []
+      const today = dayjs()
 
       // 加入上個月的天數
       for (let i = startDayOfWeek; i > 0; i--) {
         days.push({
           day: startOfMonth.subtract(i, 'day').date(),
           currentMonth: false,
-          status: 'prev-month',
+          status: 'disabled',
         })
       }
 
@@ -75,9 +78,8 @@ const Calendar = ({ branch_themes_id }) => {
         days.push({
           day: i,
           currentMonth: true,
-          status: date.isBefore(dayjs(), 'day')
-            ? 'disabled'
-            : dayData.status || 'open',
+          status: dayData.status || 'open',
+          clickable: !date.isBefore(today, 'day') && dayData.status !== 'full',
         })
       }
 
@@ -86,7 +88,7 @@ const Calendar = ({ branch_themes_id }) => {
         days.push({
           day: i,
           currentMonth: false,
-          status: 'next-month',
+          status: 'disabled',
         })
       }
 
@@ -117,26 +119,49 @@ const Calendar = ({ branch_themes_id }) => {
   }
 
   const handleDateClick = (day) => {
+    if (day.status === 'disabled') return
+
     setSelectedDate(day)
     updateSelectedDate({
       day: day.day,
       month: currentDate.month(),
       year: currentDate.year(),
     })
+
+    const formattedDate = `${currentDate.year()}-${String(
+      currentDate.month() + 1
+    ).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`
+    fetchSessionsStatus(formattedDate, branch_themes_id)
+  }
+
+  const fetchSessionsStatus = async (date) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/themes/sessions-status`,
+        {
+          params: { date, branch_themes_id },
+        }
+      )
+      setDateSessionsStatus(response.data)
+    } catch (error) {
+      console.error('Error fetching sessions status:', error)
+    }
   }
 
   const renderDay = (day, index) => {
     const classes = [myStyle.date]
-    if (day.status === 'prev-month') classes.push(myStyle.prevMonth)
-    if (day.status === 'next-month') classes.push(myStyle.nextMonth)
-    if (day.status === 'disabled') classes.push(myStyle.disabled)
+    if (day.status === 'prev-month' || day.status === 'next-month')
+      classes.push(myStyle.otherMonth)
     if (day.status === 'open') classes.push(myStyle.open)
     if (day.status === 'partial') classes.push(myStyle.partial)
     if (day.status === 'full') classes.push(myStyle.full)
+    if (day.status === 'disabled') classes.push(myStyle.disabled)
+    if (!day.clickable) classes.push(myStyle.notClickable)
     if (
       day.currentMonth &&
       day.day === dayjs().date() &&
-      currentDate.month() === dayjs().month()
+      currentDate.month() === dayjs().month() &&
+      currentDate.year() === dayjs().year()
     ) {
       classes.push(myStyle.currentDay)
     }
@@ -147,10 +172,12 @@ const Calendar = ({ branch_themes_id }) => {
     return (
       <td key={index} className={classes.join(' ')}>
         <div
-          onClick={() => handleDateClick(day)}
-          onKeyPress={(e) => handleKeyPress(e, () => handleDateClick(day))}
+          onClick={() => day.clickable && handleDateClick(day)}
+          onKeyPress={(e) =>
+            day.clickable && handleKeyPress(e, () => handleDateClick(day))
+          }
           role="button"
-          tabIndex="0"
+          tabIndex={day.clickable ? '0' : '-1'}
           className={myStyle.dateContent}
         >
           {day.day}
