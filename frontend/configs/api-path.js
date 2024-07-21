@@ -68,3 +68,4 @@ export const BRANCH_THEMES = `${API_SERVER}/themes/second`
 export const THEMES_DETAILS = `${API_SERVER}/themes/details`
 export const THEME_IMG = `${API_SERVER}/images`
 export const MEMBER_PROFILE = `${API_SERVER}/themes/api/member_profile`
+export const CALENDER = `${API_SERVER}/themes/calendar`

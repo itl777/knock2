@@ -1,5 +1,6 @@
 import express from "express";
 import db from "./../utils/connect.js";
+import moment from "moment-timezone";
 
 const router = express.Router();
 
@@ -295,6 +296,140 @@ router.get("/api/member_profile", async (req, res) => {
   } catch (error) {
     console.error("Error fetching member profile: ", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+//----------------------------------------------
+// 日曆
+router.get("/calendar", async (req, res) => {
+  console.log("收到的請求參數：", req.query);
+
+  let { year, month, branch_themes_id } = req.query;
+
+  // 參數驗證
+  if (!year || !month || !branch_themes_id) {
+    return res.status(400).json({ error: "缺少必要參數" });
+  }
+
+  // 確保年份、月份和branch_themes_id是數字
+  year = parseInt(year, 10);
+  month = parseInt(month, 10);
+  branch_themes_id = parseInt(branch_themes_id, 10);
+
+  if (
+    isNaN(year) ||
+    isNaN(month) ||
+    month < 1 ||
+    month > 12 ||
+    isNaN(branch_themes_id)
+  ) {
+    return res.status(400).json({ error: "無效的參數" });
+  }
+
+  // 將月份轉換為兩位數的字符串
+  const monthString = month.toString().padStart(2, "0");
+
+  try {
+    // 獲取特定branch_themes的theme_id
+    const [themeResult] = await db.query(
+      "SELECT theme_id FROM branch_themes WHERE branch_themes_id = ?",
+      [branch_themes_id]
+    );
+
+    if (themeResult.length === 0) {
+      return res.status(404).json({ error: "未找到指定的branch_themes_id" });
+    }
+
+    const theme_id = themeResult[0].theme_id;
+
+    // 獲取預約數據，使用 CONVERT_TZ 函數來處理時區
+    const reservationsSql = `
+      SELECT 
+        DATE(CONVERT_TZ(r.reservation_date, '+00:00', '+08:00')) AS date,
+        COUNT(DISTINCT r.session_id) AS reserved_sessions
+      FROM 
+        reservations r
+      WHERE 
+        DATE(CONVERT_TZ(r.reservation_date, '+00:00', '+08:00')) >= ? AND 
+        DATE(CONVERT_TZ(r.reservation_date, '+00:00', '+08:00')) < ? AND
+        r.branch_themes_id = ? AND
+        r.cancel = 0 AND
+        r.reservation_status_id != 3
+      GROUP BY 
+        DATE(CONVERT_TZ(r.reservation_date, '+00:00', '+08:00'))
+    `;
+
+    // 獲取總會話數
+    const sessionsSql = `
+      SELECT 
+        COUNT(DISTINCT s.sessions_id) AS total_sessions
+      FROM 
+        sessions s
+      WHERE 
+        s.theme_id = ?
+    `;
+
+    const startDate = moment
+      .tz(`${year}-${monthString}-01`, "Asia/Taipei")
+      .format("YYYY-MM-DD");
+    const endDate = moment
+      .tz(`${year}-${monthString}-01`, "Asia/Taipei")
+      .endOf("month")
+      .format("YYYY-MM-DD");
+
+    const [reservations] = await db.query(reservationsSql, [
+      startDate,
+      endDate,
+      branch_themes_id,
+    ]);
+    const [sessions] = await db.query(sessionsSql, [theme_id]);
+
+    console.log("預約數據：", reservations);
+    console.log("會話數據：", sessions);
+
+    const totalSessionsPerDay = sessions[0].total_sessions;
+
+    const calendarData = {};
+    const daysInMonth = moment
+      .tz(`${year}-${monthString}-01`, "Asia/Taipei")
+      .daysInMonth();
+
+    // 初始化每天的數據
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateString = moment
+        .tz(
+          `${year}-${monthString}-${day.toString().padStart(2, "0")}`,
+          "Asia/Taipei"
+        )
+        .format("YYYY-MM-DD");
+      calendarData[dateString] = {
+        total_sessions: totalSessionsPerDay,
+        reserved_sessions: 0,
+        status: "open",
+      };
+    }
+
+    // 填充預訂數據並計算狀態
+    reservations.forEach((row) => {
+      const dateString = moment
+        .tz(row.date, "Asia/Taipei")
+        .format("YYYY-MM-DD");
+      if (calendarData[dateString]) {
+        calendarData[dateString].reserved_sessions = row.reserved_sessions;
+        if (row.reserved_sessions >= calendarData[dateString].total_sessions) {
+          calendarData[dateString].status = "full";
+        } else if (row.reserved_sessions > 0) {
+          calendarData[dateString].status = "partial";
+        }
+      }
+    });
+
+    console.log("最終日曆數據：", JSON.stringify(calendarData, null, 2));
+
+    res.json(calendarData);
+  } catch (error) {
+    console.error("獲取日曆數據時出錯：", error);
+    res.status(500).json({ error: "內部服務器錯誤", details: error.message });
   }
 });
 
