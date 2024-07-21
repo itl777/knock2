@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import myStyles from './map.module.css'
 // import 'bootstrap/dist/css/bootstrap.css'
 
 export default function GoogleMap({
@@ -20,54 +21,25 @@ export default function GoogleMap({
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        marginBottom: '80px',
-        alignItems: 'center',
-      }}
-    >
-      <div className="col-6">
+    <div className={myStyles.map}>
+      <div className="col-12 col-md-6">
         <ul>
-          <div
-            style={{
-              marginBottom: '196px',
-              fontSize: '48px',
-              fontWeight: 'bold',
-              color: '#D9D9D9',
-            }}
-          >
-            {branchName}
-          </div>
-          <li
-            style={{
-              marginBottom: '18px',
-              color: '#D9D9D9',
-            }}
-          >
+          <div className={myStyles.title}>{branchName}</div>
+          <li className={myStyles.info}>
             營業時間&nbsp; {openTime}-{closeTime}（預約洽詢時間）
           </li>
-          <li
-            style={{
-              marginBottom: '18px',
-              color: '#D9D9D9',
-            }}
-          >
+          <li className={myStyles.info}>
             電話 &nbsp;&ensp;&ensp;&ensp; {branchPhone}
           </li>
-          <li style={{ color: '#D9D9D9' }}>
+          <li className={myStyles.info2}>
             地址 &nbsp;&ensp;&ensp;&ensp; {branchAddress}
           </li>
         </ul>
       </div>
       <iframe
-        className="col-6"
+        className={myStyles.iframe}
         title="Google Map"
         src={mapSrc}
-        width="570"
-        height="380"
-        style={{ border: 0, borderRadius: '10px' }}
         allowFullScreen=""
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
