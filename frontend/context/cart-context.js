@@ -278,7 +278,6 @@ export const CartProvider = ({ children }) => {
         discountTotal + Math.floor(discountPercentage * excludeProductTotal)
       finalDiscount = excludeProductDiscount > discountMaxTotal ? discountMaxTotal : excludeProductDiscount
     }
-    console.log("discountTotal", discountTotal, 'percentage', Math.floor(discountPercentage * excludeProductTotal),finalDiscount  );
     finalDiscount += productDiscountTotal
     setDiscountTotal(finalDiscount)
     setExcludeProductCouponTotal(excludeProductTotal)

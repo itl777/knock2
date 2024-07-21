@@ -182,6 +182,7 @@ router.post("/use", async (req, res) => {
   }
 });
 
+// 從購物車使用優惠券
 router.post("/remove", async (req, res) => {
   const { member_id, coupon_id, product_id } = req.body;
 
@@ -223,23 +224,7 @@ router.post("/remove", async (req, res) => {
   }
 });
 
-// router.post("/update_in_cart", async (req, res) => {
-//   const { member_id, coupon_id } = req.body;
-//   try {
-//     const sql = `
-//       UPDATE coupon_member
-//       SET in_cart = CASE WHEN in_cart = 0 THEN 1 ELSE 0 END
-//       WHERE member_id = ? AND coupon_id = ?;
-//     `;
-//     await db.query(sql, [member_id, coupon_id]);
-//     res.json({ status: true, message: "Coupon update in_cart successfully" });
-//   } catch (error) {
-//     console.error("Error updating coupon: ", error);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-// 更新購物車優惠券(為0)
+// 從購物車移除使用的優惠券
 router.post("/delete_in_cart", async (req, res) => {
   const { member_id, coupon_id } = req.body;
   try {
@@ -256,7 +241,6 @@ router.post("/delete_in_cart", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // 取得會員購物車可用的且 coupon type id = 1 （不指定商品）的優惠券
 router.get("/in_cart", async (req, res) => {
@@ -308,6 +292,7 @@ router.get("/in_cart", async (req, res) => {
   }
 });
 
+// 取得會員購物車可用的且 coupon type id = 2 （不指定商品）的優惠券
 router.get("/product", async (req, res) => {
   const { member_id } = req.query;
 
@@ -354,7 +339,7 @@ router.get("/product", async (req, res) => {
     });
 
     rows.forEach((r) => {
-      r.in_cart = r.in_cart > 0 ? 1 : 0
+      r.in_cart = r.in_cart > 0 ? 1 : 0;
     });
 
     // 將結果按 coupon_id 分組並包含產品資訊
@@ -400,5 +385,64 @@ router.get("/product", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// 取得會員尚未領取的優惠券
+router.get("/get-coupon", async (req, res) => {
+  const { member_id } = req.query;
+
+  try {
+    const sql = `
+      SELECT c.*
+      FROM coupons c
+      LEFT JOIN coupon_member cm 
+      ON c.id = cm.coupon_id 
+      AND cm.member_id = ?
+      WHERE cm.coupon_id IS NULL
+      AND c.valid_from <= CURDATE() 
+      AND c.valid_until >= CURDATE()
+    `;
+
+    const [rows] = await db.query(sql, [member_id]);
+
+    // 格式化日期
+    rows.forEach((r) => {
+      r.valid_from = moment(r.valid_from).isValid()
+        ? moment(r.valid_from).format(dateTimeFormat)
+        : "";
+      r.valid_until = moment(r.valid_until).isValid()
+        ? moment(r.valid_until).format(dateTimeFormat)
+        : "";
+    });
+
+    res.json({
+      status: true,
+      rows,
+    });
+  } catch (error) {
+    console.error("Error fetching member coupons: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+// 新增會員新領取的優惠券
+router.post("/add", async (req, res) => {
+  const { member_id, coupon_id } = req.body;
+
+  try {
+    const sql = `
+      INSERT INTO coupon_member (coupon_id, member_id, create_date) 
+      VALUES (?, ?, now())
+    `;
+
+    const [result] = await db.query(sql, [coupon_id, member_id]);
+
+    res.json({ status: true, message: "Coupon added to member successfully" });
+  } catch (error) {
+    console.error("Error adding coupon: ", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 export default router;

@@ -2,7 +2,7 @@ import styles from './no-data.module.css'
 
 export default function NoData({
   text = 'no data',
-  fontSize = 24 + 'px',
+  fontSize = 20 + 'px',
   backgroundColor = 'none',
   borderRadius = 1 + 'rem',
 }) {

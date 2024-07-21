@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import styles from './coupon-container.module.css'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 // contexts
 import { useAuth } from '@/context/auth-context'
 // components
@@ -8,10 +9,12 @@ import CouponCard from '../coupon-card'
 import UserHeader from '@/components/UI/user-header'
 import UserPagination from '@/components/UI/user-pagination'
 import NoData from '@/components/UI/no-data'
+import BlackBtn from '@/components/UI/black-btn'
 // api path
 import { GET_MEMBER_COUPON } from '@/configs/api-path'
 
 export default function CouponContainer({ status }) {
+  const router = useRouter()
   const [pageCoupons, setPageCoupons] = useState([])
   const [totalPages, setTotalPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
@@ -62,6 +65,13 @@ export default function CouponContainer({ status }) {
 
   return (
     <>
+      <BlackBtn
+        btnText="領取優惠券"
+        href={null}
+        onClick={() => {
+          router.push('/coupon')
+        }}
+      />
       <section className={styles.couponSection}>
         <div>
           <UserHeader title={`${title}的優惠券`} btnHidden={true} />
