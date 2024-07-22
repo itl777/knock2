@@ -6,7 +6,6 @@ import { useLoginModal } from '@/context/login-context'
 import { useAuth } from '@/context/auth-context'
 import React, { useState, useContext, useEffect } from 'react'
 import { useUserProfile } from '@/hooks/useUserProfile'
-import axios from 'axios'
 import { useSession } from '@/context/sessionContext'
 
 import myStyle from './reservation.module.css'
@@ -158,6 +157,8 @@ export default function Reservation() {
     }
     clearError(field)
   }
+
+  // 提交表單
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -167,16 +168,12 @@ export default function Reservation() {
     }
 
     const formData = {
-      name,
-      mobile_phone: mobile_phone.toString(),
-      date,
-      timeSlot: timeSlot.toString(),
-      people: people.toString(),
-      discount: discount.toString(),
+      user_id: auth.id,
+      branch_themes_id: themeDetails.branch_themes_id,
+      reservation_date: date,
+      session_id: parseInt(timeSlot),
+      participants: parseInt(people),
       remark,
-      themeId: themeDetails.id,
-      themeName: themeDetails.name,
-      branchName: themeDetails.branch_name,
     }
 
     const nameResult = schemaForm.shape.name.safeParse(name)
@@ -221,21 +218,53 @@ export default function Reservation() {
     } else {
       setErrors({})
 
-      // 在 handleSubmit 函數中,成功創建預約後
-      router.push({
-        pathname: '/themes/checkout',
-        query: {
-          name,
-          mobile_phone,
-          date,
-          timeSlot,
-          people,
-          discount,
-          deposit: data.deposit, // 從後端回應中獲取
-          themeName: themeDetails.name,
-          branchName: themeDetails.branch_name,
+      fetch('http://localhost:3001/themes/api/reservations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify(formData),
       })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+          return response.json()
+        })
+        .then((data) => {
+          if (data.success) {
+            // 找到選中的時間段
+            const selectedSession = themeDetails.sessions.find(
+              (session) => session.sessions_id.toString() === timeSlot
+            )
+
+            router.push({
+              pathname: '/themes/checkout',
+              query: {
+                ...formData,
+                deposit: data.deposit,
+                name,
+                mobile_phone,
+                timeSlot,
+                sessionTime: selectedSession
+                  ? `${selectedSession.start_time} - ${selectedSession.end_time}`
+                  : '',
+                people,
+                discount: themeDetails.coupon_name,
+                themeName: themeDetails.theme_name,
+                branchName: themeDetails.branch_name,
+                themeImage: themeDetails.theme_img,
+                remark,
+              },
+            })
+          } else {
+            throw new Error(data.message || '預約創建失敗')
+          }
+        })
+        .catch((error) => {
+          console.error('預約提交失敗:', error)
+          alert('預約提交失敗，請稍後再試。錯誤詳情：' + error.message)
+        })
     }
   }
 

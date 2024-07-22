@@ -54,7 +54,17 @@
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 1fr 1fr;
-  margin-bottom: 6rem;
+  margin-bottom: 1rem;
+}
+
+
+.themeImageContainer {
+  width: 100%;
+  height: 250px;
+  border-radius: 12px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 @media screen and (max-width: 1120px) {
@@ -70,6 +80,13 @@
   .checkoutRightMain {
     display: flex;
   }
+  .btnStyle {
+    position: static;
+    right: auto;
+    bottom: auto;
+    width: 100%; /* 可选：使按钮宽度充满容器 */
+    margin-top: 50px; /* 可选：添加一些上边距 */
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -79,5 +96,13 @@
   
   .checkoutRight {
     padding: 1.5rem;
+  }
+
+  .btnStyle {
+    position: static;
+    right: auto;
+    bottom: auto;
+    width: 100%; /* 可选：使按钮宽度充满容器 */
+    margin-top: 50px; /* 可选：添加一些上边距 */
   }
 }

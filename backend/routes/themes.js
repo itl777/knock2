@@ -479,4 +479,60 @@ router.get("/sessions-status", async (req, res) => {
   }
 });
 
+// ---------------------------------------------------------------------------------
+
+router.post("/api/reservations", async (req, res) => {
+  try {
+    const {
+      user_id,
+      branch_themes_id,
+      reservation_date,
+      session_id,
+      participants,
+      remark,
+    } = req.body;
+
+    // 獲取主題的訂金金額
+    const [themeRows] = await db.query(
+      `SELECT t.deposit 
+       FROM themes t 
+       JOIN branch_themes bt ON t.theme_id = bt.theme_id 
+       WHERE bt.branch_themes_id = ?`,
+      [branch_themes_id]
+    );
+
+    if (themeRows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "未找到對應的主題" });
+    }
+
+    const deposit = themeRows[0].deposit;
+
+    // 插入預約數據
+    const [result] = await db.query(
+      "INSERT INTO reservations (user_id, branch_themes_id, reservation_date, session_id, participants, remark) VALUES (?, ?, ?, ?, ?, ?)",
+      [
+        user_id,
+        branch_themes_id,
+        reservation_date,
+        session_id,
+        participants,
+        remark,
+      ]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "預約創建成功",
+      reservation_id: result.insertId,
+      deposit: deposit,
+    });
+  } catch (error) {
+    console.error("創建預約失敗:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "創建預約失敗", error: error.message });
+  }
+});
 export default router;

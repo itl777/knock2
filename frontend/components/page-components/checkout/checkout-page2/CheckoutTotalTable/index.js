@@ -10,7 +10,8 @@ export default function CheckoutTotalTable({
   return (
     <div className={styles.totalBox}>
       <CheckoutTotalRow label="訂金" content={subtotal} />
-      <CheckoutTotalRow label="優惠項目" content={totalDiscount} />
+
+      <HDivider margin="0.75rem 0" />
       <CheckoutTotalRow label="總計" content={checkoutTotal} />
     </div>
   )
