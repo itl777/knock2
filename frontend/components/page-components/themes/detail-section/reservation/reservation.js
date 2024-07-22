@@ -148,7 +148,7 @@ export default function Reservation() {
         setTimeSlot(value.toString())
         break
       case 'people':
-        setPeople(value.toString()) // 确保将人数字段的值转换为字符串
+        setPeople(value.toString())
         break
       case 'discount':
         setDiscount(value.toString())
@@ -174,9 +174,11 @@ export default function Reservation() {
       people: people.toString(),
       discount: discount.toString(),
       remark,
+      themeId: themeDetails.id,
+      themeName: themeDetails.name,
+      branchName: themeDetails.branch_name,
     }
 
-    // 保持现有的验证逻辑不变
     const nameResult = schemaForm.shape.name.safeParse(name)
     const mobileResult = schemaForm.shape.mobile_phone.safeParse(
       mobile_phone.toString()
@@ -218,14 +220,20 @@ export default function Reservation() {
       setErrors(newErrors)
     } else {
       setErrors({})
-      console.log('表单数据:', formData)
 
-      // 使用 router.push 导航到订单页面，并传递表单数据
+      // 在 handleSubmit 函數中,成功創建預約後
       router.push({
-        pathname: '/themes/checkout"',
+        pathname: '/themes/checkout',
         query: {
-          ...formData,
-          themeId: themeDetails.id, // 假设你有主题ID
+          name,
+          mobile_phone,
+          date,
+          timeSlot,
+          people,
+          discount,
+          deposit: data.deposit, // 從後端回應中獲取
+          themeName: themeDetails.name,
+          branchName: themeDetails.branch_name,
         },
       })
     }

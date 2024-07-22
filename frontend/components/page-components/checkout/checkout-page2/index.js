@@ -16,13 +16,22 @@ export default function CheckoutPage() {
   const [screenWidth, setScreenWidth] = useState(userClientWidth)
 
   // 從路由獲取預約數據
-  const { name, date, timeSlot, people, discount, themeId, deposit } =
-    router.query
+  const {
+    name,
+    mobile_phone,
+    date,
+    timeSlot,
+    people,
+    discount,
+    deposit,
+    themeName,
+    branchName,
+  } = router.query
 
   // 使用 deposit 作為 subtotal
   const subtotal = parseFloat(deposit) || 0
 
-  // 計算總價（這裡假設總價就是定金，您可以根據需要調整）
+  // 計算總價
   const total = subtotal
 
   useEffect(() => {
@@ -44,7 +53,17 @@ export default function CheckoutPage() {
   const handleSubmit = (e) => {
     e.preventDefault()
     // 實現預約提交邏輯
-    console.log('提交預約', { name, date, timeSlot, people, deposit, total })
+    console.log('提交預約', {
+      name,
+      mobile_phone,
+      date,
+      timeSlot,
+      people,
+      deposit,
+      total,
+      themeName,
+      branchName,
+    })
     // 這裡您可以調用 API 來保存預約
   }
 
@@ -55,7 +74,11 @@ export default function CheckoutPage() {
         <div className={styles.checkoutLeft}>
           <h5>預約資訊</h5>
           <div className={styles.itemList}>
-            <p>名稱: {name}</p>
+            <p>
+              主題: {themeName} - {branchName}
+            </p>
+            <p>姓名: {name}</p>
+            <p>電話: {mobile_phone}</p>
             <p>日期: {date}</p>
             <p>時間: {timeSlot}</p>
             <p>人數: {people}</p>
