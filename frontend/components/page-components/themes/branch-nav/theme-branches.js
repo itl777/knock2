@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 
 import Tabs from '@mui/joy/Tabs'
 import TabList from '@mui/joy/TabList'
-import Tab, { tabClasses } from '@mui/joy/Tab'
+import Tab from '@mui/joy/Tab'
 import TabPanel from '@mui/joy/TabPanel'
 import Card02 from '@/components/UI/cards-themes'
 import GoogleMap from './google-map.js'
@@ -105,7 +105,7 @@ export default function ThemeBranches() {
                 min_players={theme.min_players}
                 max_players={theme.max_players}
                 themeTime={theme.theme_time}
-                branch_themes_id={theme.branch_themes_id} // 添加这一行
+                branch_themes_id={theme.branch_themes_id}
               />
             ))}
           </div>

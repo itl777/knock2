@@ -88,7 +88,7 @@ const Banner = () => {
       <BasicModal03
         open={showMusicPrompt}
         onClose={handleDeclineMusic}
-        modalTitle="背景音樂"
+        modalTitle="Do you want to listen to music?"
         modalBody={
           <div className={myStyle.musicPrompt}>
             <p>是否播放背景音樂來增強您的體驗？</p>
