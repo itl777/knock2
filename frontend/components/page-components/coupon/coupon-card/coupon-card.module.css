@@ -11,10 +11,6 @@
   border-radius: .75rem;
 }
 
-/* .couponCard:hover .couponCardLeft, .couponCard:hover .couponCardRight {
-  background-color: #454545;
-} */
-
 .couponCardLeft {
   position: relative;
   display: flex;
@@ -22,9 +18,9 @@
   position: relative;
   padding: 1rem;
   background-color: var(--pri-1);
-  border-right: 1.5px dashed var(--pri-3);
+  /* border-right: 1.5px dashed var(--pri-3); */
   border-radius: .75rem;
-  border: 2px solid white;
+  /* border: 2px solid white; */
   border-right: 1.5px dashed var(--pri-3);
 }
 
@@ -36,40 +32,52 @@
   width: 100%;
   background-color: var(--pri-1);
   border-radius: .75rem;
-  border: 2px solid white;
-  border-left: none;
+  color: white;
+  /* border: 2px solid white; */
+  /* border-left: none; */
 }
 
 .couponCardLeftChecked {
-  border: 2px solid #c7b081;
-  border-right: 1.5px dashed var(--pri-3);
+  background-color: #6a4b0d;
+  /* border: 2px solid #c7b081; */
 }
 
 .couponCardRightChecked {
-  border: 2px solid #c7b081;
-  border-left: none;
+  background-color: #6a4b0d;
+  /* border: 2px solid #c7b081; */
+  /* border-left: none; */
 }
 
 .history {
   opacity: 0.75;
 }
 
-.couponCard img {
+.webGhostImg {
   width: 5rem;
   padding: 0.25rem;
 }
 
-.couponInfo p {
-  font-size: 15px;
-  color: white;
+.couponInfo {
+  flex-grow: 1;
 }
 
-.textBox p {
-  font-size: 12px;
+.couponInfo p {
+  font-size: 17px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  /* color: white; */
 }
 
 .textBox {
+  display: flex;
+  flex-direction: column;
   margin: 6px 0;
+}
+
+.textBox small {
+  font-size: 15px;
+  letter-spacing: 2.5px;
+  /* color: white; */
 }
 
 .couponCardLeft::before,
@@ -103,6 +111,9 @@
   background-color: var(--text-grey);
 }
 
+.appGhostImg {
+  display: none;
+}
 
 @media screen and (max-width: 480px) {
 
@@ -114,7 +125,31 @@
     padding: 1rem .625rem 1rem 1rem;
   }
 
-  .couponCard img {
-    width: 3.5rem;
+  .webGhostImg {
+    width: 0rem;
+  }
+
+  .couponInfo p {
+    font-size: 14px;
+  }
+
+  .textBox small {
+    font-size: 12px;
+  }
+
+  .couponInfo {
+    position: relative;
+  }
+
+  .appGhostImg {
+    display: block;
+    position: absolute;
+    width: 3.75rem;
+    right: -12px;
+    bottom: -32px;
+  }
+
+  .couponCardLeft {
+    min-width: 3rem;
   }
 }

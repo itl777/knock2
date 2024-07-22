@@ -17,3 +17,11 @@
   display: flex;
   gap: 1rem;
 }
+
+@media screen and (max-width: 480px) {
+  .orderDetailHeader {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}

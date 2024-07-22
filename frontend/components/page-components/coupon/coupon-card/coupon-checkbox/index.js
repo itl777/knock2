@@ -8,12 +8,12 @@ const CustomCheckbox = styled(Checkbox)(({ theme, disabled=false }) => ({
   pointerEvents: disabled ? 'none' : 'auto', // 控制是否可點擊
   opacity: disabled ? 0.5 : 1, // 控制透明度
   '&:hover svg': {
-    color: disabled ? '#757575' : '#927231', // 如果 disabled，hover 不改變顏色
+    color: disabled ? '#757575' : 'var(--sec-1)', // 如果 disabled，hover 不改變顏色
   },
   svg: {
     color: disabled ? '#757575' : '#c7b081', // 根據 disabled 狀態設置顏色
-    width: 20,
-    height: 20,
+    width: 24,
+    height: 24,
   },
 }))
 

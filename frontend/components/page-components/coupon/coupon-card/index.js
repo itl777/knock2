@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import styles from './coupon-card.module.css'
-import { useCart } from '@/context/cart-context'
 import { motion } from 'framer-motion'
 import MoreInfoBtn from './more-info-text-btn'
 import { formatPrice } from '@/hooks/numberFormat'
@@ -53,7 +52,6 @@ export default function CouponCard({
     setCheckedBoolean(isChecked)
   }, [isChecked])
 
-
   return (
     <>
       <motion.div
@@ -77,7 +75,11 @@ export default function CouponCard({
               </div>
             )}
 
-            <img src="/ghost/ghost_11.png" alt="" />
+            <img
+              src="/ghost/ghost_11.png"
+              alt=""
+              className={styles.webGhostImg}
+            />
           </div>
 
           <div
@@ -88,11 +90,16 @@ export default function CouponCard({
             <div className={styles.couponInfo}>
               <p>{coupon_name}</p>
               <div className={styles.textBox}>
-                <p>最低消費金額：{formatPrice(minimum_order)}</p>
-                <p>有效期限：{valid_until}</p>
+                <small>最低消費：{formatPrice(minimum_order)}</small>
+                <small>有效期限：{valid_until}</small>
               </div>
+              {!btnHidden && <MoreInfoBtn onClick={handleMoreInfoClick} />}
+              <img
+                src="/ghost/ghost_11.png"
+                alt=""
+                className={styles.appGhostImg}
+              />
             </div>
-            {!btnHidden && <MoreInfoBtn onClick={handleMoreInfoClick} />}
           </div>
         </div>
 
