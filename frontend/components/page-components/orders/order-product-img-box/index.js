@@ -9,11 +9,11 @@ export default function OrderProductImgBox({
   productId = 0, //************* IT */
   imgSrc = '',
   imgAlt = 'knock_knock_product_image',
-  width = '6.5rem',
-  height = '6.5rem',
+  width = '6.25rem',
+  height = '6.25rem',
   radius = '1rem',
-  smallWidth = '6rem',
-  smallHeight = '6rem',
+  smallWidth = '5.75rem',
+  smallHeight = '5.75rem',
   smallRadius = '0.75rem',
 }) {
   {

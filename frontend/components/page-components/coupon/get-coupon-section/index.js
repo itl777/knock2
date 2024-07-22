@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import styles from './get-coupon-section.module.css'
-import CouponWheel from '../coupon-wheel'
-import CouponCard from '../coupon-card'
+import axios from 'axios'
+// context
 import { useAuth } from '@/context/auth-context'
 import { useRouter } from 'next/router'
-import axios from 'axios'
+// components
+import CouponWheel from '../coupon-wheel'
+import CouponCard from '../coupon-card'
+
+
 
 export default function GetCouponSection() {
   const { auth, authIsReady } = useAuth()
@@ -34,11 +38,18 @@ export default function GetCouponSection() {
 
   return (
     <section className={styles.sectionContainer}>
-      <h2 className={styles.h2Style}>領取優惠券</h2>
-      <div className={styles.contentContainer}>
-        <div className={styles.leftContent}>
-          <h5>快來抽獎把優惠券拿回家吧！</h5>
+      <h3 className={styles.title}>領取優惠券</h3>
+      <div className={styles.wheelContainer}>
+        <CouponWheel
+          availableCoupons={availableCoupons}
+          memberId={auth.id}
+          fetchNewCoupons={fetchNewCoupons}
+        />
+      </div>
+      <div className={styles.couponContainer}>
+        <h6>快來抽獎把優惠券拿回家吧！</h6>
 
+        <div className={styles.couponGrid}>
           {availableCoupons.length > 0 &&
             availableCoupons.map((v, i) => (
               <CouponCard
@@ -51,14 +62,6 @@ export default function GetCouponSection() {
                 selectable={false}
               />
             ))}
-        </div>
-
-        <div className={styles.rightContent}>
-          <CouponWheel
-            availableCoupons={availableCoupons}
-            memberId={auth.id}
-            fetchNewCoupons={fetchNewCoupons}
-          />
         </div>
       </div>
     </section>

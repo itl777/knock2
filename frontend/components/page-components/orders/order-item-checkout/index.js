@@ -61,44 +61,42 @@ export default function OrderItemCheckout({ type = 'def' }) {
             )
         )
         return (
-          <div className={styles.itemBox} key={v.product_id}>
-            <OrderProductImgBox
-              imgSrc={`${PRODUCT_IMG}/${v.product_img}`}
-              productId={v.product_id}
-            />
-            <div className={itemInfoClass}>
-              <div className={styles.itemNamePriceBox}>
-                <p>{v.product_name}</p>
-                <OrderPriceBox
-                  originalPrice={v.price}
-                  discountedPrice={calculateProductDiscount(
-                    v.price,
-                    v.cart_product_quantity,
-                    v.coupon_type_id,
-                    v.discount_amount,
-                    v.discount_percentage,
-                    v.minimum_order,
-                    v.discount_max
-                  )}
-                />
-                {hasCoupon && (
-                  <div>
-                    <CouponSelectModal
-                      type="product"
-                      product_id={v.product_id}
-                    />
-                  </div>
-                )}
-              </div>
-              <InputStepper
-                stepperValue={v.cart_product_quantity}
-                onQuantityChange={(newQuantity) =>
-                  handleQuantityChange(v.product_id, newQuantity)
-                }
-                productName={v.product_name} // 將商品名稱傳給子元件
+          <div>
+            <div className={styles.itemBox} key={v.product_id}>
+              <OrderProductImgBox
+                imgSrc={`${PRODUCT_IMG}/${v.product_img}`}
+                productId={v.product_id}
               />
+              <div className={itemInfoClass}>
+                <div className={styles.itemNamePriceBox}>
+                  <p>{v.product_name}</p>
+                  <OrderPriceBox
+                    originalPrice={v.price}
+                    discountedPrice={calculateProductDiscount(
+                      v.price,
+                      v.cart_product_quantity,
+                      v.coupon_type_id,
+                      v.discount_amount,
+                      v.discount_percentage,
+                      v.minimum_order,
+                      v.discount_max
+                    )}
+                  />
+                </div>
+                <InputStepper
+                  stepperValue={v.cart_product_quantity}
+                  onQuantityChange={(newQuantity) =>
+                    handleQuantityChange(v.product_id, newQuantity)
+                  }
+                  productName={v.product_name} // 將商品名稱傳給子元件
+                />
+              </div>
+
+              <CartFavoriteIcon product_id={v.product_id} />
             </div>
-            <CartFavoriteIcon product_id={v.product_id} />
+            {hasCoupon && (
+              <CouponSelectModal type="product" product_id={v.product_id} />
+            )}
           </div>
         )
       })}

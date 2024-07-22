@@ -14,6 +14,7 @@ import CheckoutTotalTable from '../checkout-total-table'
 import BlackBtn from '@/components/UI/black-btn'
 import OrderItemCheckout from '../../orders/order-item-checkout'
 import EmptyCart from '../empty-cart'
+import CouponSelectModal from '../../coupon/coupon-select-modal'
 // icons
 import { FaCartShopping } from 'react-icons/fa6'
 
@@ -112,13 +113,15 @@ export default function CheckoutOffcanvas() {
               {/* 如果購物車有商品： */}
               {cartBadgeQty > 0 && (
                 <div className={styles.checkoutList}>
-                  <OrderItemCheckout />
+                  <OrderItemCheckout type="small" />
                 </div>
               )}
             </div>
 
             {cartBadgeQty > 0 && (
               <div className={styles.checkoutBottom}>
+                <CouponSelectModal />
+
                 <CheckoutTotalTable
                   subtotal={subtotal}
                   checkoutTotal={checkoutTotal}

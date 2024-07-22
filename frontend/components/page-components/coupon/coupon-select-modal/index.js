@@ -1,14 +1,18 @@
 import styles from './coupon-select-modal.module.css'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 // context
 import { useCart } from '@/context/cart-context'
+import { useAuth } from '@/context/auth-context'
+import { useLoginModal } from '@/context/login-context'
+import { useSnackbar } from '@/context/snackbar-context'
 // components
 import ModalLayout from '../../checkout/address/modal-layout'
 import CouponCard from '@/components/page-components/coupon/coupon-card'
-import { useSnackbar } from '@/context/snackbar-context'
 import NoData from '@/components/UI/no-data'
 import TinyButton from '@/components/UI/tiny-button'
 import CheckoutCouponBtn from '../../checkout/checkout-coupon-btn'
+import ProductCouponTag from '../product-coupon-tag'
 
 export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
   const {
@@ -21,11 +25,21 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
     selectedProductCoupons,
     excludeProductCouponTotal,
   } = useCart()
-  const [open, setOpen] = useState(false)
-  const handleOpen = () => setOpen(true)
-  const handleClose = () => setOpen(false)
+  const { auth, authIsReady } = useAuth()
+  const router = useRouter()
+  const { loginFormSwitch } = useLoginModal() // 取得登入視窗開關
+  const [isLogin, setIsLogin] = useState(false)
   const { openSnackbar } = useSnackbar()
-  const [itemCouponBtn, setItemCouponBtn] = useState('選擇優惠券')
+  const [itemCouponName, setItemCouponName] = useState(null)
+  const [open, setOpen] = useState(false)
+  const handleOpen = () => {
+    if (isLogin) {
+      setOpen(true)
+    } else {
+      loginFormSwitch('Login')
+    }
+  }
+  const handleClose = () => setOpen(false)
   const [wholeSiteCouponContent, setWholeSiteCouponContent] =
     useState('選擇全站優惠券')
 
@@ -37,7 +51,14 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
     return usableCoupons.find((v) => v.coupon_id === coupon_id) || {}
   }
 
-  const modalCoupons = type === 'product' ? usableProductCoupons : usableCoupons
+  const getProductCoupon = () => {
+    return usableProductCoupons.filter((coupon) =>
+      coupon.products.some((product) => product.product_id === product_id)
+    )
+  }
+
+  const modalCoupons =
+    type === 'product' ? getProductCoupon(product_id) : usableCoupons
 
   // const getInCartValue = (products) => {
   //   const product = products.find((v) => v.product_id === product_id)
@@ -74,7 +95,9 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
     if (!isChecked) {
       if (type === 'product') {
         for (const coupon of selectedProductCoupons) {
-          await handleRemoveCouponFromCart(coupon.coupon_id, coupon.product_id)
+          if (coupon.coupon_id === coupon_id) {
+            await handleRemoveCouponFromCart(coupon_id, coupon.product_id)
+          }
         }
       }
       if (type === 'all') {
@@ -82,7 +105,6 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
           handleRemoveCouponFromCart(coupon.coupon_id, product_id)
         }
       }
-
       handleAddCouponToCart(coupon_id, product_id)
       openSnackbar('已套用優惠券', 'success')
     }
@@ -109,19 +131,32 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
   //   }
   // }
 
-  const getItemCouponBtn = () => {
-    let btnText
+  // const getItemCouponBtn = () => {
+  //   let btnText
+  //   if (product_id) {
+  //     const findProductCoupon = selectedProductCoupons.find(
+  //       (v) => v.product_id === product_id
+  //     )
+  //     btnText = findProductCoupon
+  //       ? findProductCoupon.coupon_name
+  //       : '請選擇優惠券'
+  //   } else {
+  //     btnText = '請選擇優惠券'
+  //   }
+  //   setItemCouponBtn(btnText)
+  // }
+
+  const getItemCouponName = () => {
+    let couponName
     if (product_id) {
       const findProductCoupon = selectedProductCoupons.find(
         (v) => v.product_id === product_id
       )
-      btnText = findProductCoupon
-        ? findProductCoupon.coupon_name
-        : '請選擇優惠券'
-    } else {
-      btnText = '請選擇優惠券'
+      if (findProductCoupon) {
+        couponName = findProductCoupon.coupon_name
+      }
     }
-    setItemCouponBtn(btnText)
+    setItemCouponName(couponName)
   }
 
   const getWholeSiteCoupons = () => {
@@ -129,7 +164,7 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
       const couponNames = selectedCoupons.map((v) => v.coupon_name).join(', ')
       setWholeSiteCouponContent(couponNames)
     } else {
-      setWholeSiteCouponContent('請選擇全站優惠券')
+      setWholeSiteCouponContent('請選擇優惠券')
     }
   }
 
@@ -149,9 +184,15 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
     return disabled
   }
 
+  // useEffect(() => {
+  //   if (product_id !== null) {
+  //     getItemCouponBtn()
+  //   }
+  // }, [selectedProductCoupons, product_id])
+
   useEffect(() => {
     if (product_id !== null) {
-      getItemCouponBtn()
+      getItemCouponName()
     }
   }, [selectedProductCoupons, product_id])
 
@@ -161,15 +202,24 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
     }
   }, [selectedCoupons])
 
+  useEffect(() => {
+    if (router.isReady && authIsReady) {
+      auth.id ? setIsLogin(true) : setIsLogin(false)
+    }
+  }, [auth.id, router.isReady, authIsReady])
+
   return (
     <>
       {type === 'product' ? (
-        <TinyButton
-          type="button"
-          btnText={itemCouponBtn}
-          href={null}
-          onClick={handleOpen}
-        />
+        <div className={styles.productCouponBtnStack}>
+          <TinyButton
+            type="button"
+            btnText="優惠券"
+            href={null}
+            onClick={handleOpen}
+          />
+          {itemCouponName && <ProductCouponTag coupon_name={itemCouponName} />}
+        </div>
       ) : (
         <CheckoutCouponBtn
           onClick={handleOpen}
@@ -205,10 +255,7 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
                     // )}
                     isChecked={isChecked(v.coupon_id)}
                     handelSelectedToggle={() =>
-                      handleToggleCoupon(
-                        v.coupon_id,
-                        isChecked(v.coupon_id)
-                      )
+                      handleToggleCoupon(v.coupon_id, isChecked(v.coupon_id))
                     }
                     coupon={getCoupon(v.coupon_id)} // 傳遞這張 coupon card 的單一優惠券資訊到子層（coupon more info modal）
                     disabled={disabledChecked(v.coupon_id)}

@@ -17,15 +17,15 @@ export default function CouponBtn({
         fontFamily: 'Noto Serif JP',
         fontSize: '16px',
         fontWeight: 'normal',
-        borderRadius: "0 6px 6px 0",
+        borderRadius: '0 6px 6px 0',
         margin: margin,
         marginLeft: marginLeft,
         border: '2px solid #d9d9d9',
         lineHeight: 'normal',
-        height: "40px",
+        height: '40px',
         ':hover': {
-          color: "white",
-          backgroundColor: "var(--pri-1)",
+          color: 'white',
+          backgroundColor: 'var(--pri-1)',
         },
       }}
     >

@@ -9,6 +9,7 @@ import { useAuth } from '@/context/auth-context'
 import { useLoginModal } from '@/context/login-context'
 import { useAddress } from '@/context/address-context'
 import useScreenSize from '@/hooks/useScreenSize'
+import { useSnackbar } from '@/context/snackbar-context'
 // hooks
 import { useOrderValidation } from '@/hooks/orderValidation'
 import usePayment from '@/hooks/usePayment'
@@ -24,9 +25,8 @@ import CheckoutTotalTable from '../checkout-total-table'
 import EmptyCart from '@/components/page-components/checkout/empty-cart'
 import RedirectionGuide from '@/components/UI/redirect-guide'
 import CouponSelectModal from '../../coupon/coupon-select-modal'
-import { useSnackbar } from '@/context/snackbar-context'
 // api path
-import { PRODUCT_IMG, CHECKOUT_POST } from '@/configs/api-path'
+import { CHECKOUT_POST } from '@/configs/api-path'
 
 export default function CheckoutPage() {
   const router = useRouter()

@@ -204,6 +204,7 @@ export const CartProvider = ({ children }) => {
       .filter((product) => product.in_cart > 0)
     setSelectedProductCoupons(newSelectedProductCoupons)
   }
+
   // 取得訂單總金額
   const calculateTotal = (items) => {
     let newCheckTotal = 0
@@ -218,70 +219,166 @@ export const CartProvider = ({ children }) => {
 
   // 取得折扣金額
   const calculateDiscountTotal = () => {
-    let productDiscountTotal = 0
-    let discountTotal = 0
-    let discountMaxTotal = 0
-    let discountMinTotal = 0
-    let discountPercentage = 0
-    let checkoutTotal = 0
-    let productDiscountOriginalPrice = 0
+    // let productDiscountTotal = 0
+    // let discountTotal = 0
+    // let discountMaxTotal = 0
+    // let discountMinTotal = 0
+    // let discountPercentage = 0
+    // let checkoutTotal = 0
+    // let productDiscountOriginalPrice = 0
 
-    checkoutItems.forEach((item) => {
-      let productDiscount = 0
-      checkoutTotal += item.cart_product_quantity * item.price
+    let usingCouponItemsOriginalTotal = 0 // 所有使用優惠券的產品「原價」總額
+    let usingCouponItemsDiscountTotal = 0 // 所有使用優惠券的產品「折價」總額
 
-      if (item.coupon_type_id === 2) {
-        const originalPrice = item.price * item.cart_product_quantity
+    // 篩選所有有使用優惠券產品
+    const usingCouponItems = checkoutItems.filter(
+      (item) =>
+        item['cart_product_coupon_id'] !== null &&
+        item['cart_product_coupon_id'] !== undefined
+    )
 
-        if (item.discount_amount) {
-          if (
-            originalPrice >= item.minimum_order &&
-            originalPrice >= item.discount_amount
-          ) {
-            productDiscount = item.discount_amount
-            productDiscountOriginalPrice +=
-              item.cart_product_quantity * item.price
-          }
-        } else if (item.discount_percentage) {
-          if (originalPrice >= item.minimum_order) {
-            productDiscount = Math.floor(
-              originalPrice * (1 - item.discount_percentage / 100)
-            )
-            productDiscount =
-              productDiscount >= item.discount_max
-                ? item.discount_max
-                : productDiscount
-            productDiscountOriginalPrice +=
-              item.cart_product_quantity * item.price
-          }
+    usingCouponItems.forEach((item) => {
+      // 單一產品原價總額
+      const itemOriginalPrice = item.cart_product_quantity * item.price
+      // 所有使用優惠券的產品原價總額
+      usingCouponItemsOriginalTotal += itemOriginalPrice
+      // 單一產品折扣總額
+      let itemDiscount = 0
+      if (item.discount_amount) {
+        if (
+          itemOriginalPrice >= (item.minimum_order ?? 0) &&
+          itemOriginalPrice >= (item.discount_amount ?? 0)
+        ) {
+          itemDiscount = item.discount_amount ?? 0
         }
-        productDiscountTotal += productDiscount
+      } else if (item.discount_percentage) {
+        if (itemOriginalPrice >= (item.minimum_order ?? 0)) {
+          const percentage = 1 - item.discount_percentage / 100
+          const discount = Math.floor(itemOriginalPrice * percentage)
+
+          itemDiscount =
+            discount >= (item.discount_max ?? 0)
+              ? item.discount_max ?? discount
+              : discount
+        }
+      }
+      usingCouponItemsDiscountTotal += itemDiscount
+    })
+
+    // 扣除已使用產品優惠券的總額
+    const excludeCouponItemTotal = subtotal - usingCouponItemsOriginalTotal
+
+    let generalDiscount = 0 // 全站優惠折扣
+    let generalPercentage = 0 // 全站優惠百分比
+    let generalDiscountMaX = 0 // 全站優惠最高折扣
+    let generalDiscountMin = 0 // 全站優惠最低總額
+
+    // 尋找本次訂單使用的優惠券
+    selectedCoupons.forEach((item) => {
+      if (item.discount_amount) {
+        generalDiscount = item.discount_amount
+        generalDiscountMaX = item.discount_max ?? 0
+
+        generalDiscountMin = item.minimum_order ?? 0
+      } else if (item.discount_percentage) {
+        generalPercentage = 1 - item.discount_percentage / 100
+        generalDiscountMaX = item.discount_max ?? 0
+        generalDiscountMin = item.minimum_order ?? 0
       }
     })
 
-    usableCoupons.forEach((item) => {
-      if (item.in_cart === 1) {
-        discountMaxTotal += item.discount_max
-        discountMinTotal += item.minimum_order
-        if (item.discount_amount) {
-          discountTotal += item.discount_amount
-        } else if (item.discount_percentage) {
-          discountPercentage = 1 - item.discount_percentage / 100
-        }
+    let generalDiscountTotal = 0
+
+    if (excludeCouponItemTotal > generalDiscountMin) {
+      if (generalDiscount > 0) {
+        generalDiscountTotal = generalDiscount
+      } else if (generalPercentage > 0) {
+        generalDiscountTotal = Math.floor(
+          excludeCouponItemTotal * generalPercentage
+        )
       }
-    })
+    }
 
     let finalDiscount = 0
-    const excludeProductTotal = checkoutTotal - productDiscountOriginalPrice
-    if (excludeProductTotal > discountMinTotal) {
-      const excludeProductDiscount =
-        discountTotal + Math.floor(discountPercentage * excludeProductTotal)
-      finalDiscount = excludeProductDiscount > discountMaxTotal ? discountMaxTotal : excludeProductDiscount
-    }
-    finalDiscount += productDiscountTotal
+    finalDiscount = generalDiscountTotal + usingCouponItemsDiscountTotal
+
     setDiscountTotal(finalDiscount)
-    setExcludeProductCouponTotal(excludeProductTotal)
+    setExcludeProductCouponTotal(excludeCouponItemTotal)
+
+    // console.log({
+    //   finalDiscount,
+    //   excludeCouponItemTotal,
+    //   generalDiscountTotal,
+    //   usingCouponItemsDiscountTotal,
+    //   usingCouponItemsOriginalTotal,
+    // })
   }
+
+  // const calculateDiscountTotal = () => {
+  //   let productDiscountTotal = 0
+  //   let discountTotal = 0
+  //   let discountMaxTotal = 0
+  //   let discountMinTotal = 0
+  //   let discountPercentage = 0
+  //   let checkoutTotal = 0
+  //   let productDiscountOriginalPrice = 0
+
+  //   checkoutItems.forEach((item) => {
+  //     let productDiscount = 0
+  //     checkoutTotal += item.cart_product_quantity * item.price
+
+  //     if (item.coupon_type_id === 2) {
+  //       const originalPrice = item.price * item.cart_product_quantity
+
+  //       if (item.discount_amount) {
+  //         if (
+  //           originalPrice >= item.minimum_order &&
+  //           originalPrice >= item.discount_amount
+  //         ) {
+  //           productDiscount = item.discount_amount
+  //           productDiscountOriginalPrice +=
+  //             item.cart_product_quantity * item.price
+  //         }
+  //       } else if (item.discount_percentage) {
+  //         if (originalPrice >= item.minimum_order) {
+  //           productDiscount = Math.floor(
+  //             originalPrice * (1 - item.discount_percentage / 100)
+  //           )
+  //           productDiscount =
+  //             productDiscount >= item.discount_max
+  //               ? item.discount_max
+  //               : productDiscount
+  //           productDiscountOriginalPrice +=
+  //             item.cart_product_quantity * item.price
+  //         }
+  //       }
+  //       productDiscountTotal += productDiscount
+  //     }
+  //   })
+
+  //   usableCoupons.forEach((item) => {
+  //     if (item.in_cart === 1) {
+  //       discountMaxTotal += item.discount_max
+  //       discountMinTotal += item.minimum_order
+  //       if (item.discount_amount) {
+  //         discountTotal += item.discount_amount
+  //       } else if (item.discount_percentage) {
+  //         discountPercentage = 1 - item.discount_percentage / 100
+  //       }
+  //     }
+  //   })
+
+  //   let finalDiscount = 0
+  //   const excludeProductTotal = checkoutTotal - productDiscountOriginalPrice
+  //   if (excludeProductTotal > discountMinTotal) {
+  //     const excludeProductDiscount =
+  //       discountTotal + Math.floor(discountPercentage * excludeProductTotal)
+  //     finalDiscount = excludeProductDiscount > discountMaxTotal ? discountMaxTotal : excludeProductDiscount
+  //   }
+  //   finalDiscount += productDiscountTotal
+  //   setDiscountTotal(finalDiscount)
+  //   setExcludeProductCouponTotal(excludeProductTotal)
+  // }
 
   // 記錄商品數量異動
   const handleQuantityChange = async (productId, newQuantity) => {
@@ -420,6 +517,10 @@ export const CartProvider = ({ children }) => {
     getSelectedProductCoupons()
   }, [checkoutItems, usableCoupons, usableProductCoupons])
 
+  useEffect(() => {
+    fetchMemberCart()
+  }, [usableCoupons, usableProductCoupons])
+
   return (
     <CartContext.Provider
       value={{
@@ -442,6 +543,9 @@ export const CartProvider = ({ children }) => {
         setFormData,
         handleAddCouponToCart,
         handleRemoveCouponFromCart,
+        fetchMemberCart,
+        fetchMemberCartCoupons,
+        fetchMemberCartProductCoupons,
         selectedCoupons,
         selectedProductCoupons,
         excludeProductCouponTotal,

@@ -351,8 +351,9 @@ router.post("/api/checkout", async (req, res) => {
     // 合併 orderCouponId 和 cartProductCouponId
     const allCouponIds = [orderCouponId, ...cartProductCouponIds];
 
-    const updateCouponPromises = allCouponIds.map(couponId => {
-      return db.query(updateCouponSql, [memberId, couponId])
+    const updateCouponPromises = allCouponIds.map((couponId) => {
+      return db
+        .query(updateCouponSql, [memberId, couponId])
         .then(([result]) => result);
     });
 

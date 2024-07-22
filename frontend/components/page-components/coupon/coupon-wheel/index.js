@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import styles from './coupon-wheel.module.css'
-import BlackBtn from '@/components/UI/black-btn'
-import FilterBtn from '@/components/UI/filter-btn'
 import axios from 'axios'
+// contexts
 import { useSnackbar } from '@/context/snackbar-context'
+import { useCart } from '@/context/cart-context'
+// components
+import BlackBtn from '@/components/UI/black-btn'
 import confetti from 'canvas-confetti'
+import CouponWinDialog from '../coupon-win-dialog'
 
-export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupons }) {
+export default function CouponWheel({
+  availableCoupons,
+  memberId,
+  fetchNewCoupons,
+}) {
   const { openSnackbar } = useSnackbar()
   const [rotation, setRotation] = useState(0)
   const [isSpinning, setIsSpinning] = useState(false)
   const [winner, setWinner] = useState(null)
   // const [availableCoupons, setAvailableCoupons] = useState([])
   const [winCoupon, setWinCoupon] = useState({})
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const {fetchMemberCartCoupons, fetchMemberCartProductCoupons } = useCart()
 
   const segments = [
     { label: '中獎', color: '#FF6B6B' },
@@ -39,12 +48,16 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
         setWinCoupon({})
         setWinner(null)
         fetchNewCoupons(memberId)
+        fetchMemberCartCoupons()
+        fetchMemberCartProductCoupons()
+
         openSnackbar('已成功領取優惠券！', 'success')
       }
     } catch (error) {
       console.error('Error adding coupon:', error)
       openSnackbar('領取優惠券失敗', 'error')
     }
+    setIsDialogOpen(false)
   }
 
   // 計算每個扇形角度
@@ -52,6 +65,7 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
 
   // 執行抽獎
   const spinWheel = () => {
+    setIsDialogOpen(false)
     setWinCoupon({})
     setWinner(null)
     if (!isSpinning) {
@@ -70,6 +84,12 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
 
       console.log('New rotation:', newRotation)
       setRotation(newRotation)
+
+      // 使用 CSS 變量設置圖片的旋轉角度
+      document.documentElement.style.setProperty(
+        '--rotation-deg',
+        `${newRotation}deg`
+      )
 
       setTimeout(() => {
         setIsSpinning(false)
@@ -94,6 +114,8 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
             setWinCoupon({
               coupon_id: coupon.id,
               coupon_name: coupon.coupon_name,
+              valid_until: coupon.valid_until,
+              minimum_order: coupon.minimum_order,
             })
             triggerConfetti()
           } else {
@@ -101,8 +123,9 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
               coupon_id: null,
               coupon_name: 'No Coupons Available',
             })
-          }
+          } 
         }
+        setIsDialogOpen(true)
       }, 5000)
     }
   }
@@ -114,11 +137,11 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
     return rValue
   }
 
-  // 取得抽血結果文字
+  // 取得抽獎結果文字
   const getResult = () => {
     if (winner) {
       if (winner.label === '中獎') {
-        return `恭喜您中獎！請立即領取${winCoupon.coupon_name}`
+        return `恭喜您中獎！請立即領取優惠券「${winCoupon.coupon_name}」!`
       } else {
         return `${winner.label}！`
       }
@@ -126,6 +149,30 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
       return ``
     }
   }
+
+  // 關閉視窗
+  const handleClose = () => {
+    setIsDialogOpen(false)
+  }
+  
+  // 按鈕文字
+  const getButtonText = () => {
+    if (availableCoupons.length > 0) {
+      return isSpinning ? '旋轉中...' : '我要抽獎！'
+    } else {
+      return '無法抽獎'
+    }
+  }
+
+
+  const getButtonDisabled = () => {
+    if (availableCoupons.length > 0) {
+      return isSpinning
+    } else {
+      return true
+    }
+  }
+
 
   // 煙花效果
   const triggerConfetti = () => {
@@ -151,6 +198,7 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
       }
     })()
   }
+
 
   return (
     <div className={styles.container}>
@@ -195,53 +243,28 @@ export default function CouponWheel({ availableCoupons, memberId, fetchNewCoupon
           })}
         </div>
         {/* 中央的圓形div和圖片 */}
-        <div
-          className={styles.ghostImgBox}
-          // style={{
-          //   position: 'absolute',
-          //   top: '50%',
-          //   left: '50%',
-          //   transform: 'translate(-50%, -50%)',
-          //   width: '96px',
-          //   height: '96px',
-          //   padding: '10px',
-          //   borderRadius: '50%',
-          //   backgroundColor: 'var(--pri-1)',
-          //   display: 'flex',
-          //   justifyContent: 'center',
-          //   alignItems: 'center',
-          //   zIndex: 10,
-          // }}
-        >
-          <img
-            className={styles.ghostImg}
-            src="/ghost/ghost_11.png"
-            // style={{
-            //   height: '100%',
-            //   marginBottom: '6px',
-            // }}
-          />
+        <div className={styles.ghostImgBox}>
+          <img className={styles.ghostImg} src="/ghost/ghost_11.png" />
         </div>
         {/* 指針 */}
         <div className={styles.pointer}></div>
       </div>
       <BlackBtn
-        btnText={isSpinning ? '旋轉中...' : '我要抽獎！'}
+        btnText={getButtonText()}
         href={null}
         onClick={spinWheel}
-        disabled={isSpinning}
+        disabled={getButtonDisabled()}
         style={{ marginTop: '20px' }}
+        paddingType="medium"
       />
-      {winner && (
-        <div className={styles.resultBox}>
-          <p>{getResult()}</p>
-          <FilterBtn
-            btnText="領取"
-            href={null}
-            onClick={() => handleAddCoupon(winCoupon.coupon_id)}
-          />
-        </div>
-      )}
+
+      <CouponWinDialog
+        isOpen={isDialogOpen}
+        description={getResult()}
+        winCoupon={winCoupon}
+        handleAddCoupon={() => handleAddCoupon(winCoupon.coupon_id)}
+        handleClose={handleClose}
+      />
     </div>
   )
 }

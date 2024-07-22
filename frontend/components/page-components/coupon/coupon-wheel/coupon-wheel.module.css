@@ -1,14 +1,12 @@
 .container {
   text-align: center;
-
 }
 
 .wheelBox {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 360px;
+  height: 360px;
   margin: 0 auto;
-  border: 2px solid green;
   margin: 32px auto;
 }
 
@@ -19,7 +17,7 @@
   position: relative;
   overflow: hidden;
   transition: transform 5s cubic-bezier(0.25, 0.1, 0.25, 1);
-  border: 4px solid red;
+  border: 4px solid var(--pri-1);
 
 }
 
