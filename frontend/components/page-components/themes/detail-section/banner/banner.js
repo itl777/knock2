@@ -16,8 +16,35 @@ const Banner = () => {
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef(null)
   const [soundBars, setSoundBars] = useState([])
-  const [autoplayFailed, setAutoplayFailed] = useState(false)
   const [showMusicPrompt, setShowMusicPrompt] = useState(true)
+
+  const FuzzyOverlay = () => {
+    return (
+      <motion.div
+        animate={{
+          opacity: [0.1, 0.15, 0.1],
+          backgroundPosition: ['0% 0%', '130% 100%', '56% 0%'],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 0.05,
+          ease: 'linear',
+        }}
+        style={{
+          backgroundImage: 'url("/noise2.jpg")',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundSize: '150% 100%',
+          pointerEvents: 'none',
+          opacity: 1,
+        }}
+        className="absolute inset-0"
+      />
+    )
+  }
 
   const togglePlay = () => {
     if (audioRef.current.paused) {
@@ -34,13 +61,7 @@ const Banner = () => {
       setIsPlaying(false)
     }
   }
-  const MusicPrompt = ({ onAccept, onDecline }) => (
-    <div className={myStyle.musicPrompt}>
-      <p>是否播放背景音樂？</p>
-      <button onClick={onAccept}>是</button>
-      <button onClick={onDecline}>否</button>
-    </div>
-  )
+
   const handleAcceptMusic = () => {
     setShowMusicPrompt(false)
     audioRef.current
@@ -112,14 +133,14 @@ const Banner = () => {
       <div
         style={{
           position: 'relative',
-          height: 'calc(100vh - 100px)',
-          overflow: 'hidden',
-          background: `linear-gradient(to top, rgba(0, 0, 0, 0.65), rgba(155, 155, 155, 0.3)), url("/themes-main/${themeDetails.theme_img}") no-repeat center center / cover`,
+          minHeight: 'calc(100vh - 100px)',
+          background: `linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(155, 155, 155, 0.1)), url("/themes-main/${themeDetails.theme_img}") no-repeat center center / cover`,
           display: 'flex',
           alignItems: 'center',
         }}
       >
-        <div className="container">
+        <FuzzyOverlay />
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="row">
             <div className="col-6">
               <h1 className={myStyle.h1}>{themeDetails.theme_name}</h1>
@@ -178,7 +199,7 @@ const Banner = () => {
 
               {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
               <audio ref={audioRef} loop>
-                <source src="/music/music01.mp3" type="audio/mpeg" />
+                <source src="/music/music02.mp3" type="audio/mpeg" />
                 您的瀏覽器不支持 audio 元素。
               </audio>
             </div>
