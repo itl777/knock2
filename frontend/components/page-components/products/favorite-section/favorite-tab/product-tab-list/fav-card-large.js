@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useProduct } from '@/context/product-context'
 import { useProductImg } from '@/hooks/useProductImg'
 import { PRODUCT_IMG } from '@/configs/api-path'
+import { formatIntlNumber } from '@/hooks/numberFormat'
 
 export default function FavCardLarge({ dbData }) {
   const { cardChange, setCardChange } = useProduct()
@@ -57,7 +58,9 @@ export default function FavCardLarge({ dbData }) {
           className={`${myStyle['gap']} d-flex flex-column align-items-center`}
         >
           <p className={myStyle['card-text']}>{dbData.product_name}</p>
-          <p className={myStyle['card-text']}>${dbData.price}</p>
+          <p className={myStyle['card-text']}>
+            ${formatIntlNumber(dbData.price)}
+          </p>
           <BlackBtn btnText={'加入購物車'} />
         </div>
       </div>
