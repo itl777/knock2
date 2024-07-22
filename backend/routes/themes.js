@@ -45,20 +45,21 @@ const getSecondThemesList = async () => {
   let success = false;
 
   const sql = `
-  SELECT 
-    t.theme_id,
-    t.theme_name,
-    t.theme_img,
-    t.difficulty,
-    t.introduction,
-    t.min_players,
-    t.max_players,
-    t.theme_time,
-    b.branch_name
-  FROM themes t
-  LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
-  LEFT JOIN branches b ON bt.branch_id = b.branch_id
-  ORDER BY t.theme_id DESC
+ SELECT 
+  t.theme_id,
+  t.theme_name,
+  t.theme_img,
+  t.difficulty,
+  t.introduction,
+  t.min_players,
+  t.max_players,
+  t.theme_time,
+  b.branch_name,
+  bt.branch_themes_id  
+FROM themes t
+LEFT JOIN branch_themes bt ON t.theme_id = bt.theme_id
+LEFT JOIN branches b ON bt.branch_id = b.branch_id
+ORDER BY t.theme_id DESC
 `;
 
   try {
