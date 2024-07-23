@@ -66,11 +66,13 @@ export default function UserTeam() {
     <>
       <div className={styles.teamsPage}>
         <div className="container">
-          {/* <div className="row">
+          <>
+            {/* <div className="row">
             目前登入者：{auth.nickname}
             <br />
             id = {auth.id}
           </div> */}
+          </>
           {/* User Teams */}
           <div className="row pb-3">
             <Accordion>
@@ -85,11 +87,11 @@ export default function UserTeam() {
                   {userData.success ? (
                     <>
                       <div className="row">
-                        <h4>您帶領的團隊</h4>
+                        <h4 style={{ textAlign: 'center' }}>您帶領的團隊</h4>
                         <table>
                           <thead>
                             <tr>
-                              <th>日期</th>
+                              <th>日期時間</th>
                               <th>行程</th>
                               <th>團名</th>
                               <th>人數</th>
@@ -119,10 +121,12 @@ export default function UserTeam() {
                             })}
                           </tbody>
                         </table>
+                        <p>&nbsp;</p>
+                        <hr />
                       </div>
+                      <h4 style={{ textAlign: 'center' }}>您參加的團隊</h4>
                       <p>&nbsp;</p>
-                      <h4>您參加的團隊</h4>
-                      <p>&nbsp;</p>
+                      <hr />
                     </>
                   ) : (
                     <p>

@@ -49,8 +49,10 @@
 }
 
 .teamTitle {
-    background-color: #000;
-    color: #bbb;
+    /* background-color: #000; */
+    /* color: #bbb; */
+    text-align: center;
+    padding: 6px;
 }
 
 .teamContent {
@@ -80,3 +82,13 @@
     width:24px;
     height:24px;
 }
+
+.buttonBrown {
+    margin-left: auto;
+    background-color: #B99755;
+    color: white;
+    border-radius: 50px;
+    padding: 10px 50px;
+    border: none;
+    cursor: pointer;
+  }

@@ -21,33 +21,29 @@ const Accordion = styled((props) => (
 
 const AccordionSummary = styled((props) => <MuiAccordionSummary {...props} />)(
   () => ({
-    '& .MuiAccordionSummary-content': {
+    // '& .MuiAccordionSummary-content': {
+    //   margin: '0 auto',
+    //   fontSize: '22px',
+    //   textAlign: 'center',
+    // },
+    '& .MuiTypography-body1': {
+      textAlign: 'center',
       margin: '0 auto',
       fontSize: '22px',
-      textAlign: 'center',
     },
   })
 )
-// const AccordionSummary = styled(MuiAccordionSummary)({
-//   content: {
-//     margin: '0 auto',
-//     fontSize: '22px',
-//   },
-// })
 
-const AccordionDetails = styled(MuiAccordionDetails)({
-  // 這裡可以添加更多樣式
-})
-
-// const Typography = styled(MuiTypography)({
-//   textAlign: 'center',
-// 這裡可以添加更多樣式
-// })
+const AccordionDetails = styled(MuiAccordionDetails)({})
 
 const Typography = styled((props) => <MuiTypography {...props} />)(() => ({
-  '& .MuiTypography-body1': {
-    margin: '0 auto',
-    fontSize: '22px',
+  // '& .MuiTypography-body1': {
+  //   textAlign: 'center',
+  //   margin: '0 auto',
+  //   fontSize: '22px',
+  // },
+  '& a': {
+    color: '#FFF',
   },
 }))
 

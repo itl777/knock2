@@ -157,7 +157,8 @@ export default function Card01({
           <div style={{ margin: '0 auto', paddingTop: '0px ' }}>
             {' '}
             <Link href={`/teams/${team_id}`}>
-              <PdBtnContained btnText="更多詳情" color="black" />
+              <button className={styles.button}>更多詳情</button>
+              {/* <PdBtnContained btnText="更多詳情" color="black" /> */}
             </Link>
           </div>
         </CardContent>

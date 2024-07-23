@@ -20,8 +20,9 @@ const searchData = async (req) => {
   }
 
   //搜尋排序
-  let branch_id = req.query.branch_id || "";
+  let branch_id = req.query.branch_id || req.params.difficulty || "";
   let team_status = req.query.team_status || "";
+  let difficulty = req.query.difficulty || req.params.difficulty || "";
   let teamSearch = req.query.team_id || req.params.team_id || "";
   let userSearch = req.query.user_id || req.params.user_id || "";
   let start_date = req.query.startdate || "";
@@ -43,6 +44,10 @@ const searchData = async (req) => {
     where += ` AND (team.team_id = ${teamSearch_esc})`;
   }
 
+  if (difficulty) {
+    const difficulty_esc = db.escape(`${difficulty}`);
+    where += ` AND (t.difficulty = ${difficulty_esc})`;
+  }
   if (branch_id && branch_id.trim() !== "") {
     const branch_id_esc = db.escape(`${branch_id}`);
     where += ` AND (b.branch_id = ${branch_id_esc})`;
@@ -53,13 +58,14 @@ const searchData = async (req) => {
     where += ` AND (team.team_states = ${team_status_esc})`;
   }
 
-  const t_sql = `SELECT COUNT(1) totalRows FROM reservations r
-  LEFT JOIN \`teams_list\` team ON r_id = reservation_id
-  JOIN \`themes\` t ON branch_themes_id = t.theme_id
-  JOIN \`users\` u ON r.user_id = u.user_id
-  JOIN \`sessions\` s ON r.session_id = s.sessions_id
-  JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
-  JOIN \`branches\` b ON bt.branch_id = b.branch_id
+  const t_sql = `SELECT COUNT(1) totalRows 
+FROM reservations r
+JOIN branch_themes bt ON r.branch_themes_id = bt.branch_themes_id
+JOIN themes t ON bt.theme_id = t.theme_id
+JOIN users u ON r.user_id = u.user_id
+JOIN sessions s ON r.session_id = s.sessions_id
+JOIN teams_list team ON team.r_id = reservation_id
+JOIN branches b ON bt.branch_id = b.branch_id
   ${where}`;
   // ORDER BY ${sort} ${order}
   console.log(t_sql);
@@ -75,16 +81,20 @@ const searchData = async (req) => {
       return { success, redirect };
     }
 
+    //  reservation_id, r.user_id, nick_name, team_id, team_title, 
+//  b.branch_id, branch_name, 
+//  theme_name, difficulty, max_players, reservation_date, s.start_time, theme_img, s.theme_Time, team_status, team_limit 
 
-  const sql = `SELECT reservation_id, team_id, team_title, theme_name, b.branch_id, difficulty, u.user_id, nick_name, 
-  branch_name, reservation_date, s.start_time , theme_img, s.theme_Time, team_status, team_limit
+  const sql = `SELECT reservation_id, r.user_id, nick_name, team_id, team_title, 
+ b.branch_id, b.branch_name, 
+ t.theme_name, t.difficulty, t.max_players, r.reservation_date, s.start_time, theme_img, s.theme_Time, team_status, team_limit 
   FROM reservations r
-  JOIN \`teams_list\` team ON team.r_id = reservation_id
-  JOIN \`themes\` t ON branch_themes_id = t.theme_id
-  JOIN \`users\` u ON r.user_id = u.user_id
-  JOIN \`sessions\` s ON r.session_id = s.sessions_id
-  JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
-  JOIN \`branches\` b ON bt.branch_id = b.branch_id
+  JOIN branch_themes bt ON r.branch_themes_id = bt.branch_themes_id
+  JOIN branches b ON bt.branch_id = b.branch_id
+  JOIN themes t ON bt.theme_id = t.theme_id
+  JOIN teams_list team ON team.r_id = reservation_id
+  JOIN users u ON r.user_id = u.user_id
+  JOIN sessions s ON r.session_id = s.sessions_id
   ${where} 
   ORDER BY ${sort} ${order}
   LIMIT ${(page - 1) * perPage},${perPage}`;
@@ -104,17 +114,17 @@ const searchData = async (req) => {
   };
 };
 
-router.get("/apiSearch/", async (req, res) => {
+router.get("/teamSearch/", async (req, res) => {
   const data = await searchData(req);
   res.json(data);
 });
 
-router.get("/apiSearch/user/have_team_:user_id", async (req, res) => {
+router.get("/teamSearch/user/lead_team_:user_id", async (req, res) => {
   const data = await searchData(req);
   res.json(data);
 });
 
-router.get("/apiSearch/team/:team_id", async (req, res) => {
+router.get("/teamSearch/team/:team_id", async (req, res) => {
   const team_id = +req.params.team_id || 0;
   if (!team_id) {
     return res.json({ success: false, error: "沒有編號" });
@@ -122,7 +132,6 @@ router.get("/apiSearch/team/:team_id", async (req, res) => {
 
 
 // 取得還沒開團的資料
-
 const noTeamData = async (req) => {
   let success = false;
 
@@ -138,12 +147,12 @@ const noTeamData = async (req) => {
   const sql =`SELECT reservation_id, team_id, team_title, theme_name, b.branch_id, difficulty, u.user_id, nick_name, branch_name, 
   reservation_date, s.start_time , theme_img, s.theme_Time, team_status, team_limit
   FROM reservations r
-  LEFT JOIN \`teams_list\` team ON r_id = reservation_id
-  JOIN \`themes\` t ON branch_themes_id = t.theme_id
-  JOIN \`users\` u ON r.user_id = u.user_id
-  JOIN \`sessions\` s ON r.session_id = s.sessions_id
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
   JOIN \`branches\` b ON bt.branch_id = b.branch_id
+  JOIN \`themes\` t ON bt.theme_id = t.theme_id
+  LEFT JOIN \`teams_list\` team ON r_id = reservation_id
+  JOIN \`users\` u ON r.user_id = u.user_id
+  JOIN \`sessions\` s ON r.session_id = s.sessions_id
   WHERE team_id IS NULL ${where}`;
 
 // const [rows] = await db.query(sql);
@@ -163,7 +172,7 @@ return {
 }
 }
 
-router.get("/api/no_team/no_team_:user_id", async (req, res) => {
+router.get("/api/no_team_:user_id", async (req, res) => {
   const data = await noTeamData(req)
   res.json(data);
 
@@ -172,7 +181,7 @@ router.get("/api/no_team/no_team_:user_id", async (req, res) => {
 //--分隔線
 
 // 取得單項資料的 API
-router.get("/api/team/:team_id", async (req, res) => {
+router.get("/api/team_info_:team_id", async (req, res) => {
   const team_id = +req.params.team_id || 0;
   if (!team_id) {
     return res.json({ success: false, error: "沒有編號" });
@@ -183,12 +192,12 @@ router.get("/api/team/:team_id", async (req, res) => {
   const sql = `SELECT reservation_id, team_id, u.user_id, team_note, team_title, theme_name, difficulty, nick_name,
               branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, avatar, team_limit
   FROM reservations r
-  JOIN \`teams_list\` team ON r_id = reservation_id
-  JOIN \`themes\` ON branch_themes_id = themes.theme_id
-  JOIN \`users\` u ON r.user_id = u.user_id
-  JOIN \`sessions\` s ON r.session_id = s.sessions_id
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
   JOIN \`branches\` b ON bt.branch_id = b.branch_id
+  JOIN \`themes\` t ON bt.theme_id = t.theme_id
+  JOIN \`teams_list\` team ON r_id = reservation_id
+  JOIN \`users\` u ON r.user_id = u.user_id
+  JOIN \`sessions\` s ON r.session_id = s.sessions_id
   WHERE team_id=${team_id}`;
 
   const [rows] = await db.query(sql);
@@ -224,14 +233,12 @@ ORDER BY create_at DESC`;
   const [rows] = await db.query(sql);
 
   if (!rows.length) {
-    // 沒有該筆資料
-    return res.json({ success: false, error: "沒有該筆資料" });
+    // 沒有留言記錄
+    return res.json({ success: false, error: "此隊伍沒有留言記錄" });
   }
 
   res.json({ success: true, data: rows });
 });
-
-
 
 // 搜尋隊伍有多少人加入的API
 router.get("/api/team_member_at_:team_id", async (req, res) => {
@@ -240,7 +247,7 @@ router.get("/api/team_member_at_:team_id", async (req, res) => {
     return res.json({ success: false, error: "沒有編號" });
   }
 
-  const sql =`SELECT join_team_id, join_user_id, nick_name, avatar
+  const sql =`SELECT no, join_team_id, join_user_id, nick_name, avatar, m_status
 FROM \`teams_members\` tm
 JOIN \`users\` ON join_user_id = user_id
 JOIN \`teams_list\` ON join_team_id = team_id
@@ -257,6 +264,48 @@ ORDER BY tm.create_at DESC`;
   res.json({ success: true, members: rows.length ,data: rows });
 });
 
+// 管理團員的API
+router.post("/api/manage_member", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    result: {},
+  };
+ 
+  let members = req.body;
+
+  try {
+    let sql = "UPDATE `teams_members` SET `m_status` = CASE `no` ";
+    const values = [];
+    members.forEach(member => {
+      sql += `WHEN ? THEN ? `;
+      values.push(member.no, member.m_status);
+    });
+    sql += "END, `last_modified_at` = NOW() WHERE `no` IN (";
+    sql += members.map(() => "?").join(", ");
+    sql += ")";
+    members.forEach(member => {
+      values.push(member.no);
+    });
+
+    const [result] = await db.query(sql, values);
+
+  // const updatePromises = members.map((member) => {
+  //   const {m_status, no }= member;
+  //   const sql = "UPDATE `teams_members` SET `m_status` = ? WHERE `no` = ?";
+  //   return db.query(sql, [m_status, no]);
+  // });
+  
+  // try {
+  // const results = await Promise.all(updatePromises);
+  output.success = true;
+  output.result = results;  
+}catch (ex) {
+    output.error = ex.message;
+  }
+
+  res.json(output);
+});
 
 // 新增留言的API
 router.post("/api/chat/add", async (req, res) => {
@@ -310,6 +359,49 @@ router.post("/api/team_join/add", async (req, res) => {
   res.json(output);
 });
 
+
+
+// 準備揪團的API
+const createTeam = async (req) => {
+  let success = false;
+
+  const r_id = +req.params.rid || 0;
+  let rows = [];
+
+  if (!r_id) {
+    return res.json({ success: false, error: "沒有編號" });
+  }
+
+  const sql =`SELECT reservation_id, theme_name, b.branch_id, u.user_id, nick_name, branch_name, 
+  reservation_date, s.start_time, s.end_time , theme_img, s.theme_Time, min_players, max_players
+  FROM reservations r
+  JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
+  JOIN \`branches\` b ON bt.branch_id = b.branch_id
+  JOIN \`themes\` t ON bt.theme_id = t.theme_id
+  JOIN \`users\` u ON r.user_id = u.user_id
+  JOIN \`sessions\` s ON r.session_id = s.sessions_id
+  WHERE reservation_id = ${r_id}`;
+
+
+  [rows] = await db.query(sql);
+
+  if (rows.length > 0) {
+    success = true;
+  } else {
+    // 如果沒有資料，返回一個特定訊息
+    rows = [{ message: 'No data found' }];
+  }
+
+return {
+  success:true,
+  rows,
+  qs: req.query,
+}
+}
+  router.get("/api/create_rid_:rid", async (req, res) => {
+    const data = await createTeam(req)
+    res.json(data);
+})
 
 // 新增揪團的API
 router.post("/api/create_team/", async (req, res) => {
