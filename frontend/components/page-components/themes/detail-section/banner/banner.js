@@ -170,9 +170,12 @@ const Banner = () => {
           }}
         />
         <FuzzyOverlay />
-        <div className="container" style={{ position: 'relative', zIndex: 4 }}>
+        <div
+          className="container px-5 md-px-1"
+          style={{ position: 'relative', zIndex: 4 }}
+        >
           <div className="row">
-            <div className="col-6">
+            <div className="col-12 col-md-6">
               <h1 className={myStyle.h1}>{themeDetails.theme_name}</h1>
               <p className={myStyle.p}>{themeDetails.theme_desc}</p>
               <hr className={myStyle.hr} />
@@ -200,40 +203,40 @@ const Banner = () => {
                 </div>
               </div>
             </div>
-            <div className="col-6 d-flex justify-content-end align-items-end ">
-              <div className="d-flex align-items-end">
-                {isPlaying && (
-                  <div className={myStyle.soundBarsContainer}>
-                    {soundBars.map((bar, i) => (
-                      <div
-                        key={i}
-                        className={myStyle.soundBar}
-                        style={{
-                          '--min-height': `${bar.minHeight}px`,
-                          '--max-height': `${bar.maxHeight}px`,
-                          animationDelay: `${bar.delay}s`,
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-                <div
-                  className="d-flex justify-content-center align-items-center"
-                  style={{ height: '100%' }}
-                >
-                  <button onClick={togglePlay} className={myStyle.playerButton}>
-                    {isPlaying ? <FaPause /> : <FaPlay />}
-                  </button>
-                </div>
+          </div>
+        </div>
+        <div className={myStyle.play}>
+          <div className={myStyle.playerWrapper}>
+            {isPlaying && (
+              <div className={myStyle.soundBarsContainer}>
+                {soundBars.map((bar, i) => (
+                  <div
+                    key={i}
+                    className={myStyle.soundBar}
+                    style={{
+                      '--min-height': `${bar.minHeight}px`,
+                      '--max-height': `${bar.maxHeight}px`,
+                      animationDelay: `${bar.delay}s`,
+                    }}
+                  />
+                ))}
               </div>
-
-              {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-              <audio ref={audioRef} loop>
-                <source src="/music/music02.mp3" type="audio/mpeg" />
-                您的瀏覽器不支持 audio 元素。
-              </audio>
+            )}
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ height: '100%' }}
+            >
+              <button onClick={togglePlay} className={myStyle.playerButton}>
+                {isPlaying ? <FaPause /> : <FaPlay />}
+              </button>
             </div>
           </div>
+
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <audio ref={audioRef} loop>
+            <source src="/music/music02.mp3" type="audio/mpeg" />
+            您的瀏覽器不支持 audio 元素。
+          </audio>
         </div>
       </div>
 

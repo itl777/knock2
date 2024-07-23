@@ -173,7 +173,6 @@ export default function Card02({
             <Link
               href="#"
               onClick={handleClick}
-              // style={style}
               className={styles.bookingButton}
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = '#222222'
