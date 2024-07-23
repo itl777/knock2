@@ -40,6 +40,7 @@ const Banner = () => {
           backgroundSize: '150% 100%',
           pointerEvents: 'none',
           opacity: 1,
+          zIndex: 3,
         }}
         className="absolute inset-0"
       />
@@ -76,13 +77,14 @@ const Banner = () => {
   const handleDeclineMusic = () => {
     setShowMusicPrompt(false)
   }
+
   useEffect(() => {
     const { branch_themes_id } = router.query
     if (branch_themes_id) {
       setLoading(true)
       getThemeDetails(branch_themes_id).finally(() => {
         setLoading(false)
-        setShowMusicPrompt(true) // 顯示音樂播放提示
+        setShowMusicPrompt(true)
       })
     }
 
@@ -134,13 +136,41 @@ const Banner = () => {
         style={{
           position: 'relative',
           minHeight: 'calc(100vh - 100px)',
-          background: `linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(155, 155, 155, 0.1)), url("/themes-main/${themeDetails.theme_img}") no-repeat center center / cover`,
           display: 'flex',
           alignItems: 'center',
+          overflow: 'hidden',
         }}
       >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 1,
+          }}
+        >
+          <source src={`/mp4/01.mp4`} type="video/mp4" />
+          您的瀏覽器不支持 video 標籤。
+        </video>
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background:
+              'linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(155, 155, 155, 0.1))',
+            zIndex: 2,
+          }}
+        />
         <FuzzyOverlay />
-        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+        <div className="container" style={{ position: 'relative', zIndex: 4 }}>
           <div className="row">
             <div className="col-6">
               <h1 className={myStyle.h1}>{themeDetails.theme_name}</h1>
@@ -258,4 +288,3 @@ const Banner = () => {
 }
 
 export default Banner
-/* eslint-disable @next/next/no-img-element */

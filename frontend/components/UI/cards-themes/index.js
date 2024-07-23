@@ -63,7 +63,6 @@ export default function Card02({
       }}
       className={styles['card-02']}
     >
-      {/* 圖片 */}
       <CardOverflow
         sx={{
           position: 'relative',
@@ -127,11 +126,10 @@ export default function Card02({
         </Box>
       </CardOverflow>
 
-      {/* 文字 title-md body-sm */}
       <CardContent
         sx={{
           pt: 3,
-          pb: 1.5,
+          pb: 0.6,
           px: { xs: 4, sm: 6 },
           justifyContent: 'center',
         }}
@@ -140,14 +138,13 @@ export default function Card02({
       </CardContent>
       <CardOverflow>
         <CardContent
-          orientation="horizontal"
           sx={{
-            px: 6,
-            pb: 10,
-            gap: {
-              xs: 1,
-              sm: 3,
-            },
+            px: 5,
+            pb: { xs: 3, sm: 12 },
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            justifyContent: 'space-between',
           }}
         >
           <Box
@@ -155,7 +152,7 @@ export default function Card02({
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'space-between',
+              mb: { xs: 2, sm: 0 },
             }}
           >
             <Typography
@@ -165,31 +162,30 @@ export default function Card02({
             <Typography startDecorator={<MdOutlineAccessTime />}>
               {`${themeTime} 分鐘`}
             </Typography>
-            <Typography
-              sx={{
-                display: 'flax',
-                alignContent: 'center',
-                justifyContent: 'center',
-                position: 'absolute',
-                right: '22px',
+          </Box>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: { xs: 'flex-start', sm: 'flex-end' },
+              width: { xs: '100%', sm: 'auto' },
+            }}
+          >
+            <Link
+              href="#"
+              onClick={handleClick}
+              // style={style}
+              className={styles.bookingButton}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#222222'
+                e.target.style.color = 'white'
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = clicked ? '#222222' : 'white'
+                e.target.style.color = clicked ? 'white' : '#222222'
               }}
             >
-              <Link
-                href="#"
-                onClick={handleClick}
-                style={style}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = '#222222'
-                  e.target.style.color = 'white'
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = clicked ? '#222222' : 'white'
-                  e.target.style.color = clicked ? 'white' : '#222222'
-                }}
-              >
-                立即預訂
-              </Link>
-            </Typography>
+              立即預訂
+            </Link>
           </Box>
         </CardContent>
       </CardOverflow>
