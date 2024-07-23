@@ -232,7 +232,8 @@ router.get("/result/:reservation_id", async (req, res) => {
         r.cancel,
         r.created_at
         FROM reservations r
-        LEFT JOIN branches b ON b.branch_id = r.branch_themes_id
+        LEFT JOIN branch_themes bt ON bt.branch_themes_id = r.branch_themes_id
+        LEFT JOIN branches b ON b.branch_id = bt.branch_id
         JOIN themes t ON t.theme_id = r.branch_themes_id
         JOIN reservation_status rs ON rs.id = r.reservation_status_id
         JOIN sessions s ON s.sessions_id = r.session_id
