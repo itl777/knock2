@@ -80,11 +80,11 @@ export default function Item() {
             </div>
             <div className="col-3 d-block align-items-center justify-content-center">
               <div className={myStyle.tag2}>
-                {themeDetails.min_players + 2} - {themeDetails.max_players - 1}{' '}
+                {themeDetails.min_players + 2} - {themeDetails.max_players - 1}
                 人
               </div>
               <div className={myStyle.tag2}>
-                ${' '}
+                $
                 <span className={myStyle.other}>{themeDetails.price - 50}</span>
                 /人
               </div>
@@ -93,9 +93,9 @@ export default function Item() {
         </div>
       </div>
       <div
+        className={myStyle.themeBanner}
         style={{
-          background: `url('/themes-banner/${themeDetails.theme_banner}') center center no-repeat`,
-          height: '400px',
+          backgroundImage: `url('/themes-banner/${themeDetails.theme_banner}')`,
         }}
       ></div>
     </>
