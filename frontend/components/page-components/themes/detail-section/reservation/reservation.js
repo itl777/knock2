@@ -233,6 +233,7 @@ export default function Reservation() {
         })
         .then((data) => {
           if (data.success) {
+            const reservation_id = data.reservation_id // iris added
             // 找到選中的時間段
             const selectedSession = themeDetails.sessions.find(
               (session) => session.sessions_id.toString() === timeSlot
@@ -242,6 +243,7 @@ export default function Reservation() {
               pathname: '/themes/checkout',
               query: {
                 ...formData,
+                reservation_id: reservation_id,  // iris added
                 deposit: data.deposit,
                 name,
                 mobile_phone,
