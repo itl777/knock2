@@ -314,6 +314,7 @@ export const CartProvider = ({ children }) => {
     // })
   }
 
+
   // const calculateDiscountTotal = () => {
   //   let productDiscountTotal = 0
   //   let discountTotal = 0
@@ -459,6 +460,36 @@ export const CartProvider = ({ children }) => {
     setDeliverFee(120)
   }
 
+
+  const calculateProductDiscount = (
+    price,
+    product_quantity,
+    discount_amount,
+    discount_percentage,
+    minimum_order,
+    discount_max
+  ) => {
+    let discountPrice = 0
+    const productOriginalTotal = price * product_quantity
+    if (discount_amount) {
+      if (
+        productOriginalTotal >= minimum_order &&
+        productOriginalTotal >= discount_amount
+      ) {
+        discountPrice = price - discount_amount
+        discountPrice = discountPrice >= discount_max ? discountPrice : price
+      }
+    } else if (discount_percentage) {
+      if (productOriginalTotal >= minimum_order) {
+        discountPrice = Math.floor(price * (1 - discount_percentage / 100))
+        // discountPrice = discountPrice >= discount_max ? discountPrice : price
+      }
+    }
+
+    return discountPrice
+  }
+
+
   // 登入後，更新 cart_member cart 將原本未登入的 device_id 改成 auth.id
   const handleLogin = async () => {
     const deviceId = +getDeviceId()
@@ -549,6 +580,7 @@ export const CartProvider = ({ children }) => {
         selectedCoupons,
         selectedProductCoupons,
         excludeProductCouponTotal,
+        calculateProductDiscount,
       }}
     >
       {children}

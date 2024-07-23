@@ -1,3 +1,11 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 1.5rem;
+}
+
+
 .parent {
   position: relative;
   display: flex;
@@ -9,7 +17,6 @@
   box-shadow: var(--card-shadow);
   border-radius: 50%;
   overflow: hidden;
-  margin-bottom: 1.5rem;
 }
 
 
@@ -18,29 +25,37 @@
   height: 400px;
   padding: 1.5rem;
   border-radius: var(--content-radius);
-  background-color: white;
-  box-shadow: var(--card-shadow);
+  /* background-color: white; */
+  /* box-shadow: var(--card-shadow); */
+  box-shadow: none;
 }
 
 .child {
   width: 5.5rem;
   height: 5.5rem;
-  background: #efe9de;
-  padding: 0;
-  /* padding: 0.75rem .5rem .5rem .5rem; */
+  padding: 0.4rem;
+  padding-top: 0.6rem;
   border-radius: 50%;
+  background: #efe9de;
 }
+
+.parent[data-isOpen="true"] .child {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 5.5rem;
+  height: 5.5rem;
+  padding: 0.4rem;
+  padding-top: 0.6rem;
+  border-radius: 50%;
+  background: white;
+}
+
 
 .child img {
   width: 100%;
 }
 
-.parent[data-isOpen="true"] .child {
-  position: absolute;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  background: white;
-}
 
 
 .contentBox {
@@ -72,7 +87,7 @@
 
 .actionButton {
   position: absolute;
-  left: 0;
+  left: -4rem;
   bottom: 1.5rem;
 }
 

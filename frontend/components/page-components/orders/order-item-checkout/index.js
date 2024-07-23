@@ -10,38 +10,38 @@ import { PRODUCT_IMG } from '@/configs/api-path'
 import { useEffect } from 'react'
 
 export default function OrderItemCheckout({ type = 'def' }) {
-  const { checkoutItems, usableProductCoupons, handleQuantityChange } =
+  const { checkoutItems, usableProductCoupons, handleQuantityChange, calculateProductDiscount } =
     useCart()
 
-  const calculateProductDiscount = (
-    price,
-    cart_product_quantity,
-    coupon_type_id,
-    discount_amount,
-    discount_percentage,
-    minimum_order,
-    discount_max
-  ) => {
-    let discountPrice = 0
-    const productOriginalTotal = price * cart_product_quantity
-    if (coupon_type_id === 2) {
-      if (discount_amount) {
-        if (
-          productOriginalTotal >= minimum_order &&
-          productOriginalTotal >= discount_amount
-        ) {
-          discountPrice = price - discount_amount
-          discountPrice = discountPrice >= discount_max ? discountPrice : price
-        }
-      } else if (discount_percentage) {
-        if (productOriginalTotal >= minimum_order) {
-          discountPrice = Math.floor(price * (1 - discount_percentage / 100))
-          // discountPrice = discountPrice >= discount_max ? discountPrice : price
-        }
-      }
-    }
-    return discountPrice
-  }
+  // const calculateProductDiscount = (
+  //   price,
+  //   cart_product_quantity,
+  //   coupon_type_id,
+  //   discount_amount,
+  //   discount_percentage,
+  //   minimum_order,
+  //   discount_max
+  // ) => {
+  //   let discountPrice = 0
+  //   const productOriginalTotal = price * cart_product_quantity
+  //   if (coupon_type_id === 2) {
+  //     if (discount_amount) {
+  //       if (
+  //         productOriginalTotal >= minimum_order &&
+  //         productOriginalTotal >= discount_amount
+  //       ) {
+  //         discountPrice = price - discount_amount
+  //         discountPrice = discountPrice >= discount_max ? discountPrice : price
+  //       }
+  //     } else if (discount_percentage) {
+  //       if (productOriginalTotal >= minimum_order) {
+  //         discountPrice = Math.floor(price * (1 - discount_percentage / 100))
+  //         // discountPrice = discountPrice >= discount_max ? discountPrice : price
+  //       }
+  //     }
+  //   }
+  //   return discountPrice
+  // }
 
   const itemInfoClass =
     type === 'small' ? styles.itemInfoSmall : styles.itemInfo
@@ -75,7 +75,6 @@ export default function OrderItemCheckout({ type = 'def' }) {
                     discountedPrice={calculateProductDiscount(
                       v.price,
                       v.cart_product_quantity,
-                      v.coupon_type_id,
                       v.discount_amount,
                       v.discount_percentage,
                       v.minimum_order,

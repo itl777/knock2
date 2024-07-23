@@ -37,6 +37,9 @@
   align-self: flex-end;
 }
 
+
+
+
 @media screen and (max-width: 1280px) {
   .couponBox {
     grid-template-columns: auto;

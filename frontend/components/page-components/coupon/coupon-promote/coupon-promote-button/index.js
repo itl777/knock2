@@ -1,5 +1,6 @@
 import { Button } from '@mui/material'
 import styles from './coupon-promote-button.module.css'
+import { motion } from 'framer-motion'
 
 export default function CouponPromoteButton({
   btnText = 'button',
@@ -8,39 +9,40 @@ export default function CouponPromoteButton({
   onClick = () => {},
   paddingType = '',
   className,
-  disabled = false, // 新增 disabled 屬性 by Iris
+  disabled = false,
 }) {
   return (
-    <Button
-      type={type}
-      href={href}
-      variant="outlined"
-      onClick={onClick}
-      className={`${styles.button} ${className}`}
-      sx={{
-        color: 'white',
-        fontFamily: 'Noto Serif JP',
-        borderRadius: '0',
-        borderColor: '#222',
-        background: '#222',
-        fontSize: '16px',
-        padding: paddingType === 'medium' ? '8px 32px' : '8px 16px',
-        ':hover': {
-          color: 'black',
-          borderColor: '#222',
-        },
-        // disabled style by Iris
-        '&.Mui-disabled': {
-          color: 'var(--text-grey)',
-          borderColor: 'var(--pri-3)',
-          background: 'var(--pri-3)',
-          cursor: 'not-allowed',
-        },
-      }}
-      disabled={disabled} // 設置 disabled 屬性 by Iris
+    <motion.div
+      animate={{ x: [0, 50, 0] }}
+      transition={{ ease: 'easeOut', duration: 2, repeat: Infinity }}
     >
-      {btnText}
-      <img src='/order/icon-arrow-special.svg' className={styles.arrow} />
-    </Button>
+      <Button
+        type={type}
+        href={href}
+        variant="outlined"
+        onClick={onClick}
+        className={`${styles.button} ${className}`}
+        sx={{
+          color: 'white',
+          fontFamily: 'Noto Serif JP',
+          borderRadius: '0',
+          borderColor: '#222',
+          background: '#222',
+          fontSize: '16px',
+          padding: "8px 16px 8px 80px",
+          // disabled style by Iris
+          '&.Mui-disabled': {
+            color: 'var(--text-grey)',
+            borderColor: 'var(--pri-3)',
+            background: 'var(--pri-3)',
+            cursor: 'not-allowed',
+          },
+        }}
+        disabled={disabled} // 設置 disabled 屬性 by Iris
+      >
+        {btnText}
+        <img src="/order/icon-arrow-special.svg" className={styles.arrow} />
+      </Button>
+    </motion.div>
   )
 }
