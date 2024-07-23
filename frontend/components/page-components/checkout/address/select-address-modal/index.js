@@ -8,6 +8,7 @@ import RecipientButton from '../recipient-button'
 import RecipientButtonEdit from '../recipient-button-edit'
 import AddAddressModal from '../add-address-modal'
 import NoData from '@/components/UI/no-data'
+import EditAddressModal from '../edit-address-modal'
 
 export default function SelectAddressModal() {
   const { auth } = useAuth()
@@ -17,6 +18,7 @@ export default function SelectAddressModal() {
     isAddressAddModalOpen,
     memberAddress,
     openAddressAddModal,
+    isAddressEditModalOpen,
   } = useAddress()
   return (
     <ModalLayout
@@ -58,6 +60,7 @@ export default function SelectAddressModal() {
       </div>
 
       {isAddressAddModalOpen && <AddAddressModal />}
+      {isAddressEditModalOpen && <EditAddressModal />}
     </ModalLayout>
   )
 }

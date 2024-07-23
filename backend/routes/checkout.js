@@ -504,6 +504,49 @@ router.post("/api/add_address", async (req, res) => {
   }
 });
 
+
+// CHECKOUT_EDIT_ADDRESS POST insert data into address table
+router.post("/api/edit_address", async (req, res) => {
+  const data = { ...req.body };
+  console.log('data from edit address form',data);
+
+  try {   
+    const sql = `
+      UPDATE address SET
+        recipient_name = ?,
+        mobile_phone = ?,
+        district_id = ?, 
+        address = ?
+      WHERE id = ? AND user_id = ?;
+    `;
+
+    const values = [
+      data.recipientName,
+      data.recipientMobile,
+      data.recipientDistrictId,
+      data.recipientAddress,
+      data.id,
+      data.memberId,
+    ];
+    const [results] = await db.query(sql, values);
+
+    console.log("Address update Result:", results); // 後端列印結果
+
+    // 確認是否有成功 insert value
+    const success = results.affectedRows === 1;
+
+    // 返回結果到前端
+    res.json({
+      success,
+    });
+  } catch (error) {
+    console.error("Error while processing add address from checkout:", error);
+    res.status(500).json({
+      error: "An error occurred while processing add address from checkout.",
+    });
+  }
+});
+
 // CHECKOUT_DELETE_ADDRESS data from address table
 router.delete("/api/delete_address/:addressId", async (req, res) => {
   const output = {

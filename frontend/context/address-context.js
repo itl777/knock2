@@ -20,9 +20,11 @@ export const AddressProvider = ({ children }) => {
   const { auth } = useAuth()
   const [isAddressSelectModalOpen, setIsSelectModalOpen] = useState(false) // 控制「請選擇收件人」開關
   const [isAddressAddModalOpen, setIsAddressAddModalOpen] = useState(false) // 控制「請選擇收件人」開關
+  const [isAddressEditModalOpen, setIsAddressEditModalOpen] = useState(false) // 控制「請選擇收件人」開關
   const [memberAddress, setMemberAddress] = useState([]) // 取得會員 address table 所有地址
   const [orderAddress, setOrderAddress] = useState(null)
   const [newAddressId, setNewAddressId] = useState(0)
+  const [editId, setEditId] = useState(0)
   const { openSnackbar } = useSnackbar() // success toast
 
   // 取得會員地址
@@ -70,6 +72,16 @@ export const AddressProvider = ({ children }) => {
   // 關閉「新增收件人」視窗
   const closeAddressAddModal = () => {
     setIsAddressAddModalOpen(false)
+  }
+
+  // 開啟「編輯收件人」視窗
+  const openAddressEditModal = () => {
+    setIsAddressEditModalOpen(true)
+  }
+
+  // 關閉「編輯收件人」視窗
+  const closeAddressEditModal = () => {
+    setIsAddressEditModalOpen(false)
   }
 
   // 刪除會員地址
@@ -129,6 +141,43 @@ export const AddressProvider = ({ children }) => {
     }
   }
 
+  // 提交編輯地址表單
+  const handleEditAddressSubmit = async (formData) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:3001/checkout/api/edit_address',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+
+      console.log(response.data)
+
+      if (response.data.success) {
+        fetchMemberAddress()
+        setNewAddressId(formData.id)
+        closeAddressEditModal()
+        closeAddressSelectModal()
+        openSnackbar('編輯地址成功！', 'success')
+      } else {
+        openSnackbar('編輯地址失敗！', 'error')
+      }
+
+      console.log('edit id', formData.id)
+    } catch (error) {
+      console.error('編輯地址錯誤', error)
+    }
+  }
+
+  // 進入編輯表單，取得 id
+  const goToEditModal = (addressId) => {
+    setEditId(addressId)
+    setIsAddressEditModalOpen(true)
+  }
+
   useEffect(() => {
     if (!!memberAddress) {
       const newOrderAddress = memberAddress.find((v) => v.id === newAddressId)
@@ -149,6 +198,12 @@ export const AddressProvider = ({ children }) => {
         openAddressAddModal,
         closeAddressAddModal,
         newAddressId, // 要設為訂單使用地址的 id
+        openAddressEditModal,
+        closeAddressEditModal,
+        goToEditModal,
+        editId,
+        isAddressEditModalOpen,
+        setIsAddressEditModalOpen,
         setNewAddressId,
         setOrderAddress, // 設定訂單使用地址
         fetchMemberAddress, // 取得會員所有資料庫 address table 資料
@@ -157,6 +212,7 @@ export const AddressProvider = ({ children }) => {
         handleAddressDelete, // 刪除指定地址
         handleSelectAddress, // 使用指定地址
         handleAddAddressSubmit,
+        handleEditAddressSubmit,
       }}
     >
       {children}
