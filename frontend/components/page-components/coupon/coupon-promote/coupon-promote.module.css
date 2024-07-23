@@ -1,0 +1,92 @@
+.parent {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 6rem;
+  height: 6rem;
+  background: white;
+  box-shadow: var(--card-shadow);
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+
+.parent[data-isOpen="true"] {
+  width: 100%;
+  height: 400px;
+  padding: 1.5rem;
+  border-radius: var(--content-radius);
+  background-color: white;
+  box-shadow: var(--card-shadow);
+}
+
+.child {
+  width: 5.5rem;
+  height: 5.5rem;
+  background: #efe9de;
+  padding: 0;
+  /* padding: 0.75rem .5rem .5rem .5rem; */
+  border-radius: 50%;
+}
+
+.child img {
+  width: 100%;
+}
+
+.parent[data-isOpen="true"] .child {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  background: white;
+}
+
+
+.contentBox {
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+.parent[data-isOpen="true"] .contentBox {
+  display:flex;
+}
+
+.contentLeft {
+  flex-grow: 1;
+  height: 100%;
+  margin-right: 24px;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 800;
+  margin: 40px 0 12px 0;
+}
+
+.validBox {
+  font-size: 16px;
+}
+
+
+.actionButton {
+  position: absolute;
+  left: 0;
+  bottom: 1.5rem;
+}
+
+.contentRight {
+  flex-grow: 2;
+  height: 100%;
+  border-radius: 0 12px 12px 0;
+  overflow: hidden;
+}
+
+.contentRight img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+

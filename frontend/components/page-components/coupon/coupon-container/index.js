@@ -10,6 +10,7 @@ import UserHeader from '@/components/UI/user-header'
 import UserPagination from '@/components/UI/user-pagination'
 import NoData from '@/components/UI/no-data'
 import BlackBtn from '@/components/UI/black-btn'
+import CouponPromote from '../coupon-promote'
 // api path
 import { GET_MEMBER_COUPON } from '@/configs/api-path'
 
@@ -72,6 +73,7 @@ export default function CouponContainer({ status }) {
           router.push('/coupon')
         }}
       />
+      <CouponPromote/>
       <section className={styles.couponSection}>
         <div>
           <UserHeader title={`${title}的優惠券`} btnHidden={true} />

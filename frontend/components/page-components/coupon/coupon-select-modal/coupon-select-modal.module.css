@@ -12,7 +12,7 @@
 }
 
 .couponTag {
-  background-color: (var(--input-grey));
+  background-color: var(--input-grey);
 }
 
 .productCouponBtnStack {

@@ -8,8 +8,6 @@ import { useRouter } from 'next/router'
 import CouponWheel from '../coupon-wheel'
 import CouponCard from '../coupon-card'
 
-
-
 export default function GetCouponSection() {
   const { auth, authIsReady } = useAuth()
   const router = useRouter()
