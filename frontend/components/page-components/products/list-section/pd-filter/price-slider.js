@@ -62,14 +62,18 @@ export default function PriceSlider() {
 
   const handlePriceChange = (e) => {
     const newPrice = e.target.value
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        price_start: newPrice[0],
-        price_end: newPrice[1],
+    router.push(
+      {
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          price_start: newPrice[0],
+          price_end: newPrice[1],
+        },
       },
-    })
+      undefined,
+      { scroll: false }
+    )
     setPrice(newPrice)
   }
 

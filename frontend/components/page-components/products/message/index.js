@@ -9,6 +9,22 @@ import { AiFillMessage } from 'react-icons/ai'
 const socket = io('http://localhost:4040')
 
 export default function Message() {
+  // ****************IT 畫面在最頂端時隱藏top按鈕
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY < 100) {
+        setVisible(false)
+      } else {
+        setVisible(true)
+      }
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+  // ****************IT
   //toggle
   const [toggleButton, setToggleButton] = useState(false)
   // 使用者名稱
@@ -81,7 +97,8 @@ export default function Message() {
 
   return toggleButton ? (
     // 最外層
-    <div className={myStyle.fix}>
+
+    <div className={`${myStyle.fix}`}>
       {/* 頂端區 */}
       <div className={myStyle.top}>
         <button className={myStyle.topArrow} onClick={handleButton}>
@@ -122,8 +139,10 @@ export default function Message() {
       </div>
     </div>
   ) : (
-    <button className={myStyle.openButton} onClick={handleButton}>
-      <AiFillMessage />
-    </button>
+    <div className={`${visible ? '' : myStyle['visible']}`}>
+      <button className={myStyle.openButton} onClick={handleButton}>
+        <AiFillMessage />
+      </button>
+    </div>
   )
 }

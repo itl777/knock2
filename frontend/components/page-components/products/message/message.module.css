@@ -115,3 +115,8 @@
   flex-grow: 1;
   margin: 0.25rem;
 }
+
+.visible {
+  visibility: hidden;
+
+}
