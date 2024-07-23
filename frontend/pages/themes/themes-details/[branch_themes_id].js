@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useRouter } from 'next/router'
 import IndexLayout from '@/components/layout'
 import DetailSection from '@/components/page-components/themes/detail-section'
@@ -11,22 +11,23 @@ import { ThemeProvider, useTheme } from '@/context/theme-context'
 function ThemeDetailsContent() {
   const router = useRouter()
   const { themeDetails, getThemeDetails } = useTheme()
-  const [themeName, setThemeName] = useState('')
+  const [themeName, setThemeName] = React.useState('')
+  const branch_themes_id = router.query.branch_themes_id
 
-  useEffect(() => {
-    if (router.isReady && router.query.branch_themes_id) {
-      getThemeDetails(router.query.branch_themes_id)
+  React.useEffect(() => {
+    if (router.isReady && branch_themes_id) {
+      getThemeDetails(branch_themes_id)
     }
-  }, [router.isReady, router.query.branch_themes_id, getThemeDetails])
+  }, [router.isReady, branch_themes_id, getThemeDetails])
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (themeDetails) {
       setThemeName(themeDetails.theme_name)
     }
   }, [themeDetails])
 
   if (!themeDetails) {
-    return <div></div>
+    return <div> </div>
   }
 
   return (
@@ -35,7 +36,7 @@ function ThemeDetailsContent() {
         Banner={<Banner />}
         Item={<Item />}
         Step={<Step />}
-        Calendar={<Calendar />}
+        Calendar={<Calendar branch_themes_id={branch_themes_id} />}
       />
       <div className="container">
         <div className="row"></div>
@@ -44,10 +45,10 @@ function ThemeDetailsContent() {
   )
 }
 
-export default function ThemeDetails() {
-  return (
-    <ThemeProvider>
-      <ThemeDetailsContent />
-    </ThemeProvider>
-  )
-}
+const ThemeDetails = () => (
+  <ThemeProvider>
+    <ThemeDetailsContent />
+  </ThemeProvider>
+)
+
+export default ThemeDetails
