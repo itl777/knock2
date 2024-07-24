@@ -10,6 +10,7 @@
   width: 420px;
   background-color: var(--bg-grey-light);
   border-radius: 25px;
+  box-shadow: rgba(0, 0, 0, 0.6) 0 5px 40px;
 }
 .openButton {
   border: none;
@@ -19,17 +20,17 @@
   background-color: var(--sec-1);
   position: fixed;
   display: flex;
+  z-index: 999;
   justify-content: center;
   align-items: center;
-  right: 40px;
   bottom: 120px;
+  right: 3.5%;
   cursor: pointer;
   color: #eef1f6;
 }
-.openButton:hover{
+.openButton:hover {
   background-color: #eef1f6;
-  color:  var(--sec-1);
-
+  color: var(--sec-1);
 }
 .openButton > svg {
   width: 40px;
@@ -40,7 +41,7 @@
   align-items: center;
   padding: 20px;
   border-radius: 25px 25px 0 0;
-  background-color: var(--input-grey);
+  background-color: var(--sec-1);
 }
 .top h5 {
   font-size: 20px;
@@ -56,14 +57,14 @@
   border: none;
   background-color: transparent;
 }
-.topArrow:hover{
-  color: var(--sec-1);
+.topArrow:hover {
+  color: var(--pri-1);
+  /* color: var(--sec-1); */
 }
 #messageArea {
   position: relative;
-  width: 100%;
   height: 100%;
-  padding: 0 12px;
+  padding: 12px;
   overflow: scroll;
   scrollbar-width: none;
   margin-left: 10px;
@@ -71,12 +72,8 @@
 }
 
 .msgtext {
-  /* position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 0 12px;
-    overflow: scroll;
-    scrollbar-width: none; */
+  display: flex;
+  flex-direction: column;
 }
 #form {
   display: flex;
@@ -110,7 +107,8 @@
 }
 
 #form > input {
-  border: none;
+  border: 1.5px solid #5b5b5b;
+  border-radius: 5px;
   padding: 0 1rem;
   flex-grow: 1;
   margin: 0.25rem;
@@ -118,5 +116,54 @@
 
 .visible {
   visibility: hidden;
+}
 
+.right {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 6px;
+  position: relative;
+}
+.left {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.msgLeft,
+.msgRight {
+  padding: 4px 8px;
+  background-color: rgb(205, 204, 201);
+  border-radius: 8px;
+  margin-left: 14px;
+  display: flex;
+  align-items: center;
+}
+.msgRight::before {
+content: '';
+position: absolute;
+top: 10px;
+left: 48px;
+width: 15px;
+height: 15px;
+z-index: -100;
+background-color: rgb(205, 204, 201);
+transform:  rotate(45deg);
+}
+.msgLeft::after{
+content: '';
+position: absolute;
+z-index: -100;
+top: 10px;
+right: -4px;
+width: 15px;
+height: 15px;
+background-color: rgb(205, 204, 201);
+transform:  rotate(45deg);
+}
+.message img{
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 100px;
 }

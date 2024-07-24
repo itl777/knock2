@@ -10,7 +10,8 @@ export default function ReviewRating({ productRating = 4 ,size ='large'}) {
   return (
     <>
       <Rating
-        className="animate__animated animate__shakeY animate__repeat-3"
+      className='animate__animated animate__pulse'
+        // className="animate__animated animate__shakeY animate__repeat-3"
         name="size-large"
         size={size}
         value={value}

@@ -1,14 +1,17 @@
 import { useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/router'
 import { io } from 'socket.io-client'
 import { useAuth } from '@/context/auth-context'
 import myStyle from './message.module.css'
 import { IoIosArrowBack } from 'react-icons/io'
 import { GoPaperAirplane } from 'react-icons/go'
 import { AiFillMessage } from 'react-icons/ai'
+import 'animate.css/animate.css'
 
 const socket = io('http://localhost:4040')
 
 export default function Message() {
+  const router = useRouter()
   // ****************IT 畫面在最頂端時隱藏top按鈕
   const [visible, setVisible] = useState(false)
   useEffect(() => {
@@ -41,6 +44,7 @@ export default function Message() {
     // 設定room名稱 [room_XXX]
     const roomName = `room_${auth.id}`
     console.log('會員資料:', auth)
+    if(roomName === 'room_0') return
     setUsername(auth.nickname)
     setRoom(roomName)
 
@@ -54,11 +58,11 @@ export default function Message() {
     })
 
     socket.on('history', (history) => {
-      console.log('history 監聽', history)
+      // console.log('history 監聽', history)
       setMessages(history)
     })
     socket.on('disconnect', () => {
-      console.log('用戶斷開連接')
+      console.log('前端用戶斷開連接')
       // socket.emit('user_offline', room)
     })
 
@@ -84,12 +88,12 @@ export default function Message() {
   const messageEndRef = useRef(null)
 
   const scrollToBottom = () => {
-    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    messageEndRef.current?.scrollIntoView({ block: 'end', inline: 'nearest' })
   }
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages])
+  }, [messages, router.isReady, toggleButton])
 
   const handleButton = () => {
     setToggleButton(!toggleButton)
@@ -98,25 +102,51 @@ export default function Message() {
   return toggleButton ? (
     // 最外層
 
-    <div className={`${myStyle.fix}`}>
+    <div
+      className={`${myStyle.fix} animate__animated animate__fadeInUp animate__faster`}
+    >
       {/* 頂端區 */}
       <div className={myStyle.top}>
         <button className={myStyle.topArrow} onClick={handleButton}>
           <IoIosArrowBack />
         </button>
-        <h5>目前位置 : {room}</h5>
+        {/* <h5>悄瞧{room}</h5> */}
+        <h5>悄瞧</h5>
       </div>
 
       {/* 文字區 */}
       <div id={myStyle.messageArea}>
-        <div className={myStyle.msgtext}>
-          {messages.map((msg, index) => (
-            <p key={index}>
-              <strong>{msg.username}: </strong>
-              {msg.message}
-            </p>
-          ))}
-          <div ref={messageEndRef} />
+        <div className={myStyle.msgtext} ref={messageEndRef}>
+          {/* 訊息放置處 */}
+          {messages.map((msg, index) => {
+            if (msg.username !== '管理員') {
+              return (
+                <div
+                  key={index}
+                  className={`${myStyle.message} ${myStyle.left}`}
+                >
+                  <p key={index} className={myStyle.msgLeft}>
+                    {/* <strong>{msg.username}: </strong> */}
+                    {msg.message}
+                  </p>
+                </div>
+              )
+            } else {
+              return (
+                <div
+                  key={index}
+                  className={`${myStyle.message} ${myStyle.right}`}
+                >
+                  <img src="/ghost/ghost_15.png" alt="" />
+                  <p key={index} className={myStyle.msgRight}>
+                    {/* <strong>{msg.username}: </strong> */}
+                    {msg.message}
+                  </p>
+                </div>
+              )
+            }
+          })}
+          {/* <div ref={messageEndRef} /> */}
         </div>
       </div>
 
@@ -140,7 +170,10 @@ export default function Message() {
     </div>
   ) : (
     <div className={`${visible ? '' : myStyle['visible']}`}>
-      <button className={myStyle.openButton} onClick={handleButton}>
+      <button
+        className={`${myStyle.openButton} animate__animated animate__fadeInDown animate__faster`}
+        onClick={handleButton}
+      >
         <AiFillMessage />
       </button>
     </div>

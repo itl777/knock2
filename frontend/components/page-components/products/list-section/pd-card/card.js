@@ -36,7 +36,8 @@ export default function Card({ dbData }) {
     <>
       <div
         data-aos="fade-up"
-        className={`${myStyle.card} card hvr-grow-shadow`}
+        className={`${myStyle.card} card`}
+        // className={`${myStyle.card} card hvr-grow-shadow`}
       >
         <Link
           href={`product/product-details/${dbData.product_id}`}

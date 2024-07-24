@@ -41,6 +41,9 @@
   margin: 2.2rem;
   width: 20rem;
 }
+.card:hover {
+  box-shadow: rgba(0, 0, 0, 0.30) 0 5px 25px;
+}
 .grid {
   justify-content: center;
   grid-template-columns: auto auto auto;

@@ -247,7 +247,7 @@ export default function TopMatter() {
       <style jsx>
         {`
           .background {
-            background-image: url('http://localhost:3000/wall.jpg');
+            background-image: url('http://localhost:3000/home/wall.jpg');
           }
         `}
       </style>

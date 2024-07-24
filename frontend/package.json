@@ -24,6 +24,7 @@
     "bootstrap": "^5.3.3",
     "cropperjs": "^1.6.2",
     "dayjs": "^1.11.11",
+    "emoji-picker-react": "^4.11.1",
     "firebase": "^10.12.3",
     "framer-motion": "^11.3.4",
     "hover.css": "^2.3.2",

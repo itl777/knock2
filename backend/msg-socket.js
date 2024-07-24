@@ -23,8 +23,8 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket_list.push(socket);
-  console.log("有人連上了", socket_list.length);
+  // socket_list.push(socket);
+  // console.log("有人連上了", socket_list.length);
 
   socket.on("joinRoom", async ({ room, username }) => {
     if (
