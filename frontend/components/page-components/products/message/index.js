@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
+import { API_SERVER } from '@/configs/api-path'
 import { useRouter } from 'next/router'
 import { io } from 'socket.io-client'
 import { useAuth } from '@/context/auth-context'
@@ -6,9 +7,10 @@ import myStyle from './message.module.css'
 import { IoIosArrowBack } from 'react-icons/io'
 import { GoPaperAirplane } from 'react-icons/go'
 import { AiFillMessage } from 'react-icons/ai'
+import { FaCheckDouble } from 'react-icons/fa6'
 import 'animate.css/animate.css'
 // import EmojiPicker from 'emoji-picker-react'
-import { FaRegFaceLaugh } from 'react-icons/fa6'
+import { FaRegFaceLaugh, FaPaperclip, FaRegNoteSticky } from 'react-icons/fa6'
 import dynamic from 'next/dynamic'
 
 const socket = io('http://localhost:4040')
@@ -42,11 +44,21 @@ export default function Message() {
 
   // emoji顯示
   const [toggleEmoji, setToggleEmoji] = useState(false)
+  const [emojiData, setEmojiData] = useState(null)
+  // sticker顯示
+  const [toggleSticker, setToggleSticker] = useState(false)
+  //上傳圖片顯示
+  const [uploadImg, setUploadImg] = useState('')
+  // 選擇圖片
+  const [selectedImage, setSelectedImage] = useState(null)
+  const inputFileRef = useRef(null)
+
   //toggle
   const [toggleButton, setToggleButton] = useState(false)
   // 使用者名稱
   const [username, setUsername] = useState('')
   // 訊息
+  const [type, setType] = useState('text')
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
   // 新房間
@@ -57,7 +69,7 @@ export default function Message() {
   useEffect(() => {
     // 設定room名稱 [room_XXX]
     const roomName = `room_${auth.id}`
-    console.log('會員資料:', auth)
+    // console.log('會員資料:', auth)
     if (roomName === 'room_0') return
     setUsername(auth.nickname)
     setRoom(roomName)
@@ -66,9 +78,9 @@ export default function Message() {
   }, [authIsReady, auth])
 
   useEffect(() => {
-    socket.on('chat message', ({ room, username, message }) => {
-      console.log('前台clint:', { room, username, message })
-      setMessages((prevMsg) => [...prevMsg, { room, username, message }])
+    socket.on('chat message', ({ room, username, type, message }) => {
+      console.log('前台clint:', { room, username, type, message })
+      setMessages((prevMsg) => [...prevMsg, { room, username, type, message }])
     })
 
     socket.on('history', (history) => {
@@ -87,20 +99,54 @@ export default function Message() {
     }
   }, [])
 
+  //上傳圖片
+  const sendUpload = async () => {
+    if (selectedImage) {
+      const formData = new FormData()
+      formData.append('file', selectedImage)
+
+      console.log(' formData.append:', formData)
+      try {
+        const res = await fetch('http://localhost:3001/products/upload', {
+          method: 'POST',
+          body: formData,
+        })
+        console.log('---fecth res', res)
+
+        const resData = await res.json()
+        setUploadImg(resData.filePath)
+        setType('img')
+        console.log('fetch上傳成功', resData)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+
+  useEffect(() => {
+    sendUpload()
+  }, [selectedImage])
+
   // 點送出按鈕
   const sendMessage = (e) => {
     e.preventDefault()
     if (message) {
       // 傳給server
-      console.log('發送訊息:', room, username, message)
-      socket.emit('chat message', { room, username, message })
+      console.log('發送圖片:', room, username, type, message)
+      socket.emit('chat message', { room, username, type, message })
       // setMessages((prevMsg) => [...prevMsg, { room, username, message }])
       setMessage('')
-    }
+    } else if (uploadImg) {
+      console.log('發送圖片:', room, username, type, uploadImg)
+      socket.emit('chat message', { room, username, type, message: uploadImg })
+      setType('text')
+      setUploadImg('')
+    } else if (message === '') return
   }
 
   const messageEndRef = useRef(null)
 
+  // 跳到底端
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ block: 'end', inline: 'nearest' })
   }
@@ -120,7 +166,11 @@ export default function Message() {
     setMessage((prevMsg) => prevMsg + emojiObject.emoji)
   }, [])
 
-  // 使用 useMemo 來記憶 EmojiPicker
+  // const handleSendImg = () => {
+  //   setMessage([{ username, type: 'img', message: uploadImg }])
+  // }
+
+  // 使用 useMemo 記憶
   const memoizedEmojiPicker = useMemo(
     () => (
       <Picker
@@ -130,10 +180,37 @@ export default function Message() {
         }}
         skinTonesDisabled={true}
         onEmojiClick={handleEmojiClick}
+        data={emojiData}
       />
     ),
-    [handleEmojiClick]
+    [handleEmojiClick, emojiData]
   )
+
+  // -----------------
+  // 預加載表情數據
+  useEffect(() => {
+    const preloadEmojiData = async () => {
+      try {
+        const data = await import('emoji-picker-react/src/data/emojis')
+        setEmojiData(data)
+      } catch (error) {
+        console.error('Failed to preload emoji data:', error)
+      }
+    }
+
+    preloadEmojiData()
+  }, [])
+  // -----------------
+
+  const handleStickers = () => {
+    setToggleSticker(!toggleSticker)
+  }
+
+  const handleClick = () => {
+    if (inputFileRef.current) {
+      inputFileRef.current.click()
+    }
+  }
 
   return toggleButton ? (
     // 最外層
@@ -162,7 +239,6 @@ export default function Message() {
                   className={`${myStyle.message} ${myStyle.left}`}
                 >
                   <p key={index} className={myStyle.msgLeft}>
-                    {/* <strong>{msg.username}: </strong> */}
                     {msg.message}
                   </p>
                 </div>
@@ -175,14 +251,12 @@ export default function Message() {
                 >
                   <img src="/ghost/ghost_15.png" alt="" />
                   <p key={index} className={myStyle.msgRight}>
-                    {/* <strong>{msg.username}: </strong> */}
                     {msg.message}
                   </p>
                 </div>
               )
             }
           })}
-          {/* <div ref={messageEndRef} /> */}
         </div>
       </div>
 
@@ -198,13 +272,43 @@ export default function Message() {
             <button onClick={handleEmoji} type="button">
               <FaRegFaceLaugh style={{ width: '26px', height: '26px' }} />
             </button>
-            {toggleEmoji && (
-              <div className={myStyle.emojiPicker}>
-                {memoizedEmojiPicker}
-                {/* <Picker
-                  autoFocusSearch={false}
-                  onEmojiClick={handleEmojiClick}
-                /> */}
+            {toggleEmoji && emojiData && (
+              <div className={myStyle.emojiPicker}>{memoizedEmojiPicker}</div>
+            )}
+          </div>
+
+          {/* 貼圖 */}
+          <div className={myStyle.stickersArea}>
+            <button onClick={handleStickers} type="button">
+              <FaRegNoteSticky style={{ width: '26px', height: '26px' }} />
+            </button>
+            {toggleSticker && (
+              <div className={myStyle.stickerWindow}>貼圖還沒做</div>
+            )}
+          </div>
+
+          {/* 上傳圖片 */}
+          <div className={myStyle.uploadImgArea}>
+            <button onClick={handleClick} type="button">
+              <FaPaperclip style={{ width: '26px', height: '26px' }} />
+            </button>
+
+            {/* 原始輸入框 */}
+            <div id={myStyle.originalInput}>
+              <input
+                type="file"
+                id="myImage"
+                name="myImage"
+                ref={inputFileRef}
+                onChange={(event) => {
+                  setSelectedImage(event.target.files[0])
+                  console.log(event.target.files[0])
+                }}
+              />
+            </div>
+            {uploadImg && (
+              <div className={myStyle.uploadWindow}>
+                <img src={`${API_SERVER}/img/${uploadImg}`} alt="img" />
               </div>
             )}
           </div>

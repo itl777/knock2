@@ -73,14 +73,14 @@ io.on("connection", (socket) => {
   socket.emit("AllRoom", online);
 
   socket.on("chat message", async (data) => {
-    const { room, username, message } = data;
-    console.log(`${username} : ${message}`);
+    const { room, username,type, message } = data;
+    console.log(`${username} :${type}, ${message}`);
     try {
       const [results] = await db.query(
         "INSERT INTO messages (room, username, message) VALUES (?, ?, ?)",
         [room, username, message]
       );
-      io.to(room).emit("chat message", { username, message });
+      io.to(room).emit("chat message", { username,type, message });
       console.log("INSERT INTO OK");
     } catch (error) {
       console.error("Error fetching chat history:", error);

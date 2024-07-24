@@ -313,7 +313,7 @@ router.get("/review", async (req, res) => {
   let success = false;
   let rows = [];
   const product_id = parseInt(req.query.product_id)|| 0;
-console.log('product_id',product_id);
+// console.log('product_id',product_id);
   
   // SELECT * FROM `orders` JOIN order_details ON `orders`.`id`=order_id WHERE `order_product_id`=6;
   // SELECT * FROM `orders` JOIN order_details ON `orders`.`id`=order_id JOIN users ON users.user_id=member_id WHERE `order_product_id`=6;
@@ -339,4 +339,38 @@ console.log('product_id',product_id);
     success,
     rows,
   });
+});
+
+// 上傳圖片
+// 上傳 avatar 的api
+router.post("/upload", upload.single("file"), async (req, res) => {
+  console.log('Request received:', req.body); // 檢查請求主體
+  console.log('Uploaded file:', req.file); // 檢查文件
+  const output = {
+    success: false,
+    error: "",
+    file: req.file,
+  };
+  if (!req.file) {
+    output.error = "上傳失敗!!";
+    return res.json(output);
+  }
+
+  // try {
+  //   // INSERT INTO product_favorites SET fav_product_id=?,user_id=?
+  //   const sql = "INSERT INTO messages SET avatar=? WHERE user_id=?";
+  //   const [result] = await db.query(sql, [req.file.filename, req.body.user_id]);
+  //   output.success = !!result.affectedRows;
+  //   if (!output.success) {
+  //     output.error = "更新失敗";
+  //     return res.json(output);
+  //   }
+  // } catch (ex) {
+  //   output.error = ex;
+  // }
+
+  // output.file = req.file;
+  // return res.json(output);
+  console.log('上傳了--------');
+  res.json({ filePath: req.file.filename });
 });
