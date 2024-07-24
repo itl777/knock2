@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { io } from 'socket.io-client'
 import { useAuth } from '@/context/auth-context'
@@ -7,6 +7,9 @@ import { IoIosArrowBack } from 'react-icons/io'
 import { GoPaperAirplane } from 'react-icons/go'
 import { AiFillMessage } from 'react-icons/ai'
 import 'animate.css/animate.css'
+// import EmojiPicker from 'emoji-picker-react'
+import { FaRegFaceLaugh } from 'react-icons/fa6'
+import dynamic from 'next/dynamic'
 
 const socket = io('http://localhost:4040')
 
@@ -28,6 +31,17 @@ export default function Message() {
     }
   }, [])
   // ****************IT
+
+  // emoji避免undefine
+  const Picker = dynamic(
+    () => {
+      return import('emoji-picker-react')
+    },
+    { ssr: false }
+  )
+
+  // emoji顯示
+  const [toggleEmoji, setToggleEmoji] = useState(false)
   //toggle
   const [toggleButton, setToggleButton] = useState(false)
   // 使用者名稱
@@ -44,7 +58,7 @@ export default function Message() {
     // 設定room名稱 [room_XXX]
     const roomName = `room_${auth.id}`
     console.log('會員資料:', auth)
-    if(roomName === 'room_0') return
+    if (roomName === 'room_0') return
     setUsername(auth.nickname)
     setRoom(roomName)
 
@@ -98,6 +112,28 @@ export default function Message() {
   const handleButton = () => {
     setToggleButton(!toggleButton)
   }
+  const handleEmoji = () => {
+    setToggleEmoji(!toggleEmoji)
+  }
+
+  const handleEmojiClick = useCallback((emojiObject) => {
+    setMessage((prevMsg) => prevMsg + emojiObject.emoji)
+  }, [])
+
+  // 使用 useMemo 來記憶 EmojiPicker
+  const memoizedEmojiPicker = useMemo(
+    () => (
+      <Picker
+        autoFocusSearch={false}
+        previewConfig={{
+          showPreview: false,
+        }}
+        skinTonesDisabled={true}
+        onEmojiClick={handleEmojiClick}
+      />
+    ),
+    [handleEmojiClick]
+  )
 
   return toggleButton ? (
     // 最外層
@@ -157,6 +193,22 @@ export default function Message() {
           className={myStyle.input}
           onSubmit={sendMessage}
         >
+          {/* emoji */}
+          <div className={myStyle.emojiArea}>
+            <button onClick={handleEmoji} type="button">
+              <FaRegFaceLaugh style={{ width: '26px', height: '26px' }} />
+            </button>
+            {toggleEmoji && (
+              <div className={myStyle.emojiPicker}>
+                {memoizedEmojiPicker}
+                {/* <Picker
+                  autoFocusSearch={false}
+                  onEmojiClick={handleEmojiClick}
+                /> */}
+              </div>
+            )}
+          </div>
+
           <input
             type="text"
             value={message}

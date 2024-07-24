@@ -167,3 +167,21 @@ transform:  rotate(45deg);
   height: 2.5rem;
   border-radius: 100px;
 }
+.emojiArea{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 4px;
+  margin: 0 4px;
+  cursor: pointer;
+  position: relative;
+}
+.emojiArea button{
+  border: none;
+  background-color: transparent;
+}
+.emojiPicker{
+position: absolute;
+bottom: 50px;
+z-index: 999;
+}
