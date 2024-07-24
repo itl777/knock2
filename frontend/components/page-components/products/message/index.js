@@ -112,10 +112,10 @@ export default function Message() {
           body: formData,
         })
         console.log('---fecth res', res)
-
         const resData = await res.json()
         setUploadImg(resData.filePath)
         setType('img')
+        console.log('---fecth type:', type)
         console.log('fetch上傳成功', resData)
       } catch (e) {
         console.log(e)
@@ -132,14 +132,14 @@ export default function Message() {
     e.preventDefault()
     if (message) {
       // 傳給server
-      console.log('發送圖片:', room, username, type, message)
+      console.log('發送訊息:', room, username, type, message)
       socket.emit('chat message', { room, username, type, message })
       // setMessages((prevMsg) => [...prevMsg, { room, username, message }])
       setMessage('')
     } else if (uploadImg) {
       console.log('發送圖片:', room, username, type, uploadImg)
-      socket.emit('chat message', { room, username, type, message: uploadImg })
-      setType('text')
+      socket.emit('chat message', { room, username, type:type, message: uploadImg })
+      // setType('text')
       setUploadImg('')
     } else if (message === '') return
   }
@@ -233,7 +233,7 @@ export default function Message() {
           {/* 訊息放置處 */}
           {messages.map((msg, index) => {
             if (msg.username !== '管理員') {
-              return (
+              return (msg.type === 'text'?
                 <div
                   key={index}
                   className={`${myStyle.message} ${myStyle.left}`}
@@ -241,6 +241,14 @@ export default function Message() {
                   <p key={index} className={myStyle.msgLeft}>
                     {msg.message}
                   </p>
+                </div>:<div
+                  key={index}
+                  className={`${myStyle.message} ${myStyle.left}`}
+                >
+                  <img key={index} className={myStyle.msgLeftImg} src={`${API_SERVER}/img/${msg.message}`} alt="img"/>
+                  
+                    
+                 
                 </div>
               )
             } else {
@@ -249,7 +257,7 @@ export default function Message() {
                   key={index}
                   className={`${myStyle.message} ${myStyle.right}`}
                 >
-                  <img src="/ghost/ghost_15.png" alt="" />
+                  <img id={myStyle.adminImg} src="/ghost/ghost_15.png" alt="" />
                   <p key={index} className={myStyle.msgRight}>
                     {msg.message}
                   </p>
