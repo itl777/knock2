@@ -3,6 +3,7 @@ import { v4 } from "uuid";
 
 const extMap = {
   "image/jpg": ".jpg",
+  "image/jpeg": ".jpg",
   "image/png": ".png",
   "image/webp": ".webp",
 };

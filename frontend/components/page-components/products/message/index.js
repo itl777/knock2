@@ -110,13 +110,14 @@ export default function Message() {
         const res = await fetch('http://localhost:3001/products/upload', {
           method: 'POST',
           body: formData,
+          enctype:"multipart/form-data"
         })
         console.log('---fecth res', res)
         const resData = await res.json()
         setUploadImg(resData.filePath)
         setType('img')
         console.log('---fecth type:', type)
-        console.log('fetch上傳成功', resData)
+        console.log('-----fetch', resData)
       } catch (e) {
         console.log(e)
       }

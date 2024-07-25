@@ -342,10 +342,8 @@ router.get("/review", async (req, res) => {
 });
 
 // 上傳圖片
-// 上傳 avatar 的api
 router.post("/upload", upload.single("file"), async (req, res) => {
-  console.log('Request received:', req.body); // 檢查請求主體
-  console.log('Uploaded file:', req.file); // 檢查文件
+  console.log('File received:', req.file);
   const output = {
     success: false,
     error: "",
@@ -353,24 +351,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
   };
   if (!req.file) {
     output.error = "上傳失敗!!";
-    return res.json(output);
+    return res.status(400).json(output);
   }
-
-  // try {
-  //   // INSERT INTO product_favorites SET fav_product_id=?,user_id=?
-  //   const sql = "INSERT INTO messages SET avatar=? WHERE user_id=?";
-  //   const [result] = await db.query(sql, [req.file.filename, req.body.user_id]);
-  //   output.success = !!result.affectedRows;
-  //   if (!output.success) {
-  //     output.error = "更新失敗";
-  //     return res.json(output);
-  //   }
-  // } catch (ex) {
-  //   output.error = ex;
-  // }
-
-  // output.file = req.file;
-  // return res.json(output);
-  console.log('上傳了--------');
   res.json({ filePath: req.file.filename });
 });

@@ -157,9 +157,13 @@
 
       socket.on("chat message", (data) => {
         console.log("HTML", data);
-
         const item = document.createElement("li");
-        item.textContent = `${data.username} : ${data.message}`;
+        if (data.type === "text") {
+            item.textContent = `${data.username} : ${data.message}`;
+          } else if (data.type === "img") {
+            item.innerHTML = `<div class="userArea"><div>${data.username} :</div><img class="userImg" src='/img/${data.message}' alt='img' /></div>`;
+          }
+        // item.textContent = `${data.username} : ${data.message}`;
         messages.appendChild(item);
         // 使用 setTimeout 來確保在 DOM 更新後滾動
         setTimeout(() => {
