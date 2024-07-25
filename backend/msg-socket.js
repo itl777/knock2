@@ -33,8 +33,10 @@ io.on("connection", (socket) => {
       ) &&
       username !== "管理員"
     ) {
-      online.push({ room, username });
-      console.log("'中online", online);
+      online.push({ room, username, id: socket.id });
+      console.log("***server online", online);
+      // 更新並廣播 AllRoom
+      io.emit("AllRoom", online);
     }
 
     try {
@@ -51,44 +53,40 @@ io.on("connection", (socket) => {
 
     socket.join(room);
     console.log(`${username} joined room: ${room}`);
-    io.to("AllRoom").emit("AllRoom", online);
-
-    socket.on("disconnect", () => {
-      console.log(room, "用戶斷開連接");
-      online = online.filter((value) => value.room !== room);
-      console.log("inline", online);
-      io.to("AllRoom").emit("AllRoom", online);
-
-      console.log(`-------joined room--------`);
-    });
   });
 
+
+ socket.on("disconnect", () => {
+  online = online.filter((value) => value.id !== socket.id);
+  console.log("online", online);
+  
+  // 更新並廣播 AllRoom
+  io.emit("AllRoom", online);
+});
+
   // 傳給後台
-  socket.on("AllRoom", (data) => {
-    console.log("AllRoom", data);
+  socket.on("AllRoom", () => {
     socket.join("AllRoom");
-    io.to("AllRoom").emit("AllRoom", data);
+    io.to("AllRoom").emit("AllRoom", online);
   });
 
   socket.emit("AllRoom", online);
 
   socket.on("chat message", async (data) => {
-    const { room, username,type, message } = data;
+    const { room, username, type, message } = data;
     console.log(`${username} :${type}, ${message}`);
     try {
       const [results] = await db.query(
         "INSERT INTO messages (room, username,type, message) VALUES (?, ?, ?,?)",
-        [room, username,type, message]
+        [room, username, type, message]
       );
-      io.to(room).emit("chat message", { username,type, message });
+      io.to(room).emit("chat message", { username, type, message });
       console.log("INSERT INTO OK");
     } catch (error) {
       console.error("Error fetching chat history:", error);
       socket.emit("error", { message: "Failed to fetch chat history" });
     }
-
   });
-
 });
 
 server.listen(4040, () => {

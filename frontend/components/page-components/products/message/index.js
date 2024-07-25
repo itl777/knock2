@@ -138,8 +138,13 @@ export default function Message() {
       setMessage('')
     } else if (uploadImg) {
       console.log('發送圖片:', room, username, type, uploadImg)
-      socket.emit('chat message', { room, username, type:type, message: uploadImg })
-      // setType('text')
+      socket.emit('chat message', {
+        room,
+        username,
+        type: type,
+        message: uploadImg,
+      })
+      setType('text')
       setUploadImg('')
     } else if (message === '') return
   }
@@ -153,8 +158,26 @@ export default function Message() {
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages, router.isReady, toggleButton])
+  }, [messages, uploadImg, toggleButton])
+  
+  useEffect(() => {
+    if (messageEndRef.current) {
+      scrollToBottom();
+    }
+  }, [messageEndRef.current]);
 
+  useEffect(() => {
+    const container = document.querySelector(`.${myStyle.msgtext}`);
+    if (container) {
+      const resizeObserver = new ResizeObserver(() => {
+        scrollToBottom();
+      });
+      resizeObserver.observe(container);
+      return () => resizeObserver.disconnect();
+    }
+  }, []);
+
+  // --------------
   const handleButton = () => {
     setToggleButton(!toggleButton)
   }
@@ -165,10 +188,6 @@ export default function Message() {
   const handleEmojiClick = useCallback((emojiObject) => {
     setMessage((prevMsg) => prevMsg + emojiObject.emoji)
   }, [])
-
-  // const handleSendImg = () => {
-  //   setMessage([{ username, type: 'img', message: uploadImg }])
-  // }
 
   // 使用 useMemo 記憶
   const memoizedEmojiPicker = useMemo(
@@ -233,29 +252,27 @@ export default function Message() {
           {/* 訊息放置處 */}
           {messages.map((msg, index) => {
             if (msg.username !== '管理員') {
-              return (msg.type === 'text'?
-                <div
-                  key={index}
-                  className={`${myStyle.message} ${myStyle.left}`}
-                >
+              return msg.type === 'text' ? (
+                <div key={index} className={`${myStyle.left}`}>
                   <p key={index} className={myStyle.msgLeft}>
                     {msg.message}
                   </p>
-                </div>:<div
-                  key={index}
-                  className={`${myStyle.message} ${myStyle.left}`}
-                >
-                  <img key={index} className={myStyle.msgLeftImg} src={`${API_SERVER}/img/${msg.message}`} alt="img"/>
-                  
-                    
-                 
+                </div>
+              ) : (
+                <div key={index} className={`${myStyle.left}`}>
+                  <img
+                    key={index}
+                    className={myStyle.msgLeftImg}
+                    src={`${API_SERVER}/img/${msg.message}`}
+                    alt="img"
+                  />
                 </div>
               )
             } else {
               return (
                 <div
                   key={index}
-                  className={`${myStyle.message} ${myStyle.right}`}
+                  className={`${myStyle.right}`}
                 >
                   <img id={myStyle.adminImg} src="/ghost/ghost_15.png" alt="" />
                   <p key={index} className={myStyle.msgRight}>
