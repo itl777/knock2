@@ -9,7 +9,7 @@ import {
 import { IconButton, Tooltip } from '@mui/material'
 import { LuCopy, LuCopyCheck } from 'react-icons/lu'
 import { useAuth } from '@/context/auth-context'
-import ClearButton from '@/components/UI/ClearButton'
+import ClearButton from '@/components/UI/clear-button'
 import BlackBtn from '@/components/UI/black-btn'
 import OTPInput from '@/components/UI/form-item/otp-input'
 import TwoFactorAuthStepper from '@/components/UI/stepper'
@@ -57,6 +57,7 @@ export default function UserSet2fa() {
   }
 
   const handleVerify = async () => {
+    if (verificationCode.length !== 6) openSnackbar('請填寫驗證碼', 'error')
     try {
       const response = await axios.post(GOOGLE_AUTHENTICATOR_VERIFY_POST, {
         id: auth.id,
@@ -70,7 +71,7 @@ export default function UserSet2fa() {
       }
     } catch (error) {
       console.error('驗證 TOTP 失敗:', error)
-      openSnackbar('驗證過程出錯，請稍後再試。', 'error')
+      openSnackbar('驗證失敗，請確認代碼是否正確。', 'error')
     }
   }
 
@@ -103,9 +104,9 @@ export default function UserSet2fa() {
         {setup2faStep === 0 && (
           <>
             <div className={styles.boxColumn}>
-              <p>您可以透過驗證器應用程式取得驗證碼。</p>
+              <p>您可以透過驗證器應用程式取得驗證碼</p>
               <p>
-                請前往
+                前往
                 <span className={styles.link}>
                   <ClearButton
                     btnText="Google Play"
@@ -129,7 +130,7 @@ export default function UserSet2fa() {
                   />
                 </span>
               </p>
-              <p>下載 Google Authenticator 或其他驗證器。</p>
+              <p>下載 Google Authenticator 驗證器</p>
             </div>
             <div className={styles.boxRow}>
               <BlackBtn
@@ -148,15 +149,17 @@ export default function UserSet2fa() {
           <>
             <div className={styles.boxColumn}>
               <p>請以驗證器掃描以下 QRcode：</p>
-              <Image
-                src={setup2faData.qrCode}
-                width={250}
-                height={250}
-                alt="QR Code"
-              />
+              {setup2faData.qrCode && (
+                <Image
+                  src={setup2faData.qrCode}
+                  width={250}
+                  height={250}
+                  alt="QR Code"
+                />
+              )}
               <p>或複製金鑰：</p>
               <div className={styles.boxRow}>
-                <code>{setup2faData.secret}</code>
+                <pre>{setup2faData.secret}</pre>
                 <Tooltip
                   placement="top"
                   title={copySuccess ? '已複製!' : '複製金鑰'}
@@ -202,7 +205,10 @@ export default function UserSet2fa() {
                 btnText="上一步"
                 type="button"
                 href={null}
-                onClick={() => setSetup2faStep(1)}
+                onClick={() => {
+                  setVerificationCode('')
+                  setSetup2faStep(1)
+                }}
               />
               <BlackBtn
                 btnText="驗證並完成設置"

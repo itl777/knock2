@@ -14,19 +14,22 @@ export default function IndexLayout({
 
   return (
     <>
-      <Head>
-        <title>{`${title ? `${title} | ` : ''}${siteTitle}`}</title>
-      </Head>
-      <Navbar pageName={pageName} />
-      <main className={`bg ${background}`}>
-        {children}
+      <section className={`layout ${background}`}>
+        <Head>
+          <title>{`${title ? `${title} | ` : ''}${siteTitle}`}</title>
+        </Head>
+        <Navbar pageName={pageName} />
+        <main className="main">{children}</main>
         <TopBtn />
         <Footer />
-      </main>
+      </section>
       <style jsx>
         {`
-          .bg {
-            background-color: white;
+          .layout {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
           }
           .light {
             background: url('/bg-light.png') no-repeat;
@@ -37,6 +40,10 @@ export default function IndexLayout({
             background: url('/bg-dark.png') no-repeat;
             background-attachment: fixed;
             background-size: cover;
+          }
+
+          .main {
+            flex: 1;
           }
         `}
       </style>

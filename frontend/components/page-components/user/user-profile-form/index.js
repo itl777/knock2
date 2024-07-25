@@ -18,6 +18,7 @@ import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
 import AvatarFormDialogs from '../user-avatar-form'
+// import AddressModal from '../address-modal'
 import schemaForm from './schema-form'
 import BlackBtn from '@/components/UI/black-btn'
 import ConfirmDialog from '@/components/UI/confirm-dialog'
@@ -54,6 +55,7 @@ export default function UserProfileForm() {
     tax_id: '',
   })
   const [openAvatarModal, setOpenAvatarModal] = useState(false)
+  const [openAddressModal, setOpenAddressModal] = useState(false)
 
   // function
   const unset2fa = async () => {
@@ -347,6 +349,7 @@ export default function UserProfileForm() {
                 <UserProfileFormTitle text={'個人資料'} />
                 <UserProfileInput
                   label="姓名"
+                  required={true}
                   name="name"
                   type="text"
                   value={profileForm.name}
@@ -357,6 +360,7 @@ export default function UserProfileForm() {
                 />
                 <UserProfileInput
                   label="暱稱"
+                  required={true}
                   name="nick_name"
                   type="text"
                   value={profileForm.nick_name}
@@ -410,9 +414,20 @@ export default function UserProfileForm() {
                   name="address_id"
                   value={addressValue.address_id}
                   placeholder="請選擇常用收件地址"
+                  // btn={true}
+                  // btnText="新增地址"
+                  // btnOnClick={() => {
+                  //   setOpenAddressModal(true)
+                  // }}
                   errorText={profileFormErrors.address_id}
                   onChange={handleChange}
                 />
+                {/* <AddressModal
+                  open={openAddressModal}
+                  onClose={() => {
+                    setOpenAddressModal(false)
+                  }}
+                /> */}
               </div>
             </div>
             <div className={styles['box2']}>

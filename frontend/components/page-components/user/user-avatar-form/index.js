@@ -19,7 +19,7 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
   // cropper
   const [cropper, setCropper] = useState(null)
   const imageRef = useRef(null)
-  const [backgroundColor, setBackgroundColor] = useState('rgb(236, 236, 236,1)')
+  const [backgroundColor, setBackgroundColor] = useState('rgb(236, 236, 236,0)')
 
   const onDrop = (acceptedFiles) => {
     if (acceptedFiles[0].size > 2097152) {
@@ -100,12 +100,12 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
               setAuthRefresh(true)
               openSnackbar('新增成功', 'success')
             } else {
-              openSnackbar('新增失敗', 'error')
+              openSnackbar('新增失敗，請稍後再試', 'error')
             }
           })
           .catch((err) => {
             console.error(err)
-            openSnackbar('連線失敗', 'error')
+            openSnackbar('新增失敗，請稍後再試', 'error')
           })
         resetUploader()
       })
@@ -117,7 +117,7 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
     setImgUrl('')
     imageRef.current = null
     setZoomValue(0.1)
-    setBackgroundColor('rgb(236, 236, 236,1)')
+    setBackgroundColor('rgb(236, 236, 236,0)')
   }
 
   useEffect(() => {
@@ -212,12 +212,13 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
           display: flex;
           justify-content: center;
           align-items: center;
-          background-color: ${backgroundColor || 'rgb(236, 236, 236,1)'};
+          border-radius: 12px;
+          background-color: ${backgroundColor || 'rgb(236, 236, 236,0)'};
           & :global(.cropper-view-box) {
             border-radius: 50%;
             outline: unset;
             border: 2px solid #ffffff;
-            background-color: ${backgroundColor || 'rgb(236, 236, 236,1)'};
+            background-color: ${backgroundColor || 'rgb(236, 236, 236,0)'};
           }
           & :global(.cropper-face) {
             background-color: unset;

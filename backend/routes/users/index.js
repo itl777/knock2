@@ -15,6 +15,7 @@ import {
   generateQRCode,
   verifyGoogleAuthOtp,
 } from "../../configs/otp.js";
+import { sendNotificationToUser } from "../notifications.js";
 
 const dateFormat = "YYYY-MM-DD";
 const dateTimeFormat = "YYYY-MM-DD HH:mm:ss";
@@ -33,11 +34,12 @@ const getUserData = async (user_id) => {
   try {
     const sql = "SELECT * FROM users WHERE user_id=?";
     const [rows] = await db.query(sql, [user_id]);
+
+    if (!rows.length) return;
     const userData = rows[0];
-    // 如果沒有提供帳號就返回
     return userData;
   } catch (ex) {
-    return null;
+    return;
   }
 };
 
@@ -95,6 +97,8 @@ router.post("/login-jwt", upload.none(), async (req, res) => {
       avatar: rows[0].avatar,
       token,
     };
+    const dateTime = moment(new Date()).format(dateTimeFormat);
+    sendNotificationToUser(output.data.id, `您在 ${dateTime} 登入成功`);
   }
 
   res.json(output);
@@ -137,6 +141,7 @@ router.post("/verify-otp", async (req, res) => {
   }
 
   // 如果驗證成功，給令牌
+
   const payload = {
     id: user_id,
     account: account,
@@ -149,6 +154,9 @@ router.post("/verify-otp", async (req, res) => {
     avatar: avatar,
     token: jwtToken,
   };
+  const dateTime = moment(new Date()).format(dateTimeFormat);
+  sendNotificationToUser(output.data.id, `您在 ${dateTime} 登入成功`);
+
   output.success = true;
   return res.json(output);
 });
@@ -644,6 +652,8 @@ router.post("/google-login", async (req, res) => {
     return res.json(output);
   }
 
+  const dateTime = moment(new Date()).format(dateTimeFormat);
+  sendNotificationToUser(output.data.id, `您在 ${dateTime} 登入成功`);
   return res.json(output);
 });
 

@@ -129,7 +129,7 @@ function OTP({ separator, length, value, onChange, color }) {
   }
 
   return (
-    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
       {new Array(length).fill().map((_, index) => (
         <React.Fragment key={index}>
           <BaseInput

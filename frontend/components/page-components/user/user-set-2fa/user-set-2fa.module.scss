@@ -25,6 +25,10 @@
     width: 100%;
     gap: 20px;
     padding: 0px;
+    pre {
+      color: #d63384; 
+      margin-bottom: 0;
+    }
   }
   .boxColumn {
     display: flex;
@@ -41,6 +45,7 @@
   p {
     display: flex;
     align-items: center;
+    white-space:nowrap;
     gap: 5px;
   }
   .link {

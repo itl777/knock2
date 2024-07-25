@@ -14,6 +14,7 @@ import payments from "./routes/payments.js";
 import coupons from "./routes/coupons.js";
 import reservations from "./routes/reservations.js";
 import invoice from "./routes/invoice.js";
+import notifications from "./routes/notifications.js";
 
 // 掛載 express
 const app = express();
@@ -31,9 +32,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-
 // 使用套件紀錄 http 請求 **** added by iris
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
 // 自訂頂層的 middleware
 app.use((req, res, next) => {
@@ -60,10 +60,11 @@ app.use("/products", products);
 app.use("/users", users);
 app.use("/orders", orders);
 app.use("/checkout", checkout);
-app.use("/payments", payments)
+app.use("/payments", payments);
 app.use("/coupons", coupons);
 app.use("/reservations", reservations);
 app.use("/invoice", invoice);
+app.use("/notifications", notifications);
 
 // 偵聽 port
 app.listen(3001, function () {

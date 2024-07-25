@@ -24,12 +24,6 @@ export default function UserTab() {
       paths: ['/user/reservation'],
     },
     {
-      key: 'group-reservation',
-      name: '揪團行程',
-      link: '/user/group-reservation',
-      paths: ['/user/group-reservation'],
-    },
-    {
       key: 'orders',
       name: '商品訂單',
       link: '/user/orders/ongoing',

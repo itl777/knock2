@@ -1,6 +1,8 @@
 import styled from '@emotion/styled'
+import { Button as BaseButton } from '@mui/base/Button'
 
-const ClearStyle = styled.button`
+const Button = styled(BaseButton)(
+  ({ theme }) => `
   background: none;
   border: none;
   margin: 0;
@@ -25,6 +27,7 @@ const ClearStyle = styled.button`
     outline: none;
   }
 `
+)
 export default function ClearButton({
   btnText = '',
   type = 'button',
@@ -32,9 +35,9 @@ export default function ClearButton({
 }) {
   return (
     <>
-      <ClearStyle type={type} onClick={onClick}>
+      <Button type={type} onClick={onClick}>
         {btnText}
-      </ClearStyle>
+      </Button>
     </>
   )
 }
