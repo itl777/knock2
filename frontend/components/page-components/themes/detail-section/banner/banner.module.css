@@ -191,6 +191,7 @@
 .musicPrompt {
   text-align: center;
   padding: 20px;
+  font-size: 16px;
 }
 
 .musicPromptButtons {
@@ -224,6 +225,10 @@
 
 .declineButton:hover {
   background-color: #da190b;
+}
+.p3{
+  font-weight: bold;
+  color: #b99755;
 }
 
 @media screen and (max-width: 480px){
@@ -289,5 +294,17 @@
   .item {
     background-color: white;
     height: 110px;
+  }
+  .musicPrompt {
+    font-size: 12px;
+  }
+  .p{
+    font-size: 10px;
+  }
+  .p1{
+    font-size: 10px;
+  }
+  .p3{
+    font-size: 10px;
   }
 }

@@ -52,6 +52,11 @@
     text-align: center;
     margin-top: 10px;
 }
+.p3{
+  font-size: 18px;
+  color: var(--sec-1);
+  font-weight: bold;
+}
 @media screen and (max-width: 480px){
     .reservationrBg {
         width: 400px;
@@ -91,4 +96,13 @@
     .reservation{
         margin-top: 25px;
     }
+    .p{
+        margin-top: 28px;
+    }
+    .p1{
+        font-size: 10px;
+    }
+    .p3{
+        font-size: 10px;
+      }
 }
