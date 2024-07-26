@@ -7,6 +7,7 @@ import { DateProvider } from '@/context/date-context'
 import { ConfirmDialogProvider } from '@/context/confirm-dialog-context'
 import { CartProvider } from '@/context/cart-context'
 import { SessionProvider } from '@/context/sessionContext'
+import { NotificationsContextProvider } from '@/context/notifications-context'
 
 export default function MyApp({ Component, pageProps }) {
   // 使用自訂在頁面層級的版面(layout)
@@ -20,7 +21,9 @@ export default function MyApp({ Component, pageProps }) {
             <LoginContextProvider>
               <SessionProvider>
                 <DateProvider>
-                  <Component {...pageProps} />
+                  <NotificationsContextProvider>
+                    <Component {...pageProps} />
+                  </NotificationsContextProvider>
                 </DateProvider>
               </SessionProvider>
             </LoginContextProvider>

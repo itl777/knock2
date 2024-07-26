@@ -78,7 +78,6 @@ export function AuthContextProvider({ children }) {
         },
       })
       const result = await r.json()
-      console.log(result)
       if (result.success) {
         output.success = true
         localStorage.setItem(storageKey, JSON.stringify(result.data))

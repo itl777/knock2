@@ -1,9 +1,11 @@
 import styles from './item.module.scss'
 import Input01 from '@/components/UI/form-item/input01'
 import FilterBtn from '@/components/UI/filter-btn'
+import Badge from '@mui/material/Badge'
 
 export default function UserProfileInput({
   label = '',
+  required = false,
   name = '',
   type = '',
   value = '',
@@ -19,7 +21,9 @@ export default function UserProfileInput({
     <>
       <div className={styles.formItem}>
         <label htmlFor={name} className={styles.myLabel}>
-          {label}
+          <Badge badgeContent={required ? '*' : 0} color="error" variant="dot">
+            {label}
+          </Badge>
         </label>
         <div className={styles.myDiv}>
           <div className={styles.row}>

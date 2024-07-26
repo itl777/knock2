@@ -15,6 +15,14 @@ export const GOOGLE_AUTHENTICATOR_SETUP_POST = `${API_SERVER}/users/2fa/request`
 export const GOOGLE_AUTHENTICATOR_VERIFY_POST = `${API_SERVER}/users/2fa/verify-otp`
 export const GOOGLE_AUTHENTICATOR_UNSET_POST = `${API_SERVER}/users/2fa/unset2fa`
 
+// notifications
+export const NOTIFICATION_CENTER_GET = `${API_SERVER}/notifications/notification_center`
+export const PREVIOUS_NOTIFICATION_POST = `${API_SERVER}/notifications/previous_notification`
+export const SEND_ALL_POST = `${API_SERVER}/notifications/send-all`
+export const SEND_PERSONAL_POST = `${API_SERVER}/notifications/send-personal`
+export const MARK_MESSAGE_READ_POST = `${API_SERVER}/notifications/mark_message_read`
+
+
 // product image path
 export const PRODUCT_IMG = `${API_SERVER}/images`
 export const PRODUCT_LIST = `${API_SERVER}/products`

@@ -55,7 +55,6 @@ export const verifyGoogleAuthOtp = (token, totp_secret, account) => {
     period: 30,
     secret: Secret.fromBase32(totp_secret),
   });
-  console.log(otp.secret);
   const delta = otp.validate({ token, window: 1 });
   return delta !== null;
 };

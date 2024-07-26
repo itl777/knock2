@@ -1,5 +1,6 @@
 import styles from './item.module.scss'
 import Select02 from '@/components/UI/form-item/select02/index'
+import FilterBtn from '@/components/UI/filter-btn'
 
 export default function UserProfileSelect({
   name = '',
@@ -7,8 +8,11 @@ export default function UserProfileSelect({
   placeholder = '',
   options = [],
   label = '',
+  btn = false,
+  btnText = '',
   errorText = '',
   onChange = () => {},
+  btnOnClick = () => {},
 }) {
   return (
     <>
@@ -17,13 +21,20 @@ export default function UserProfileSelect({
           {label}
         </label>
         <div className={styles.myDiv}>
-          <Select02
-            name={name}
-            placeholder={placeholder}
-            value={value}
-            options={options}
-            onChange={onChange}
-          />
+          <div className={styles.selectBtn}>
+            <Select02
+              name={name}
+              placeholder={placeholder}
+              value={value}
+              options={options}
+              onChange={onChange}
+            />
+            {btn ? (
+              <div className={styles.button}>
+                <FilterBtn href={null} onClick={btnOnClick} btnText={btnText} />
+              </div>
+            ) : null}
+          </div>
           <div className={styles.errorText}>
             {errorText !== '' ? <span>{errorText}</span> : ''}
           </div>
