@@ -23,7 +23,7 @@ export const PRODUCT_DETAILS = `${API_SERVER}/products/details`
 export const PRODUCT_FAVORITE = `${API_SERVER}/products/favorite`
 
 // order & checkout
-export const ORDER_LIST_GET = `${API_SERVER}/orders`
+export const ORDER_LIST_GET = `${API_SERVER}/orders/list`
 export const ORDER_DETAILS_GET = `${API_SERVER}/orders`
 export const CANCEL_ORDER = `${API_SERVER}/orders/api/cancel_order`
 export const ORDER_REVIEW_POST = `${API_SERVER}/orders/api/add-reviews`

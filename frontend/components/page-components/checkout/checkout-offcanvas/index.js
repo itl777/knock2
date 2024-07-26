@@ -67,7 +67,11 @@ export default function CheckoutOffcanvas() {
 
   return (
     <>
-      <IconButton aria-label="cart" onClick={toggleShow}>
+      <IconButton
+        aria-label="cart"
+        onClick={toggleShow}
+        sx={{ width: '2rem', height: '2rem', padding: '2px' }}
+      >
         <motion.div
           key={subtotal} // 使用 key 屬性強制重新渲染
           initial={{ opacity: 0, scale: 0.5 }}

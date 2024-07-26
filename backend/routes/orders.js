@@ -48,10 +48,123 @@ const getPaymentType = (payment_type) => {
 };
 
 // GET orders data
-router.get("/", async (req, res) => {
-  // 從 query 中取得 member_id, order_status_id
-  const { member_id, order_status_id, page } = req.query;
-  const perPage = 5; //每頁筆數
+// router.get("/", async (req, res) => {
+//   // 從 query 中取得 member_id, order_status_id
+//   const { member_id, order_status_id, page } = req.query;
+//   const perPage = 5; //每頁筆數
+//   let currentPage = parseInt(page) || 1;
+//   const offset = (currentPage - 1) * perPage;
+
+//   if (currentPage < 1) {
+//     return res.redirect("?page=1");
+//   }
+
+//   try {
+//     // 取得訂單資料
+//     const orderSql = `
+//       SELECT 
+//         o.id AS order_id,
+//         o.order_date,
+//         o.merchant_trade_no,
+//         o.payment_type,
+//         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
+//         o.order_status_id,
+//         os.order_status_name,
+//         o.invoice_rtn_code,
+//         o.invoice_no,
+//         o.invoice_date,
+//         o.invoice_random_number,
+//         o.deliver_fee,
+//         SUM(od.order_quantity * pm.price) AS subtotal_price,
+//         SUM(od.order_quantity * pm.price + o.deliver_fee) AS total_price
+//       FROM orders o
+//       LEFT JOIN order_details od ON od.order_id = o.id
+//       LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
+//       LEFT JOIN district d ON d.id = o.order_district_id
+//       LEFT JOIN city c ON c.id = d.city_id
+//       LEFT JOIN order_status os ON os.id = o.order_status_id
+//       WHERE o.member_id = ? AND o.order_status_id = ?
+//       GROUP BY o.id
+//       ORDER BY o.id DESC
+//       LIMIT ? OFFSET ?;
+//     `;
+
+//     const [orders] = await db.query(orderSql, [
+//       member_id,
+//       order_status_id,
+//       perPage,
+//       offset,
+//     ]);
+
+//     // 格式化 order_date
+//     orders.forEach((v) => {
+//       const m = moment(v.order_date);
+//       if (m.isValid()) {
+//         v.order_date = m.format(dateFormat);
+//       } else {
+//         v.order_date = "無訂單日期";
+//       }
+//     });
+
+//     // 格式化 payment_type
+//     orders.forEach((v) => {
+//       v.payment_type = getPaymentType(v.payment_type);
+//     });
+
+//     // 取得訂單商品圖片
+//     const orderDetailsSql = `
+//       SELECT 
+//         od.order_id,
+//         od.order_product_id AS product_id,
+//         img.product_img
+//       FROM order_details od
+//       LEFT JOIN (
+//         SELECT img_product_id, product_img,
+//           ROW_NUMBER() OVER (PARTITION BY img_product_id ORDER BY img_id) AS rn
+//         FROM product_img
+//       ) img ON img.img_product_id = od.order_product_id AND img.rn = 1
+//       WHERE od.order_id IN (SELECT id FROM orders WHERE member_id = ? AND order_status_id = ?);
+//     `;
+
+//     const [orderDetails] = await db.query(orderDetailsSql, [
+//       member_id,
+//       order_status_id,
+//     ]);
+
+//     // 訂單總頁數
+//     const countSql = `
+//       SELECT COUNT(*) AS count
+//       FROM orders
+//       WHERE member_id = ? AND order_status_id = ?;
+//     `;
+
+//     const [[{ count }]] = await db.query(countSql, [
+//       member_id,
+//       order_status_id,
+//     ]);
+//     const totalPages = Math.ceil(count / perPage);
+
+//     console.log("orders data: ", orders);
+//     console.log("order details data: ", orderDetails);
+
+//     // 將查詢結果傳送到前端
+//     res.json({
+//       status: true,
+//       orders,
+//       orderDetails,
+//       perPage,
+//       offset,
+//       totalPages,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching orders: ", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
+router.get("/list", async (req, res) => {
+  const { member_id, status, page } = req.query;
+  const perPage = 5; // 每頁筆數
   let currentPage = parseInt(page) || 1;
   const offset = (currentPage - 1) * perPage;
 
@@ -60,6 +173,27 @@ router.get("/", async (req, res) => {
   }
 
   try {
+    let condition;
+
+    switch (status) {
+      case "ongoing":
+        condition = `(o.rtn_code IS NULL OR o.rtn_code = 0 ) AND o.cancel != 1 AND o.order_date + INTERVAL 7 DAY < CURDATE()`;
+        break;
+      case "shipping":
+        condition = `o.rtn_code = 1 AND o.cancel = 0 AND o.deliver = 0`;
+        break;
+      case "completed":
+        condition = `o.rtn_code = 1 AND o.cancel = 0 AND o.deliver = 1`;
+        break;
+      case "canceled":
+        condition = `o.cancel = 1 OR (o.rtn_code = 0 AND o.order_date + interval 10 day > CURDATE())`;
+        break;
+      default:
+        return res
+          .status(400)
+          .json({ error: `Invalid status parameter, status: ${status}` });
+    }
+
     // 取得訂單資料
     const orderSql = `
       SELECT 
@@ -68,13 +202,17 @@ router.get("/", async (req, res) => {
         o.merchant_trade_no,
         o.payment_type,
         CONCAT(c.city_name, d.district_name, o.order_address) AS full_address,
-        o.order_status_id,
         os.order_status_name,
         o.invoice_rtn_code,
         o.invoice_no,
         o.invoice_date,
         o.invoice_random_number,
         o.deliver_fee,
+        o.payment_date,
+        o.order_status_id,
+        o.rtn_code,
+        o.deliver,
+        o.cancel,
         SUM(od.order_quantity * pm.price) AS subtotal_price,
         SUM(od.order_quantity * pm.price + o.deliver_fee) AS total_price
       FROM orders o
@@ -83,18 +221,13 @@ router.get("/", async (req, res) => {
       LEFT JOIN district d ON d.id = o.order_district_id
       LEFT JOIN city c ON c.id = d.city_id
       LEFT JOIN order_status os ON os.id = o.order_status_id
-      WHERE o.member_id = ? AND o.order_status_id = ?
+      WHERE o.member_id = ? AND ${condition}
       GROUP BY o.id
       ORDER BY o.id DESC
       LIMIT ? OFFSET ?;
     `;
 
-    const [orders] = await db.query(orderSql, [
-      member_id,
-      order_status_id,
-      perPage,
-      offset,
-    ]);
+    const [orders] = await db.query(orderSql, [member_id, perPage, offset]);
 
     // 格式化 order_date
     orders.forEach((v) => {
@@ -116,6 +249,15 @@ router.get("/", async (req, res) => {
       SELECT 
         od.order_id,
         od.order_product_id AS product_id,
+        od.product_coupon_id AS coupon_id,
+        c.discount_amount,
+        c.discount_percentage,
+        c.discount_max,
+        od.order_unit_price,
+        o.rtn_code,
+        o.payment_date,
+        o.deliver,
+        o.cancel,
         img.product_img
       FROM order_details od
       LEFT JOIN (
@@ -123,25 +265,23 @@ router.get("/", async (req, res) => {
           ROW_NUMBER() OVER (PARTITION BY img_product_id ORDER BY img_id) AS rn
         FROM product_img
       ) img ON img.img_product_id = od.order_product_id AND img.rn = 1
-      WHERE od.order_id IN (SELECT id FROM orders WHERE member_id = ? AND order_status_id = ?);
+      LEFT JOIN orders o ON o.id = od.order_id
+      LEFT JOIN coupons c ON c.id = od.product_coupon_id
+      WHERE od.order_id IN (SELECT id FROM orders WHERE member_id = ? AND ${condition});
     `;
 
-    const [orderDetails] = await db.query(orderDetailsSql, [
-      member_id,
-      order_status_id,
-    ]);
+    const [orderDetails] = await db.query(orderDetailsSql, [member_id]);
+
+  
 
     // 訂單總頁數
     const countSql = `
       SELECT COUNT(*) AS count
-      FROM orders
-      WHERE member_id = ? AND order_status_id = ?;
+      FROM orders o
+      WHERE member_id = ? AND ${condition};
     `;
 
-    const [[{ count }]] = await db.query(countSql, [
-      member_id,
-      order_status_id,
-    ]);
+    const [[{ count }]] = await db.query(countSql, [member_id]);
     const totalPages = Math.ceil(count / perPage);
 
     console.log("orders data: ", orders);
@@ -153,7 +293,7 @@ router.get("/", async (req, res) => {
       orders,
       orderDetails,
       perPage,
-      offset,
+      currentPage,
       totalPages,
     });
   } catch (error) {
@@ -400,7 +540,7 @@ router.post("/api/cancel_order", async (req, res) => {
   try {
     const sql = `
       UPDATE orders SET 
-        order_status_id = 4, 
+        cancel = 1, 
         last_modified_at = now()
       WHERE id = ?;
     `;
