@@ -91,6 +91,8 @@ SELECT
   t.price,
   t.deposit,
   t.theme_desc,
+  t.theme_mp4,
+  t.bg_music,
   b.branch_name,
   f.storyline,
   f.puzzle_design,
@@ -121,7 +123,7 @@ LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
 JOIN sessions s ON bt.theme_id = s.theme_id
 LEFT JOIN coupons c ON bt.id = c.id
 WHERE bt.branch_themes_id = ?
-GROUP BY bt.branch_themes_id, t.theme_id, t.theme_name, t.theme_img, t.theme_banner, t.min_players, t.max_players, t.theme_time, t.difficulty, t.price, t.deposit, t.theme_desc, b.branch_name, f.storyline, f.puzzle_design, f.atmosphere, c.coupon_name, c.discount_percentage;
+GROUP BY bt.branch_themes_id, t.theme_id, t.theme_name, t.theme_img, t.theme_banner, t.min_players, t.max_players, t.theme_time, t.difficulty, t.price, t.deposit, t.theme_desc,t.theme_mp4,t.bg_music, b.branch_name, f.storyline, f.puzzle_design, f.atmosphere, c.coupon_name, c.discount_percentage;
   `;
 
   try {

@@ -41,10 +41,17 @@ export default function Card02({
 
   const [clicked, setClicked] = useState(false)
 
-  const handleClick = async (e) => {
+  const handleClick = (e) => {
     e.preventDefault()
     setClicked(!clicked)
-    await router.push(`/themes/themes-details/${branch_themes_id}`)
+    router.push(`/themes/themes-details/${branch_themes_id}`)
+  }
+
+  const style = {
+    border: '1px solid #222222',
+    padding: '7px 13px 7px 13px',
+    borderRadius: '20px',
+    fontWeight: 'normal',
   }
 
   return (
@@ -164,13 +171,9 @@ export default function Card02({
             }}
           >
             <Link
-              href={`/themes/themes-details/${branch_themes_id}`}
-              className={styles.bookingButton}
+              href="#"
               onClick={handleClick}
-              style={{
-                backgroundColor: clicked ? '#222222' : 'white',
-                color: clicked ? 'white' : '#222222',
-              }}
+              className={styles.bookingButton}
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = '#222222'
                 e.target.style.color = 'white'
