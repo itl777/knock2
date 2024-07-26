@@ -13,8 +13,13 @@ import checkout from "./routes/checkout.js";
 import payments from "./routes/payments.js";
 import coupons from "./routes/coupons.js";
 import reservations from "./routes/reservations.js";
+<<<<<<< HEAD
 // import invoice from "./routes/invoice.js";
 import notifications from "./routes/notifications.js";
+=======
+import invoice from "./routes/invoice.js";
+import './msg-socket.js'
+>>>>>>> origin/it
 
 // 掛載 express
 const app = express();

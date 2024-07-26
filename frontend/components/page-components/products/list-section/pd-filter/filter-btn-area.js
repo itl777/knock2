@@ -14,20 +14,28 @@ export default function FilterBtnArea() {
   const [NewToggle, setNewToggle] = useState(false)
 
   const handleFilterCreated = (sort, order) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, sort: sort, order: order },
-    })
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, sort: sort, order: order },
+      },
+      undefined,
+      { scroll: false }
+    )
     setShowIcon(false)
     setShowIconNew(true)
     setNewToggle(!NewToggle)
   }
 
   const handleFilterPrice = (sort, order) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, sort: sort, order: order },
-    })
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, sort: sort, order: order },
+      },
+      undefined,
+      { scroll: false }
+    )
     setShowIcon(true)
     setPriceToggle(!priceToggle)
   }

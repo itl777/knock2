@@ -23,6 +23,12 @@ export default function CategoryBtn() {
     setShowIcon(false)
   }
 
+  const handleLinkClick = (e, path) => {
+    e.preventDefault()
+    router.push(path, undefined, { scroll: false })
+    handleShowIcon()
+  }
+
   return (
     <>
       <div className="row">
@@ -33,7 +39,8 @@ export default function CategoryBtn() {
                 <Link
                   className={isActive(v.key) ? myStyle['active'] : ''}
                   href={v.path}
-                  onClick={handleShowIcon}
+                  // onClick={handleShowIcon}
+                  onClick={(e) => handleLinkClick(e, v.path)}
                 >
                   {v.name}
                 </Link>

@@ -79,10 +79,14 @@ export default function SearchInputPhone() {
 
   const handleClick = (event) => {
     event.preventDefault()
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, userSearch: userSearch },
-    })
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, userSearch: userSearch },
+      },
+      undefined,
+      { scroll: false }
+    )
   }
 
   return (

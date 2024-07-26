@@ -6,7 +6,8 @@ export default function BuyBtn2({ btnText = '加入購物車', onClick }) {
     <Button
       onClick={onClick}
       sx={{
-        fontFamily: 'Noto Sans TC',
+        fontFamily: 'Noto Serif JP',
+        fontWeight: 'bold',
         color: 'black',
         width: '100%',
         '&:hover': {

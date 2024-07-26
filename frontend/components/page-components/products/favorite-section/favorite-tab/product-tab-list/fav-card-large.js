@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useProduct } from '@/context/product-context'
 import { useProductImg } from '@/hooks/useProductImg'
 import { PRODUCT_IMG } from '@/configs/api-path'
+import { formatIntlNumber } from '@/hooks/numberFormat'
 
 import { useCart } from '@/context/cart-context' // ****** Iris Added
 
@@ -63,6 +64,7 @@ export default function FavCardLarge({ dbData }) {
           className={`${myStyle['gap']} d-flex flex-column align-items-center`}
         >
           <p className={myStyle['card-text']}>{dbData.product_name}</p>
+<<<<<<< HEAD
           <p className={myStyle['card-text']}>${dbData.price}</p>
           <BlackBtn
             btnText={'加入購物車'}
@@ -76,6 +78,12 @@ export default function FavCardLarge({ dbData }) {
               )
             }} // ****** Iris Added
           />
+=======
+          <p className={myStyle['card-text']}>
+            ${formatIntlNumber(dbData.price)}
+          </p>
+          <BlackBtn btnText={'加入購物車'} />
+>>>>>>> origin/it
         </div>
       </div>
     </>

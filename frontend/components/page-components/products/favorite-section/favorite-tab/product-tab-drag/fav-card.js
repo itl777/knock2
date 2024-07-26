@@ -6,6 +6,8 @@ import myStyle from './drag.module.css'
 import DeleteIconBtn from '../product-tab-list/delete-icon-btn'
 import { useProductImg } from '@/hooks/useProductImg'
 import { PRODUCT_IMG } from '@/configs/api-path'
+import { formatIntlNumber } from '@/hooks/numberFormat'
+
 
 export default function FavCard({ dbData, onDragEnd, onDragStart }) {
   const { cardChange, setCardChange } = useProduct()
@@ -47,7 +49,7 @@ export default function FavCard({ dbData, onDragEnd, onDragStart }) {
         </div>
         <div className="p-2">
           <p>{dbData.product_name}</p>
-          <p>${dbData.price}</p>
+          <p>${formatIntlNumber(dbData.price)}</p>
         </div>
         <FaCartShopping className={myStyle.cartStyle} />
       </div>
