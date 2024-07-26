@@ -27,6 +27,7 @@ export default function Card01({
   reservation_date = '',
   start_time = '',
   themeTime = 0,
+  team_status ='',
 }) {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {

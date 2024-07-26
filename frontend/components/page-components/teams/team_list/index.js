@@ -120,8 +120,8 @@ export default function TeamList() {
                 onChange={(e) => setTeamStatus(e.target.value)}
                 options={[
                   { value: '', text: '隊伍狀態' },
-                  { value: '1', text: '募集中' },
-                  { value: '2', text: '已成團' },
+                  { value: '募集中', text: '募集中' },
+                  { value: '已成團', text: '已成團' },
                 ]}
               />
             </div>
@@ -143,6 +143,7 @@ export default function TeamList() {
                     reservation_date={r.reservation_date}
                     start_time={r.start_time}
                     team_title={r.team_title}
+                    team_status={r.team_status}
                   />
                 </div>
               )
