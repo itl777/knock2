@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react'
 
 const useIntersectionObserver = (refs = []) => {
-  const [isVisible, setIsVisible] = useState(refs.map(() => false));
+  const [isVisible, setIsVisible] = useState(refs.map(() => false))
 
   useEffect(() => {
     const observers = refs.map((ref, index) => {
@@ -9,37 +9,37 @@ const useIntersectionObserver = (refs = []) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVisible((prev) => {
-              const newVisible = [...prev];
-              newVisible[index] = true;
-              return newVisible;
-            });
+              const newVisible = [...prev]
+              newVisible[index] = true
+              return newVisible
+            })
           } else {
             setIsVisible((prev) => {
-              const newVisible = [...prev];
-              newVisible[index] = false;
-              return newVisible;
-            });
+              const newVisible = [...prev]
+              newVisible[index] = false
+              return newVisible
+            })
           }
-        });
-      });
-    });
+        })
+      })
+    })
 
     refs.forEach((ref, index) => {
       if (ref.current) {
-        observers[index].observe(ref.current);
+        observers[index].observe(ref.current)
       }
-    });
+    })
 
     return () => {
       refs.forEach((ref, index) => {
         if (ref.current) {
-          observers[index].unobserve(ref.current);
+          observers[index].unobserve(ref.current)
         }
-      });
-    };
-  }, []);
+      })
+    }
+  }, [])
 
-  return isVisible;
-};
+  return isVisible
+}
 
-export default useIntersectionObserver;
+export default useIntersectionObserver

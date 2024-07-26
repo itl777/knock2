@@ -3,16 +3,10 @@ import 'hover.css/css/hover-min.css'
 import IconButton from '@mui/material/IconButton'
 import { IoHeartOutline } from 'react-icons/io5'
 import FavoriteIcon from '@mui/icons-material/Favorite'
-import Image from 'next/image'
 import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
 
 export default function CartFavoriteIcon({ product_id }) {
   const { toggleButton, animate, data } = useFavoriteProduct(product_id)
-  // const btnStyle = {
-  //   position: 'absolute',
-  //   top: '6px',
-  //   right: '6px',
-  // }
   return (
     <>
       <IconButton
@@ -20,7 +14,7 @@ export default function CartFavoriteIcon({ product_id }) {
         aria-label="favorite"
         size="large"
         // sx={btnStyle}
-        className={animate ?myStyle.addToFavoriteIcon:''}
+        className={animate ? myStyle.addToFavoriteIcon : ''}
         // className={animate ? myStyle.likeBefore : ''}
       >
         {data.includes(product_id) ? (

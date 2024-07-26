@@ -1,19 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import moment from 'moment-timezone'
-
-// import { useAuth } from '@/context/auth-context';
+import styles from '@/components/page-components/teams/teams.module.css'
+import { useFetch } from '@/hooks/useTeamFetch'
 import { NO_TEAM } from '@/configs/api-path'
 
-import PdBtnContained from '@/components/UI/pd-btn-contained'
-
 export default function PreTeam({ user_id = '' }) {
-  const [noTeamData, setNoTeamData] = useState({
-    success: false,
-    rows: [],
-  })
-  const [isLoading, setIsLoading] = useState(true)
-
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
   }
@@ -22,70 +14,50 @@ export default function PreTeam({ user_id = '' }) {
     return moment(timeString, 'HH:mm:ss').format('A hh:mm')
   }
 
-  useEffect(() => {
-    const fetchNoTeamData = async () => {
-      try {
-        const res = await fetch(`${NO_TEAM}${user_id}`)
-        if (!res.ok) {
-          throw new Error('Fetch Failed')
-        }
-
-        const myData = await res.json()
-        setNoTeamData(myData)
-      } catch (error) {
-        console.error('Fetch error:', error)
-      }
-    }
-
-    const fetchData = async () => {
-      await Promise.all([fetchNoTeamData()])
-      setIsLoading(false)
-    }
-
-    fetchData()
-  }, [user_id])
-
-  if (isLoading) {
+  const { data: noTeamData, isLoading: isNoTeamDataLoading } = useFetch(
+    `${NO_TEAM}${user_id}`
+  )
+  if (isNoTeamDataLoading) {
     return <div>Now Loading...</div>
   }
 
   return (
     <div className="row">
-      <h4>已預約的行程</h4>
+      <h4 style={{ textAlign: 'center' }}>已預約的行程</h4>
       {noTeamData.success ? (
-        <table>
-          <thead>
-            <tr>
-              <th>日期</th>
-              <th>行程</th>
-              <th>團名</th>
-              <th>人數</th>
-              <th>修改</th>
-            </tr>
-          </thead>
-          <tbody>
-            {noTeamData.rows.map((r) => (
-              <tr key={r.reservation_id}>
-                <td>
+        <>
+          {noTeamData.rows.map((r) => (
+            <div className="col-lg-6 col-12" key={r.reservation_id}>
+              <div className="row">
+                <div className="col-9">
+                  日期時間
+                  <br />
                   {formatDateToTaiwan(r.reservation_date)}{' '}
                   {formatTime(r.start_time)}
-                </td>
-                <td>{r.theme_name}</td>
-                <td></td>
-                <td></td>
-                <td>
-                  <Link
-                    href={`/teams/add_team?reservation_id=${r.reservation_id}`}
-                  >
-                    <PdBtnContained btnText="我要開團" color="black" />
-                  </Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+                <div className="col-3">
+                  行程
+                  <br />
+                  {r.theme_name}
+                </div>
+              </div>
+              <div
+                style={{ textAlign: 'center', marginTop: '12px' }}
+                className="row"
+              >
+                <Link
+                  href={`/teams/add_team?reservation_id=${r.reservation_id}`}
+                >
+                  <button className={styles.teamButton}>我要開團</button>
+                </Link>
+              </div>
+            </div>
+          ))}
+        </>
       ) : (
-        <p>無資料</p>
+        <>
+          <div className={styles.noDataInfo}>沒有預訂行程，要不要<Link href="/themes">趕快預訂</Link>呢？</div>
+        </>
       )}
     </div>
   )

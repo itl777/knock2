@@ -18,6 +18,7 @@ import UserProfileSelect from './user-profile-item/UserProfileSelect'
 import UserProfileBirthday from './user-profile-item/birthday'
 import AvatarFormItem from './avatar'
 import AvatarFormDialogs from '../user-avatar-form'
+import AddressModal from '../address-modal'
 import schemaForm from './schema-form'
 import BlackBtn from '@/components/UI/black-btn'
 import ConfirmDialog from '@/components/UI/confirm-dialog'
@@ -32,7 +33,8 @@ export default function UserProfileForm() {
   // state
   const [profileForm, setProfileForm] = useState({})
   const [addressValue, setAddressValue] = useState({})
-  const [addressForm, setAddressForm] = useState([])
+  const [addressOptions, setAddressOptions] = useState([])
+  const [addressFormData, setAddressFormData] = useState([])
   const [birthdayValue, setBirthdayValue] = useState({
     year: '',
     month: '',
@@ -54,6 +56,7 @@ export default function UserProfileForm() {
     tax_id: '',
   })
   const [openAvatarModal, setOpenAvatarModal] = useState(false)
+  const [openAddressModal, setOpenAddressModal] = useState(false)
 
   // function
   const unset2fa = async () => {
@@ -261,10 +264,11 @@ export default function UserProfileForm() {
             return {
               value: v.id,
               type: v.type,
-              text: `${v.postal_codes} ${v.city_name}${v.district_name}${v.address} - ${v.recipient_name} / ${v.recipient_phone}`,
+              text: `${v.postal_codes} ${v.city_name}${v.district_name}${v.address} - ${v.recipient_name} / ${v.mobile_phone}`,
             }
           })
-          setAddressForm(options)
+          setAddressOptions(options)
+          setAddressFormData(data.address)
           // 寫入 address value
           const values = data.address.find((v) => v.type === '1')
           if (values) {
@@ -347,6 +351,7 @@ export default function UserProfileForm() {
                 <UserProfileFormTitle text={'個人資料'} />
                 <UserProfileInput
                   label="姓名"
+                  required={true}
                   name="name"
                   type="text"
                   value={profileForm.name}
@@ -357,6 +362,7 @@ export default function UserProfileForm() {
                 />
                 <UserProfileInput
                   label="暱稱"
+                  required={true}
                   name="nick_name"
                   type="text"
                   value={profileForm.nick_name}
@@ -405,13 +411,26 @@ export default function UserProfileForm() {
                   onChange={handleChange}
                 />
                 <UserProfileSelect
-                  label="收件地址"
-                  options={addressForm}
+                  label="預設地址"
+                  options={addressOptions}
                   name="address_id"
                   value={addressValue.address_id}
                   placeholder="請選擇常用收件地址"
+                  btn={true}
+                  btnText="編輯地址"
+                  btnOnClick={() => {
+                    setOpenAddressModal(true)
+                  }}
                   errorText={profileFormErrors.address_id}
                   onChange={handleChange}
+                />
+                <AddressModal
+                  addressFormData={addressFormData}
+                  open={openAddressModal}
+                  updateData={fetchData}
+                  onClose={() => {
+                    setOpenAddressModal(false)
+                  }}
                 />
               </div>
             </div>

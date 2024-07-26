@@ -48,7 +48,7 @@ export default function BookingBtn({ targetId }) {
             priority={false}
           />
           <Image
-            src="/ghost/ghost_08.png"
+            src="/ghost/ghost_21.png"
             alt="top-button-hover"
             width={130}
             height={110}

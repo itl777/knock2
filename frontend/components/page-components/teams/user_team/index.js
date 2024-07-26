@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import styles from '@/pages/teams/teams.module.css'
+import styles from '@/components/page-components/teams/teams.module.css'
 
 import { useAuth } from '@/context/auth-context'
-import { GET_USER_DATA } from '@/configs/api-path'
+import {
+  GET_DATA,
+  GET_ALL_MEMBER,
+  GET_USER_DATA,
+  USER_JOIN_TEAM,
+} from '@/configs/api-path'
+import { useFetch } from '@/hooks/useTeamFetch'
 import PreTeam from './preteam'
 
 import Link from 'next/link'
@@ -15,121 +21,159 @@ import {
   Typography,
 } from './mui_style'
 
-// import PdBtnContained from '@/components/UI/pd-btn-contained'
-
 export default function UserTeam() {
   const { auth } = useAuth()
 
-  const [userData, setUserData] = useState({
-    success: false,
-    rows: [],
-  })
+  const { data: allTeamData, isLoading: isAllTeamDataLoading } =
+    useFetch(GET_DATA)
+  const { data: userData, isLoading: isUserDataLoading } = useFetch(
+    `${GET_USER_DATA}${auth.id}`
+  )
+  const { data: joinTeamData, isLoading: isJoinTeamDataLoading } = useFetch(
+    `${USER_JOIN_TEAM}${auth.id}`
+  )
+  const { data: teamMemberData, isLoading: isTeamMemberDataLoading } =
+    useFetch(GET_ALL_MEMBER)
 
   const formatDateToTaiwan = (dateString) => {
-    return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
+    return moment(dateString).tz('Asia/Taipei').format('YYYY/MM/DD')
   }
   const formatTime = (timeString) => {
     return moment(timeString, 'HH:mm:ss').format('A hh:mm')
   }
 
-  const [isLoading, setIsLoading] = useState(true)
-
-  // 登入者的團隊
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const res = await fetch(`${GET_USER_DATA}/${auth.id}`)
-        if (!res.ok) {
-          throw new Error('Fetch Failed')
-        }
-
-        const myData = await res.json()
-        setUserData(myData)
-      } catch (error) {
-        console.error('Fetch error:', error)
-      }
-    }
-
-    const fetchData = async () => {
-      await Promise.all([fetchUserData()])
-      setIsLoading(false)
-    }
-
-    fetchData()
-  }, [auth.id])
-
-  if (isLoading) {
+  if (
+    isUserDataLoading ||
+    isJoinTeamDataLoading ||
+    isTeamMemberDataLoading ||
+    isAllTeamDataLoading
+  ) {
     return <div>Now Loading...</div>
   }
+
+  // 加入的隊伍
+  const filteredTeams = allTeamData.rows.filter((team) =>
+    joinTeamData.data.some(
+      (member) =>
+        member.join_team_id === team.team_id && member.join_user_id === auth.id
+    )
+  )
+
+  // 計算隊員數量
+  const teamMemberCount = {}
+  teamMemberData.data.forEach((member) => {
+    if (teamMemberCount[member.join_team_id]) {
+      teamMemberCount[member.join_team_id]++
+    } else {
+      teamMemberCount[member.join_team_id] = 1
+    }
+  })
 
   return (
     <>
       <div className={styles.teamsPage}>
         <div className="container">
-          {/* <div className="row">
-            目前登入者：{auth.nickname}
-            <br />
-            id = {auth.id}
-          </div> */}
-          {/* User Teams */}
           <div className="row pb-3">
             <Accordion>
               <AccordionSummary
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
-                <Typography>您的團隊</Typography>
+                <Typography component="div">您的團隊</Typography>
               </AccordionSummary>
-              <AccordionDetails>
-                <Typography>
+              <AccordionDetails component="div">
+                <Typography component="div">
                   {userData.success ? (
                     <>
                       <div className="row">
-                        <h4>您帶領的團隊</h4>
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>日期</th>
-                              <th>行程</th>
-                              <th>團名</th>
-                              <th>人數</th>
-                              <th>修改</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {userData.rows.map((r, i) => {
-                              return (
-                                <>
-                                  <tr key={r.team_id}>
-                                    <td>
-                                      {formatDateToTaiwan(r.reservation_date)}{' '}
-                                      {formatTime(r.start_time)}
-                                    </td>
-                                    <td>{r.theme_name}</td>
-                                    <td>{r.team_title}</td>
-                                    <td>目前 / {r.team_limit}</td>
-                                    <td>
-                                      <Link href={`/teams/${r.team_id}`}>
-                                        管理團隊
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                </>
-                              )
-                            })}
-                          </tbody>
-                        </table>
+                        <div
+                          className={`col-12 col-lg-6 ${styles.teamlistblock} ${styles.teamlistblock1}`}
+                        >
+                          <h4 style={{ textAlign: 'center' }}>您帶領的團隊</h4>
+                          <table className={styles.teamTable}>
+                            <thead>
+                              <tr>
+                                <th>團名</th>
+                                <th>行程</th>
+                                <th>日期時間</th>
+                                <th>人數</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {userData.rows.map((r, i) => {
+                                return (
+                                  <>
+                                    <tr key={r.team_id}>
+                                      <td>
+                                        {' '}
+                                        <Link href={`/teams/${r.team_id}`}>
+                                          {r.team_title}
+                                        </Link>
+                                      </td>
+                                      <td>{r.theme_name}</td>
+                                      <td>
+                                        {formatDateToTaiwan(r.reservation_date)}{' '}
+                                        {formatTime(r.start_time)}
+                                      </td>
+                                      <td>
+                                        {teamMemberCount[r.team_id] || 0} /{' '}
+                                        {r.team_limit}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              })}
+                            </tbody>
+                          </table>
+                          <div className={styles.bb2}></div>
+                        </div>
+                        <div className="col-12 col-lg-6">
+                          <h4 style={{ textAlign: 'center' }}>您參加的團隊</h4>
+                          <table className={styles.teamTable}>
+                            <thead>
+                              <tr>
+                                <th>團名</th>
+                                <th>行程</th>
+                                <th>日期時間</th>
+                                <th>人數</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {filteredTeams.map((r, i) => {
+                                return (
+                                  <>
+                                    <tr key={r.team_id}>
+                                      <td>
+                                        {' '}
+                                        <Link href={`/teams/${r.team_id}`}>
+                                          {r.team_title}
+                                        </Link>
+                                      </td>
+                                      <td>{r.theme_name}</td>
+                                      <td>
+                                        {formatDateToTaiwan(r.reservation_date)}{' '}
+                                        {formatTime(r.start_time)}
+                                      </td>
+                                      <td>
+                                        {teamMemberCount[r.team_id] || 0} /{' '}
+                                        {r.team_limit}
+                                      </td>
+                                    </tr>
+                                  </>
+                                )
+                              })}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div className={styles.bb}></div>
                       </div>
-                      <p>&nbsp;</p>
-                      <h4>您參加的團隊</h4>
-                      <p>&nbsp;</p>
                     </>
                   ) : (
-                    <p>
-                      沒有參與隊伍的紀錄
-                      <br />
-                      <br />
-                    </p>
+                    <>
+                      <div className={styles.noDataInfo}>
+                        沒有參與隊伍的紀錄
+                      </div>
+                    </>
                   )}
 
                   <PreTeam user_id={auth.id} />

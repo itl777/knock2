@@ -8,6 +8,7 @@ import 'hover.css/css/hover-min.css'
 import myStyle from './card.module.css'
 import FavoriteIconBtn from './favorite-icon-btn'
 import { useProductImg } from '@/hooks/useProductImg'
+import { formatIntlNumber } from '@/hooks/numberFormat'
 import BuyBtn2 from './buy-btn2' // ******* Iris added *******
 import { useCart } from '@/context/cart-context' // ******* Iris added *******
 
@@ -35,7 +36,8 @@ export default function Card({ dbData }) {
     <>
       <div
         data-aos="fade-up"
-        className={`${myStyle.card} card hvr-grow-shadow`}
+        className={`${myStyle.card} card`}
+        // className={`${myStyle.card} card hvr-grow-shadow`}
       >
         <Link
           href={`product/product-details/${dbData.product_id}`}
@@ -64,7 +66,9 @@ export default function Card({ dbData }) {
           >
             <div className={`${myStyle['card-btn']} d-flex`}>
               <div className={`${myStyle['buy-btn-outer']} w-100 py-1`}>
-                <div className={`${myStyle['buy-btn']}`}>${dbData.price}</div>
+                <div className={`${myStyle['buy-btn']}`}>
+                  ${formatIntlNumber(dbData.price)}
+                </div>
               </div>
               <div className={`${myStyle['buy-btn-outer']} w-100`}>
                 {/* ******* Iris Added Start ******* */}

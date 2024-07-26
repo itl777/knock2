@@ -5,11 +5,7 @@ import UserTab from '@/components/UI/user-tab'
 import FavoriteSection from '@/components/page-components/products/favorite-section/index'
 import { ProductProvider } from '@/context/product-context'
 
-
-
 export default function Favorite() {
- 
-
   return (
     <>
       <ProductProvider>

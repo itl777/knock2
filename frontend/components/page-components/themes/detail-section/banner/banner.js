@@ -40,6 +40,7 @@ const Banner = () => {
           backgroundSize: '150% 100%',
           pointerEvents: 'none',
           opacity: 1,
+          zIndex: 3,
         }}
         className="absolute inset-0"
       />
@@ -76,13 +77,14 @@ const Banner = () => {
   const handleDeclineMusic = () => {
     setShowMusicPrompt(false)
   }
+
   useEffect(() => {
     const { branch_themes_id } = router.query
     if (branch_themes_id) {
       setLoading(true)
       getThemeDetails(branch_themes_id).finally(() => {
         setLoading(false)
-        setShowMusicPrompt(true) // 顯示音樂播放提示
+        setShowMusicPrompt(true)
       })
     }
 
@@ -134,15 +136,46 @@ const Banner = () => {
         style={{
           position: 'relative',
           minHeight: 'calc(100vh - 100px)',
-          background: `linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(155, 155, 155, 0.1)), url("/themes-main/${themeDetails.theme_img}") no-repeat center center / cover`,
           display: 'flex',
           alignItems: 'center',
+          overflow: 'hidden',
         }}
       >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 1,
+          }}
+        >
+          <source src={`/mp4/01.mp4`} type="video/mp4" />
+          您的瀏覽器不支持 video 標籤。
+        </video>
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background:
+              'linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(155, 155, 155, 0.1))',
+            zIndex: 2,
+          }}
+        />
         <FuzzyOverlay />
-        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+        <div
+          className="container px-5 md-px-1"
+          style={{ position: 'relative', zIndex: 4 }}
+        >
           <div className="row">
-            <div className="col-6">
+            <div className="col-12 col-md-6">
               <h1 className={myStyle.h1}>{themeDetails.theme_name}</h1>
               <p className={myStyle.p}>{themeDetails.theme_desc}</p>
               <hr className={myStyle.hr} />
@@ -170,40 +203,40 @@ const Banner = () => {
                 </div>
               </div>
             </div>
-            <div className="col-6 d-flex justify-content-end align-items-end ">
-              <div className="d-flex align-items-end">
-                {isPlaying && (
-                  <div className={myStyle.soundBarsContainer}>
-                    {soundBars.map((bar, i) => (
-                      <div
-                        key={i}
-                        className={myStyle.soundBar}
-                        style={{
-                          '--min-height': `${bar.minHeight}px`,
-                          '--max-height': `${bar.maxHeight}px`,
-                          animationDelay: `${bar.delay}s`,
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-                <div
-                  className="d-flex justify-content-center align-items-center"
-                  style={{ height: '100%' }}
-                >
-                  <button onClick={togglePlay} className={myStyle.playerButton}>
-                    {isPlaying ? <FaPause /> : <FaPlay />}
-                  </button>
-                </div>
+          </div>
+        </div>
+        <div className={myStyle.play}>
+          <div className={myStyle.playerWrapper}>
+            {isPlaying && (
+              <div className={myStyle.soundBarsContainer}>
+                {soundBars.map((bar, i) => (
+                  <div
+                    key={i}
+                    className={myStyle.soundBar}
+                    style={{
+                      '--min-height': `${bar.minHeight}px`,
+                      '--max-height': `${bar.maxHeight}px`,
+                      animationDelay: `${bar.delay}s`,
+                    }}
+                  />
+                ))}
               </div>
-
-              {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-              <audio ref={audioRef} loop>
-                <source src="/music/music02.mp3" type="audio/mpeg" />
-                您的瀏覽器不支持 audio 元素。
-              </audio>
+            )}
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ height: '100%' }}
+            >
+              <button onClick={togglePlay} className={myStyle.playerButton}>
+                {isPlaying ? <FaPause /> : <FaPlay />}
+              </button>
             </div>
           </div>
+
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <audio ref={audioRef} loop>
+            <source src="/music/music02.mp3" type="audio/mpeg" />
+            您的瀏覽器不支持 audio 元素。
+          </audio>
         </div>
       </div>
 
@@ -213,41 +246,45 @@ const Banner = () => {
         modalTitle="注意事項"
         modalBody={
           <div>
-            <p>1. 活動採包場制，不協助並團，預約須達「遊戲最低人數」。</p>
-            <p>
+            <p className={myStyle.p1}>
+              1. 活動採包場制，不協助並團，預約須達「遊戲最低人數」。
+            </p>
+            <p className={myStyle.p1}>
               2.
               變更或取消預訂日期，請於預約日前一日來電通知。臨時取消將會影響您下次預約的優先權利。
             </p>
-            <p>
+            <p className={myStyle.p1}>
               3.
               在遊戲人數範圍內可以臨時追加人數，不需與客服聯繫，當日將以現場人數收費。遇天災或不可抗力因素取消或變更場次，以網站公告為準。
             </p>
-            <p>
-              4. 請「準時到場」集合報到，現場以{' '}
+            <p className={myStyle.p1}>
+              4. 請「準時到場」集合報到，現場以
               <span style={{ color: '#B99755', fontWeight: 'bold' }}>
                 現金收費
-              </span>{' '}
+              </span>
               並進行事前說明。超過表定時間未報到入場，即取消場次，開放給現場玩家預約。
             </p>
-            <p>
+            <p className={myStyle.p1}>
               5.
               活動流程包含事前說明、進行密室逃脫、遊戲後故事解說（無全程謎題講解）。
             </p>
-            <p>
+            <p className={myStyle.p1}>
               6.
-              遊玩人數低於建議人數時難度較高，不足開場人數時將導致活動無法進行。本遊戲因場景及遊戲設計，{' '}
-              <span style={{ color: '#B99755', fontWeight: 'bold' }}>
+              遊玩人數低於建議人數時難度較高，不足開場人數時將導致活動無法進行。本遊戲因場景及遊戲設計，
+              <span className={myStyle.p3}>
                 未滿12歲、孕婦及行動不便者不得入場
               </span>
               。
             </p>
-            <p>
+            <p className={myStyle.p1}>
               8.
               如因年齡未達遊戲主題限制，本工作室有權拒絕玩家入場，並不得將未成年孩童托管在場館內。如有特殊需求（嬰兒車、寵物等），請先來電詢問。
             </p>
-            <p>9. 遊戲期間請勿飲食、攝影及錄音。</p>
-            <p>10. 場內設置各項活動機關，請「穿著方便活動的衣物」。</p>
-            <p style={{ color: '#B99755', fontWeight: 'bold' }}>
+            <p className={myStyle.p1}>9. 遊戲期間請勿飲食、攝影及錄音。</p>
+            <p className={myStyle.p1}>
+              10. 場內設置各項活動機關，請「穿著方便活動的衣物」。
+            </p>
+            <p className={myStyle.p3}>
               遊戲過程中如有毀損道具及場景之行為，造成本工作室損失，將提出求償。（包含道具維修、場景修復、營業損失之費用等等）。
             </p>
           </div>
@@ -258,4 +295,3 @@ const Banner = () => {
 }
 
 export default Banner
-/* eslint-disable @next/next/no-img-element */

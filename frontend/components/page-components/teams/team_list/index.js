@@ -3,9 +3,11 @@ import { useRouter } from 'next/router'
 
 import { GET_DATA } from '@/configs/api-path'
 
-import styles from '@/pages/teams/teams.module.css'
+import styles from '@/components/page-components/teams/teams.module.css'
 import Card from '@/components/UI/teams-card'
 import MyPagination from './pagination'
+
+import SelectT from './selectT'
 
 export default function TeamList() {
   const router = useRouter()
@@ -17,7 +19,8 @@ export default function TeamList() {
 
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [branchId, setBranchId] = useState('')
+  const [branchID, setBranchID] = useState('')
+  const [difficulty, setDifficulty] = useState('')
   const [order, setOrder] = useState('')
   const [teamStatus, setTeamStatus] = useState('')
   // const [perPage] = useState(6)
@@ -25,11 +28,14 @@ export default function TeamList() {
   const fetchData = async () => {
     const params = new URLSearchParams({ page })
 
-    if (branchId) {
-      params.append('branch_id', branchId)
+    if (branchID) {
+      params.append('branch_id', branchID)
     }
     if (order) {
       params.append('order', order)
+    }
+    if (difficulty) {
+      params.append('difficulty', difficulty)
     }
     if (teamStatus) {
       params.append('team_status', teamStatus)
@@ -46,60 +52,78 @@ export default function TeamList() {
   }
 
   useEffect(() => {
-    fetchData()
-  }, [branchId, order, teamStatus, page])
+    fetchData(page)
+  }, [branchID, order, difficulty, teamStatus, page])
 
   return (
     <>
       <div className={styles.teamsPage}>
         <div className="container">
           <div className="row">
-            <h4>團隊一覽</h4>
+            <h3 className={styles.secTitle}>團隊一覽</h3>
             <hr />
           </div>
 
           {/* 篩選排序 */}
           <div className="row pb-5">
             <h4>篩選排序</h4>
-            <div className="col-12 col-md-6 col-lg-4">
-              <label>
-                <select
-                  value={branchId}
-                  onChange={(e) => setBranchId(e.target.value)}
-                >
-                  {/* <select value={location} onChange={(e) => setLocation(e.target.value)}> */}
-                  <option value="">館別篩選</option>
-                  <option value="1">台北館</option>
-                  <option value="2">台中館</option>
-                  <option value="3">高雄館</option>
-                </select>
-              </label>
+            <div className="col-12 col-md-6 col-lg-3">
+              <SelectT
+                name="branch"
+                label="館別篩選"
+                value={branchID}
+                placeholder="館別篩選"
+                onChange={(e) => setBranchID(e.target.value)}
+                options={[
+                  { value: '', text: '館別篩選' },
+                  { value: '3', text: '台北館' },
+                  { value: '2', text: '台中館' },
+                  { value: '1', text: '高雄館' },
+                ]}
+              />
             </div>
-            <div className="col-12 col-md-6 col-lg-4">
-              <label>
-                <select
-                  value={order}
-                  onChange={(e) => setOrder(e.target.value)}
-                >
-                  {/* <select value={location} onChange={(e) => setLocation(e.target.value)}> */}
-                  <option value="">日期排序</option>
-                  <option value="DESC">從新到舊</option>
-                  <option value="ASC">從舊到新</option>
-                </select>
-              </label>
+            <div className="col-12 col-md-6 col-lg-3">
+              <SelectT
+                name="difficulty"
+                label="難度篩選"
+                value={difficulty}
+                placeholder="難度篩選"
+                onChange={(e) => setDifficulty(e.target.value)}
+                options={[
+                  { value: '', text: '難度篩選' },
+                  { value: 'EASY', text: 'EASY' },
+                  { value: 'MEDIUM', text: 'MEDIUM' },
+                  { value: 'HARD', text: 'HARD' },
+                ]}
+              />
             </div>
-            <div className="col-12 col-md-6 col-lg-4">
-              <label>
-                <select
-                  value={teamStatus}
-                  onChange={(e) => setTeamStatus(e.target.value)}
-                >
-                  {/* <select value={location} onChange={(e) => setLocation(e.target.value)}> */}
-                  <option value="">隊伍狀態</option>
-                  <option value="1">募集中</option>
-                  <option value="2">已成團</option>
-                </select>
-              </label>
+            <div className="col-12 col-md-6 col-lg-3">
+              <SelectT
+                name="order"
+                label="時間排序"
+                value={order}
+                placeholder="時間排序"
+                onChange={(e) => setOrder(e.target.value)}
+                options={[
+                  { value: '', text: '時間排序' },
+                  { value: 'DESC', text: '從新到舊' },
+                  { value: 'ASC', text: '從舊到新' },
+                ]}
+              />
+            </div>
+            <div className="col-12 col-md-6 col-lg-3">
+              <SelectT
+                name="teamStatus"
+                label="隊伍狀態"
+                value={teamStatus}
+                placeholder="隊伍狀態"
+                onChange={(e) => setTeamStatus(e.target.value)}
+                options={[
+                  { value: '', text: '隊伍狀態' },
+                  { value: '募集中', text: '募集中' },
+                  { value: '已成團', text: '已成團' },
+                ]}
+              />
             </div>
           </div>
           <div className="row">
@@ -119,13 +143,18 @@ export default function TeamList() {
                     reservation_date={r.reservation_date}
                     start_time={r.start_time}
                     team_title={r.team_title}
+                    team_status={r.team_status}
                   />
                 </div>
               )
             })}
           </div>
           <div>
-          <MyPagination totalPages={totalPages} />
+            <MyPagination
+              totalPages={totalPages}
+              fetchData={fetchData}
+              setPage={setPage}
+            />
           </div>
         </div>
       </div>

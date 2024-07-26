@@ -8,7 +8,7 @@ import { useLoginModal } from '@/context/login-context/index'
 // styles
 import styles from '../login-form.module.scss'
 // components
-import ClearButton from '@/components/UI/ClearButton'
+import ClearButton from '@/components/UI/clear-button'
 import LoginInput from './login-input'
 import OTPInput from '@/components/UI/form-item/otp-input'
 

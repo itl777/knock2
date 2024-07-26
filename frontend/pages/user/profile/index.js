@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/auth-context'
 
@@ -19,15 +19,16 @@ export default function Profile() {
       router.push('/')
       loginFormSwitch('Login')
     }
-  }, [auth.id, router.isReady, authIsReady])
+    // 下面這行 讓eslint略過一行檢查
+    // eslint-disable-next-line
+  }, [auth.id, authIsReady])
+
+  if (!auth.id) return null
 
   return (
     <>
-      <IndexLayout title="會員中心" background="light">
-        <UserLayout
-          userTab={<UserTab />}
-          sectionRight={auth.id ? <UserProfileForm /> : ''}
-        />
+      <IndexLayout title="會員中心" pageName="profile" background="light">
+        <UserLayout userTab={<UserTab />} sectionRight={<UserProfileForm />} />
       </IndexLayout>
     </>
   )

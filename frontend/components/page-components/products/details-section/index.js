@@ -1,4 +1,6 @@
+import Message from '../message'
 import myStyle from './details.module.css'
+
 export default function DetailsSection({ breadcrumb, features, tab }) {
   return (
     <>
@@ -9,6 +11,7 @@ export default function DetailsSection({ breadcrumb, features, tab }) {
           {tab}
         </div>
       </div>
+      <Message />
     </>
   )
 }

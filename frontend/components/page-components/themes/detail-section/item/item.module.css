@@ -48,7 +48,53 @@ color: #B99755;
     color: #D9D9D9;
     font-size: 48px;
 }
-.b {
-    background:url('/themes-banner/banner-07.png') center center;
+.themeBanner {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
     height: 400px;
+    width: 100%;
+  }
+@media screen and (max-width: 480px){
+    .item{
+        height: 110px;
+    }
+    .p{
+        font-size: 12px;
+        margin-top: 10px;
+    }
+    .group{
+        font-size: 33px;
+    }
+    .clock{
+        font-size: 33px;
+    }
+    .price{
+        height: 110px;
+        background-color: var(--pri-1);
+    }
+    .tag{
+        color: #D9D9D9;
+        font-size: 12px;
+        text-align: center;
+        border-right: 1px solid #D9D9D9;
+        margin-left: -10px;
+    }
+    .tag2{
+        color: #D9D9D9;
+        font-size: 12px;
+        text-align: center;
+        margin-left: -5px;
+    }
+    .org{
+    font-size: 16px;
+    color: #B99755;
+    }
+    .other{
+        color: #D9D9D9;
+        font-size: 16px;
+    }
+    .themeBanner {
+        height: 110px;
+    }
 }

@@ -1,45 +1,88 @@
 import Image from 'next/image'
 import ReviewStar from '@/components/UI/review-rating'
+import { useState, useEffect } from 'react'
+import myStyle from './tabs.module.css'
+import { PRODUCT_LIST, API_SERVER } from '@/configs/api-path'
 
-export default function ProductReview() {
+export default function ProductReview({ product_id }) {
+  const [productId, setProductId] = useState(product_id)
+  const [reviewData, setReviewData] = useState([])
+
+  useEffect(() => {
+    if (product_id && product_id.length > 0) {
+      const newData = { ...product_id[0] }
+      setProductId(newData)
+      console.log('ProductReview------------')
+    }
+  }, [product_id])
+
+  const getReview = async (id) => {
+    console.log('getReview------------')
+
+    const url = `${PRODUCT_LIST}/review?product_id=${id}`
+    try {
+      const res = await fetch(url)
+      const resData = await res.json()
+      if (resData.success) {
+        setReviewData(resData.rows)
+        console.log('執行完fetch', resData.rows) //返回array
+      } else {
+        console.log('success=false', resData)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  useEffect(() => {
+    getReview(productId)
+  }, [productId])
+
   return (
     <>
-      <div className="add-line pb-5 d-flex justify-content-between align-items-center">
-        <div>
-          <Image
-            src="/products/p1.png"
-            width={95}
-            height={95}
-            alt="Picture of the author"
-          />
-        </div>
+      {reviewData.length ? (
+        reviewData.map((value) => {
+          return (
+            <div className={myStyle.reviewed} key={value.id}>
+              <div className={myStyle.mask}>
+                <Image
+                  src={`${API_SERVER}/avatar/${value.avatar}`}
+                  width={97}
+                  height={95}
+                  alt="Picture of the author"
+                />
+              </div>
+              {/* 星星 */}
+              <div className="text-nowrap mx-5">
+                <ReviewStar size={'small'} rate={value.rate} />
+              </div>
 
-        <div className="text-nowrap px-5">
-          <ReviewStar />
-        </div>
+              <div className={myStyle.customerReview}>
+                {/* 內容 */}
+                <div className={myStyle.content}>
+                  {value.review ? value.review : '非常喜歡!'}
+                </div>
 
-        <div>
-          <div className="text-start">
-            卡坦島是一款絕佳的策略遊戲，玩法簡單易懂但深度豐富。我們全家每次玩都樂此不疲，強烈推薦！卡坦島是一款絕佳的策略遊戲，玩法簡單易懂但深度豐富。我們全家每次玩都樂此不疲，強烈推薦！卡坦島是一款絕佳的策略遊戲，玩法簡單易懂但深度豐富。我們全家每次玩都樂此不疲，強烈推薦！
-          </div>
-          <div className="d-flex justify-content-end">
-            <p className="mb-0 ps-4">購買人：OOO</p>
-            <p className="mb-0 ps-4">評價日期：2019/03/14</p>
-          </div>
-        </div>
-      </div>
-      <style jsx global>
-        {`
-          .add-line::after {
-            content: '';
-            width: 100%;
-            height: 2px;
-            position: absolute;
-            bottom: 0px;
-            background: #d9d9d9;
-          }
-        `}
-      </style>
+                {/* 購買人資訊 */}
+                {/* "d-flex justify-content-end" */}
+                <div className={myStyle.customer}>
+                  <div>
+                    <p>購買人：</p>
+                    <p>{value.nick_name[0] + 'OO'}</p>
+                  </div>
+
+                  <div>
+                    <p>評價日期：</p>
+                    <p>{value.order_date}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )
+        })
+      ) : (
+        <div className={myStyle.noReview}>尚無評價</div>
+      )}
     </>
   )
 }

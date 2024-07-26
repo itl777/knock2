@@ -55,7 +55,6 @@ export function LoginContextProvider({ children }) {
 
     if (result.success) {
       // 如果帳號密碼驗證成功，判斷是否有2步驟驗證
-      console.log(result)
       if (result.totp_enabled) {
         setTotpEnabled(true)
         setUserIdData(result.user_id)

@@ -208,7 +208,7 @@ const Calendar = ({ branch_themes_id }) => {
   }
 
   return (
-    <div className="container">
+    <div className="container-fluid container-md">
       <div className="row d-flex justify-content-evenly">
         <div className={myStyle.calendarBg}>
           <div className={myStyle.calendar}>
@@ -249,16 +249,16 @@ const Calendar = ({ branch_themes_id }) => {
               <tbody>{renderWeeks()}</tbody>
             </table>
 
-            <div className="mt-5 d-flex align-items-center justify-content-end mb-5">
-              <div className="d-flex align-items-center justify-content-end">
+            <div className="mt-3 d-flex flex-row align-items-center justify-content-end mb-4">
+              <div className="d-flex align-items-center justify-content-end mb-2 mb-md-0">
                 <FaCircle className={myStyle.icon2} />
                 <span>場次已額滿</span>
               </div>
-              <div className="d-flex align-items-center justify-content-end">
+              <div className="d-flex align-items-center justify-content-end mb-2 mb-md-0">
                 <FaCircle className={myStyle.icon3} />
                 <span>剩部分場次</span>
               </div>
-              <div className="d-flex align-items-center justify-content-end">
+              <div className="d-flex align-items-center justify-content-end mb-2 mb-md-0">
                 <FaCircle className={myStyle.icon4} />
                 <span>開放預約</span>
               </div>
@@ -266,8 +266,8 @@ const Calendar = ({ branch_themes_id }) => {
 
             <hr className={myStyle.hr} />
 
-            <div className="d-flex justify-content-between">
-              <div className={`${myStyle.info}`}>
+            <div className="d-flex flex-column flex-md-row justify-content-between">
+              <div className={`${myStyle.info} mb-3 mb-md-0`}>
                 <div className="mb-3">預約當日場次請來電 (･∀･)</div>
                 <div>For international travelers, </div>
                 <div>please send a direct message</div>
