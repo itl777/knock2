@@ -208,7 +208,7 @@ const Banner = () => {
             display: videoLoaded ? 'block' : 'none', // 只在加載完成後顯示
           }}
         >
-          <source src={`/mp4/${themeDetails.theme_mp4}`} type="video/mp4" />
+          <source src={`/mp4/01.mp4`} type="video/mp4" />
           您的瀏覽器不支持 video 標籤。
         </video>
         <div
@@ -288,7 +288,7 @@ const Banner = () => {
 
           {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
           <audio ref={audioRef} loop>
-            <source src={`/music/${themeDetails.bg_music}`} type="audio/mpeg" />
+            <source src="/music/music02.mp3" type="audio/mpeg" />
             您的瀏覽器不支持 audio 元素。
           </audio>
         </div>
