@@ -13,7 +13,7 @@ import checkout from "./routes/checkout.js";
 import payments from "./routes/payments.js";
 import coupons from "./routes/coupons.js";
 import reservations from "./routes/reservations.js";
-import invoice from "./routes/invoice.js";
+// import invoice from "./routes/invoice.js";
 import notifications from "./routes/notifications.js";
 
 // 掛載 express
@@ -63,7 +63,7 @@ app.use("/checkout", checkout);
 app.use("/payments", payments);
 app.use("/coupons", coupons);
 app.use("/reservations", reservations);
-app.use("/invoice", invoice);
+// app.use("/invoice", invoice);
 app.use("/notifications", notifications);
 
 // 偵聽 port
