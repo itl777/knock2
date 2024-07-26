@@ -439,7 +439,7 @@ export default function Reservation() {
                 </span>
               ))}
           </div>
-          <div style={{ textAlign: 'center', marginTop: '10px' }}>
+          <div className={myStyle.reservation}>
             <button className={myStyle.booking} type="submit">
               我要預約
             </button>
@@ -452,6 +452,10 @@ export default function Reservation() {
         open={modalOpen}
         onClose={closeModal}
         modalTitle="注意事項"
+        desktopWidth="600px"
+        desktopHeight="300px"
+        mobileWidth="300px"
+        mobileHeight="auto"
         modalBody={
           <div>
             <p>1. 活動採包場制，不協助並團，預約須達「遊戲最低人數」。</p>

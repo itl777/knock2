@@ -1,6 +1,6 @@
 .reservationrBg {
     width: 600px;
-    min-height: 860px; /* 設定最小高度，確保容器最初足夠大 */
+    min-height: 860px; 
     background-color: var(--pri-1);
     margin-top: 60px;
     margin-bottom: 60px;
@@ -10,7 +10,7 @@
     display: flex;
     justify-content: center;
     padding: 5px;
-    overflow: auto; /* 當內容超過容器時顯示滾動條 */
+    overflow: auto; 
     padding-bottom: 30px;
 }
 
@@ -46,4 +46,49 @@
     color: rgb(190, 0, 0);
     margin-top: 2.6px;
     font-size: 14px;
+}
+
+.reservation{
+    text-align: center;
+    margin-top: 10px;
+}
+@media screen and (max-width: 480px){
+    .reservationrBg {
+        width: 400px;
+        min-height: 860px;
+        background-color: var(--pri-1);
+        margin-top: 60px;
+        margin-bottom: 60px;
+        border: 2px solid var(--sec-1);
+        border-radius: 15px;
+        color: var(--pri-3);
+        display: flex;
+        justify-content: center;
+        padding: 5px;
+        padding-bottom: 30px;
+    }
+    .form{
+        margin-top: 30px;
+    }
+    
+    .p{
+        margin-top: 28px;
+    }
+    
+    .booking{
+        border: 1px solid var(--sec-1);
+        background-color: var(--pri-1);
+        color: var(--sec-1);
+        padding: 10px 30px;
+        border-radius: 30px;
+    }
+    
+    .title {
+        color: var(--sec-1);
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .reservation{
+        margin-top: 25px;
+    }
 }

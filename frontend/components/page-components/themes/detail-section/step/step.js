@@ -38,8 +38,8 @@ export default function Step() {
             className={`col-1 d-none d-md-block ${myStyle.icon2}`}
           />
           <div className="col-6 col-md-2 d-flex flex-column align-items-center mb-4">
-            <div className={myStyle.step}>
-              Step. 2<div className={myStyle.step}>預付訂金</div>
+            <div className={myStyle.step1}>
+              Step. 2<div className={myStyle.step1}>預付訂金</div>
             </div>
             <RiMoneyDollarCircleLine className={myStyle.icon} />
             <span className={myStyle.p}>填寫付款資料</span>
@@ -48,8 +48,8 @@ export default function Step() {
             className={`col-1 d-none d-md-block ${myStyle.icon2}`}
           />
           <div className="col-6 col-md-2 d-flex flex-column align-items-center mb-4">
-            <div className={myStyle.step}>
-              Step. 3<div className={myStyle.step}>確認資料</div>
+            <div className={myStyle.step1}>
+              Step. 3<div className={myStyle.step1}>確認資料</div>
             </div>
             <FaCheckCircle className={myStyle.icon} />
             <span className={myStyle.p}>確認預約資訊無誤</span>
@@ -58,8 +58,8 @@ export default function Step() {
             className={`col-1 d-none d-md-block ${myStyle.icon2}`}
           />
           <div className="col-6 col-md-2 d-flex flex-column align-items-center mb-4">
-            <div className={myStyle.step}>
-              Final<div className={myStyle.step}>預約完成</div>
+            <div className={myStyle.step1}>
+              Final<div className={myStyle.step1}>預約完成</div>
             </div>
             <div className={myStyle.check}></div>
             <span className={myStyle.p2}>歡迎遊玩密室逃脫</span>
