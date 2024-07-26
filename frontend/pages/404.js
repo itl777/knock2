@@ -12,6 +12,8 @@ export default function Custom404() {
     return () => {
       clearTimeout(backToHome)
     }
+    // 下面這行 讓eslint略過一行檢查
+    // eslint-disable-next-line
   }, [])
 
   return (
