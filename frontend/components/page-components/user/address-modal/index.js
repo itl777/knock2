@@ -112,12 +112,12 @@ export default function AddressModal({
     const response = await fetch(url, option)
     const result = await response.json()
     if (result.success) {
-      openSnackbar('更新地址成功', 'success')
+      openSnackbar('更新成功', 'success')
       reset()
       updateData()
       return
     } else {
-      console.error('更新地址失敗', result)
+      console.error('更新失敗', result)
     }
   }
   return (
