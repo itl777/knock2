@@ -30,10 +30,7 @@ const ChatDisplay = ({ chat_at, submissionCount }) => {
 
   return (
     <>
-      <div className={styles.borderbox}>
-        <div className="row">
-          <h4>留言區</h4>
-        </div>
+      <div className="row">
         {chatData.map((chat) => (
           <div key={chat.chat_id}>
             <div className="row">
@@ -44,11 +41,6 @@ const ChatDisplay = ({ chat_at, submissionCount }) => {
                   height={26}
                   alt={`${chat.nick_name} avatar`}
                 />
-                {/* <img
-                  src={chat.avatar ? `${API_SERVER}/avatar/${chat.avatar}` : ''}
-                  style={{ height: 26, width: 26 }}
-                  alt={`${chat.nick_name} avatar`}
-                /> */}
                 {chat.nick_name}
                 <br />
                 {moment(chat.create_at)

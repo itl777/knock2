@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { ADD_CHAT } from '@/configs/api-path'
 
 import styles from '@/pages/teams/teams.module.css'
-import SubmitBtn from '@/pages/teams/submit-btn'
+// import SubmitBtn from '@/pages/teams/submit-btn'
 
 export default function AddChatForm({ chat_at, chat_by, onSubmit }) {
   const [chatText, setChatText] = useState('')
@@ -40,25 +40,23 @@ export default function AddChatForm({ chat_at, chat_by, onSubmit }) {
   }
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className={`${styles.borderbox} typechat`}>
-          <h4 style={{ textAlign: 'center' }}>在此留言</h4>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              className="form-control"
-              id="chat_text"
-              name="chat_text"
-              value={chatText}
-              onChange={(e) => setChatText(e.target.value)}
-              placeholder="請輸入留言"
-            />
-            <div style={{ textAlign: 'center' }}>
-              <SubmitBtn btnText="送出留言" color="grey" />
-            </div>
-          </form>
-        </div>
+    <div className="row">
+      <div className={`typechat`}>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            className="form-control"
+            id="chat_text"
+            name="chat_text"
+            value={chatText}
+            onChange={(e) => setChatText(e.target.value)}
+            placeholder="請輸入留言"
+          />
+          <div style={{ textAlign: 'center', marginTop: '12px' }}>
+            <button className={styles.buttonBrown}>送出留言</button>
+            {/* <SubmitBtn btnText="送出留言" color="grey" /> */}
+          </div>
+        </form>
       </div>
     </div>
   )

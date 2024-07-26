@@ -69,15 +69,20 @@ export const COUPON_GET_GENERAL = `${API_SERVER}/coupons/get-coupon`
 
 
 //teams
-export const GET_DATA = `${API_SERVER}/teams/apiSearch`
-export const GET_TEAM_DATA = `${API_SERVER}/teams/apiSearch/team`
-export const GET_USER_DATA = `${API_SERVER}/teams/apiSearch/user`
-export const ONE_TEAM = `${API_SERVER}/teams/api/team/`
-export const NO_TEAM = `${API_SERVER}/teams/api/no_team/no_team_`
+export const GET_DATA = `${API_SERVER}/teams/teamSearch`
+export const GET_TEAM_DATA = `${API_SERVER}/teams/teamSearch/team`
+export const GET_USER_DATA = `${API_SERVER}/teams/teamSearch/user/lead_team_`
+export const ONE_TEAM = `${API_SERVER}/teams/api/team_info_`
+export const NO_TEAM = `${API_SERVER}/teams/api/no_team_`
 export const DISPLAY_CHAT = `${API_SERVER}/teams/api/chat/get_chat_at_`
 export const ADD_CHAT = `${API_SERVER}/teams/api/chat/add/`
-export const GET_MEMBER = `${API_SERVER}/teams/api/team_member/`
+export const GET_ALL_MEMBER = `${API_SERVER}/teams/api/all_member`
+export const GET_MEMBER = `${API_SERVER}/teams/api/team_member_at_`
+export const USER_JOIN_TEAM = `${API_SERVER}/teams/api/user_join_team_`
+export const MANAGE_MEMBER = `${API_SERVER}/teams/api/manage_member`
 export const JOIN_TEAM = `${API_SERVER}/teams/api/team_join/add/`
+export const R_CREATE_TEAM = `${API_SERVER}/teams/api/create_rid_`
+export const CREATE_TEAM = `${API_SERVER}/teams/api/create_team/`
 
 //THEME
 export const THEME_LIST = `${API_SERVER}/themes`
