@@ -5,15 +5,16 @@ import { useAuth } from '@/context/auth-context'
 import Image from 'next/image'
 import { AspectRatio } from '@mui/joy'
 
-import BasicModal02 from './team-modal'
+import BasicModal02 from '../../components/page-components/teams/team-modal-2'
 
-import TeamMemberComponent from './member/m'
+import TeamMemberComponent from '../../components/page-components/teams/member'
 import ChatArea from '@/components/page-components/teams/chat_area'
 
 import { API_SERVER, ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
 
-import styles from './teams.module.css'
+import styles from '@/components/page-components/teams/teams.module.css'
 import useDateFormatter from '@/hooks/useDateFormatter'
+import Link from 'next/link'
 
 export default function TeamInfo() {
   const router = useRouter()
@@ -113,7 +114,7 @@ export default function TeamInfo() {
   const closeModal = () => setModalOpen(false)
 
   if (!teamData) {
-    return <p>Loading...</p>
+    return <div>Loading...</div>
   }
 
   return (
@@ -129,10 +130,13 @@ export default function TeamInfo() {
                 <div className="row">
                   <div className="col-12 col-md-3">
                     <div className={styles.teamTitle}>
-                      <h3>{teamData.theme_name}</h3>
-                      {/* <span className={`${getDifficulty(teamData.difficulty)}`}>
-                        {teamData.difficulty}
-                      </span> */}
+                      <h3>
+                        <Link
+                          href={`/themes/themes-details/${teamData.theme_id}`}
+                        >
+                          {teamData.theme_name}
+                        </Link>
+                      </h3>
                     </div>
                     <div className="teamPhoto">
                       <AspectRatio ratio="375/240">
@@ -208,7 +212,7 @@ export default function TeamInfo() {
                           </button>
                         </>
                       ) : isMember ? (
-                        <p>您已申請加入此團隊</p>
+                        <div>您已申請加入此團隊</div>
                       ) : (
                         <>
                           <button

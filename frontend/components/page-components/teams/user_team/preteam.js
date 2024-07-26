@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import moment from 'moment-timezone'
-import styles from '@/pages/teams/teams.module.css'
-
-// import { useAuth } from '@/context/auth-context';
+import styles from '@/components/page-components/teams/teams.module.css'
+import { useFetch } from '@/hooks/useTeamFetch'
 import { NO_TEAM } from '@/configs/api-path'
 
-// import PdBtnContained from '@/components/UI/pd-btn-contained'
-
 export default function PreTeam({ user_id = '' }) {
-  const [noTeamData, setNoTeamData] = useState({
-    success: false,
-    rows: [],
-  })
-  const [isLoading, setIsLoading] = useState(true)
-
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
   }
@@ -23,30 +14,10 @@ export default function PreTeam({ user_id = '' }) {
     return moment(timeString, 'HH:mm:ss').format('A hh:mm')
   }
 
-  useEffect(() => {
-    const fetchNoTeamData = async () => {
-      try {
-        const res = await fetch(`${NO_TEAM}${user_id}`)
-        if (!res.ok) {
-          throw new Error('Fetch Failed')
-        }
-
-        const myData = await res.json()
-        setNoTeamData(myData)
-      } catch (error) {
-        console.error('Fetch error:', error)
-      }
-    }
-
-    const fetchData = async () => {
-      await Promise.all([fetchNoTeamData()])
-      setIsLoading(false)
-    }
-
-    fetchData()
-  }, [user_id])
-
-  if (isLoading) {
+  const { data: noTeamData, isLoading: isNoTeamDataLoading } = useFetch(
+    `${NO_TEAM}${user_id}`
+  )
+  if (isNoTeamDataLoading) {
     return <div>Now Loading...</div>
   }
 
@@ -56,7 +27,7 @@ export default function PreTeam({ user_id = '' }) {
       {noTeamData.success ? (
         <>
           {noTeamData.rows.map((r) => (
-            <div className="col-sm-4 col-12" key={r.reservation_id}>
+            <div className="col-lg-6 col-12" key={r.reservation_id}>
               <div className="row">
                 <div className="col-9">
                   日期時間
@@ -77,14 +48,16 @@ export default function PreTeam({ user_id = '' }) {
                 <Link
                   href={`/teams/add_team?reservation_id=${r.reservation_id}`}
                 >
-                  <button className={styles.buttonBrown}>我要開團</button>
+                  <button className={styles.teamButton}>我要開團</button>
                 </Link>
               </div>
             </div>
           ))}
         </>
       ) : (
-        <p>沒有其他預定行程</p>
+        <>
+          <div className={styles.noDataInfo}>沒有預訂行程，要不要<Link href="/themes">趕快預訂</Link>呢？</div>
+        </>
       )}
     </div>
   )

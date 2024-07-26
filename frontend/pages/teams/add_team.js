@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import IndexLayout from '@/components/layout'
-import styles from './teams.module.css'
+import styles from '@/components/page-components/teams/teams.module.css'
 import moment from 'moment-timezone'
-
+import LINK from 'next/link'
 import { useAuth } from '@/context/auth-context'
 import { R_CREATE_TEAM, CREATE_TEAM } from '@/configs/api-path'
+
+import BasicModal02 from '../../components/page-components/teams/team-modal-1'
+import TeamsNotice from '@/components/page-components/teams/add_team/add_notice'
 
 import SubmitBtn from '@/pages/teams/submit-btn'
 
@@ -13,6 +16,7 @@ export default function TeamsAdd() {
   const { auth } = useAuth()
   const router = useRouter()
 
+  const [modalOpen, setModalOpen] = useState(false)
   const [reservationData, setReservationData] = useState(null)
   const [createTeam, setCreateTeam] = useState({
     success: false,
@@ -22,7 +26,9 @@ export default function TeamsAdd() {
     team_note: '',
   })
 
-  const [error, setError] = useState('')
+  const [titleError, setTitleError] = useState('')
+  const [limitError, setLimitError] = useState('')
+  const [checkboxError, setCheckboxError] = useState('')
 
   const { reservation_id } = router.query
 
@@ -52,22 +58,35 @@ export default function TeamsAdd() {
     const { name, value } = e.target
     setCreateTeam({ ...createTeam, [name]: value })
 
+    if (name === 'team_title') {
+      if (value.length <= 2) {
+        setTitleError('團隊名稱需大於3個字')
+      } else {
+        setTitleError('')
+      }
+    }
+
     if (name === 'team_limit' && reservationData) {
       const maxLimit = reservationData.max_players - 1
       if (parseInt(value, 10) > maxLimit) {
-        setError(`此行程團員上限為${maxLimit}人`)
+        setLimitError(`此行程團員上限為${maxLimit}人`)
       } else {
-        setError('')
+        setLimitError('')
       }
     }
-    // setCreateTeam((prevCreateTeam) => ({
-    //   ...prevCreateTeam,
-    //   [name]: name === 'team_limit' ? parseInt(value) : value,
-    // }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const checkbox = document.getElementById('readCheck')
+
+    if (!checkbox.checked) {
+      setCheckboxError('請閱讀注意事項')
+      return
+    } else {
+      setCheckboxError('')
+    }
+
     try {
       const res = await fetch(CREATE_TEAM, {
         method: 'POST',
@@ -91,7 +110,15 @@ export default function TeamsAdd() {
       alert('創建團隊時發生錯誤')
     }
   }
-
+  const openModal = () => {
+    if (window.innerWidth < 992) {
+      setModalOpen(true)
+    }
+  }
+  const closeModal = () => {
+    setModalOpen(false)
+    document.getElementById('readCheck').checked = true
+  }
   return (
     <>
       <IndexLayout title="糾團" background="dark">
@@ -101,9 +128,9 @@ export default function TeamsAdd() {
         <div className={styles.teamsPage}>
           <div className="container">
             <div className="row">
-              <div className="col-12 col-md-6">
+              <div className="col-12 col-lg-6">
                 <div className={styles.borderbox}>
-                  <h3 className="boxTitle">創立團隊</h3>
+                  <h3 className={styles.teamTitle}>創立團隊</h3>
                   <form name="createTeam" onSubmit={handleSubmit}>
                     <div className="mb-3">
                       <label htmlFor={'lead_name'} className="form-label">
@@ -113,25 +140,25 @@ export default function TeamsAdd() {
                     {reservationData ? (
                       <div className="mb-3">
                         <div className="displayDetail">
-                          <p>主題名稱: {reservationData.theme_name}</p>
-                          <p>
+                          <div>主題名稱: {reservationData.theme_name}</div>
+                          <div>
                             預約日期:{' '}
                             {moment(reservationData.reservation_date).format(
                               'YYYY年MM月DD日'
                             )}
-                          </p>
-                          <p>
+                          </div>
+                          <div>
                             時間: {reservationData.start_time} ~{' '}
                             {reservationData.end_time}
-                          </p>
-                          <p>
+                          </div>
+                          <div>
                             人數: {reservationData.min_players} ~{' '}
                             {reservationData.max_players} 人
-                          </p>
+                          </div>
                         </div>
                       </div>
                     ) : (
-                      <p>Loading...</p>
+                      <div>Loading...</div>
                     )}
                     <hr />
                     <div className="mb-3">
@@ -147,6 +174,9 @@ export default function TeamsAdd() {
                         onChange={handleInputChange}
                         aria-describedby="enterteamname"
                       />
+                      <div style={{ color: 'red' }}>
+                        {titleError && titleError}
+                      </div>
                     </div>
                     <div className="mb-3">
                       <label htmlFor={'team_limit'} className="form-label">
@@ -161,7 +191,9 @@ export default function TeamsAdd() {
                         onChange={handleInputChange}
                         aria-label="enterteamlimit"
                       />
-                      {error && <p style={{ color: 'red' }}>{error}</p>}
+                      <div style={{ color: 'red' }}>
+                        &nbsp;{limitError && limitError}
+                      </div>
                     </div>
                     <div className="mb-3">
                       <label htmlFor={'team_note'} className="form-label">
@@ -179,14 +211,15 @@ export default function TeamsAdd() {
                       <input
                         type="checkbox"
                         className="form-check-input"
-                        id="exampleCheck1"
+                        id="readCheck"
                       />
-                      <label
-                        className="form-check-label"
-                        htmlFor={'exampleCheck1'}
-                      >
-                        我已閱讀<b>注意事項</b>
+                      <label className={styles.formCheck} htmlFor={'readCheck'}>
+                        我已閱讀
+                        <LINK href="#" onClick={openModal}>
+                          <b>注意事項</b>
+                        </LINK>
                       </label>
+                      <div style={{ color: 'red' }}>{checkboxError}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
                       <SubmitBtn btnText="建立團隊" color="grey" />
@@ -194,26 +227,21 @@ export default function TeamsAdd() {
                   </form>
                 </div>
               </div>
-              <div className="col-12 col-md-6">
+              <div className="col-lg-6 d-none d-lg-block">
                 <div className={styles.borderbox}>
-                  <h3 className="boxTitle">注意事項</h3>
-                  <ol>
-                    <li>1. 請先完成預約行程手續，並支付訂金。</li>
-                    <li>2. 選擇想揪團的行程後，填寫創團表單。</li>
-                    <li>3. 創團後，團長可以審核是否讓申請入團的使用者加入。</li>
-                    <li>
-                      4.
-                      確定成團後，團隊狀態將會變為「已成團」。成團之後團長無法任意更改團員名單。
-                    </li>
-                    <li></li>
-                    <li></li>
-                  </ol>
+                  <TeamsNotice />
                 </div>
               </div>
             </div>
           </div>
         </div>
       </IndexLayout>
+      <BasicModal02
+        open={modalOpen}
+        onClose={closeModal}
+        modalTitle="注意事項"
+        modalBody={<TeamsNotice />}
+      ></BasicModal02>
     </>
   )
 }

@@ -189,7 +189,7 @@ router.get("/api/team_info_:team_id", async (req, res) => {
 
   // reservation_id, team_id, u.user_id, team_note, team_title, theme_name, difficulty, nick_name,
   // branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, avatar
-  const sql = `SELECT reservation_id, team_id, u.user_id, team_note, team_title, theme_name, difficulty, nick_name,
+  const sql = `SELECT reservation_id, team_id, u.user_id, bt.theme_id,team_note, team_title, theme_name, difficulty, nick_name,
               branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, avatar, team_limit
   FROM reservations r
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
@@ -238,6 +238,43 @@ ORDER BY create_at DESC`;
   }
 
   res.json({ success: true, data: rows });
+});
+
+// 搜尋使用者加入哪些團隊的API
+router.get("/api/user_join_team_:user_id", async (req, res) => {
+  const user_id = +req.params.user_id || 0;
+  if (!user_id) {
+    return res.json({ success: false, error: "沒有編號" });
+  }
+
+  const sql =`SELECT *
+FROM teams_members
+WHERE join_user_id = ${user_id}`;
+
+  const [rows] = await db.query(sql);
+
+  if (!rows.length) {
+    // 沒有該筆資料
+    return res.json({ success: false, error: "此隊伍還沒有人申請加入" });
+  }
+
+  res.json({ success: true, members: rows.length ,data: rows });
+});
+
+
+router.get("/api/all_member", async (req, res) => {
+
+  const sql =`SELECT no, join_team_id, join_user_id
+FROM teams_members`;
+
+  const [rows] = await db.query(sql);
+
+  if (!rows.length) {
+    // 沒有該筆資料
+    return res.json({ success: false, error: "此隊伍還沒有人申請加入" });
+  }
+
+  res.json({ success: true, members: rows.length ,data: rows });
 });
 
 // 搜尋隊伍有多少人加入的API

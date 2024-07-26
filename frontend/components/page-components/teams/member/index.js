@@ -115,9 +115,9 @@ const TeamMemberComponent = ({
       <div style={{ textAlign: 'center' }}>
         團員/上限: {selectedCount} / {team_limit}
         {selectedCount > team_limit && (
-          <p style={{ color: 'red', textAlign: 'center' }}>
+          <div style={{ color: 'red', textAlign: 'center' }}>
             人數超過上限，請重新設定
-          </p>
+          </div>
         )}{' '}
       </div>
       <button onClick={handleSubmit} disabled={selectedCount > team_limit}>

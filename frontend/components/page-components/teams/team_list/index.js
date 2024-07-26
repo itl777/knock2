@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 import { GET_DATA } from '@/configs/api-path'
 
-import styles from '@/pages/teams/teams.module.css'
+import styles from '@/components/page-components/teams/teams.module.css'
 import Card from '@/components/UI/teams-card'
 import MyPagination from './pagination'
 
@@ -60,7 +60,7 @@ export default function TeamList() {
       <div className={styles.teamsPage}>
         <div className="container">
           <div className="row">
-            <h4>團隊一覽</h4>
+            <h3 className={styles.secTitle}>團隊一覽</h3>
             <hr />
           </div>
 
