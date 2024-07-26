@@ -8,6 +8,7 @@ import {
   CHECKOUT_GET_ADDRESS,
   CHECKOUT_DELETE_ADDRESS,
   CHECKOUT_ADD_ADDRESS,
+  CHECKOUT_EDIT_ADDRESS,
 } from '@/configs/api-path'
 
 const AddressContext = createContext()
@@ -144,15 +145,11 @@ export const AddressProvider = ({ children }) => {
   // 提交編輯地址表單
   const handleEditAddressSubmit = async (formData) => {
     try {
-      const response = await axios.post(
-        'http://localhost:3001/checkout/api/edit_address',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
+      const response = await axios.post(CHECKOUT_EDIT_ADDRESS, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
 
       console.log(response.data)
 

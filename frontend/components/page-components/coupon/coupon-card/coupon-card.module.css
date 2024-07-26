@@ -1,3 +1,17 @@
+.cardBg {
+  background-color: var(--bg-grey-light);
+  padding: 3px;
+  border-radius: .75rem;
+}
+
+.cardBgChecked {
+  background-color: #d2b783;
+}
+
+.cardBgDisabled {
+  background-color: var(--pri-3);
+}
+
 .checkboxContainer {
   position: absolute;
   top: 2px;
@@ -18,9 +32,7 @@
   position: relative;
   padding: 1rem;
   background-color: var(--pri-1);
-  /* border-right: 1.5px dashed var(--pri-3); */
   border-radius: .75rem;
-  /* border: 2px solid white; */
   border-right: 1.5px dashed var(--pri-3);
 }
 
@@ -33,19 +45,6 @@
   background-color: var(--pri-1);
   border-radius: .75rem;
   color: white;
-  /* border: 2px solid white; */
-  /* border-left: none; */
-}
-
-.couponCardLeftChecked {
-  background-color: #6a4b0d;
-  /* border: 2px solid #c7b081; */
-}
-
-.couponCardRightChecked {
-  background-color: #6a4b0d;
-  /* border: 2px solid #c7b081; */
-  /* border-left: none; */
 }
 
 .history {
@@ -65,7 +64,6 @@
   font-size: 17px;
   font-weight: bold;
   letter-spacing: 3px;
-  /* color: white; */
 }
 
 .textBox {
@@ -77,7 +75,6 @@
 .textBox small {
   font-size: 15px;
   letter-spacing: 2.5px;
-  /* color: white; */
 }
 
 .couponCardLeft::before,
@@ -90,6 +87,25 @@
   border-radius: 50%;
 }
 
+
+.couponCardLeftChecked::before,
+.couponCardLeftChecked::after {
+  background-color: #d2b783;
+}
+
+.couponCardLeftDisabled {
+  background-color: #505050;
+}
+
+.couponCardRightDisabled {
+  background-color: #505050;
+}
+
+.couponCardLeftDisabled::before,
+.couponCardLeftDisabled::after {
+  background-color: var(--pri-3);
+}
+
 .couponCardLeft::before {
   top: -8px;
   right: -8px;
@@ -98,17 +114,6 @@
 .couponCardLeft::after {
   bottom: -8px;
   right: -8px;
-}
-
-.couponStatusTag {
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding: .25rem .5rem;
-  color: white;
-  font-size: .75rem;
-  border-bottom-right-radius: .75rem;
-  background-color: var(--text-grey);
 }
 
 .appGhostImg {

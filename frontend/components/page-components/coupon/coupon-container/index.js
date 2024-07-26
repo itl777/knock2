@@ -69,7 +69,8 @@ export default function CouponContainer({ status }) {
         <div>
           <UserHeader title={`${title}的優惠券`} btnHidden={true} />
         </div>
-        <CouponPromote />
+
+        {status === 'ongoing' && <CouponPromote />}
 
         <div className={styles.couponBox}>
           {pageCoupons.length > 0 ? (

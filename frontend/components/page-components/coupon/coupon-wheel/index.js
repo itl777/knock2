@@ -8,6 +8,8 @@ import { useCart } from '@/context/cart-context'
 import BlackBtn from '@/components/UI/black-btn'
 import confetti from 'canvas-confetti'
 import CouponWinDialog from '../coupon-win-dialog'
+// api path
+import { COUPON_ADD } from '@/configs/api-path'
 
 export default function CouponWheel({
   availableCoupons,
@@ -21,7 +23,7 @@ export default function CouponWheel({
   // const [availableCoupons, setAvailableCoupons] = useState([])
   const [winCoupon, setWinCoupon] = useState({})
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const {fetchMemberCartCoupons, fetchMemberCartProductCoupons } = useCart()
+  const { fetchMemberCartCoupons, fetchMemberCartProductCoupons } = useCart()
 
   const segments = [
     { label: '中獎', color: '#FF6B6B' },
@@ -39,7 +41,7 @@ export default function CouponWheel({
     }
 
     try {
-      const response = await axios.post(`http://localhost:3001/coupons/add`, {
+      const response = await axios.post(COUPON_ADD, {
         member_id: memberId,
         coupon_id: coupon_id,
       })
@@ -123,7 +125,7 @@ export default function CouponWheel({
               coupon_id: null,
               coupon_name: 'No Coupons Available',
             })
-          } 
+          }
         }
         setIsDialogOpen(true)
       }, 5000)
@@ -154,7 +156,7 @@ export default function CouponWheel({
   const handleClose = () => {
     setIsDialogOpen(false)
   }
-  
+
   // 按鈕文字
   const getButtonText = () => {
     if (availableCoupons.length > 0) {
@@ -164,7 +166,6 @@ export default function CouponWheel({
     }
   }
 
-
   const getButtonDisabled = () => {
     if (availableCoupons.length > 0) {
       return isSpinning
@@ -172,7 +173,6 @@ export default function CouponWheel({
       return true
     }
   }
-
 
   // 煙花效果
   const triggerConfetti = () => {
@@ -198,7 +198,6 @@ export default function CouponWheel({
       }
     })()
   }
-
 
   return (
     <div className={styles.container}>

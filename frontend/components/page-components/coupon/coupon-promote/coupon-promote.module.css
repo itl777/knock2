@@ -69,13 +69,13 @@
 }
 
 .contentLeft {
-  flex-grow: 1;
+  width: 40%;
   height: 100%;
   margin-right: 24px;
 }
 
 .title {
-  font-size: 48px;
+  font-size: 28px;
   font-weight: 800;
   margin: 40px 0 12px 0;
 }
@@ -92,9 +92,9 @@
 }
 
 .contentRight {
-  flex-grow: 2;
+  width: 60%;
   height: 100%;
-  border-radius: 0 12px 12px 0;
+  /* border-radius: 0 12px 12px 0; */
   overflow: hidden;
 }
 

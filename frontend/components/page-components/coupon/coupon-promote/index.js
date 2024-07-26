@@ -23,8 +23,10 @@ export default function CouponPromote() {
       >
         <div className={styles.contentBox}>
           <div className={styles.contentLeft}>
-            <div className={styles.title}>DISCOUNT</div>
-            <div className={styles.validBox}>優惠券抽獎活動限時 8 小時</div>
+            <div className={styles.title}>桌遊商城抽獎活動</div>
+            <p className={styles.validBox}>
+            親愛的桌遊迷們，為了感謝大家一直以來的支持，特別舉辦了一場桌遊優惠券抽獎活動！現在就有機會贏取我們精心準備的優惠券，讓你在下一次購買桌遊時享受更多折扣！趕快來參加抽獎活動吧！祝各位桌遊迷們好運！🎉🎉🎉
+            </p>
             <div className={styles.actionButton}>
               <CouponPromoteButton
                 btnText="前往抽獎活動"
@@ -41,8 +43,8 @@ export default function CouponPromote() {
 
         <motion.div className={styles.child}>
           <motion.img
-            src="/ghost/ghost_08.png"
-            animate={{ scale: [0.9, 1.1, 0.9] }}
+            src="/ghost/ghost_gift.webp"
+            animate={{ scale: [0.95, 1.05, 0.95] }}
             transition={{ ease: 'easeOut', duration: 2, repeat: Infinity }}
           />
         </motion.div>

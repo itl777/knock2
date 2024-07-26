@@ -10,6 +10,10 @@ import {
   CHECKOUT_GET_PROFILE,
   GET_MEMBER_COUPON,
   GET_MEMBER_COUPON_IN_CART,
+  COUPON_GET_PRODUCT,
+  COUPON_GET_USE,
+  COUPON_REMOVE,
+  COUPON_UPDATE_CART,
 } from '@/configs/api-path'
 
 const CartContext = createContext()
@@ -117,7 +121,7 @@ export const CartProvider = ({ children }) => {
   const fetchMemberCartProductCoupons = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/coupons/product?member_id=${auth.id}`
+        `${COUPON_GET_PRODUCT}?member_id=${auth.id}`
       )
       setUsableProductCoupons(response.data.rows)
       getSelectedProductCoupons()
@@ -129,7 +133,7 @@ export const CartProvider = ({ children }) => {
   // 新增會員購物車優惠券
   const handleAddCouponToCart = async (coupon_id, product_id) => {
     try {
-      await axios.post('http://localhost:3001/coupons/use', {
+      await axios.post(COUPON_GET_USE, {
         member_id: auth.id,
         coupon_id: coupon_id,
         product_id: product_id,
@@ -148,7 +152,7 @@ export const CartProvider = ({ children }) => {
   // 刪除會員購物車優惠券
   const handleRemoveCouponFromCart = async (coupon_id, product_id) => {
     try {
-      await axios.post('http://localhost:3001/coupons/remove', {
+      await axios.post(COUPON_REMOVE, {
         member_id: auth.id,
         coupon_id: coupon_id,
         product_id: product_id,
@@ -314,7 +318,6 @@ export const CartProvider = ({ children }) => {
     // })
   }
 
-
   // const calculateDiscountTotal = () => {
   //   let productDiscountTotal = 0
   //   let discountTotal = 0
@@ -460,7 +463,6 @@ export const CartProvider = ({ children }) => {
     setDeliverFee(120)
   }
 
-
   const calculateProductDiscount = (
     price,
     product_quantity,
@@ -489,20 +491,16 @@ export const CartProvider = ({ children }) => {
     return discountPrice
   }
 
-
   // 登入後，更新 cart_member cart 將原本未登入的 device_id 改成 auth.id
   const handleLogin = async () => {
     const deviceId = +getDeviceId()
     const memberId = auth.id
 
     try {
-      const updateResponse = await axios.post(
-        'http://localhost:3001/checkout/api/update_cart',
-        {
-          memberId,
-          deviceId,
-        }
-      )
+      const updateResponse = await axios.post(COUPON_UPDATE_CART, {
+        memberId,
+        deviceId,
+      })
 
       if (updateResponse.data.success) {
         fetchMemberCart()

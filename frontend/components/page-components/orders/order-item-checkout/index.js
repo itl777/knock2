@@ -1,17 +1,27 @@
 // order item component for checkout page
 import styles from './order-item-checkout.module.css'
+import { useCallback, useEffect } from 'react'
+import { useRouter } from 'next/router'
+// contents
 import { useCart } from '@/context/cart-context'
+// components
 import InputStepper from '@/components/UI/input-stepper'
 import OrderProductImgBox from '../order-product-img-box'
 import OrderPriceBox from '../order-price-box'
 import CartFavoriteIcon from '../../products/cart-favorite-icon'
 import CouponSelectModal from '../../coupon/coupon-select-modal'
+import OrderProductLink from '../order-product-link'
+// api path
 import { PRODUCT_IMG } from '@/configs/api-path'
-import { useEffect } from 'react'
 
 export default function OrderItemCheckout({ type = 'def' }) {
-  const { checkoutItems, usableProductCoupons, handleQuantityChange, calculateProductDiscount } =
-    useCart()
+  const {
+    checkoutItems,
+    usableProductCoupons,
+    handleQuantityChange,
+    calculateProductDiscount,
+  } = useCart()
+  const router = useRouter()
 
   // const calculateProductDiscount = (
   //   price,
@@ -46,6 +56,7 @@ export default function OrderItemCheckout({ type = 'def' }) {
   const itemInfoClass =
     type === 'small' ? styles.itemInfoSmall : styles.itemInfo
 
+
   useEffect(() => {
     calculateProductDiscount()
   }, [usableProductCoupons])
@@ -69,7 +80,9 @@ export default function OrderItemCheckout({ type = 'def' }) {
               />
               <div className={itemInfoClass}>
                 <div className={styles.itemNamePriceBox}>
-                  <p>{v.product_name}</p>
+                  <OrderProductLink btnText={v.product_name} productId={v.product_id}/>
+                  {/* <p>{v.product_name}</p> */}
+
                   <OrderPriceBox
                     originalPrice={v.price}
                     discountedPrice={calculateProductDiscount(

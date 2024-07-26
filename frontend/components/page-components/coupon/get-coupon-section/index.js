@@ -7,6 +7,8 @@ import { useRouter } from 'next/router'
 // components
 import CouponWheel from '../coupon-wheel'
 import CouponCard from '../coupon-card'
+// api path
+import { COUPON_GET_NEW } from '@/configs/api-path'
 
 export default function GetCouponSection() {
   const { auth, authIsReady } = useAuth()
@@ -17,7 +19,7 @@ export default function GetCouponSection() {
   const fetchNewCoupons = async (memberId) => {
     try {
       const response = await axios.get(
-        `http://localhost:3001/coupons/get-coupon?member_id=${memberId}`
+        `${COUPON_GET_NEW}?member_id=${memberId}`
       )
       if (response.data.status) {
         setAvailableCoupons(response.data.rows)
