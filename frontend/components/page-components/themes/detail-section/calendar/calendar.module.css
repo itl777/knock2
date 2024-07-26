@@ -25,6 +25,7 @@
     color: var(--sec-1);
     border: 1px solid var(--sec-1);
     opacity: 1;
+    margin-top: 20px;
   }
   
   .h2 {
@@ -207,4 +208,38 @@
     font-size: 54px;
     margin-left: 30px;
     cursor: pointer;
+}
+@media screen and (max-width: 480px){
+  .calendarBg {
+    width: 100%; /* 或使用具體的像素值，例如 320px */
+    height: 670px;
+    margin: 40px auto;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 20px;
+  }
+
+  .calendar {
+    font-size: 14px; /* 縮小整體字體大小 */
+  }
+
+  .calendar td {
+    height: 3.2em;
+    line-height: 3.2em;
+    width: 3.2em;
+    margin: 3px;
+  }
+
+  .icon {
+    font-size: 24px;
+  }
+
+  .info {
+    font-size: 14px;
+  }
+
+  .icon5 {
+    font-size: 40px;
+    margin-left: 15px;
+  }
 }

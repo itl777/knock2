@@ -18,6 +18,13 @@ $mediumDuration: 0.3s;
   margin-bottom: 76px;
   width: 315px;
 
+  .bookingButton {
+    border: 1px solid #222222;
+    padding: 7px 13px;
+    border-radius: 20px;
+    font-weight: normal;
+    transition: background-color 0.3s, color 0.3s;}
+
   /* Grow effect */
   @mixin grow {
     @include hacks();
@@ -51,5 +58,9 @@ $mediumDuration: 0.3s;
     position: absolute;
     bottom: 3px;
     right: -50px;
+  }
+  .bookingButton {
+  width: 100%;
+  text-align: center;
   }
 }

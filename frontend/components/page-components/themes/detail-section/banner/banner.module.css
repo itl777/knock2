@@ -98,6 +98,18 @@
   }
 }
 
+.play {
+  position: absolute;
+  bottom: 115px;
+  right: 120px;
+  z-index: 1000;
+}
+
+.playerWrapper {
+  display: flex;
+  align-items: center;
+}
+
 .soundBar {
   width: 4px;
   background: white;
@@ -169,8 +181,6 @@
   height: 48px; /* 設置一個固定高度 */
 }
 
-
-
 .autoplayMessage {
   font-size: 12px;
   color: white;
@@ -181,6 +191,7 @@
 .musicPrompt {
   text-align: center;
   padding: 20px;
+  font-size: 16px;
 }
 
 .musicPromptButtons {
@@ -214,4 +225,86 @@
 
 .declineButton:hover {
   background-color: #da190b;
+}
+.p3{
+  font-weight: bold;
+  color: #b99755;
+}
+
+@media screen and (max-width: 480px){
+
+  .h1 {
+    color: var(--bg-grey-light);
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 30px;
+  }
+  
+  .p {
+    line-height: 2rem;
+    margin-top: 2rem;
+    letter-spacing: 3px;
+    font-size: 16px;
+  }
+  
+  .hr {
+    border-color: #d9d9d9;
+    opacity: 0.8;
+    margin-top: 30px;
+  }
+  
+  .comment {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .title {
+    font-size: 14px;
+    letter-spacing: 2px;
+    font-weight: bold;
+  }
+  
+  .section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #d9d9d9;
+    font-size: 14px;
+    line-height: 2rem;
+  }
+  
+  .star {
+    font-size: 14px;
+  }
+
+  .warning {
+    border-radius: 18px;
+    margin-left: auto;
+    padding: 3px 20px;
+    font-size: 14px; 
+  }
+  .play {
+    position: absolute;
+    bottom: 100px;
+    right: 50px;
+    z-index: 1000;
+  }
+
+  .item {
+    background-color: white;
+    height: 110px;
+  }
+  .musicPrompt {
+    font-size: 12px;
+  }
+  .p{
+    font-size: 10px;
+  }
+  .p1{
+    font-size: 10px;
+  }
+  .p3{
+    font-size: 10px;
+  }
 }
