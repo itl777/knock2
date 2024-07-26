@@ -13,43 +13,42 @@ export default function ReservationListCards({
   deposit,
   created_at,
   payment_date,
+  cancel,
+  rtn_code,
   reservation_status_id = 0,
   handleCancel,
   handlePayment,
 }) {
+  
   const currentDate = new Date().toJSON().slice(0, 10)
   
-  if (reservation_status_id === 3) {
-    payment_date = '已取消'
-  } 
-  const new_payment_date = payment_date ? payment_date : '待付款'
 
   const getPaymentDate = () => {
-    let payment_date_content = payment_date
-    if (!payment_date && reservation_status_id !== 3) {
-      if (reservation_date < currentDate) {
-        payment_date_content = '已逾期'
+    if (rtn_code === 1) {
+      return payment_date
+    } else {
+      if (cancel === 1) {
+        return '已取消'
+      } else if (reservation_date < currentDate) {
+        return '已逾期'
       } else {
-        payment_date_content = '待付款'
+        return '待付款'
       }
     }
-    if (reservation_status_id === 3) {
-      payment_date_content = '已取消'
-    }
-    return payment_date_content
   }
+
 
   // 是否顯示取消訂單
   const showCancelBtn = () => {
-    return reservation_status_id !== 3 && reservation_date > currentDate
+    return cancel === 0 && reservation_date > currentDate
       ? false
       : true
   }
 
   // 是否顯示重新付款
   const showPaymentBtn = () => {
-    return payment_date === '' &&
-      reservation_status_id !== 3 &&
+    return (!rtn_code || rtn_code === 0 ) &&
+      cancel === 0 &&
       reservation_date > currentDate
       ? false
       : true

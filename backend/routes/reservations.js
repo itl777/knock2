@@ -92,13 +92,13 @@ router.get("/", async (req, res) => {
 
     switch (status) {
       case "ongoing":
-        condition = `r.reservation_date >= curdate() AND r.reservation_status_id != 3`;
+        condition = `r.reservation_date >= curdate() AND r.cancel = 0`;
         break;
       case "complete":
-        condition = `r.reservation_date < curdate() AND r.reservation_status_id != 3 AND r.payment_date != NULL`;
+        condition = `r.rtn_code = 1 AND r.reservation_date < curdate() AND r.cancel = 0`;
         break;
       case "canceled":
-        condition = `r.reservation_status_id = 3 OR( r.payment_date != NULL AND reservation_date < curdate())`;
+        condition = `r.cancel = 1 OR (r.rtn_code = 0 AND r.reservation_date < curdate())`;
         break;
       default:
         return res.status(400).json({ error: "Invalid status parameter" });
@@ -118,11 +118,11 @@ router.get("/", async (req, res) => {
         r.merchant_trade_no,
         r.payment_type,
         r.payment_date,
-        r.reservation_status_id,
         b.branch_name,
-        r.branch_themes_id,
         t.theme_name,
         t.theme_img,
+        r.rtn_code,
+        r.cancel,
         r.reservation_status_id,
         rs.reservation_status_name,
         r.session_id,
@@ -131,10 +131,11 @@ router.get("/", async (req, res) => {
         t.deposit,
         r.created_at
         FROM reservations r
-        LEFT JOIN branches b ON b.branch_id = r.branch_themes_id
-        JOIN themes t ON t.theme_id = r.branch_themes_id
-        JOIN reservation_status rs ON rs.id = r.reservation_status_id
-        JOIN sessions s ON s.sessions_id = r.session_id
+        LEFT JOIN branch_themes bt ON bt.branch_themes_id = r.branch_themes_id
+        LEFT JOIN branches b ON b.branch_id = bt.branch_id
+        LEFT JOIN themes t ON t.theme_id = bt.theme_id
+        LEFT JOIN reservation_status rs ON rs.id = r.reservation_status_id
+        LEFT JOIN sessions s ON s.sessions_id = r.session_id
       WHERE r.user_id = ? AND ${condition}
       LIMIT ?, ?;
     `;
@@ -183,7 +184,7 @@ router.post("/cancel", async (req, res) => {
   try {
     const sql = `
       UPDATE reservations SET 
-        reservation_status_id = 3, 
+        cancel = 1, 
         last_modified_at = now()
       WHERE reservation_id = ?;
     `;
@@ -232,7 +233,8 @@ router.get("/result/:reservation_id", async (req, res) => {
         r.cancel,
         r.created_at
         FROM reservations r
-        LEFT JOIN branches b ON b.branch_id = r.branch_themes_id
+        LEFT JOIN branch_themes bt ON bt.branch_themes_id = r.branch_themes_id
+        LEFT JOIN branches b ON b.branch_id = bt.branch_id
         JOIN themes t ON t.theme_id = r.branch_themes_id
         JOIN reservation_status rs ON rs.id = r.reservation_status_id
         JOIN sessions s ON s.sessions_id = r.session_id

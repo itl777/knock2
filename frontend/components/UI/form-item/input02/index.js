@@ -17,6 +17,8 @@ export default function Input02({
     setInputType(type)
   }, [type])
 
+  const goldTextStyle = { color: '#B99755' }
+
   let className
 
   if (inputStyles === 'def') {
@@ -39,6 +41,7 @@ export default function Input02({
         className={className}
         onChange={onChange}
         onBlur={onBlur}
+        style={goldTextStyle}
       />
     </div>
   )

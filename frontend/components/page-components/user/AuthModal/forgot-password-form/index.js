@@ -8,7 +8,7 @@ import { useLoginModal } from '@/context/login-context/index'
 import styles from '../login-form.module.scss'
 // components
 import AuthFormInput from '../auth-form-input'
-import ClearButton from '@/components/UI/ClearButton'
+import ClearButton from '@/components/UI/clear-button'
 
 const dialogTheme = createTheme({
   components: {

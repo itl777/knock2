@@ -24,7 +24,7 @@ const schemaForm = z.object({
         return mobilePattern.test(val)
       },
       {
-        message: ' 請填寫正確的手機號碼格式',
+        message: '請填寫正確的手機號碼格式',
       }
     ),
   date: z.string().refine(
@@ -35,6 +35,9 @@ const schemaForm = z.object({
       message: '無效的日期格式，請重新選擇',
     }
   ),
+  timeSlot: z.string().nonempty({ message: '請選擇場次' }), // 驗證選擇的場次
+  people: z.string().nonempty({ message: '請選擇人數' }), // 驗證選擇的人數
+  discount: z.string().nonempty({ message: '請選擇優惠項目' }), // 驗證選擇的優惠項目
 })
 
 export default schemaForm

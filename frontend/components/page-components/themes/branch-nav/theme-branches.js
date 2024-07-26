@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react'
 
 import Tabs from '@mui/joy/Tabs'
 import TabList from '@mui/joy/TabList'
-import Tab, { tabClasses } from '@mui/joy/Tab'
+import Tab from '@mui/joy/Tab'
 import TabPanel from '@mui/joy/TabPanel'
 import Card02 from '@/components/UI/cards-themes'
-import GoogleMap from '@/components/UI/google-map'
+import GoogleMap from './google-map.js'
+import myStyles from './branch_themes.module.css'
 
 export default function ThemeBranches() {
   const [data, setData] = useState({
@@ -50,12 +51,7 @@ export default function ThemeBranches() {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-      }}
-    >
+    <div className={myStyles.container}>
       <Tabs
         aria-label="tabs"
         value={selectedBranch}
@@ -63,104 +59,36 @@ export default function ThemeBranches() {
         sx={{ bgcolor: 'transparent' }}
         centered
       >
-        <TabList
-          disableUnderline
-          sx={{
-            m: 8,
-            p: 0.5,
-            gap: 6,
-            display: 'flex',
-            justifyContent: 'space-evenly', // 居中 TabList
-          }}
-        >
-          <hr
-            style={{
-              borderColor: '#D9D9D9',
-              width: '200px',
-              opacity: 1,
-              marginTop: '22px',
-            }}
-          />
+        <TabList disableUnderline className={myStyles.tabList}>
+          <hr className={myStyles.hr} />
           <Tab
             disableIndicator
-            sx={{
-              height: '50px',
-              width: '140px',
-              fontFamily: 'Noto Serif JP',
-              fontWeight: 'bold',
-              border: '1px solid',
-              borderColor: '#D9D9D9',
-              borderRadius: '50px',
-              color: '#D9D9D9',
-              '&:hover': {
-                backgroundColor: '#D9D9D9 !important',
-                color: '#676767 !important',
-              },
-              [`&.${tabClasses.selected}`]: {
-                color: '#676767',
-                backgroundColor: '#D9D9D9',
-              },
-            }}
-            value={1} // 高雄店的 branch_id
+            className={`${myStyles.tab} ${
+              selectedBranch === 1 ? myStyles.tabSelected : ''
+            }`}
+            value={1}
           >
             高雄店
           </Tab>
           <Tab
             disableIndicator
-            sx={{
-              height: '50px',
-              width: '140px',
-              fontFamily: 'Noto Serif JP',
-              fontWeight: 'bold',
-              border: '1px solid',
-              borderColor: '#D9D9D9',
-              borderRadius: '50px',
-              color: '#D9D9D9',
-              '&:hover': {
-                backgroundColor: '#D9D9D9 !important',
-                color: '#676767 !important',
-              },
-              [`&.${tabClasses.selected}`]: {
-                color: '#676767',
-                backgroundColor: '#D9D9D9',
-              },
-            }}
-            value={2} // 台中店的 branch_id
+            className={`${myStyles.tab} ${
+              selectedBranch === 2 ? myStyles.tabSelected : ''
+            }`}
+            value={2}
           >
             台中店
           </Tab>
           <Tab
             disableIndicator
-            sx={{
-              height: '50px',
-              width: '140px',
-              fontFamily: 'Noto Serif JP',
-              fontWeight: 'bold',
-              border: '1px solid',
-              borderColor: '#D9D9D9',
-              borderRadius: '50px',
-              color: '#D9D9D9',
-              '&:hover': {
-                backgroundColor: '#D9D9D9 !important',
-                color: '#676767 !important',
-              },
-              [`&.${tabClasses.selected}`]: {
-                color: '#676767',
-                backgroundColor: '#D9D9D9',
-              },
-            }}
-            value={3} // 台北店的 branch_id
+            className={`${myStyles.tab} ${
+              selectedBranch === 3 ? myStyles.tabSelected : ''
+            }`}
+            value={3}
           >
             台北店
           </Tab>
-          <hr
-            style={{
-              borderColor: '#D9D9D9',
-              width: '200px',
-              opacity: 1,
-              marginTop: '22px',
-            }}
-          />
+          <hr className={myStyles.hr} />
         </TabList>
 
         {/* TabPanel for 高雄店 */}
@@ -177,7 +105,7 @@ export default function ThemeBranches() {
                 min_players={theme.min_players}
                 max_players={theme.max_players}
                 themeTime={theme.theme_time}
-                branch_themes_id={theme.branch_themes_id} // 添加这一行
+                branch_themes_id={theme.branch_themes_id}
               />
             ))}
           </div>
@@ -212,7 +140,7 @@ export default function ThemeBranches() {
                 min_players={theme.min_players}
                 max_players={theme.max_players}
                 themeTime={theme.theme_time}
-                branch_themes_id={theme.branch_themes_id} // 添加这一行
+                branch_themes_id={theme.branch_themes_id}
               />
             ))}
           </div>
@@ -247,7 +175,7 @@ export default function ThemeBranches() {
                 min_players={theme.min_players}
                 max_players={theme.max_players}
                 themeTime={theme.theme_time}
-                branch_themes_id={theme.branch_themes_id} // 添加这一行
+                branch_themes_id={theme.branch_themes_id}
               />
             ))}
           </div>

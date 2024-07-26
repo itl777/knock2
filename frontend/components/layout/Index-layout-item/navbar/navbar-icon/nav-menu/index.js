@@ -8,7 +8,7 @@ import { API_SERVER } from '@/configs/api-path'
 
 import styles from './nav-menu.module.scss'
 import MenuItem from './menu-item'
-import ClearButton from '@/components/UI/ClearButton'
+import ClearButton from '@/components/UI/clear-button'
 
 export default function NavMenu({ anchorEl, open, onClose }) {
   const { logout, auth } = useAuth()
@@ -22,7 +22,7 @@ export default function NavMenu({ anchorEl, open, onClose }) {
         TransitionProps={{ direction: 'left' }}
         disableScrollLock={true}
         sx={{
-          top: '30px',
+          top: '34px',
           '.MuiMenu-paper': {
             backgroundColor: '#5b5b5b',
             borderRadius: '0 0 16px 16px',

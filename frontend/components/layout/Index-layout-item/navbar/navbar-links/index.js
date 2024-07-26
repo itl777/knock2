@@ -10,16 +10,16 @@ export default function NavbarLinks({ pageName, menuState }) {
         className={`${styles['navbar-links']} animate__animated ${menuState}`}
       >
         <li>
-          <Link href="/">
-            <span className={styles[pageName === 'index' ? 'page-name' : '']}>
-              首頁
+          <Link href="/themes">
+            <span className={styles[pageName === 'themes' ? 'page-name' : '']}>
+              密室逃脫
             </span>
           </Link>
         </li>
         <li>
-          <Link href="/themes">
-            <span className={styles[pageName === 'themes' ? 'page-name' : '']}>
-              密室逃脫
+          <Link href="/teams">
+            <span className={styles[pageName === 'teams' ? 'page-name' : '']}>
+              揪團行程
             </span>
           </Link>
         </li>
@@ -35,16 +35,16 @@ export default function NavbarLinks({ pageName, menuState }) {
           </Link>
         </li>
         <li>
-          <Link href="/teams">
-            <span className={styles[pageName === 'teams' ? 'page-name' : '']}>
-              揪團
+          <Link href="/product">
+            <span className={styles[pageName === 'product' ? 'page-name' : '']}>
+              桌遊商城
             </span>
           </Link>
         </li>
         <li>
-          <Link href="/product">
-            <span className={styles[pageName === 'product' ? 'page-name' : '']}>
-              桌遊商城
+          <Link href="/user/profile">
+            <span className={styles[pageName === 'profile' ? 'page-name' : '']}>
+              會員中心
             </span>
           </Link>
         </li>

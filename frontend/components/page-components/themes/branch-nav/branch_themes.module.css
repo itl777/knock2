@@ -1,0 +1,80 @@
+/* branch_themes.module.css */
+.container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .tabList {
+    margin: 80px;
+    padding: 30px;
+    gap: 60px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+  .hr {
+    border-width: 1.5px; /* 增加線條粗細 */
+    border-color: rgba(255, 255, 255, 0.9); 
+    width: 200px;
+    opacity: 1; /* 確保透明度不影響元素 */
+    margin-top: 22px;
+  }
+  .tab {
+    height: 50px;
+    width: 140px;
+    font-family: 'Noto Serif JP';
+    font-weight: bold;
+    border: 1px solid;
+    border-color: #d9d9d9;
+    border-radius: 50px;
+    color: #d9d9d9;
+  }
+  
+  .tab:hover {
+    background-color: #d9d9d9 !important;
+    color: #676767 !important;
+  }
+  
+  .tabSelected {
+    color: #676767;
+    background-color: #d9d9d9 !important;
+  }
+  
+  .hrStyle {
+    border-color: #d9d9d9;
+    width: 200px;
+    opacity: 1;
+    margin-top: 22px;
+  }
+  
+  .tabPanel {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  @media (max-width: 480px) {
+    .hr{
+        display: none;
+      }
+    .container {
+      align-items: center;
+    }
+  
+    .tabList {
+      flex-direction: row;
+      align-items: center;
+      margin: 20px;
+      padding: 10px;
+      gap: 10px;
+    }
+  
+    .tab {
+      width: 100px;
+    }
+  
+    .tabPanel {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  

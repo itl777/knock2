@@ -1,6 +1,6 @@
 .h2Style {
   text-align: center;
-  padding: 2.5rem 0;
+  padding: 2rem 0;
 }
 
 .sectionContainer {
@@ -80,4 +80,14 @@
   .checkoutRight {
     padding: 1.5rem;
   }
+
+  .h2Style {
+    font-size: 1.75rem;
+    padding: 1.5rem 0;
+  }
+
+  .contentContainer h5 {
+    font-size: 1.375rem;
+  }
+  
 }

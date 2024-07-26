@@ -11,21 +11,6 @@ import {
 const usePayment = () => {
   const router = useRouter()
 
-  // 取消訂單
-  // const handleOrderCancel = async (order_id) => {
-  //   try {
-  //     const updateOrderStatus = await axios.post(
-  //       `${CANCEL_ORDER}?order_id=${order_id}`
-  //     )
-
-  //     if (updateOrderStatus.data.success) {
-  //       alert('已取消訂單')
-  //     }
-  //   } catch (error) {
-  //     console.error('提交表單時出錯', error)
-  //   }
-  // }
-
   const handleOrderCancel = async (order_id) => {
     try {
       const updateOrderStatus = await axios.post(

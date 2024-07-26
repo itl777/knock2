@@ -15,6 +15,7 @@ import Description from './description'
 export default function PdTabs({ data }) {
   const [value, setValue] = useState('1')
   const [productData, setProductData] = useState({
+    product_id:0,
     product_name: '',
     price: 0,
     summary: '',
@@ -104,25 +105,21 @@ export default function PdTabs({ data }) {
           </Box>
           <TabPanel sx={mySxPanel} value="1">
             {/* 詳情 */}
-            {/* <p> */}
+
             <Description description={productData.description} />
-            {/* {productData.description} */}
-            {/* </p> */}
+      
           </TabPanel>
 
           <TabPanel sx={mySxPanel} value="2">
             {/* 評價 */}
-            <div className="col-10 offset-1 d-flex justify-content-center my-5 position-relative">
-              <ProductReview />
+            <div className={`${myStyle.reviewArea} col-10 offset-1 `}>
+              <ProductReview product_id={productData.product_id}/>
             </div>
-            {/* 評價 */}
+           
 
-            <div className="col-10 offset-1 d-flex justify-content-center my-5 position-relative">
-              <ProductReview />
-            </div>
-            <div className="col-10 offset-1 d-flex justify-content-center my-5">
+            {/* <div className="col-10 offset-1 d-flex justify-content-center my-5">
               <FilterBtn btnText={'更多評論'} />
-            </div>
+            </div> */}
           </TabPanel>
         </TabContext>
       </Box>

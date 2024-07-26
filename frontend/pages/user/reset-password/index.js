@@ -7,6 +7,7 @@ import UserLayout from '@/components/layout/user-layout'
 import ResetPasswordForm from '@/components/page-components/user/reset-password-form'
 import { useAuth } from '@/context/auth-context'
 import UserTab from '@/components/UI/user-tab'
+import TokenExpired from '@/components/page-components/user/token-expired'
 
 export default function Profile() {
   const router = useRouter()
@@ -47,7 +48,7 @@ export default function Profile() {
             isVerified || auth.id ? (
               <ResetPasswordForm user_id={user_id} />
             ) : (
-              '驗證連結無效或已經過期，請再重新申請忘記密碼。'
+              <TokenExpired />
             )
           }
         />

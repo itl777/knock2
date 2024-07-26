@@ -153,7 +153,13 @@ router.get("/api/cart", async (req, res) => {
         pm.product_name,
         pm.price,
         pi.product_img,
-        cm.cart_product_quantity
+        cm.cart_product_quantity,
+        cm.cart_product_coupon_id,
+        c.coupon_type_id,
+        c.minimum_order,
+        c.discount_amount,
+        c.discount_percentage,
+        c.discount_max
       FROM cart_member AS cm
       JOIN product_management AS pm
       ON pm.product_id = cm.cart_product_id
@@ -163,6 +169,8 @@ router.get("/api/cart", async (req, res) => {
         GROUP BY img_product_id
       ) AS pi
       ON pi.img_product_id = cm.cart_product_id
+      LEFT JOIN coupons AS c
+      ON c.id = cm.cart_product_coupon_id
       WHERE cm.cart_member_id = ?
     `;
 
@@ -254,6 +262,7 @@ router.post("/api/checkout", async (req, res) => {
     mobileInvoice,
     recipientTaxId,
     deliverFee,
+    orderCouponId,
     orderItems,
   } = req.body;
 
@@ -271,10 +280,11 @@ router.post("/api/checkout", async (req, res) => {
         recipient_invoice_carrier,
         recipient_tax_id,
         deliver_fee,
+        order_coupon_id,
         order_status_id,
         created_at,
         last_modified_at
-      ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
+      ) VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now(), now());
     `;
 
     const orderValues = [
@@ -287,6 +297,7 @@ router.post("/api/checkout", async (req, res) => {
       mobileInvoice,
       recipientTaxId,
       deliverFee,
+      orderCouponId,
       1, // order_status_id
     ];
 
@@ -301,18 +312,20 @@ router.post("/api/checkout", async (req, res) => {
         order_product_id,
         order_quantity,
         order_unit_price,
+        product_coupon_id,
         created_at,
         last_modified_at
-      ) VALUES (?, ?, ?, ?, now(), now());
+      ) VALUES (?, ?, ?, ?, ?, now(), now());
     `;
 
     const orderDetailPromises = orderItems.map(
-      ({ productId, productOriginalPrice, orderQty }) => {
+      ({ productId, productOriginalPrice, orderQty, cartProductCouponId }) => {
         const orderDetailValues = [
           orderId,
           productId,
           orderQty,
           productOriginalPrice,
+          cartProductCouponId,
         ];
         return db
           .query(orderDetailSql, orderDetailValues)
@@ -321,6 +334,30 @@ router.post("/api/checkout", async (req, res) => {
     );
 
     const orderDetailResults = await Promise.all(orderDetailPromises);
+
+    // order_coupon
+    const updateCouponSql = `
+      UPDATE coupon_member SET
+        in_cart = 0,
+        used_at = now()
+        WHERE member_id = ? AND coupon_id = ?
+      `;
+
+    // 提取 cartProductCouponId
+    const cartProductCouponIds = orderItems
+      .map((item) => item.cartProductCouponId)
+      .filter((id) => id !== null);
+
+    // 合併 orderCouponId 和 cartProductCouponId
+    const allCouponIds = [orderCouponId, ...cartProductCouponIds];
+
+    const updateCouponPromises = allCouponIds.map((couponId) => {
+      return db
+        .query(updateCouponSql, [memberId, couponId])
+        .then(([result]) => result);
+    });
+
+    const updateCouponResults = await Promise.all(updateCouponPromises);
 
     const success =
       orderResult.affectedRows === 1 &&
@@ -340,6 +377,7 @@ router.post("/api/checkout", async (req, res) => {
       orderId,
       // productNames,
     });
+    console.log(orderResult, orderDetailResults, updateCouponResults);
   } catch (error) {
     console.error("Error while processing checkout:", error);
     res
@@ -377,7 +415,6 @@ router.get("/api/member_profile", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // CHECKOUT_GET_ADDRESS member address
 router.get("/api/member_address", async (req, res) => {
@@ -458,6 +495,49 @@ router.post("/api/add_address", async (req, res) => {
     res.json({
       success,
       addressId,
+    });
+  } catch (error) {
+    console.error("Error while processing add address from checkout:", error);
+    res.status(500).json({
+      error: "An error occurred while processing add address from checkout.",
+    });
+  }
+});
+
+
+// CHECKOUT_EDIT_ADDRESS POST insert data into address table
+router.post("/api/edit_address", async (req, res) => {
+  const data = { ...req.body };
+  console.log('data from edit address form',data);
+
+  try {   
+    const sql = `
+      UPDATE address SET
+        recipient_name = ?,
+        mobile_phone = ?,
+        district_id = ?, 
+        address = ?
+      WHERE id = ? AND user_id = ?;
+    `;
+
+    const values = [
+      data.recipientName,
+      data.recipientMobile,
+      data.recipientDistrictId,
+      data.recipientAddress,
+      data.id,
+      data.memberId,
+    ];
+    const [results] = await db.query(sql, values);
+
+    console.log("Address update Result:", results); // 後端列印結果
+
+    // 確認是否有成功 insert value
+    const success = results.affectedRows === 1;
+
+    // 返回結果到前端
+    res.json({
+      success,
     });
   } catch (error) {
     console.error("Error while processing add address from checkout:", error);

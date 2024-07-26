@@ -1,5 +1,5 @@
 // useFetchCityDistrict.js
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import axios from 'axios'
 import { CHECKOUT_CITY_GET, CHECKOUT_DISTRICT_GET } from '@/configs/api-path'
 
@@ -44,15 +44,15 @@ const useFetchCityDistrict = () => {
     }
   }
 
-  const filteredDistrictOptions = (selectedCityId) => {
+  const filteredDistrictOptions = useCallback((selectedCityId) => {
     const filteredDistrictOptions = districts
-    .filter((v) => v.city_id === selectedCityId)
-    .map((v) => ({
-      value: v.id,
-      text: v.district_name,
-    }))
+      .filter((v) => v.city_id === selectedCityId)
+      .map((v) => ({
+        value: v.id,
+        text: v.district_name,
+      }))
     setDistrictOptions(filteredDistrictOptions)
-  }
+  }, [districts])
   
 
   useEffect(() => {

@@ -7,6 +7,7 @@ const borderColorHover = '#B99755'
 const borderColorFocus = '#B99755'
 const boxShadowFocus = '#efede8'
 const selectedTextColor = '#B99755'
+const initialTextColor = '#757575'
 const selectedBackgroundColor = ''
 const selectedBackgroundColorHover = ''
 
@@ -17,11 +18,13 @@ const customTheme = createTheme({
         root: {
           height: '40px',
           width: '100%',
-          color: '#757575',
           fontFamily: 'Noto Serif JP, serif',
           '& .MuiSelect-select': {
             padding: '8px 16px',
-            color: `${selectedTextColor}`, // 設置選擇後文字顏色
+            color: initialTextColor, // 初始文字顏色（灰色）
+            '&:not([class*="placeholder"])': {
+              color: selectedTextColor, // 選中後文字顏色（金色）
+            },
           },
           '& .MuiOutlinedInput-notchedOutline': {
             border: `${borderWidth} solid ${borderColor}`,
@@ -39,11 +42,8 @@ const customTheme = createTheme({
             transition: '200ms',
           },
         },
-        // 調整選中後文字顏色為金色
-        '& .MuiSelect-menu': {
-          '& .Mui-selected': {
-            color: selectedTextColor,
-          },
+        icon: {
+          color: initialTextColor, // 下拉箭頭顏色
         },
       },
     },
@@ -71,7 +71,7 @@ const customTheme = createTheme({
           fontFamily: 'Noto Serif JP, serif',
           '&.Mui-selected': {
             backgroundColor: selectedBackgroundColor,
-            // color: selectedTextColor,
+            color: selectedTextColor, // 選中後文字顏色為金色
           },
           '&.Mui-selected:hover': {
             backgroundColor: selectedBackgroundColorHover,

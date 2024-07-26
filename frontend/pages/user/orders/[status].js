@@ -18,22 +18,22 @@ export default function OrdersPage() {
   ]
 
   // 根據 status 設置 order_status_id
-  const getOrderStatusId = (status) => {
-    switch (status) {
-      case 'ongoing':
-        return 1
-      case 'shipping':
-        return 2
-      case 'completed':
-        return 3
-      case 'canceled':
-        return 4
-      default:
-        return 1 // 預設處理中狀態
-    }
-  }
+  // const getOrderStatusId = (status) => {
+  //   switch (status) {
+  //     case 'ongoing':
+  //       return 1
+  //     case 'shipping':
+  //       return 2
+  //     case 'completed':
+  //       return 3
+  //     case 'canceled':
+  //       return 4
+  //     default:
+  //       return 1 // 預設處理中狀態
+  //   }
+  // }
 
-  const orderStatusId = getOrderStatusId(status)
+  // const orderStatusId = getOrderStatusId(status)
 
   return (
     <IndexLayout title="商品訂單" background="light">
@@ -42,7 +42,7 @@ export default function OrdersPage() {
         userTabSec={<UserTabSec tabItems={tabItems} />}
         sectionRight={
           <OrderListLayout
-            orderStatusId={orderStatusId}
+            status={status}
             initialPage={parseInt(page)}
           />
         }

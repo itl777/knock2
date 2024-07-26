@@ -5,14 +5,52 @@ import { FaCircle, FaFacebook, FaInstagram } from 'react-icons/fa'
 import Reservation from '../reservation/reservation'
 import myStyle from './calendar.module.css'
 import { DateContext } from '@/context/date-context'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import { useSession } from '@/context/sessionContext'
 
-const Calendar = () => {
+const Calendar = ({ branch_themes_id }) => {
+  const { setDateSessionsStatus } = useSession()
+  const router = useRouter()
+  const { id } = router.query
+  const isReady = router.isReady
+
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [daysInMonth, setDaysInMonth] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
   const [month, setMonth] = useState(currentDate.month())
   const [year, setYear] = useState(currentDate.year())
   const { updateSelectedDate } = useContext(DateContext)
+  const [calendarData, setCalendarData] = useState({})
+
+  const fetchCalendarData = async (year, month) => {
+    if (!branch_themes_id) return
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/themes/calendar`,
+        {
+          params: { year, month, branch_themes_id },
+        }
+      )
+      setCalendarData(response.data)
+    } catch (error) {
+      console.error('Error fetching calendar data:', error)
+    }
+  }
+
+  useEffect(() => {
+    console.log('Calendar component:', { year, month, branch_themes_id })
+    if (branch_themes_id) {
+      fetchCalendarData(year, month + 1)
+    }
+  }, [year, month, branch_themes_id])
+
+  useEffect(() => {
+    if (branch_themes_id) {
+      fetchCalendarData(currentDate.year(), currentDate.month() + 1)
+    }
+  }, [currentDate, branch_themes_id])
 
   useEffect(() => {
     const updateDaysInMonth = () => {
@@ -21,23 +59,29 @@ const Calendar = () => {
       const startDayOfWeek = startOfMonth.day()
       const endDayOfWeek = endOfMonth.day()
       const days = []
+      const today = dayjs()
 
       // 加入上個月的天數
       for (let i = startDayOfWeek; i > 0; i--) {
         days.push({
           day: startOfMonth.subtract(i, 'day').date(),
           currentMonth: false,
-          status: 'prev-month',
+          status: 'disabled',
         })
       }
 
       // 加入當月的天數
       for (let i = 1; i <= endOfMonth.date(); i++) {
         const date = dayjs(`${year}-${month + 1}-${i}`)
+        const dateString = date.format('YYYY-MM-DD')
+        const dayData = calendarData[dateString] || {}
+        const isPastOrToday =
+          date.isBefore(dayjs(), 'day') || date.isSame(dayjs(), 'day')
         days.push({
           day: i,
           currentMonth: true,
-          status: date.isBefore(dayjs(), 'day') ? 'disabled' : 'open',
+          status: isPastOrToday ? 'disabled' : dayData.status || 'open',
+          clickable: !isPastOrToday && dayData.status !== 'full',
         })
       }
 
@@ -46,7 +90,7 @@ const Calendar = () => {
         days.push({
           day: i,
           currentMonth: false,
-          status: 'next-month',
+          status: 'disabled',
         })
       }
 
@@ -54,7 +98,7 @@ const Calendar = () => {
     }
 
     updateDaysInMonth()
-  }, [currentDate, month, year])
+  }, [currentDate, month, year, calendarData])
 
   const handlePrevMonth = () => {
     const newDate = currentDate.subtract(1, 'month')
@@ -77,26 +121,49 @@ const Calendar = () => {
   }
 
   const handleDateClick = (day) => {
+    if (day.status === 'disabled') return
+
     setSelectedDate(day)
     updateSelectedDate({
       day: day.day,
       month: currentDate.month(),
       year: currentDate.year(),
     })
+
+    const formattedDate = `${currentDate.year()}-${String(
+      currentDate.month() + 1
+    ).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`
+    fetchSessionsStatus(formattedDate, branch_themes_id)
+  }
+
+  const fetchSessionsStatus = async (date) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3001/themes/sessions-status`,
+        {
+          params: { date, branch_themes_id },
+        }
+      )
+      setDateSessionsStatus(response.data)
+    } catch (error) {
+      console.error('Error fetching sessions status:', error)
+    }
   }
 
   const renderDay = (day, index) => {
     const classes = [myStyle.date]
-    if (day.status === 'prev-month') classes.push(myStyle.prevMonth)
-    if (day.status === 'next-month') classes.push(myStyle.nextMonth)
-    if (day.status === 'disabled') classes.push(myStyle.disabled)
+    if (day.status === 'prev-month' || day.status === 'next-month')
+      classes.push(myStyle.otherMonth)
     if (day.status === 'open') classes.push(myStyle.open)
     if (day.status === 'partial') classes.push(myStyle.partial)
     if (day.status === 'full') classes.push(myStyle.full)
+    if (day.status === 'disabled') classes.push(myStyle.disabled)
+    if (!day.clickable) classes.push(myStyle.notClickable)
     if (
       day.currentMonth &&
       day.day === dayjs().date() &&
-      currentDate.month() === dayjs().month()
+      currentDate.month() === dayjs().month() &&
+      currentDate.year() === dayjs().year()
     ) {
       classes.push(myStyle.currentDay)
     }
@@ -107,10 +174,12 @@ const Calendar = () => {
     return (
       <td key={index} className={classes.join(' ')}>
         <div
-          onClick={() => handleDateClick(day)}
-          onKeyPress={(e) => handleKeyPress(e, () => handleDateClick(day))}
+          onClick={() => day.clickable && handleDateClick(day)}
+          onKeyPress={(e) =>
+            day.clickable && handleKeyPress(e, () => handleDateClick(day))
+          }
           role="button"
-          tabIndex="0"
+          tabIndex={day.clickable ? '0' : '-1'}
           className={myStyle.dateContent}
         >
           {day.day}
@@ -139,7 +208,7 @@ const Calendar = () => {
   }
 
   return (
-    <div className="container">
+    <div className="container-fluid container-md">
       <div className="row d-flex justify-content-evenly">
         <div className={myStyle.calendarBg}>
           <div className={myStyle.calendar}>
@@ -180,16 +249,16 @@ const Calendar = () => {
               <tbody>{renderWeeks()}</tbody>
             </table>
 
-            <div className="mt-5 d-flex align-items-center justify-content-end mb-5">
-              <div className="d-flex align-items-center justify-content-end">
+            <div className="mt-3 d-flex flex-row align-items-center justify-content-end mb-4">
+              <div className="d-flex align-items-center justify-content-end mb-2 mb-md-0">
                 <FaCircle className={myStyle.icon2} />
                 <span>場次已額滿</span>
               </div>
-              <div className="d-flex align-items-center justify-content-end">
+              <div className="d-flex align-items-center justify-content-end mb-2 mb-md-0">
                 <FaCircle className={myStyle.icon3} />
                 <span>剩部分場次</span>
               </div>
-              <div className="d-flex align-items-center justify-content-end">
+              <div className="d-flex align-items-center justify-content-end mb-2 mb-md-0">
                 <FaCircle className={myStyle.icon4} />
                 <span>開放預約</span>
               </div>
@@ -197,8 +266,8 @@ const Calendar = () => {
 
             <hr className={myStyle.hr} />
 
-            <div className="d-flex justify-content-between">
-              <div className={`${myStyle.info}`}>
+            <div className="d-flex flex-column flex-md-row justify-content-between">
+              <div className={`${myStyle.info} mb-3 mb-md-0`}>
                 <div className="mb-3">預約當日場次請來電 (･∀･)</div>
                 <div>For international travelers, </div>
                 <div>please send a direct message</div>
@@ -211,7 +280,7 @@ const Calendar = () => {
             </div>
           </div>
         </div>
-        <Reservation />
+        <Reservation id={id} />
       </div>
     </div>
   )

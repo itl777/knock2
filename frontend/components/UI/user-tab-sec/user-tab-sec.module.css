@@ -25,7 +25,14 @@
 @media screen and (max-width: 800px) {
   .userTabSec {
     font-size: .9375rem;
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 1.25rem 0;
     gap: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .userTabContainer {
+    display: flex;
+    justify-content: center;
   }
 }

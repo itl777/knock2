@@ -3,7 +3,7 @@ import moment from "moment-timezone";
 import db from "./../utils/connect.js";
 import upload from "../utils/upload-imgs.js";
 
-const dateFormat = "YYYY-MM-DD HH:mm:ss";
+const dateFormat = "YYYY-MM-DD";
 const router = express.Router();
 
 const getListDate = async (req) => {
@@ -75,11 +75,6 @@ const getListDate = async (req) => {
     }
 
     let orderBy = `ORDER BY ${sort} ${order}`;
-
-    // JOIN圖片
-    // const sql = `SELECT * FROM \`product_management\` JOIN \`product_img\` on \`product_id\` = \`img_product_id\` ${where} ${orderBy} LIMIT ${
-    //   (page - 1) * perPage
-    // },${perPage}`;
 
     // JOIN分類
     const sql = `SELECT * FROM \`product_management\` JOIN \`product_category\` ON product_management.category_id = product_category.category_id ${where} ${orderBy}  LIMIT ${
@@ -311,4 +306,52 @@ router.post("/favorite_title/add/:title_user_id", async (req, res) => {
   const [result] = await db.query(sql, [title, title_user_id]);
 
   res.json({ result, success: !!result.affectedRows });
+});
+
+// 取得評價資料
+router.get("/review", async (req, res) => {
+  let success = false;
+  let rows = [];
+  const product_id = parseInt(req.query.product_id)|| 0;
+// console.log('product_id',product_id);
+  
+  // SELECT * FROM `orders` JOIN order_details ON `orders`.`id`=order_id WHERE `order_product_id`=6;
+  // SELECT * FROM `orders` JOIN order_details ON `orders`.`id`=order_id JOIN users ON users.user_id=member_id WHERE `order_product_id`=6;
+  // const sql = `SELECT * FROM order_details WHERE order_product_id=${product_id}`;
+  const sql = `SELECT * FROM orders JOIN order_details ON orders.id=order_id JOIN users ON users.user_id=member_id WHERE order_product_id=${product_id}`;
+
+  [rows] = await db.query(sql);
+
+   // 格式化 order_date
+   rows.forEach((v) => {
+    const m = moment(v.order_date);
+    if (m.isValid()) {
+      v.order_date = m.format(dateFormat);
+    } else {
+      v.order_date = "無日期";
+    }
+  });
+  
+  if(rows.length >0){
+    success = true;
+  }
+  res.json({
+    success,
+    rows,
+  });
+});
+
+// 上傳圖片
+router.post("/upload", upload.single("file"), async (req, res) => {
+  console.log('File received:', req.file);
+  const output = {
+    success: false,
+    error: "",
+    file: req.file,
+  };
+  if (!req.file) {
+    output.error = "上傳失敗!!";
+    return res.status(400).json(output);
+  }
+  res.json({ filePath: req.file.filename });
 });

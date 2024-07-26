@@ -9,20 +9,24 @@ export default function BasicModal02({
   modalBody,
   open,
   onClose,
-  modalW = '840px',
-  modalH = '750px',
+  modalW = '800px',
+  modalH = '700px',
 }) {
   const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: modalW,
-    height: modalH,
+    width: 'var(--modal-width)',
+    height: 'var(--modal-height)',
     bgcolor: 'background.paper',
     borderRadius: '1rem',
     boxShadow: 'var(--card-shadow)',
     padding: '2.5rem',
+    '--modal-width': modalW,
+    '--modal-height': modalH,
+    display: 'flex',
+    flexDirection: 'column',
   }
 
   const button = {
@@ -43,26 +47,15 @@ export default function BasicModal02({
 
   return (
     <Modal open={open} onClose={() => {}}>
-      <Box sx={style}>
+      <Box sx={style} className={styles.modalBox}>
         <h6 className={styles.modalHeader}>{modalTitle}</h6>
         <hr></hr>
-        <div
-          className={styles.modalContent}
-          style={{ maxHeight: '500px', overflowY: 'auto', lineHeight: '40px' }}
-        >
-          {modalBody}
-        </div>
+        <div className={styles.modalContent}>{modalBody}</div>
         <hr></hr>
-        <div style={{ letterSpacing: '1.4px' }}>
+        <div className={styles.modalFooter}>
           如有任何疑問請直接私訊粉絲團或來電 0928-007799/0907-101822
         </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginTop: '1rem',
-          }}
-        >
+        <div className={styles.buttonContainer}>
           <Button sx={button} variant="contained" onClick={onClose}>
             確定
           </Button>
