@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useTheme } from '@/context/theme-context'
 import { useRouter } from 'next/router'
 import myStyle from './banner.module.css'
@@ -12,80 +12,99 @@ const Banner = () => {
   const { themeDetails, getThemeDetails } = useTheme()
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [videoLoaded, setVideoLoaded] = useState(false)
   const router = useRouter()
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef(null)
   const [soundBars, setSoundBars] = useState([])
-  const [showMusicPrompt, setShowMusicPrompt] = useState(true)
+  const [showMusicPrompt, setShowMusicPrompt] = useState(false)
+  const [audioLoaded, setAudioLoaded] = useState(false)
 
-  const FuzzyOverlay = () => {
-    return (
-      <motion.div
-        animate={{
-          opacity: [0.1, 0.15, 0.1],
-          backgroundPosition: ['0% 0%', '130% 100%', '56% 0%'],
-        }}
-        transition={{
-          repeat: Infinity,
-          duration: 0.05,
-          ease: 'linear',
-        }}
-        style={{
-          backgroundImage: 'url("/noise2.jpg")',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundSize: '150% 100%',
-          pointerEvents: 'none',
-          opacity: 1,
-          zIndex: 3,
-        }}
-        className="absolute inset-0"
-      />
-    )
-  }
+  const FuzzyOverlay = () => (
+    <motion.div
+      animate={{
+        opacity: [0.1, 0.15, 0.1],
+        backgroundPosition: ['0% 0%', '130% 100%', '56% 0%'],
+      }}
+      transition={{
+        repeat: Infinity,
+        duration: 0.05,
+        ease: 'linear',
+      }}
+      style={{
+        backgroundImage: 'url("/noise2.jpg")',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundSize: '150% 100%',
+        pointerEvents: 'none',
+        opacity: 1,
+        zIndex: 3,
+      }}
+      className="absolute inset-0"
+    />
+  )
 
-  const togglePlay = () => {
+  const togglePlay = useCallback(() => {
+    if (!audioLoaded) return
     if (audioRef.current.paused) {
       audioRef.current
         .play()
-        .then(() => {
-          setIsPlaying(true)
-        })
+        .then(() => setIsPlaying(true))
         .catch((error) => {
+          console.error('播放失敗:', error)
           setIsPlaying(false)
         })
     } else {
       audioRef.current.pause()
       setIsPlaying(false)
     }
-  }
+  }, [audioLoaded])
 
-  const handleAcceptMusic = () => {
+  const handleAcceptMusic = useCallback(() => {
     setShowMusicPrompt(false)
-    audioRef.current
-      .play()
-      .then(() => setIsPlaying(true))
-      .catch((error) => {
-        console.log('播放失敗:', error)
+    localStorage.setItem('musicPreference', 'accepted')
+    if (audioLoaded) {
+      audioRef.current
+        .play()
+        .then(() => setIsPlaying(true))
+        .catch((error) => {
+          console.error('播放失敗:', error)
+          setIsPlaying(false)
+        })
+    }
+  }, [audioLoaded])
+
+  const handleDeclineMusic = useCallback(() => {
+    setShowMusicPrompt(false)
+    localStorage.setItem('musicPreference', 'declined')
+  }, [])
+
+  useEffect(() => {
+    const musicPreference = localStorage.getItem('musicPreference')
+    setShowMusicPrompt(musicPreference === null)
+  }, [])
+
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
         setIsPlaying(false)
-      })
-  }
-
-  const handleDeclineMusic = () => {
-    setShowMusicPrompt(false)
-  }
+      }
+    }
+    router.events.on('routeChangeStart', handleRouteChange)
+    return () => router.events.off('routeChangeStart', handleRouteChange)
+  }, [router])
 
   useEffect(() => {
     const { branch_themes_id } = router.query
     if (branch_themes_id) {
       setLoading(true)
-      getThemeDetails(branch_themes_id).finally(() => {
-        setLoading(false)
-        setShowMusicPrompt(true)
-      })
+      setVideoLoaded(false)
+      setAudioLoaded(false)
+      getThemeDetails(branch_themes_id).finally(() => setLoading(false))
     }
 
     setSoundBars(
@@ -97,14 +116,46 @@ const Banner = () => {
     )
   }, [router.query, getThemeDetails])
 
+  useEffect(() => {
+    if (themeDetails.bg_music) {
+      audioRef.current.src = `/music/${themeDetails.bg_music}`
+      setAudioLoaded(false)
+    }
+    if (themeDetails.theme_mp4) {
+      setVideoLoaded(false)
+    }
+  }, [themeDetails.bg_music, themeDetails.theme_mp4])
+
+  useEffect(() => {
+    const audio = audioRef.current
+    const handleCanPlayThrough = () => {
+      setAudioLoaded(true)
+      if (localStorage.getItem('musicPreference') === 'accepted') {
+        audio.play().catch(console.error)
+        setIsPlaying(true)
+      }
+    }
+    const handleError = (e) => console.error('Audio error:', e)
+
+    audio.addEventListener('canplaythrough', handleCanPlayThrough)
+    audio.addEventListener('error', handleError)
+
+    return () => {
+      audio.removeEventListener('canplaythrough', handleCanPlayThrough)
+      audio.removeEventListener('error', handleError)
+    }
+  }, [])
+
   const openModal = () => setModalOpen(true)
   const closeModal = () => setModalOpen(false)
 
-  const createStars = (count) => {
-    return Array.from({ length: count }, (_, index) => (
-      <FaStar key={index} style={{ marginRight: '6px' }} />
-    ))
-  }
+  const createStars = useCallback(
+    (count) =>
+      Array.from({ length: count }, (_, index) => (
+        <FaStar key={index} style={{ marginRight: '6px' }} />
+      )),
+    []
+  )
 
   return (
     <>
@@ -142,16 +193,19 @@ const Banner = () => {
         }}
       >
         <video
+          key={themeDetails.theme_mp4} // 添加 key 屬性
           autoPlay
           loop
           muted
           playsInline
+          onLoadedData={() => setVideoLoaded(true)}
           style={{
             position: 'absolute',
             width: '100%',
             height: '100%',
             objectFit: 'cover',
             zIndex: 1,
+            display: videoLoaded ? 'block' : 'none', // 只在加載完成後顯示
           }}
         >
           <source src={`/mp4/${themeDetails.theme_mp4}`} type="video/mp4" />
