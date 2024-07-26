@@ -149,7 +149,7 @@
           } else if (data.type === "img") {
             item.innerHTML = `<div class="userArea"><div>${data.username} :</div><img class="userImg" src='/img/${data.message}' alt='img' /></div>`;
           }else if(data.type ==='sticker'){
-            item.innerHTML = `<div class="userArea"><div>${data.username} :</div><img class="userImg" src='/sticker/ghost_0${data.message}.png' alt='img' /></div>`;
+            item.innerHTML = `<div class="userArea"><div>${data.username} :</div><img class="userSticker" src='/sticker/ghost_${data.message}.png' alt='img' /></div>`;
           }
           messages.appendChild(item);
         });

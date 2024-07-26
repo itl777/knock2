@@ -132,6 +132,11 @@ ul,li{
   height: auto;
   padding-left: 8px;
 }
+.userSticker{
+  max-width: 100px;
+  height: auto;
+  padding-left: 8px;
+}
 .userArea{
   display: flex;
 }

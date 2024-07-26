@@ -243,11 +243,15 @@ justify-content: space-around; */
 .stickerImgArea{
 display: grid;
 grid-template-columns: auto auto auto;
+gap:10px;
 margin: 10px;
 }
 .stickerImg{
-  width: 55px;
+  width: 45px;
   height: auto;
+}
+.stickerImg:hover{
+  width: 100%;
 }
 .uploadImgArea{
   display: flex;

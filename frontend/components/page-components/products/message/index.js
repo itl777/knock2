@@ -290,7 +290,7 @@ export default function Message() {
                     <img
                       key={index}
                       className={myStyle.msgLeftSticker}
-                      src={`/ghost/ghost_0${msg.message}.png`}
+                      src={`/sticker/ghost_${msg.message}.png`}
                       alt="img"
                     />
                   </div>
