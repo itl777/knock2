@@ -11,8 +11,7 @@ export default function DetailsSection({ breadcrumb, features, tab }) {
           {tab}
         </div>
       </div>
-      <Message/>
-
+      <Message />
     </>
   )
 }

@@ -48,9 +48,8 @@ export default function PdFeatures({ dbData }) {
                 <ShareBtn />
 
                 {/* 還沒接評價資料 */}
-            
-                <ReviewStar />
 
+                <ReviewStar />
               </div>
             </div>
 
