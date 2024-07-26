@@ -12,6 +12,10 @@
   object-fit: cover;
 }
 
+.itemImgBox :hover{
+  transform: scale(1.2);
+}
+
 @media screen and (max-width: 480px) {
   .itemImgBox {
     width: var(--small-img-width);
