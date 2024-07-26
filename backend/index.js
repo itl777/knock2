@@ -13,13 +13,8 @@ import checkout from "./routes/checkout.js";
 import payments from "./routes/payments.js";
 import coupons from "./routes/coupons.js";
 import reservations from "./routes/reservations.js";
-<<<<<<< HEAD
-// import invoice from "./routes/invoice.js";
 import notifications from "./routes/notifications.js";
-=======
-import invoice from "./routes/invoice.js";
 import './msg-socket.js'
->>>>>>> origin/it
 
 // 掛載 express
 const app = express();
@@ -68,7 +63,6 @@ app.use("/checkout", checkout);
 app.use("/payments", payments);
 app.use("/coupons", coupons);
 app.use("/reservations", reservations);
-// app.use("/invoice", invoice);
 app.use("/notifications", notifications);
 
 // 偵聽 port

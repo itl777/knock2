@@ -64,8 +64,10 @@ export default function FavCardLarge({ dbData }) {
           className={`${myStyle['gap']} d-flex flex-column align-items-center`}
         >
           <p className={myStyle['card-text']}>{dbData.product_name}</p>
-<<<<<<< HEAD
-          <p className={myStyle['card-text']}>${dbData.price}</p>
+          <p className={myStyle['card-text']}>
+            ${formatIntlNumber(dbData.price)}
+          </p>
+          
           <BlackBtn
             btnText={'加入購物車'}
             href={null}
@@ -78,12 +80,8 @@ export default function FavCardLarge({ dbData }) {
               )
             }} // ****** Iris Added
           />
-=======
-          <p className={myStyle['card-text']}>
-            ${formatIntlNumber(dbData.price)}
-          </p>
-          <BlackBtn btnText={'加入購物車'} />
->>>>>>> origin/it
+          
+          {/* <BlackBtn btnText={'加入購物車'} /> */}
         </div>
       </div>
     </>
