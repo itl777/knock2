@@ -77,3 +77,8 @@ position: relative;
   bottom: 32px;
   background: #d9d9d9;
 }
+.mask{
+  mask: url(/products/mask.svg);
+  mask-repeat: no-repeat;
+  mask-position: center;
+}

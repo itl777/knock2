@@ -44,11 +44,10 @@ export default function ProductReview({ product_id }) {
         reviewData.map((value) => {
           return (
             <div className={myStyle.reviewed} key={value.id}>
-              <div>
-                {/* 圖片avatar */}
+              <div className={myStyle.mask}>
                 <Image
                   src={`${API_SERVER}/avatar/${value.avatar}`}
-                  width={95}
+                  width={97}
                   height={95}
                   alt="Picture of the author"
                 />

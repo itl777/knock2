@@ -12,6 +12,7 @@ import 'animate.css/animate.css'
 // import EmojiPicker from 'emoji-picker-react'
 import { FaRegFaceLaugh, FaPaperclip, FaRegNoteSticky } from 'react-icons/fa6'
 import dynamic from 'next/dynamic'
+import StickerWindow from './sticker-window'
 
 const socket = io('http://localhost:4040')
 
@@ -47,6 +48,7 @@ export default function Message() {
   const [emojiData, setEmojiData] = useState(null)
   // sticker顯示
   const [toggleSticker, setToggleSticker] = useState(false)
+  const [stickerData, setStickerData] = useState(null)
   //上傳圖片顯示
   const [uploadImg, setUploadImg] = useState('')
   // 選擇圖片
@@ -110,7 +112,7 @@ export default function Message() {
         const res = await fetch('http://localhost:3001/products/upload', {
           method: 'POST',
           body: formData,
-          enctype:"multipart/form-data"
+          enctype: 'multipart/form-data',
         })
         console.log('---fecth res', res)
         const resData = await res.json()
@@ -150,6 +152,16 @@ export default function Message() {
     } else if (message === '') return
   }
 
+  // 送出貼圖
+  const sendSticker = (stickerNum) => {
+    socket.emit('chat message', {
+      room,
+      username,
+      type: 'sticker',
+      message: stickerNum,
+    })
+  }
+
   const messageEndRef = useRef(null)
 
   // 跳到底端
@@ -160,23 +172,23 @@ export default function Message() {
   useEffect(() => {
     scrollToBottom()
   }, [messages, uploadImg, toggleButton])
-  
-  useEffect(() => {
-    if (messageEndRef.current) {
-      scrollToBottom();
-    }
-  }, [messageEndRef.current]);
 
   useEffect(() => {
-    const container = document.querySelector(`.${myStyle.msgtext}`);
+    if (messageEndRef.current) {
+      scrollToBottom()
+    }
+  }, [messageEndRef.current])
+
+  useEffect(() => {
+    const container = document.querySelector(`.${myStyle.msgtext}`)
     if (container) {
       const resizeObserver = new ResizeObserver(() => {
-        scrollToBottom();
-      });
-      resizeObserver.observe(container);
-      return () => resizeObserver.disconnect();
+        scrollToBottom()
+      })
+      resizeObserver.observe(container)
+      return () => resizeObserver.disconnect()
     }
-  }, []);
+  }, [])
 
   // --------------
   const handleButton = () => {
@@ -253,28 +265,40 @@ export default function Message() {
           {/* 訊息放置處 */}
           {messages.map((msg, index) => {
             if (msg.username !== '管理員') {
-              return msg.type === 'text' ? (
-                <div key={index} className={`${myStyle.left}`}>
-                  <p key={index} className={myStyle.msgLeft}>
-                    {msg.message}
-                  </p>
-                </div>
-              ) : (
-                <div key={index} className={`${myStyle.left}`}>
-                  <img
-                    key={index}
-                    className={myStyle.msgLeftImg}
-                    src={`${API_SERVER}/img/${msg.message}`}
-                    alt="img"
-                  />
-                </div>
-              )
+              if (msg.type === 'text') {
+                return (
+                  <div key={index} className={`${myStyle.left}`}>
+                    <p key={index} className={myStyle.msgLeft}>
+                      {msg.message}
+                    </p>
+                  </div>
+                )
+              } else if (msg.type === 'img') {
+                return (
+                  <div key={index} className={`${myStyle.left}`}>
+                    <img
+                      key={index}
+                      className={myStyle.msgLeftImg}
+                      src={`${API_SERVER}/img/${msg.message}`}
+                      alt="img"
+                    />
+                  </div>
+                )
+              } else if (msg.type === 'sticker') {
+                return (
+                  <div key={index} className={`${myStyle.left}`}>
+                    <img
+                      key={index}
+                      className={myStyle.msgLeftSticker}
+                      src={`/ghost/ghost_0${msg.message}.png`}
+                      alt="img"
+                    />
+                  </div>
+                )
+              }
             } else {
               return (
-                <div
-                  key={index}
-                  className={`${myStyle.right}`}
-                >
+                <div key={index} className={`${myStyle.right}`}>
                   <img id={myStyle.adminImg} src="/ghost/ghost_15.png" alt="" />
                   <p key={index} className={myStyle.msgRight}>
                     {msg.message}
@@ -308,9 +332,7 @@ export default function Message() {
             <button onClick={handleStickers} type="button">
               <FaRegNoteSticky style={{ width: '26px', height: '26px' }} />
             </button>
-            {toggleSticker && (
-              <div className={myStyle.stickerWindow}>貼圖還沒做</div>
-            )}
+            {toggleSticker && <StickerWindow sendSticker={sendSticker} />}
           </div>
 
           {/* 上傳圖片 */}
