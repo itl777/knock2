@@ -10,6 +10,7 @@ export default function OrderDetailInfo({
   payment_date,
   full_address,
   order_status_id,
+  discount_total,
   order_status_name,
   paymentHidden = false,
 }) {
@@ -22,7 +23,7 @@ export default function OrderDetailInfo({
       )}
 
       {!paymentHidden && (
-        <OrderDetailRow label="折扣" content={formatPrice(0)} />
+        <OrderDetailRow label="折扣" content={formatPrice(discount_total)} />
       )}
       {!paymentHidden && (
         <OrderDetailRow label="運費" content={formatPrice(deliver_fee)} />

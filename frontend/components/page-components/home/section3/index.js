@@ -16,7 +16,10 @@ export default function HomeSection3() {
     fetch(`${BRANCH_THEMES}?branch_id=1`)
       .then((response) => response.json())
       .then((myData) => {
-        let shuffledThemes = _.shuffle(myData.themes)
+        let shuffledThemes = _.shuffle(myData.themes).map((theme) => ({
+          ...theme,
+          branch_themes_id: theme.branch_themes_id || theme.theme_id,
+        }))
         setData(shuffledThemes)
       })
       .catch((error) => {
@@ -94,6 +97,7 @@ export default function HomeSection3() {
                 min_players={theme.min_players}
                 max_players={theme.max_players}
                 themeTime={theme.theme_time}
+                branch_themes_id={theme.branch_themes_id}
               />
             ))}
           </Slider>

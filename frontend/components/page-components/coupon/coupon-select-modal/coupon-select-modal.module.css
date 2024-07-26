@@ -1,7 +1,7 @@
 .modalContentBox {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .couponBox {
@@ -12,7 +12,14 @@
 }
 
 .couponTag {
-  background-color: (var(--input-grey));
+  background-color: var(--input-grey);
+}
+
+.productCouponBtnStack {
+  display: flex;
+  gap: .5rem;
+  margin-left: 2px;
+  margin-top: .75rem;
 }
 
 @media screen and (max-width: 480px) {

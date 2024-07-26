@@ -9,6 +9,7 @@ import { useAuth } from '@/context/auth-context'
 import { useLoginModal } from '@/context/login-context'
 import { useAddress } from '@/context/address-context'
 import useScreenSize from '@/hooks/useScreenSize'
+import { useSnackbar } from '@/context/snackbar-context'
 // hooks
 import { useOrderValidation } from '@/hooks/orderValidation'
 import usePayment from '@/hooks/usePayment'
@@ -25,17 +26,17 @@ import EmptyCart from '@/components/page-components/checkout/empty-cart'
 import RedirectionGuide from '@/components/UI/redirect-guide'
 import CouponSelectModal from '../../coupon/coupon-select-modal'
 // api path
-import { PRODUCT_IMG, CHECKOUT_POST } from '@/configs/api-path'
+import { CHECKOUT_POST } from '@/configs/api-path'
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { auth, authIsReady } = useAuth() // 取得 auth.id, authIsReady
   const { loginFormSwitch } = useLoginModal() // 取得登入視窗開關
-  // const [memberProfile, setMemberProfile] = useState([]) // 取得會員基本資料
   const { timeout, errors, validateField } = useOrderValidation() // 訂單驗證
   const [invoiceTypeValue, setInvoiceTypeValue] = useState('member')
   const { handleOrderPayment } = usePayment()
   const userClientWidth = useScreenSize()
+  const { openSnackbar } = useSnackbar()
   const [screenWidth, setScreenWidth] = useState(userClientWidth)
   const {
     isAddressSelectModalOpen,
@@ -52,13 +53,16 @@ export default function CheckoutPage() {
     checkoutTotal,
     subtotal,
     cartBadgeQty,
-    handleQuantityChange,
     clearCart,
     deliverFee,
     fetchMemberProfile,
     formData,
     setFormData,
     selectedCoupons,
+    calculateDiscountTotal,
+    usableCoupons,
+    useableProductCoupons,
+    // selectedCoupons,
     discountTotal,
   } = useCart()
 
@@ -90,6 +94,7 @@ export default function CheckoutPage() {
     validateField(name, value)
   }
 
+  // 辨識發票類別
   const handleInvoiceTypeChange = (e) => {
     const value = e.target.value
     setInvoiceTypeValue(value)
@@ -107,6 +112,8 @@ export default function CheckoutPage() {
       productId: item.product_id,
       productOriginalPrice: item.price,
       orderQty: item.cart_product_quantity,
+      cartProductCouponId: item.cart_product_coupon_id,
+      
     }))
 
     // 根據發票形式設置 formData
@@ -145,6 +152,13 @@ export default function CheckoutPage() {
       alert('請確認欄位')
       return
     }
+
+    let orderCouponId = null
+
+    if (selectedCoupons.length > 0) {
+      orderCouponId = selectedCoupons[0].coupon_id
+    }
+
     const dataToSubmit = {
       ...updatedFormData,
       memberId: auth.id,
@@ -153,18 +167,17 @@ export default function CheckoutPage() {
       recipientDistrictId: orderAddress.district_id, // 收件人區域 ID
       recipientAddress: orderAddress.address, // 收件人地址
       deliverFee,
+      orderCouponId: orderCouponId,
       orderItems, // 將 orderItems 加入到要提交的數據中
     }
 
-
     try {
-      // Step 1: 提交訂單和商品資料到後端
       const response = await axios.post(CHECKOUT_POST, dataToSubmit)
       if (response.data.success) {
         const orderId = response.data.orderId // 取得後端返回的 order_id
         clearCart()
-        // Step 2: 送 orderId, checkoutTotal 給後端
-        handleOrderPayment(orderId, checkoutTotal)
+        openSnackbar('訂單已成立', 'success')
+        await handleOrderPayment(orderId, checkoutTotal)
       }
     } catch (error) {
       console.error('提交表單時出錯', error)
@@ -197,7 +210,6 @@ export default function CheckoutPage() {
   return (
     <section className={styles.sectionContainer}>
       <h2 className={styles.h2Style}>結帳</h2>
-
       {cartBadgeQty <= 0 && (
         <div className={styles.contentContainer}>
           <EmptyCart />
@@ -217,30 +229,18 @@ export default function CheckoutPage() {
             <h5>訂購資訊</h5>
             {/* OrderItemCheckout */}
             <div className={styles.itemList}>
-              {checkoutItems.map((v, i) => (
-                <OrderItemCheckout
-                  key={v.product_id}
-                  type={screenWidth < 640 ? 'small' : 'def'}
-                  cartId={v.cart_id}
-                  productId={v.product_id}
-                  productName={v.product_name}
-                  productOriginalPrice={v.price}
-                  productDiscountedPrice={v.price}
-                  productImg={`${PRODUCT_IMG}/${v.product_img}`}
-                  orderQty={v.cart_product_quantity}
-                  onQuantityChange={handleQuantityChange}
-                />
-              ))}
+              <OrderItemCheckout type={screenWidth < 640 ? 'small' : 'def'} />
             </div>
-            
-            <CouponSelectModal/>
+
+            <CouponSelectModal />
 
             {/* 訂單金額 */}
             <CheckoutTotalTable
               subtotal={subtotal}
-              checkoutTotal={checkoutTotal}
               deliverFee={deliverFee}
               totalDiscount={discountTotal}
+              checkoutTotal={checkoutTotal}
+
             />
           </div>
 
@@ -252,7 +252,6 @@ export default function CheckoutPage() {
               {isAddressSelectModalOpen && (
                 <SelectAddressModal onClose={closeAddressSelectModal} />
               )}
-
               {!!orderAddress ? (
                 <RecipientButtonSelected
                   key={orderAddress.id}
@@ -267,7 +266,6 @@ export default function CheckoutPage() {
               ) : (
                 <RecipientButton onClick={openAddressSelectModal} />
               )}
-
               <OrderSelectBox
                 name="invoice_type"
                 label="發票形式"
@@ -276,7 +274,6 @@ export default function CheckoutPage() {
                 options={invoiceTypeOption}
                 onChange={handleInvoiceTypeChange}
               />
-
               {invoiceTypeValue === 'mobile' && (
                 <OrderInputBox
                   name="mobileInvoice"
@@ -287,7 +284,6 @@ export default function CheckoutPage() {
                   onBlur={handleBlur}
                 />
               )}
-
               {invoiceTypeValue === 'tax' && (
                 <OrderInputBox
                   name="recipientTaxId"

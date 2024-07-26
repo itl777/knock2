@@ -7,9 +7,15 @@ import { useProduct } from '@/context/product-context'
 import { useProductImg } from '@/hooks/useProductImg'
 import { PRODUCT_IMG } from '@/configs/api-path'
 
+import { useCart } from '@/context/cart-context' // ****** Iris Added
+
+
 export default function FavCardLarge({ dbData }) {
   const { cardChange, setCardChange } = useProduct()
   const [isId, setIsId] = useState(0)
+
+  const { buyQuantity } = useProduct() // ****** Iris Added
+  const { handleAddToCart } = useCart() // ****** Iris Added
 
   const imgStyle = {
     width: ' 100%',
@@ -58,7 +64,18 @@ export default function FavCardLarge({ dbData }) {
         >
           <p className={myStyle['card-text']}>{dbData.product_name}</p>
           <p className={myStyle['card-text']}>${dbData.price}</p>
-          <BlackBtn btnText={'加入購物車'} />
+          <BlackBtn
+            btnText={'加入購物車'}
+            href={null}
+            onClick={() => {
+              handleAddToCart(
+                dbData.product_id,
+                dbData.product_name,
+                buyQuantity,
+                'add'
+              )
+            }} // ****** Iris Added
+          />
         </div>
       </div>
     </>

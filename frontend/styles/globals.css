@@ -144,6 +144,14 @@ h3 {
   margin: 0;
 }
 
+h4 {
+  font-size: 1.75rem;
+  font-weight: bold;
+  letter-spacing: var(--letter-spacing-4);
+  margin: 0;
+}
+
+
 h5 {
   font-size: 1.5rem;
   font-weight: bold;
@@ -198,4 +206,11 @@ a {
     margin: 0;
   }
   
+}
+
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
 }

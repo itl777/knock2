@@ -9,6 +9,7 @@ import { useAuth } from '@/context/auth-context'
 import { formatDateWithWeekday } from '@/hooks/numberFormat'
 // components
 import BlackBtn from '@/components/UI/black-btn'
+import OutlineBtn from '@/components/UI/outline-btn'
 import SuccessRows from './success-rows'
 import SuccessDeposit from './success-deposit'
 // api path
@@ -77,7 +78,7 @@ export default function ReservationSuccessSection() {
       )}
 
       <div className={styles.btnStack}>
-        <BlackBtn
+        <OutlineBtn
           btnText="回首頁"
           onClick={() => router.push('/')}
           href={null}
@@ -85,7 +86,7 @@ export default function ReservationSuccessSection() {
         />
         <BlackBtn
           btnText="檢視行程"
-          onClick={() => router.push('user/reservation/ongoing')}
+          onClick={() => router.push('/user/reservation/ongoing')}
           href={null}
           paddingType="medium"
         />

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import styles from './coupon-card.module.css'
+import { motion } from 'framer-motion'
 import MoreInfoBtn from './more-info-text-btn'
 import { formatPrice } from '@/hooks/numberFormat'
 import CouponCheckbox from './coupon-checkbox'
 import CouponMoreInfoModal from '../coupon-more-info-modal'
+import CouponTag from './coupon-tag'
 
 export default function CouponCard({
   status = 'ongoing',
@@ -20,10 +22,6 @@ export default function CouponCard({
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [checkedBoolean, setCheckedBoolean] = useState(isChecked)
-
-  useEffect(() => {
-    setCheckedBoolean(isChecked)
-  }, [isChecked])
 
   const getStatusClass = (baseClass) => {
     switch (status) {
@@ -51,14 +49,49 @@ export default function CouponCard({
     handelSelectedToggle(coupon_id)
   }
 
+  const getBgStyles = () => {
+    if (disabled) {
+      return `${styles.cardBg} ${styles.cardBgDisabled}`
+    } else if (isChecked) {
+      return `${styles.cardBg} ${styles.cardBgChecked}`
+    } else {
+      return `${styles.cardBg}`
+    }
+  }
+
+  const getCouponCardLeftStyles = () => {
+    let classNames = `${styles.couponCardLeft}`
+    if (disabled) {
+      classNames += ` ${styles.couponCardLeftDisabled}`
+    } else if (isChecked) {
+      classNames += ` ${styles.couponCardLeftChecked}`
+    }
+    return classNames
+  }
+
+  const getClasses = (baseClass, conditionClasses) => {
+    let classNames = baseClass
+    Object.entries(conditionClasses).forEach(([condition, className]) => {
+      if (condition) {
+        classNames += ` ${className}`
+      }
+    })
+    return classNames
+  }
+
+  useEffect(() => {
+    setCheckedBoolean(isChecked)
+  }, [isChecked])
+
   return (
-    <>
+    <motion.div
+      className={getBgStyles()}
+      // className={`${styles.cardBg} ${isChecked ? styles.cardBgChecked : ''}`}
+      whileHover={{ scale: 1.03 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+    >
       <div className={getStatusClass(styles.couponCard)}>
-        <div
-          className={`${styles.couponCardLeft} ${
-            isChecked ? styles.couponCardLeftChecked : ''
-          }`}
-        >
+        <div className={getCouponCardLeftStyles()}>
           {selectable && (
             <div className={styles.checkboxContainer}>
               <CouponCheckbox
@@ -69,22 +102,35 @@ export default function CouponCard({
             </div>
           )}
 
-          <img src="/ghost/ghost_11.png" alt="" />
+          <img
+            src="/ghost/ghost_11.png"
+            alt=""
+            className={styles.webGhostImg}
+          />
         </div>
 
         <div
-          className={`${styles.couponCardRight} ${
-            isChecked ? styles.couponCardRightChecked : ''
-          }`}
+          className={
+            disabled
+              ? `${styles.couponCardRightDisabled} ${styles.couponCardRight}`
+              : styles.couponCardRight
+          }
         >
           <div className={styles.couponInfo}>
             <p>{coupon_name}</p>
             <div className={styles.textBox}>
-              <p>最低消費金額：{formatPrice(minimum_order)}</p>
-              <p>有效期限：{valid_until}</p>
+              <small>最低消費：{formatPrice(minimum_order)}</small>
+              <small>有效期限：{valid_until}</small>
             </div>
+            {!btnHidden && <MoreInfoBtn onClick={handleMoreInfoClick} />}
+
+            {disabled && <CouponTag tagText="不符合資格" />}
+            <img
+              src="/ghost/ghost_11.png"
+              alt=""
+              className={styles.appGhostImg}
+            />
           </div>
-          {!btnHidden && <MoreInfoBtn onClick={handleMoreInfoClick} />}
         </div>
       </div>
 
@@ -95,6 +141,6 @@ export default function CouponCard({
           handleClose={handleCloseModal}
         />
       )}
-    </>
+    </motion.div>
   )
 }

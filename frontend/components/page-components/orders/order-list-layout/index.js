@@ -16,7 +16,7 @@ import NoData from '@/components/UI/no-data'
 import UserPagination from '@/components/UI/user-pagination'
 import RedirectionGuide from '@/components/UI/redirect-guide'
 
-export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
+export default function OrderListLayout({ status, initialPage = 1 }) {
   const [page, setPage] = useState(initialPage)
   const router = useRouter()
   const { auth, authIsReady } = useAuth()
@@ -38,8 +38,8 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
     // })
   }
 
-  const handleCancel = (order_id, order_status_id, merchant_trade_no) => {
-    if (order_status_id === 1 || order_status_id === 2) {
+  const handleCancel = (order_id, merchant_trade_no) => {
+    if (status === 'ongoing') {
       return async () => {
         setCancelDialog(`確定要取消訂單編號 ${merchant_trade_no} 嗎？`)
 
@@ -72,15 +72,15 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
         setIsLogin(false)
         loginFormSwitch('Login')
       } else {
-        fetchAllOrders(auth.id, orderStatusId, page)
+        fetchAllOrders(auth.id, status, page)
         setIsLogin(true)
       }
     }
-  }, [auth.id, router.isReady, authIsReady, orderStatusId, page])
+  }, [auth.id, router.isReady, authIsReady, status, page])
 
   useEffect(() => {
     if (updateAllOrders && auth.id) {
-      fetchAllOrders(auth.id, orderStatusId, page)
+      fetchAllOrders(auth.id, status, page)
       setUpdateAllOrders(false)
     }
   }, [updateAllOrders, auth.id])
@@ -108,12 +108,12 @@ export default function OrderListLayout({ orderStatusId, initialPage = 1 }) {
             total_price={v.total_price}
             payment_type={v.payment_type}
             full_address={v.full_address}
-            order_status_id={v.order_status_id}
-            order_status_name={v.order_status_name}
+            status={status}
+            // order_status_name={v.order_status_name}
             orderDetailData={allOrderDetails}
             member_id={auth.id}
             page={page}
-            handleCancel={handleCancel(v.order_id, v.order_status_id, v.merchant_trade_no)}
+            handleCancel={handleCancel(v.order_id, v.merchant_trade_no)}
             handlePayment={handlePayment(v.order_id, v.payment_type, v.total_price)}
           />
         ))

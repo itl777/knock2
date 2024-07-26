@@ -1,32 +1,99 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useTheme } from '@/context/theme-context'
 import { useRouter } from 'next/router'
 import myStyle from './banner.module.css'
 import { FaStar } from 'react-icons/fa'
+import BasicModal03 from '@/components/UI/basic-modal03'
 import BasicModal02 from '@/components/UI/basic-modal02'
 import { motion } from 'framer-motion'
+import { FaPlay, FaPause } from 'react-icons/fa'
 
 const Banner = () => {
   const { themeDetails, getThemeDetails } = useTheme()
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const [isPlaying, setIsPlaying] = useState(false)
+  const audioRef = useRef(null)
+  const [soundBars, setSoundBars] = useState([])
+  const [showMusicPrompt, setShowMusicPrompt] = useState(true)
 
+  const FuzzyOverlay = () => {
+    return (
+      <motion.div
+        animate={{
+          opacity: [0.1, 0.15, 0.1],
+          backgroundPosition: ['0% 0%', '130% 100%', '56% 0%'],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 0.05,
+          ease: 'linear',
+        }}
+        style={{
+          backgroundImage: 'url("/noise2.jpg")',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundSize: '150% 100%',
+          pointerEvents: 'none',
+          opacity: 1,
+        }}
+        className="absolute inset-0"
+      />
+    )
+  }
+
+  const togglePlay = () => {
+    if (audioRef.current.paused) {
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true)
+        })
+        .catch((error) => {
+          setIsPlaying(false)
+        })
+    } else {
+      audioRef.current.pause()
+      setIsPlaying(false)
+    }
+  }
+
+  const handleAcceptMusic = () => {
+    setShowMusicPrompt(false)
+    audioRef.current
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch((error) => {
+        console.log('播放失敗:', error)
+        setIsPlaying(false)
+      })
+  }
+
+  const handleDeclineMusic = () => {
+    setShowMusicPrompt(false)
+  }
   useEffect(() => {
     const { branch_themes_id } = router.query
     if (branch_themes_id) {
       setLoading(true)
-      getThemeDetails(branch_themes_id).finally(() => setLoading(false))
+      getThemeDetails(branch_themes_id).finally(() => {
+        setLoading(false)
+        setShowMusicPrompt(true) // 顯示音樂播放提示
+      })
     }
+
+    setSoundBars(
+      Array.from({ length: 20 }, () => ({
+        minHeight: Math.floor(Math.random() * 3) + 3,
+        maxHeight: Math.floor(Math.random() * 7) + 20,
+        delay: Math.random() * 0.5,
+      }))
+    )
   }, [router.query, getThemeDetails])
-
-  if (loading) {
-    return <div></div>
-  }
-
-  if (!themeDetails) {
-    return <div>No theme data available</div>
-  }
 
   const openModal = () => setModalOpen(true)
   const closeModal = () => setModalOpen(false)
@@ -39,17 +106,41 @@ const Banner = () => {
 
   return (
     <>
+      <BasicModal03
+        open={showMusicPrompt}
+        onClose={handleDeclineMusic}
+        modalTitle="Do you want to listen to music?"
+        modalBody={
+          <div className={myStyle.musicPrompt}>
+            <p>是否播放背景音樂來增強您的體驗？</p>
+            <div className={myStyle.musicPromptButtons}>
+              <button
+                className={myStyle.acceptButton}
+                onClick={handleAcceptMusic}
+              >
+                播放音樂
+              </button>
+              <button
+                className={myStyle.declineButton}
+                onClick={handleDeclineMusic}
+              >
+                不要播放
+              </button>
+            </div>
+          </div>
+        }
+      />
       <div
         style={{
           position: 'relative',
-          height: 'calc(100vh - 100px)',
-          overflow: 'hidden',
-          background: `linear-gradient(to top, rgba(0, 0, 0, 0.65), rgba(155, 155, 155, 0.3)), url("/themes-main/${themeDetails.theme_img}") no-repeat center center / cover`,
+          minHeight: 'calc(100vh - 100px)',
+          background: `linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(155, 155, 155, 0.1)), url("/themes-main/${themeDetails.theme_img}") no-repeat center center / cover`,
           display: 'flex',
           alignItems: 'center',
         }}
       >
-        <div className="container">
+        <FuzzyOverlay />
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="row">
             <div className="col-6">
               <h1 className={myStyle.h1}>{themeDetails.theme_name}</h1>
@@ -78,6 +169,39 @@ const Banner = () => {
                   </button>
                 </div>
               </div>
+            </div>
+            <div className="col-6 d-flex justify-content-end align-items-end ">
+              <div className="d-flex align-items-end">
+                {isPlaying && (
+                  <div className={myStyle.soundBarsContainer}>
+                    {soundBars.map((bar, i) => (
+                      <div
+                        key={i}
+                        className={myStyle.soundBar}
+                        style={{
+                          '--min-height': `${bar.minHeight}px`,
+                          '--max-height': `${bar.maxHeight}px`,
+                          animationDelay: `${bar.delay}s`,
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ height: '100%' }}
+                >
+                  <button onClick={togglePlay} className={myStyle.playerButton}>
+                    {isPlaying ? <FaPause /> : <FaPlay />}
+                  </button>
+                </div>
+              </div>
+
+              {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+              <audio ref={audioRef} loop>
+                <source src="/music/music02.mp3" type="audio/mpeg" />
+                您的瀏覽器不支持 audio 元素。
+              </audio>
             </div>
           </div>
         </div>
@@ -134,3 +258,4 @@ const Banner = () => {
 }
 
 export default Banner
+/* eslint-disable @next/next/no-img-element */

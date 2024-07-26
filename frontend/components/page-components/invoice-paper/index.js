@@ -5,12 +5,16 @@ import useFetchOrderData from '@/hooks/fetchOrderDetails'
 import Barcode from 'react-barcode'
 import QRCode from 'react-qr-code'
 import { useRouter } from 'next/router'
+import NoData from '@/components/UI/no-data'
+import BlackBtn from '@/components/UI/black-btn'
+import OutlineBtn from '@/components/UI/outline-btn'
 
 export default function InvoicePaper({ order_id }) {
   const router = useRouter()
   const { auth, authIsReady } = useAuth()
   const { order, detail, fetchOrderData } = useFetchOrderData()
   const [fetchReady, setFetchReady] = useState(false)
+  const [wrongPath, setWrongPath] = useState(false)
 
   const formatDateRange = (value) => {
     const date = new Date(value)
@@ -23,9 +27,13 @@ export default function InvoicePaper({ order_id }) {
     return `${taiwanYear}年 ${month}月-${nextMonth}月`
   }
 
-  // const formatInvoiceNo = (value) => {
-  //   return `${value.slice(0, 2)}-${value.slice(2)}`
-  // }
+  const formatInvoiceNo = (value) => {
+    if (value) {
+      return `${value.slice(0, 2)}-${value.slice(2)}`
+    } else {
+      return value
+    }
+  }
 
   const getBarcodeDate = (value) => {
     const date = new Date(value)
@@ -34,6 +42,19 @@ export default function InvoicePaper({ order_id }) {
     return `${taiwanYear}${month}`
   }
 
+  const invoiceChecked = () => {
+    if (
+      !order ||
+      order.invoice_rtn_code !== 1 ||
+      !order.invoice_no ||
+      !order.invoice_date ||
+      !order.invoice_random_number
+    ) {
+      setWrongPath(true)
+    } else {
+      setWrongPath(false)
+    }
+  }
   useEffect(() => {
     if (router.isReady && authIsReady && auth.id) {
       if (order_id > 0) {
@@ -43,48 +64,74 @@ export default function InvoicePaper({ order_id }) {
     }
   }, [auth.id, router.isReady, authIsReady])
 
-  return (
-    <div className={styles.taiwanInvoice}>
-      <div className={styles.invoiceHeader}>
-        <img src="/home/LOGO.svg" />
-        <div className={styles.invoiceTitle}>電子發票證明聯</div>
-        <div className={styles.invoiceSubTitle}>
-          {formatDateRange(order.invoice_date)}
-        </div>
-        <div className={styles.invoiceSubTitle}>{order.invoice_no}</div>
-      </div>
-      <div className={styles.invoiceInfo}>
-        <div className={styles.row}>
-          <div>{order.invoice_date}</div>
-          <div>格式：25</div>
-        </div>
-        <div className={styles.row}>
-          <div>隨機碼：{order.invoice_random_number}</div>
-          <div>總計：{order.total_price}</div>
-        </div>
-        <div>賣方：66666666</div>
-      </div>
+  useEffect(() => {
+    invoiceChecked(order)
+  }, [order])
 
-      <div className={styles.qrcodeBox}>
-        <QRCode
-          value={`${order.invoice_date},${order.invoice_random_number}`}
-          size={80}
+  return (
+    <div className={styles.sectionContainer}>
+      {wrongPath && <NoData text="錯誤路徑" />}
+      {!wrongPath && (
+        <div className={styles.taiwanInvoice}>
+          <div className={styles.invoiceHeader}>
+            <img src="/home/invoice-logo.svg" />
+            <div className={styles.invoiceTitle}>電子發票證明聯</div>
+            <div className={styles.invoiceSubTitle}>
+              {formatDateRange(order.invoice_date)}
+            </div>
+            <div className={styles.invoiceSubTitle}>
+              {formatInvoiceNo(order.invoice_no)}
+            </div>
+          </div>
+          <div className={styles.invoiceInfo}>
+            <div className={styles.row}>
+              <div>{order.invoice_date}</div>
+              <div>格式：25</div>
+            </div>
+            <div className={styles.row}>
+              <div>隨機碼：{order.invoice_random_number}</div>
+              <div>總計：{order.subtotal_price+order.deliver_fee-order.discountTotal}</div>
+            </div>
+            <div>賣方：66666666</div>
+          </div>
+          <div className={styles.barcodeBox}>
+            <Barcode
+              format="CODE39"
+              width={2.25}
+              height={30}
+              displayValue={false}
+              value={getBarcodeDate(order.invoice_date)}
+            />
+          </div>
+
+          <div className={styles.qrcodeBox}>
+            <QRCode
+              value={`${order.invoice_date},${order.invoice_random_number}`}
+              size={90}
+            />
+            <QRCode
+              value={`${order.invoice_date},${order.invoice_random_number}`}
+              size={90}
+            />
+          </div>
+        </div>
+      )}
+      <div className={styles.btnStack}>
+        <OutlineBtn
+          btnText="返回"
+          href={null}
+          onClick={() => {
+            router.back()
+          }}
         />
-        <QRCode
-          value={`${order.invoice_date},${order.invoice_random_number}`}
-          size={80}
-        />
-        <QRCode
-          value={`${order.invoice_date},${order.invoice_random_number}`}
-          size={80}
+        <BlackBtn
+          btnText="列印"
+          href={null}
+          onClick={() => {
+            window.print()
+          }}
         />
       </div>
-        <Barcode
-        format="CODE39"
-          height={30}
-          displayValue={false}
-          value={getBarcodeDate(order.invoice_date)}
-        />
     </div>
   )
 }

@@ -36,10 +36,10 @@ export default function RecipientButtonEdit({
   name = '無收件人',
   phone = '無收件手機',
   address = '無收件地址',
-  href = '/',
+  href = null,
   addressId, // 接收父層 SelectAddressModal 資料
 }) {
-  const { handleAddressDelete, handleSelectAddress } = useAddress()
+  const { handleAddressDelete, handleSelectAddress, openAddressEditModal, goToEditModal } = useAddress()
   const { openConfirmDialog } = useConfirmDialog()
 
   const handleDeleteClick = () => {
@@ -61,7 +61,7 @@ export default function RecipientButtonEdit({
 
             <div className={styles.btnDivider}> </div>
 
-            <TextButton btnText="編輯" type="sec" href={null} />
+            <TextButton btnText="編輯" type="sec" href={null} onClick={()=>{goToEditModal(addressId)}} />
 
             <div className={styles.btnDivider}> </div>
 

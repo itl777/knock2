@@ -7,6 +7,9 @@ import OrderStatusTag from '../../order-status-tag'
 import OrderProductImgBox from '../../order-product-img-box'
 import { HiOutlineCreditCard, HiOutlineCube } from 'react-icons/hi'
 import { useRouter } from 'next/router'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+import { useEffect } from 'react'
 
 export default function OrderListCard({
   order_id,
@@ -15,11 +18,11 @@ export default function OrderListCard({
   total_price,
   payment_type,
   full_address,
-  order_status_id,
-  order_status_name,
+  status,
+  // order_status_name,
   orderDetailData,
-  handlePayment, // 接收父層 order list layout 
-  handleCancel, // 接收父層 order list layout 
+  handlePayment, // 接收父層 order list layout
+  handleCancel, // 接收父層 order list layout
 }) {
   const router = useRouter()
 
@@ -28,15 +31,38 @@ export default function OrderListCard({
   }
 
   const showCancelBtn = () => {
-    return order_status_id === 1 || order_status_id === 2 ? false : true
+    return status === 'ongoing' || status === 'shipping' ? false : true
   }
 
   const showPaymentBtn = () => {
-    return payment_type === '待付款' ? false : true
+    return status === 'ongoing' ? false : true
   }
 
+  const getStatus = () => {
+    switch (status) {
+      case 'ongoing':
+        return '待付款'
+        break
+      case 'shipping':
+        return '待出貨'
+        break
+      case 'completed':
+        return '已完成'
+        break
+      case 'canceled':
+        return '已取消'
+        break
+      default:
+        break
+    }
+  }
+
+  useEffect(() => {
+    AOS.init()
+  }, [])
+
   return (
-    <div className={styles.orderBox}>
+    <div className={styles.orderBox} data-aos="fade-right">
       <CardHeader
         title={order_date}
         btn1Text="詳情"
@@ -59,7 +85,7 @@ export default function OrderListCard({
             <IconTextRow content={full_address} icon={HiOutlineCube} />
           </div>
 
-          <OrderStatusTag statusText={order_status_name} />
+          <OrderStatusTag statusText={getStatus()} />
         </div>
 
         <div className={styles.imgListBox}>

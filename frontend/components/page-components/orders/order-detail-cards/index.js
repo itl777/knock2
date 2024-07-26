@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styles from './order-detail-cards.module.css'
 import { useRouter } from 'next/router'
+import { useCart } from '@/context/cart-context'
 import useFetchOrderData from '@/hooks/fetchOrderDetails'
 import OrderItemDetail from '../order-item-detail'
 import OrderReviewDialog from '../order-review-dialog'
@@ -12,13 +13,16 @@ export default function OrderDetailCards({ order_id }) {
   const router = useRouter()
   const { order, detail, anyReviewed, fetchOrderData } = useFetchOrderData()
   const [showReviewDialog, setShowReviewDialog] = useState(false)
+  const { calculateProductDiscount } = useCart()
 
   const handleInvoice = () => {
     router.push(`/user/orders/details/invoice/${order_id}`)
   }
 
   const hideInvoice = () => {
-    return order.invoice_rtn_code === 1 ? false : true
+    if (order) {
+      return order.invoice_rtn_code === 1 ? false : true
+    }
   }
 
   useEffect(() => {
@@ -52,7 +56,14 @@ export default function OrderDetailCards({ order_id }) {
               key={v.product_id}
               productName={v.product_name}
               originalPrice={v.order_unit_price}
-              discountedPrice={v.order_unit_price}
+              // discountedPrice={v.order_unit_price}
+              discountedPrice={calculateProductDiscount(
+                v.order_unit_price,
+                v.order_quantity,
+                v.discount_amount,
+                0,
+                v.discount_max
+              )}
               productImg={
                 v.product_img ? `${PRODUCT_IMG}/${v.product_img}` : ''
               }
@@ -68,7 +79,10 @@ export default function OrderDetailCards({ order_id }) {
             merchant_trade_no={order?.merchant_trade_no}
             subtotal_price={order?.subtotal_price}
             deliver_fee={order?.deliver_fee}
-            total_price={order?.total_price}
+            discount_total={order?.discountTotal}
+            total_price={
+              order?.subtotal_price + order?.deliver_fee - order?.discountTotal
+            }
             payment_date={order?.payment_date}
             full_address={order?.full_address}
             order_status_name={order?.order_status_name}

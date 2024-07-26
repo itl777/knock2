@@ -124,7 +124,9 @@ export default function ReservationPage({ status }) {
               deposit={formatPrice(v.deposit)}
               created_at={v.created_at}
               payment_date={v.payment_date}
+              rtn_code = {v.rtn_code}
               reservation_status_id={v.reservation_status_id}
+              cancel={v.cancel}
               handleCancel={handleCancel(
                 v.reservation_status_id,
                 v.reservation_date,
