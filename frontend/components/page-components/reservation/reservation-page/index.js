@@ -114,6 +114,7 @@ export default function ReservationPage({ status }) {
         <div className={styles.listContainer}>
           {reservationData.map((v) => (
             <ReservationListCards
+            key={v.reservation_id}
               reservation_date={v.reservation_date}
               theme_name={`${v.theme_name} / ${
                 v.branch_name ? v.branch_name : ''

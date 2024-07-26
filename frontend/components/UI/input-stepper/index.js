@@ -50,11 +50,11 @@ export default function InputStepper({
   }
 
   // 點擊「確定刪除」後
-  const handleConfirmDelete = () => {
-    setValue(minValue) // 數量歸 0
-    onQuantityChange(minValue) // 通知父層數量歸 0
-    handleConfirm() // close confirm dialog
-  }
+  // const handleConfirmDelete = () => {
+  //   setValue(minValue) // 數量歸 0
+  //   onQuantityChange(minValue) // 通知父層數量歸 0
+  //   // handleConfirm() // close confirm dialog
+  // }
 
   const StepperButton = styled(IconButton)(({ theme }) => ({
     backgroundColor: 'white',
