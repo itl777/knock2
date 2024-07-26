@@ -94,6 +94,34 @@
     }
 }
 
+.teamForm .sty input{
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.12rem;
+    font-family: "Noto Serif JP", "serif";
+    position: relative;
+    height: 40px;
+    padding: 0.5rem 1rem;
+    color: #B99755 !important;
+    background: #222222;
+    border-radius: 10px;
+    border: 2px solid #B99755;
+    transition: all 200ms;
+}
+
+.teamForm textarea{
+    letter-spacing: 0.12rem;
+    font-family: "Noto Serif JP", "serif";
+    padding: 0.5rem 1rem;
+    color: #B99755 !important;
+    background: #222222;
+    border-radius: 10px;
+    border: 2px solid #B99755;
+    transition: all 200ms;
+}
+
 .teamTable {
     width: 100%;
 }

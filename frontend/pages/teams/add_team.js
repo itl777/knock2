@@ -131,7 +131,11 @@ export default function TeamsAdd() {
               <div className="col-12 col-lg-6">
                 <div className={styles.borderbox}>
                   <h3 className={styles.teamTitle}>創立團隊</h3>
-                  <form name="createTeam" onSubmit={handleSubmit}>
+                  <form
+                    name="createTeam"
+                    onSubmit={handleSubmit}
+                    className={styles.teamForm}
+                  >
                     <div className="mb-3">
                       <label htmlFor={'lead_name'} className="form-label">
                         團長： {auth.nickname}
@@ -161,7 +165,8 @@ export default function TeamsAdd() {
                       <div>Loading...</div>
                     )}
                     <hr />
-                    <div className="mb-3">
+
+                    <div className={`mb-3 ${styles.sty}`}>
                       <label htmlFor={'team_title'} className="form-label">
                         團隊名稱
                       </label>
@@ -178,7 +183,8 @@ export default function TeamsAdd() {
                         {titleError && titleError}
                       </div>
                     </div>
-                    <div className="mb-3">
+
+                    <div className={`mb-3 ${styles.sty}`}>
                       <label htmlFor={'team_limit'} className="form-label">
                         募集人數
                       </label>

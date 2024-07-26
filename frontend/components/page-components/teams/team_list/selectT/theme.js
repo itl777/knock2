@@ -54,6 +54,10 @@ const customTheme = createTheme({
           border: `${borderWidth} solid ${borderColor}`,
           borderRadius: borderRadius,
           boxShadow: 'none',
+
+          '& .Mui-disabled': {
+            display: 'none',
+          },
         },
       },
     },
