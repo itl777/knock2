@@ -240,7 +240,7 @@ router.post("/api", async (req, res) => {
   const m = moment(users[0].birthday);
   users[0].birthday = m.isValid() ? m.format(dateFormat) : "";
 
-  const sql2 = `SELECT address.id,postal_codes,address,recipient_name,address.mobile_phone as recipient_phone,type,district_name,city_name 
+  const sql2 = `SELECT address.id,postal_codes,address,recipient_name, address.mobile_phone ,type, district.id AS district_id,district_name, city_id ,city_name 
   FROM address 
   LEFT JOIN district
   ON district_id = district.id 
@@ -350,6 +350,135 @@ router.put("/api", async (req, res) => {
   }
 
   return res.json(output);
+});
+
+// 處理 地址city選項 的api
+router.get("/address_city_options", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    city: {},
+  };
+
+  try {
+    const sql = `SELECT id AS value , city_name AS text FROM city;`;
+    const [rows] = await db.query(sql);
+    output.city = rows;
+  } catch (error) {
+    console.error("Error fetching city: ", error);
+    res.status(500).json(output);
+  }
+
+  output.success = true;
+  res.json(output);
+});
+
+// 處理 地址district選項 的api
+router.get("/address_district_options/:city_id", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    district: {},
+  };
+
+  const city_id = +req.params.city_id || 0;
+  if (!city_id) {
+    output.code = 400;
+    output.error = "缺少 city id";
+    return res.status(400).json(output);
+  }
+
+  try {
+    const sql = `SELECT id AS value , district_name AS text FROM district WHERE city_id=?;`;
+    const [rows] = await db.query(sql, [city_id]);
+    output.district = rows;
+  } catch (error) {
+    console.error("Error fetching district: ", error);
+    res.status(500).json(output);
+  }
+
+  output.success = true;
+  res.json(output);
+});
+
+// 處理 地址更新 的api
+router.post("/update_address", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    result: {},
+  };
+  if (!req.my_jwt?.id) {
+    output.error = "沒登入";
+    return res.json(output);
+  }
+
+  const address_id = req.body.id;
+  try {
+    if (!address_id) {
+      const sql = "INSERT INTO address SET ?";
+      const [result] = await db.query(sql, [req.body]);
+
+      output.success = result.affectedRows;
+      output.result = result;
+    } else {
+      const sql = "UPDATE address SET ? WHERE id=?";
+      const [result] = await db.query(sql, [req.body, address_id]);
+
+      output.success = result.affectedRows;
+      output.result = result;
+    }
+  } catch (error) {
+    output.error = error;
+    res.status(500).json(output);
+  }
+
+  return res.json(output);
+});
+
+// 處理 刪除地址 的api
+router.delete("/delete_address/:address_id", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    error: "",
+    result: {},
+  };
+  if (!req.my_jwt?.id) {
+    output.error = "沒登入";
+    return res.json(output);
+  }
+
+  const address_id = +req.params.address_id || 0;
+
+  if (!address_id) {
+    output.code = 400;
+    output.error = "缺少 address id";
+    return res.status(400).json(output);
+  }
+
+  try {
+    const sql = `DELETE FROM address WHERE id=?`;
+    const [result] = await db.query(sql, [address_id]);
+
+    if (result.affectedRows === 1) {
+      output.success = true;
+      output.result = result;
+    } else {
+      output.code = 404;
+      output.error = "刪除失敗，找不到 address id";
+    }
+
+    res.status(200).json(output);
+  } catch (error) {
+    console.error("地址刪除失敗:", error);
+    output.code = 500;
+    output.message = error;
+    res.status(500).json(output);
+  }
 });
 
 // 處理 register 註冊的api
