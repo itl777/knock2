@@ -55,7 +55,7 @@ export default function FilterBtnArea({
             {showIconNew && (NewToggle ? <AiFillCaretUp /> : '')}
           </>
         }
-        onClick={() => handleFilterCreated('created_at', 'DESC')}
+        onClick={() => handleFilterCreated('created_at', NewToggle?'ASC':'DESC')}
       />
       <OutlineBtn
         btnText={

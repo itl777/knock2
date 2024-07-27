@@ -6,6 +6,7 @@ import { useDragFavorite } from '@/hooks/useDragFavorite'
 import EmptyFavorite from '../empty-favorite'
 import { PRODUCT_LIST } from '@/configs/api-path'
 import { useAuth } from '@/context/auth-context'
+import OrderReviewDialog from './order-review-dialog/index'
 
 export default function ProductTabDrag({ favData }) {
   let favDataRows = favData['rows'] || []
@@ -96,7 +97,6 @@ export default function ProductTabDrag({ favData }) {
         body: JSON.stringify({ title: newTitle }),
       })
       const resData = await res.json()
-
     } catch (e) {
       console.error(e)
     }
@@ -341,6 +341,9 @@ export default function ProductTabDrag({ favData }) {
               ))}
           </div>
         </div>
+
+        {/* 提示 */}
+        <OrderReviewDialog />
       </div>
       <style jsx>
         {`

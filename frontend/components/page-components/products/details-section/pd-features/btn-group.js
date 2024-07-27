@@ -8,7 +8,7 @@ import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
 
 export default function BtnGroup({ product_id, product_name }) {
   // 從context來的quantity
-  const { quantity, setQuantity } = useProduct()
+  // const { quantity, setQuantity } = useProduct()
   const { buyQuantity, setBuyQuantity } = useProduct() // ****** Iris Added
   const { handleAddToCart } = useCart() // ****** Iris Added
   const { toggleButton, data } = useFavoriteProduct(product_id)

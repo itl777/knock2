@@ -19,7 +19,6 @@ const customTheme = (outerTheme) =>
       MuiTextField: {
         styleOverrides: {
           root: {
-       
             '--TextField-brandBorderColor': '#5B5B5B',
             '--TextField-brandBorderHoverColor': 'rgba(34, 34, 34, 1)',
             '--TextField-brandBorderFocusedColor': '#B99755',
@@ -38,7 +37,7 @@ const customTheme = (outerTheme) =>
             fontFamily: 'Noto Serif JP',
           },
           root: {
-            height:'45px',
+            height: '45px',
             [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
               borderColor: 'var(--TextField-brandBorderHoverColor)',
             },
@@ -81,10 +80,14 @@ export default function SearchInput() {
 
   const handleClick = (event) => {
     event.preventDefault()
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, userSearch: userSearch },
-    })
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, userSearch: userSearch },
+      },
+      undefined,
+      { scroll: false }
+    )
   }
 
   return (
