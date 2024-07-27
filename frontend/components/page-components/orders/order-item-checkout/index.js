@@ -56,7 +56,6 @@ export default function OrderItemCheckout({ type = 'def' }) {
   const itemInfoClass =
     type === 'small' ? styles.itemInfoSmall : styles.itemInfo
 
-
   useEffect(() => {
     calculateProductDiscount()
   }, [usableProductCoupons])
@@ -72,15 +71,18 @@ export default function OrderItemCheckout({ type = 'def' }) {
             )
         )
         return (
-          <div>
-            <div className={styles.itemBox} key={v.product_id}>
+          <div key={v.product_id}>
+            <div className={styles.itemBox} >
               <OrderProductImgBox
                 imgSrc={`${PRODUCT_IMG}/${v.product_img}`}
                 productId={v.product_id}
               />
               <div className={itemInfoClass}>
                 <div className={styles.itemNamePriceBox}>
-                  <OrderProductLink btnText={v.product_name} productId={v.product_id}/>
+                  <OrderProductLink
+                    btnText={v.product_name}
+                    productId={v.product_id}
+                  />
                   {/* <p>{v.product_name}</p> */}
 
                   <OrderPriceBox
