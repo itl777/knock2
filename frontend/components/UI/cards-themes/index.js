@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import styles from './cards.module.scss'
+import styles from './cards.module.css'
 import {
   AspectRatio,
   Card,
@@ -171,9 +171,17 @@ export default function Card02({
             }}
           >
             <Link
-              href="#"
-              onClick={handleClick}
+              href={`/themes/themes-details/${branch_themes_id}`}
+              onClick={(e) => {
+                e.preventDefault()
+                setClicked(!clicked)
+                router.push(`/themes/themes-details/${branch_themes_id}`)
+              }}
               className={styles.bookingButton}
+              style={{
+                backgroundColor: clicked ? '#222222' : 'white',
+                color: clicked ? 'white' : '#222222',
+              }}
               onMouseEnter={(e) => {
                 e.target.style.backgroundColor = '#222222'
                 e.target.style.color = 'white'

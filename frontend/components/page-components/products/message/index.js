@@ -263,50 +263,61 @@ export default function Message() {
       <div id={myStyle.messageArea}>
         <div className={myStyle.msgtext} ref={messageEndRef}>
           {/* 訊息放置處 */}
-          {messages.map((msg, index) => {
-            if (msg.username !== '管理員') {
-              if (msg.type === 'text') {
+          {messages.length < 1 ? (
+            <div className={`${myStyle.right}`}>
+              <img id={myStyle.adminImg} src="/ghost/ghost_15.png" alt="" />
+              <p className={myStyle.msgRight}>您好!請問需要什麼服務呢?</p>
+            </div>
+          ) : (
+            messages.map((msg, index) => {
+              if (msg.username !== '管理員') {
+                if (msg.type === 'text') {
+                  return (
+                    <div key={index} className={`${myStyle.left}`}>
+                      <p key={index} className={myStyle.msgLeft}>
+                        {msg.message}
+                      </p>
+                    </div>
+                  )
+                } else if (msg.type === 'img') {
+                  return (
+                    <div key={index} className={`${myStyle.left}`}>
+                      <img
+                        key={index}
+                        className={myStyle.msgLeftImg}
+                        src={`${API_SERVER}/img/${msg.message}`}
+                        alt="img"
+                      />
+                    </div>
+                  )
+                } else if (msg.type === 'sticker') {
+                  return (
+                    <div key={index} className={`${myStyle.left}`}>
+                      <img
+                        key={index}
+                        className={myStyle.msgLeftSticker}
+                        src={`/sticker/ghost_${msg.message}.png`}
+                        alt="img"
+                      />
+                    </div>
+                  )
+                }
+              } else {
                 return (
-                  <div key={index} className={`${myStyle.left}`}>
-                    <p key={index} className={myStyle.msgLeft}>
+                  <div key={index} className={`${myStyle.right}`}>
+                    <img
+                      id={myStyle.adminImg}
+                      src="/ghost/ghost_15.png"
+                      alt=""
+                    />
+                    <p key={index} className={myStyle.msgRight}>
                       {msg.message}
                     </p>
                   </div>
                 )
-              } else if (msg.type === 'img') {
-                return (
-                  <div key={index} className={`${myStyle.left}`}>
-                    <img
-                      key={index}
-                      className={myStyle.msgLeftImg}
-                      src={`${API_SERVER}/img/${msg.message}`}
-                      alt="img"
-                    />
-                  </div>
-                )
-              } else if (msg.type === 'sticker') {
-                return (
-                  <div key={index} className={`${myStyle.left}`}>
-                    <img
-                      key={index}
-                      className={myStyle.msgLeftSticker}
-                      src={`/sticker/ghost_${msg.message}.png`}
-                      alt="img"
-                    />
-                  </div>
-                )
               }
-            } else {
-              return (
-                <div key={index} className={`${myStyle.right}`}>
-                  <img id={myStyle.adminImg} src="/ghost/ghost_15.png" alt="" />
-                  <p key={index} className={myStyle.msgRight}>
-                    {msg.message}
-                  </p>
-                </div>
-              )
-            }
-          })}
+            })
+          )}
         </div>
       </div>
 
