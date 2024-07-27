@@ -37,6 +37,7 @@ export default function Profile() {
           }
         })
     }
+    // eslint-disable-next-line
   }, [router.isReady, isVerified, auth.id])
 
   return (

@@ -153,11 +153,17 @@ export default function AddressModal({
             </div>
             {addressModalState === 2 && (
               <div className={styles.btnBar}>
-                <BlackBtn btnText="上一步" onClick={reset} href={null} />
+                <BlackBtn
+                  btnText="返回"
+                  onClick={reset}
+                  href={null}
+                  paddingType="medium"
+                />
                 <BlackBtn
                   btnText="確定"
                   onClick={addressFormSubmit}
                   href={null}
+                  paddingType="medium"
                 />
               </div>
             )}

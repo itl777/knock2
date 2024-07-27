@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import moment from 'moment-timezone'
 import styles from '@/components/page-components/teams/teams.module.css'
@@ -56,7 +56,9 @@ export default function PreTeam({ user_id = '' }) {
         </>
       ) : (
         <>
-          <div className={styles.noDataInfo}>沒有預訂行程，要不要<Link href="/themes">趕快預訂</Link>呢？</div>
+          <div className={styles.noDataInfo}>
+            沒有預訂行程，要不要<Link href="/themes">趕快預訂</Link>呢？
+          </div>
         </>
       )}
     </div>
