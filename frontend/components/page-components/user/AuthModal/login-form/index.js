@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import Image from 'next/image'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'

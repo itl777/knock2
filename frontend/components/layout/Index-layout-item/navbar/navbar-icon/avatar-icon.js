@@ -5,7 +5,7 @@ import Badge from '@mui/material/Badge'
 import { styled } from '@mui/material/styles'
 import { useNotifications } from '@/context/notifications-context'
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
+const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
     right: -3,
     top: -3,

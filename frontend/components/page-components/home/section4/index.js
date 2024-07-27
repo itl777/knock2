@@ -33,7 +33,7 @@ export default function HomeSection4() {
             width={295}
             height={290}
           />
-          <HomeBtn linkSrc="/teams" btnText="揪團開團" />
+          <HomeBtn linkSrc="/themes" btnText="揪團開團" />
         </div>
       </div>
     </>
