@@ -15,11 +15,21 @@ export default function IndexLayout({
   const siteTitle = '悄瞧'
 
   const [pageLoading, setPageLoading] = useState() // 控制網頁 loading
-
+  const [loadingVisible, setLoadingVisible] = useState(false)
   // 控制網頁 loading
   useEffect(() => {
-    const handleStart = () => setPageLoading(true)
-    const handleComplete = () => setPageLoading(false)
+    let timer
+
+    const handleStart = () => {
+      timer = setTimeout(() => setLoadingVisible(true), 1200) // Delay loading spinner by 3 seconds
+      setPageLoading(true)
+    }
+
+    const handleComplete = () => {
+      clearTimeout(timer)
+      setLoadingVisible(false)
+      setPageLoading(false)
+    }
 
     Router.events.on('routeChangeStart', handleStart)
     Router.events.on('routeChangeComplete', handleComplete)
@@ -32,13 +42,14 @@ export default function IndexLayout({
     }
   }, [])
 
+
   return (
     <>
       <section className={`layout ${background}`}>
         <Head>
           <title>{`${title ? `${title} | ` : ''}${siteTitle}`}</title>
         </Head>
-        {pageLoading && <LoadingSpinner />}
+        {pageLoading && loadingVisible && <LoadingSpinner />}
         <Navbar pageName={pageName} />
         <main className="main">{children}</main>
         <TopBtn />
