@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles'
 import { useNotifications } from '@/context/notifications-context'
 import { motion } from 'framer-motion'
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
+const StyledBadge = styled(Badge)(() => ({
   '& .MuiBadge-badge': {
     right: -3,
     top: -3,
