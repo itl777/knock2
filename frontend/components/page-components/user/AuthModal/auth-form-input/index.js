@@ -19,7 +19,6 @@ export default function AuthFormInput({
   }
   useEffect(() => {
     setInputType(type)
-    // eslint-disable-next-line
   }, [])
   return (
     <>

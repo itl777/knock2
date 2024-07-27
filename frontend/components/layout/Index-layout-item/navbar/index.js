@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+// context
+import { useAuth } from '@/context/auth-context'
 // styles
 import styles from './nav-styles.module.scss'
 // components
@@ -22,9 +24,12 @@ export default function Navbar({ pageName }) {
     setMenuState(newMenu)
   }
 
+
   return (
     <>
-      <header className={styles['navbar']}>
+      <header
+        className={styles['navbar']}
+      >
         <AuthModal />
         <nav>
           <NavbarIcon handleMobileMenu={handleMobileMenu} />

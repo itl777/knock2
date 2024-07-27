@@ -18,7 +18,6 @@ export default function Radio01({
       return
     }
     setRadiosArray(true)
-    // eslint-disable-next-line
   }, [])
   return (
     <>

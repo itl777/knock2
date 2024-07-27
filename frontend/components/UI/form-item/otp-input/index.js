@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { Input as BaseInput } from '@mui/base/Input'
 import { Box, styled } from '@mui/system'
@@ -190,30 +190,30 @@ export default function OTPInput({ state, setState, color = '#222222' }) {
   )
 }
 
-// const blue = {
-//   100: '#DAECFF',
-//   200: '#80BFFF',
-//   400: '#3399FF',
-//   500: '#007FFF',
-//   600: '#0072E5',
-//   700: '#0059B2',
-// }
+const blue = {
+  100: '#DAECFF',
+  200: '#80BFFF',
+  400: '#3399FF',
+  500: '#007FFF',
+  600: '#0072E5',
+  700: '#0059B2',
+}
 
-// const grey = {
-//   50: '#F3F6F9',
-//   100: '#E5EAF2',
-//   200: '#DAE2ED',
-//   300: '#C7D0DD',
-//   400: '#B0B8C4',
-//   500: '#9DA8B7',
-//   600: '#6B7A90',
-//   700: '#434D5B',
-//   800: '#303740',
-//   900: '#1C2025',
-// }
+const grey = {
+  50: '#F3F6F9',
+  100: '#E5EAF2',
+  200: '#DAE2ED',
+  300: '#C7D0DD',
+  400: '#B0B8C4',
+  500: '#9DA8B7',
+  600: '#6B7A90',
+  700: '#434D5B',
+  800: '#303740',
+  900: '#1C2025',
+}
 
 const InputElement = styled('input')(
-  () => `
+  ({ theme }) => `
   width: 50px;
   height: 50px;
   font-family: 'Noto Serif JP', 'serif';

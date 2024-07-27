@@ -29,8 +29,6 @@ export default function TeamsAdd() {
   const [titleError, setTitleError] = useState('')
   const [limitError, setLimitError] = useState('')
   const [checkboxError, setCheckboxError] = useState('')
-  const [isFormValid, setIsFormValid] = useState(false)
-  const [checkboxChecked, setCheckboxChecked] = useState(false)
 
   const { reservation_id } = router.query
 
@@ -55,14 +53,6 @@ export default function TeamsAdd() {
       console.error('Fetch error:', error)
     }
   }
-
-  useEffect(() => {
-    const isTitleValid = createTeam.team_title.length > 3
-    const isLimitValid = limitError === ''
-    const isCheckboxValid = checkboxChecked
-
-    setIsFormValid(isTitleValid && isLimitValid && isCheckboxValid)
-  }, [createTeam.team_title, limitError, checkboxChecked])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -141,11 +131,7 @@ export default function TeamsAdd() {
               <div className="col-12 col-lg-6">
                 <div className={styles.borderbox}>
                   <h3 className={styles.teamTitle}>創立團隊</h3>
-                  <form
-                    name="createTeam"
-                    onSubmit={handleSubmit}
-                    className={styles.teamForm}
-                  >
+                  <form name="createTeam" onSubmit={handleSubmit}>
                     <div className="mb-3">
                       <label htmlFor={'lead_name'} className="form-label">
                         團長： {auth.nickname}
@@ -175,8 +161,7 @@ export default function TeamsAdd() {
                       <div>Loading...</div>
                     )}
                     <hr />
-
-                    <div className={`mb-3 ${styles.sty}`}>
+                    <div className="mb-3">
                       <label htmlFor={'team_title'} className="form-label">
                         團隊名稱
                       </label>
@@ -193,8 +178,7 @@ export default function TeamsAdd() {
                         {titleError && titleError}
                       </div>
                     </div>
-
-                    <div className={`mb-3 ${styles.sty}`}>
+                    <div className="mb-3">
                       <label htmlFor={'team_limit'} className="form-label">
                         募集人數
                       </label>
@@ -228,8 +212,6 @@ export default function TeamsAdd() {
                         type="checkbox"
                         className="form-check-input"
                         id="readCheck"
-                        checked={checkboxChecked}
-                        onChange={() => setCheckboxChecked(!checkboxChecked)}
                       />
                       <label className={styles.formCheck} htmlFor={'readCheck'}>
                         我已閱讀
@@ -240,11 +222,7 @@ export default function TeamsAdd() {
                       <div style={{ color: 'red' }}>{checkboxError}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                      <SubmitBtn
-                        btnText="建立團隊"
-                        color="grey"
-                        disabled={!isFormValid}
-                      />
+                      <SubmitBtn btnText="建立團隊" color="grey" />
                     </div>
                   </form>
                 </div>

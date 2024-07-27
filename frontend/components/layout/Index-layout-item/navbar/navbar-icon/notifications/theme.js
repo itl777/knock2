@@ -1,5 +1,6 @@
 import { createTheme } from '@mui/material/styles'
 
+const unreadBackGroundColor = '#e0e0e0'
 const menuBackGroundColor = '#eeeeee'
 const iconColorIsRead = '#d9d9d9'
 const iconColorUnread = '#63AA90'

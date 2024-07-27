@@ -91,6 +91,7 @@ export default function CheckoutOffcanvas() {
             badgeContent={cartBadgeQty}
             color="secondary"
             max={99}
+            // sx={{ top: '-12px', right: '-24px' }}
           ></StyledBadge>
         </motion.div>
         <FaCartShopping />

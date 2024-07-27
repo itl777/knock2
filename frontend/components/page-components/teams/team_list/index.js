@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-// import { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 
 import { GET_DATA } from '@/configs/api-path'
 
@@ -10,7 +10,7 @@ import MyPagination from './pagination'
 import SelectT from './selectT'
 
 export default function TeamList() {
-  // const router = useRouter()
+  const router = useRouter()
 
   const [data, setData] = useState({
     success: false,

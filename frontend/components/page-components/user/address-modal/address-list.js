@@ -20,26 +20,30 @@ export default function AddressList({
           borderRadius="var(--input-radius)"
         />
       ) : (
-        addressFormData.map((v) => (
-          <RecipientButtonEdit
-            key={v.id}
-            addressId={v.id}
-            name={v.recipient_name}
-            phone={v.mobile_phone}
-            address={v.postal_codes + v.city_name + v.district_name + v.address}
-            user_id={auth.id}
-            addressEdit={addressEdit}
-            updateData={updateData}
+        <>
+          {addressFormData.map((v, i) => (
+            <RecipientButtonEdit
+              key={v.id}
+              addressId={v.id}
+              name={v.recipient_name}
+              phone={v.mobile_phone}
+              address={
+                v.postal_codes + v.city_name + v.district_name + v.address
+              }
+              user_id={auth.id}
+              addressEdit={addressEdit}
+              updateData={updateData}
+            />
+          ))}
+          <RecipientButton
+            memberId={auth.id}
+            btnText="新增收件人資料"
+            iconType="add"
+            bgtype="outline"
+            onClick={onClick}
           />
-        ))
+        </>
       )}
-      <RecipientButton
-        memberId={auth.id}
-        btnText="新增收件人資料"
-        iconType="add"
-        bgtype="outline"
-        onClick={onClick}
-      />
     </>
   )
 }
