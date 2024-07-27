@@ -5,10 +5,9 @@ import { useAuth } from '@/context/auth-context'
 import Image from 'next/image'
 import { AspectRatio } from '@mui/joy'
 
-import BasicModal02 from '../../components/page-components/teams/team-modal-2'
-
-import TeamMemberComponent from '../../components/page-components/teams/member'
+import TeamMemberComponent from '@/components/page-components/teams/member'
 import ChatArea from '@/components/page-components/teams/chat_area'
+import BasicModal02 from '@/components/page-components/teams/team-modal-2'
 
 import { API_SERVER, ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
 
@@ -24,7 +23,7 @@ export default function TeamInfo() {
   const [showMembers, setShowMembers] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [memberCount, setMemberCount] = useState(0)
-  const [memberData, setMemberData] = useState([])
+  // const [memberData, setMemberData] = useState([])
   const { formatDateToTaiwan, formatTime } = useDateFormatter()
 
   const fetchTeamData = async (team_id) => {
@@ -51,7 +50,7 @@ export default function TeamInfo() {
       const data = await res.json()
 
       if (data.success) {
-        setMemberData(data.data)
+        // setMemberData(data.data)
         setMemberCount(data.data.length)
         console.log('成功取得團員資料', data.data)
 
@@ -149,11 +148,7 @@ export default function TeamInfo() {
                       </AspectRatio>
                     </div>
                   </div>
-                  <div
-                    className={`col-12 ${
-                      showMembers ? 'col-md-6' : 'col-md-9'
-                    }`}
-                  >
+                  <div className="col-12 col-md-9">
                     <h5>團名：{teamData.team_title}</h5>
                     <p>
                       冒險時間：
@@ -185,15 +180,6 @@ export default function TeamInfo() {
                       ：{teamData.team_note}
                     </p>
                   </div>
-                  {showMembers && (
-                    <div className="col-12 col-md-3">
-                      <TeamMemberComponent
-                        team_id={router.query.team_id}
-                        team_limit={teamData.team_limit}
-                        onMemberCountChange={setMemberCount}
-                      />
-                    </div>
-                  )}
                 </div>
 
                 <div className="row">
@@ -204,8 +190,8 @@ export default function TeamInfo() {
                       {auth.id === teamData.user_id ? (
                         <>
                           <button
-                            // onClick={openModal}
-                            onClick={handleTeamSetting}
+                            onClick={openModal}
+                            // onClick={handleTeamSetting}
                             className={styles.buttonBrown}
                           >
                             管理團員
@@ -236,6 +222,20 @@ export default function TeamInfo() {
           </>
         </div>
       </IndexLayout>
+      <BasicModal02
+        open={modalOpen}
+        onClose={closeModal}
+        modalTitle="管理團員"
+        modalBody={
+          <TeamMemberComponent
+            team_id={router.query.team_id}
+            team_limit={teamData.team_limit}
+            onMemberCountChange={setMemberCount}
+          />
+        }
+        buttonLabel="我已閱讀"
+        onButtonClick={closeModal}
+      />
     </>
   )
 }

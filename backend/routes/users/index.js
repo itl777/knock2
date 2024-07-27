@@ -781,8 +781,8 @@ router.post("/google-login", async (req, res) => {
     return res.json(output);
   }
 
-  const dateTime = moment(new Date()).format(dateTimeFormat);
-  sendNotificationToUser(output.data.id, `您在 ${dateTime} 登入成功`);
+  // const dateTime = moment(new Date()).format(dateTimeFormat);
+  // sendNotificationToUser(output.data.id, `您在 ${dateTime} 登入成功`);
   return res.json(output);
 });
 

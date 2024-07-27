@@ -42,17 +42,14 @@ export default function OrderListCard({
     switch (status) {
       case 'ongoing':
         return '待付款'
-        break
       case 'shipping':
         return '待出貨'
-        break
       case 'completed':
         return '已完成'
-        break
       case 'canceled':
         return '已取消'
-        break
       default:
+        '已取消'
         break
     }
   }

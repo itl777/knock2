@@ -44,8 +44,11 @@ export default function PdFeatures({ dbData }) {
               <h1 className={myStyle.title}>{productData.product_name}</h1>
 
               <div className={myStyle.shareStar}>
+              <div className={myStyle.none390}>
+
                 {/* 分享icon */}
                 <ShareBtn />
+              </div>
 
                 {/* 還沒接評價資料 */}
 
@@ -58,7 +61,7 @@ export default function PdFeatures({ dbData }) {
             <div className={myStyle.content}>{productData.summary}</div>
 
             <div className={myStyle.price}>
-              <div>${productData.price}</div>
+              <div className={myStyle.priceText}>${productData.price}</div>
 
               {/* RWD992以下顯示 */}
               <div className={myStyle['media-992']}>
@@ -72,6 +75,11 @@ export default function PdFeatures({ dbData }) {
               <div className={myStyle.content}>數量:</div>
               <NumInput />
             </div>
+
+            <div className={myStyle['media-390']}>
+              {/* 分享icon */}
+              <ShareBtn />
+              </div>
 
             {/* 按鈕 */}
             <div className={myStyle['btn-area']}>

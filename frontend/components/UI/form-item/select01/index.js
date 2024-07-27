@@ -29,6 +29,7 @@ export default function Select03({
       return
     }
     setOptionsArray(true)
+    // eslint-disable-next-line
   }, [])
 
   return (

@@ -411,7 +411,7 @@ export default function UserProfileForm() {
                   onChange={handleChange}
                 />
                 <UserProfileSelect
-                  label="預設地址"
+                  label="常用地址"
                   options={addressOptions}
                   name="address_id"
                   value={addressValue.address_id}
