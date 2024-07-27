@@ -34,7 +34,7 @@ const ChatDisplay = ({ chat_at, submissionCount }) => {
         {chatData.map((chat) => (
           <div key={chat.chat_id}>
             <div className="row">
-              <div>
+              <div className={styles.chatlist}>
                 <Image
                   src={chat.avatar ? `${API_SERVER}/avatar/${chat.avatar}` : ''}
                   width={26}

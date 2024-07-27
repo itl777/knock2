@@ -56,7 +56,7 @@ export default function PdTabs({ data }) {
     borderTopLeftRadius: '15px',
     borderTopRightRadius: '15px',
     borderBottom: '#fff',
-    width: '11rem',
+    width: '10rem',
     height: ' 53.5px',
     marginRight: '10px',
     marginLeft: '10px',

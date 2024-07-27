@@ -40,7 +40,7 @@ export default function TopBtn() {
             height={84}
             className={`${styles['default']} animate__animated animate__pulse animate__infinite animate__slow`}
             priority={false}
-          />ß
+          />
           <Image
             src="/ghost/ghost_07.png"
             alt="top-button-hover"

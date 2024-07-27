@@ -2,7 +2,7 @@ import styled from '@emotion/styled'
 import { Button as BaseButton } from '@mui/base/Button'
 
 const Button = styled(BaseButton)(
-  ({ theme }) => `
+  () => `
   background: none;
   border: none;
   margin: 0;
