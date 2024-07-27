@@ -1,5 +1,7 @@
 import { THEME_LIST, BRANCH_LIST } from '@/configs/api-path'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
+import { Select, MenuItem, FormControl, Button } from '@mui/material'
+import { styled } from '@mui/system'
 
 import Tabs from '@mui/joy/Tabs'
 import TabList from '@mui/joy/TabList'
@@ -9,7 +11,76 @@ import Card02 from '@/components/UI/cards-themes'
 import GoogleMap from './google-map.js'
 import myStyles from './branch_themes.module.css'
 
+// 自定義樣式
+const StyledButton = styled(Button)({
+  backgroundColor: '#222222',
+  color: '#d9d9d9',
+  fontFamily: 'Noto Serif JP',
+  border: '1px solid #222222',
+  borderRadius: '30px',
+  marginRight: '10px',
+  marginLeft: '10px',
+  padding: '10px 15px',
+  '&:hover': {
+    backgroundColor: '#333333',
+    color: '#d9d9d9',
+  },
+})
+
+const StyledFormControl = styled(FormControl)({
+  margin: '0 5px',
+  minWidth: 120,
+})
+
+const StyledSelect = styled(Select)({
+  backgroundColor: '#222222',
+  fontFamily: 'Noto Serif JP',
+  color: '#d9d9d9',
+  // border: '2px solid #d9d9d9',
+  borderRadius: '20px',
+  '&:hover': {
+    backgroundColor: '#333333',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    // borderColor: '#d9d9d9',
+  },
+  '&:hover .MuiOutlinedInput-notchedOutline': {
+    // borderColor: '#bd9f4b',
+  },
+  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#bd9f4b',
+  },
+  '& .MuiSvgIcon-root': {
+    color: '#d9d9d9',
+  },
+  '& .MuiSelect-select': {
+    paddingTop: '10px',
+    paddingBottom: '10px',
+  },
+})
+
+const StyledMenuItem = styled(MenuItem)({
+  backgroundColor: 'white',
+  fontFamily: 'Noto Serif JP',
+  color: '#333333',
+  '&:hover': {
+    backgroundColor: '#d9d9d9',
+  },
+  '&.Mui-selected': {
+    backgroundColor: '#d9d9d9',
+    '&:hover': {
+      backgroundColor: '#d9d9d9',
+    },
+  },
+})
+
 export default function ThemeBranches() {
+  const [difficultyFilter, setDifficultyFilter] = useState('all')
+  const [timeFilter, setTimeFilter] = useState('all')
+  const handleClearFilters = () => {
+    setDifficultyFilter('all')
+    setTimeFilter('all')
+  }
   const [data, setData] = useState({
     success: false,
     themes: [],
@@ -46,8 +117,26 @@ export default function ThemeBranches() {
       })
   }, [selectedBranch])
 
+  const filteredThemes = useMemo(() => {
+    return data.themes.filter((theme) => {
+      const matchesDifficulty =
+        difficultyFilter === 'all' || theme.difficulty === difficultyFilter
+      const matchesTime =
+        timeFilter === 'all' || theme.theme_time.toString() === timeFilter
+      return matchesDifficulty && matchesTime
+    })
+  }, [data.themes, difficultyFilter, timeFilter])
+
   const handleChange = (event, newValue) => {
     setSelectedBranch(newValue) // 更新分店
+  }
+
+  const handleDifficultyChange = (event) => {
+    setDifficultyFilter(event.target.value)
+  }
+
+  const handleTimeChange = (event) => {
+    setTimeFilter(event.target.value)
   }
 
   return (
@@ -91,10 +180,44 @@ export default function ThemeBranches() {
           <hr className={myStyles.hr} />
         </TabList>
 
+        <div className="container">
+          <div className={myStyles.filterContainer}>
+            <StyledFormControl>
+              <StyledSelect
+                value={difficultyFilter}
+                onChange={handleDifficultyChange}
+                displayEmpty
+                renderValue={(value) => (value === 'all' ? '難度' : value)}
+              >
+                <StyledMenuItem value="all">所有難度</StyledMenuItem>
+                <StyledMenuItem value="EASY">EASY</StyledMenuItem>
+                <StyledMenuItem value="MEDIUM">MEDIUM</StyledMenuItem>
+                <StyledMenuItem value="HARD">HARD</StyledMenuItem>
+              </StyledSelect>
+            </StyledFormControl>
+
+            <StyledFormControl>
+              <StyledSelect
+                value={timeFilter}
+                onChange={handleTimeChange}
+                displayEmpty
+                renderValue={(value) =>
+                  value === 'all' ? '時間' : `${value}分鐘`
+                }
+              >
+                <StyledMenuItem value="all">所有時間</StyledMenuItem>
+                <StyledMenuItem value="60">60分鐘</StyledMenuItem>
+                <StyledMenuItem value="90">90分鐘</StyledMenuItem>
+              </StyledSelect>
+            </StyledFormControl>
+            <StyledButton onClick={handleClearFilters}>清除篩選</StyledButton>
+          </div>
+        </div>
+
         {/* TabPanel for 高雄店 */}
         <TabPanel value={1}>
           <div className="col-12 d-flex flex-row flex-wrap justify-content-center">
-            {data.themes.map((theme) => (
+            {filteredThemes.map((theme) => (
               <Card02
                 key={theme.theme_id}
                 branchName={theme.branch_name}
@@ -129,7 +252,7 @@ export default function ThemeBranches() {
         {/* TabPanel for 台中店 */}
         <TabPanel value={2}>
           <div className="col-12 d-flex flex-row flex-wrap justify-content-center">
-            {data.themes.map((theme) => (
+            {filteredThemes.map((theme) => (
               <Card02
                 key={theme.theme_id}
                 branchName={theme.branch_name}
@@ -164,7 +287,7 @@ export default function ThemeBranches() {
         {/* TabPanel for 台北店 */}
         <TabPanel value={3}>
           <div className="col-12 d-flex flex-row flex-wrap justify-content-center">
-            {data.themes.map((theme) => (
+            {filteredThemes.map((theme) => (
               <Card02
                 key={theme.theme_id}
                 branchName={theme.branch_name}
