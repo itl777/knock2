@@ -1,3 +1,5 @@
+/* @import '~bootstrap/scss/bootstrap'; */
+@import 'bootstrap/scss/bootstrap';
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200..900&display=swap');
 
 :root {
@@ -41,26 +43,24 @@
   --card-rgb: 180, 185, 188;
   --card-border-rgb: 131, 134, 135; */
 
-
-
   /* 新增的 */
   --content-padding: 2.5rem;
   --content-radius: 1.25rem;
   --popup-padding: 1.5rem;
   --popup-radius: 1rem;
-  --letter-spacing-4: .25rem;
-  --letter-spacing-2: .125rem;
+  --letter-spacing-4: 0.25rem;
+  --letter-spacing-2: 0.125rem;
   --img-radius: 1rem;
-  --input-radius: .5rem;
+  --input-radius: 0.5rem;
   --pri-1: #222222;
-  --pri-3: #D9D9D9;
-  --sec-1: #B99755;
-  --success: #61DCB0;
+  --pri-3: #d9d9d9;
+  --sec-1: #b99755;
+  --success: #61dcb0;
   --text-dark: #222222;
-  --text-grey: #5B5B5B;
-  --input-grey: #BBBBBB;
-  --danger: #A43131;
-  --bg-grey-light: #F7F7F7;
+  --text-grey: #5b5b5b;
+  --input-grey: #bbbbbb;
+  --danger: #a43131;
+  --bg-grey-light: #f7f7f7;
   --card-shadow: 0 0 16px 0 rgb(34, 34, 34, 0.2);
 }
 
@@ -101,13 +101,12 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
-  font-family: "Noto Serif JP", serif;
+  font-family: 'Noto Serif JP', serif;
 }
 
 html,
 body {
   color: var(--text-dark);
-
   /* max-width: 100vw; */
   /* overflow-x: hidden; */
 }
@@ -122,13 +121,37 @@ body {
     rgb(var(--background-start-rgb));
 } */
 
-
 /* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
 } */
 
+/* 捲軸寬度及高度 */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+/* 軌道背景底色 */
+*::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+/* 滑桿顏色 */
+*::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+/* 滑桿滑鼠滑入時的顏色 */
+*::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  letter-spacing: var(--letter-spacing-4);
+  margin: 0;
+}
 
 h2 {
   font-size: 2.5rem;
@@ -151,7 +174,6 @@ h4 {
   margin: 0;
 }
 
-
 h5 {
   font-size: 1.5rem;
   font-weight: bold;
@@ -172,7 +194,8 @@ p {
   margin: 0;
 }
 
-ul, li {
+ul,
+li {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -181,7 +204,7 @@ ul, li {
 
 a {
   color: var(--text-dark);
-  text-decoration: none; 
+  text-decoration: none;
   letter-spacing: var(--letter-spacing-2);
 }
 
@@ -192,22 +215,20 @@ a {
     letter-spacing: var(--letter-spacing-4);
     margin: 0;
   }
-  
+
   h3 {
     font-size: 34px;
     font-weight: bold;
     letter-spacing: var(--letter-spacing-4);
     margin: 0;
   }
-  
+
   p {
     font-size: 1rem;
     letter-spacing: var(--letter-spacing-2);
     margin: 0;
   }
-  
 }
-
 
 @media print {
   body * {
