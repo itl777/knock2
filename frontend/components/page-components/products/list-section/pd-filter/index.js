@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import Image from 'next/image'
 import 'hover.css/css/hover-min.css'
 import CategoryBtn from './category-btn'
@@ -14,31 +13,16 @@ import { useEffect } from 'react'
 import OutlineBtn from '@/components/UI/outline-btn'
 import { useSnackbar } from '@/context/snackbar-context'
 import { MdOutlineAttachMoney } from 'react-icons/md'
-import { TfiMoney } from 'react-icons/tfi'
-import { useProduct } from '@/context/product-context'
-
+import { TfiMoney } from "react-icons/tfi";
 
 export default function PdFilter() {
   const { openSnackbar } = useSnackbar()
-  // 價格、最新按鈕toggle
-  const [priceToggle, setPriceToggle] = useState(false)
-  const [NewToggle, setNewToggle] = useState(false)
-  // PriceSlider價格區間
-  const [price, setPrice] = useState([500, 1500])
-
-  const { setShowIcon, setShowIconNew ,setUserSearch} = useProduct()
 
   const router = useRouter()
   const handleClearUrl = () => {
     const { pathname } = router
     router.replace(pathname, undefined, { shallow: true })
     openSnackbar('清除篩選', 'error')
-    setNewToggle(false)
-    setShowIconNew(false)
-    setShowIcon(false)
-    setPriceToggle(false)
-    setUserSearch('')
-    setPrice([500, 1500])
   }
   useEffect(() => {
     AOS.init()
@@ -46,7 +30,7 @@ export default function PdFilter() {
 
   return (
     <>
-      <div data-aos="zoom-in-up" data-aos-duration="1500" className="container">
+      <div data-aos="zoom-in-up"  data-aos-duration="1500" className="container">
         <div className={myStyle.container}>
           <div className={myStyle.frame}>
             <Image
@@ -108,20 +92,21 @@ export default function PdFilter() {
                 className={`${myStyle['bottom-center']} col-lg-4 d-flex flex-column justify-content-center align-items-center`}
               >
                 <div className={myStyle.text}>
-                  <TfiMoney />
+                  {/* <MdOutlineAttachMoney /> */}
+                  <TfiMoney/>
+                  {/* <div className={myStyle.text}>$</div> */}
                 </div>
                 <div>
-                  <PriceSlider price={price} setPrice={setPrice}/>
+                  <PriceSlider />
                 </div>
               </div>
 
               <div className={`${myStyle['bottom-right']} col-lg-4 gap-3`}>
-                <FilterBtnArea
-                  priceToggle={priceToggle}
-                  setPriceToggle={setPriceToggle}
-                  NewToggle={NewToggle}
-                  setNewToggle={setNewToggle}
-                />
+                <FilterBtnArea />
+                {/* <div className={myStyle['input-bottom']}>
+                  <SearchInput />
+                </div>
+                <OutlineBtn btnText={'重設'} onClick={handleClearUrl} /> */}
               </div>
             </div>
           </div>
