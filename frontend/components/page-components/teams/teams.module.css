@@ -122,6 +122,10 @@
     transition: all 200ms;
 }
 
+.chatlist{
+    padding-bottom: 12px;
+}
+
 .teamTable {
     width: 100%;
 }

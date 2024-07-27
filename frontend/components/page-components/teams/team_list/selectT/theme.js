@@ -7,7 +7,7 @@ const borderColorHover = '#B99755'
 const borderColorFocus = '#B99755'
 const boxShadowFocus = '#efede8'
 const selectedTextColor = '#B99755'
-const selectedBackgroundColor = ''
+// const selectedBackgroundColor = ''
 const selectedBackgroundColorHover = ''
 
 const customTheme = createTheme({

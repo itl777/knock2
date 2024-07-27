@@ -29,6 +29,8 @@ export default function TeamsAdd() {
   const [titleError, setTitleError] = useState('')
   const [limitError, setLimitError] = useState('')
   const [checkboxError, setCheckboxError] = useState('')
+  const [isFormValid, setIsFormValid] = useState(false)
+  const [checkboxChecked, setCheckboxChecked] = useState(false)
 
   const { reservation_id } = router.query
 
@@ -53,6 +55,14 @@ export default function TeamsAdd() {
       console.error('Fetch error:', error)
     }
   }
+
+  useEffect(() => {
+    const isTitleValid = createTeam.team_title.length > 3
+    const isLimitValid = limitError === ''
+    const isCheckboxValid = checkboxChecked
+
+    setIsFormValid(isTitleValid && isLimitValid && isCheckboxValid)
+  }, [createTeam.team_title, limitError, checkboxChecked])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -218,6 +228,8 @@ export default function TeamsAdd() {
                         type="checkbox"
                         className="form-check-input"
                         id="readCheck"
+                        checked={checkboxChecked}
+                        onChange={() => setCheckboxChecked(!checkboxChecked)}
                       />
                       <label className={styles.formCheck} htmlFor={'readCheck'}>
                         我已閱讀
@@ -228,7 +240,11 @@ export default function TeamsAdd() {
                       <div style={{ color: 'red' }}>{checkboxError}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                      <SubmitBtn btnText="建立團隊" color="grey" />
+                      <SubmitBtn
+                        btnText="建立團隊"
+                        color="grey"
+                        disabled={!isFormValid}
+                      />
                     </div>
                   </form>
                 </div>
