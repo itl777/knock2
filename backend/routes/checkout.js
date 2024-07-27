@@ -370,7 +370,7 @@ router.post("/api/checkout", async (req, res) => {
       await db.query(deleteCartSql, [memberId]);
       // 取得綠界訂單需要的資料
       // const productNames = orderDetailResults.map(({ product_name }) => product_name);
-      sendNotificationToUser( memberId , '新增訂單成功！' );
+      sendNotificationToUser( memberId , '訂單已成立！' );
     }
 
     // 返回结果到前端

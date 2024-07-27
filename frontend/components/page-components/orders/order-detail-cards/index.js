@@ -61,6 +61,7 @@ export default function OrderDetailCards({ order_id }) {
                 v.order_unit_price,
                 v.order_quantity,
                 v.discount_amount,
+                v.discount_percentage,
                 0,
                 v.discount_max
               )}
