@@ -63,27 +63,36 @@ export default function ThemeBranches() {
           <hr className={myStyles.hr} />
           <Tab
             disableIndicator
-            className={`${myStyles.tab} ${
-              selectedBranch === 1 ? myStyles.tabSelected : ''
-            }`}
+            sx={{
+              '&.Mui-selected': {
+                color: 'primary.main',
+                fontWeight: 'bold',
+              },
+            }}
             value={1}
           >
             高雄店
           </Tab>
           <Tab
             disableIndicator
-            className={`${myStyles.tab} ${
-              selectedBranch === 2 ? myStyles.tabSelected : ''
-            }`}
+            sx={{
+              '&.Mui-selected': {
+                color: 'primary.main',
+                fontWeight: 'bold',
+              },
+            }}
             value={2}
           >
             台中店
           </Tab>
           <Tab
             disableIndicator
-            className={`${myStyles.tab} ${
-              selectedBranch === 3 ? myStyles.tabSelected : ''
-            }`}
+            sx={{
+              '&.Mui-selected': {
+                color: 'primary.main',
+                fontWeight: 'bold',
+              },
+            }}
             value={3}
           >
             台北店
