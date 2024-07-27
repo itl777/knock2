@@ -55,7 +55,7 @@ const searchData = async (req) => {
 
   if (team_status && team_status.trim() !== "") {
     const team_status_esc = db.escape(`${team_status}`);
-    where += ` AND (team_status = ${team_status_esc})`;
+    where += ` AND (team.team_states = ${team_status_esc})`;
   }
 
   const t_sql = `SELECT COUNT(1) totalRows 

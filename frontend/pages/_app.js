@@ -1,5 +1,5 @@
-// import 'bootstrap/dist/css/bootstrap.min.css'
-import '@/styles/globals.scss'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import '@/styles/globals.css'
 import { AuthContextProvider } from '@/context/auth-context'
 import { SnackbarContextProvider } from '@/context/snackbar-context'
 import { LoginContextProvider } from '@/context/login-context'

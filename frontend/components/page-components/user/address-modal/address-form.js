@@ -15,6 +15,7 @@ export default function AddressForm({
   addressFormErrors,
 }) {
   const { getAuthHeader } = useAuth()
+  const [isValid, setIsValid] = useState(true)
   const [selectedCity, setSelectedCity] = useState('')
   const [selectedDistrict, setSelectedDistrict] = useState('')
   const [cityOptions, setCityOptions] = useState([])
@@ -98,12 +99,17 @@ export default function AddressForm({
     // set selected
     setSelectedCity(addressData?.city_id)
     setSelectedDistrict(addressData?.district_id)
-    // eslint-disable-next-line
   }, [])
 
   return (
     <>
       <form name="AddressForm" className={styles.formBox}>
+        {!isValid && (
+          <div className={styles.span2}>
+            <ErrorHint hintText="請確認表單欄位" />
+          </div>
+        )}
+
         <OrderInputBox
           label="姓名"
           name="recipient_name"

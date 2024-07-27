@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Dialog } from '@mui/material'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import ThirdPartyLoginButton from '../third-party-login-button'

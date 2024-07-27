@@ -152,7 +152,6 @@ export default function AvatarFormDialogs({ openDialog, closeDialog }) {
         setCropper(cropperInstance)
       }
     }
-    // eslint-disable-next-line
   }, [imgUrl])
 
   return (

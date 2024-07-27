@@ -10,7 +10,7 @@ export default function Input01({
   disabled = false,
   inputStyles = 'def',
   onChange = () => {},
-  onBlur = () => {},
+  onBlur=() => {},
 }) {
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [inputType, setInputType] = useState('')
@@ -36,7 +36,6 @@ export default function Input01({
 
   useEffect(() => {
     setInputType(type)
-    // eslint-disable-next-line
   }, [])
 
   return (

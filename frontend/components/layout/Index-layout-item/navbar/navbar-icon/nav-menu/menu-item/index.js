@@ -54,7 +54,7 @@ export default function MenuItem() {
 
   return (
     <ul className={styles.menuItem}>
-      {tabItems.map((v) => (
+      {tabItems.map((v, i) => (
         <li key={v.key} className={isActive(v.paths) ? styles.active : ''}>
           <Link href={v.link}>
             <FaGhost />

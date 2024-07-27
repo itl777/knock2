@@ -6,17 +6,12 @@ import { AiFillCaretDown } from 'react-icons/ai'
 import { useProduct } from '@/context/product-context'
 import OutlineBtn from '@/components/UI/outline-btn'
 
-export default function FilterBtnArea({
-  priceToggle,
-  setPriceToggle,
-  NewToggle,
-  setNewToggle,
-}) {
+export default function FilterBtnArea() {
   const router = useRouter()
   const { showIcon, setShowIcon, showIconNew, setShowIconNew } = useProduct()
 
-  // const [priceToggle, setPriceToggle] = useState(false)
-  // const [NewToggle, setNewToggle] = useState(false)
+  const [priceToggle, setPriceToggle] = useState(false)
+  const [NewToggle, setNewToggle] = useState(false)
 
   const handleFilterCreated = (sort, order) => {
     router.push(
@@ -28,7 +23,7 @@ export default function FilterBtnArea({
       { scroll: false }
     )
     setShowIcon(false)
-    setShowIconNew(!showIconNew)
+    setShowIconNew(true)
     setNewToggle(!NewToggle)
   }
 
@@ -42,7 +37,6 @@ export default function FilterBtnArea({
       { scroll: false }
     )
     setShowIcon(true)
-    setShowIconNew(false)
     setPriceToggle(!priceToggle)
   }
 

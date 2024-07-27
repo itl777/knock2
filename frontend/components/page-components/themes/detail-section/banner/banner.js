@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useTheme } from '@/context/theme-context'
 import { useRouter } from 'next/router'
 import myStyle from './banner.module.css'
 import { FaStar } from 'react-icons/fa'
+import BasicModal03 from '@/components/UI/basic-modal03'
 import BasicModal02 from '@/components/UI/basic-modal02'
 import { motion } from 'framer-motion'
 import { FaPlay, FaPause } from 'react-icons/fa'
@@ -11,108 +12,76 @@ const Banner = () => {
   const { themeDetails, getThemeDetails } = useTheme()
   const [modalOpen, setModalOpen] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [videoLoaded, setVideoLoaded] = useState(false)
   const router = useRouter()
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef(null)
   const [soundBars, setSoundBars] = useState([])
-  const [showMusicPrompt, setShowMusicPrompt] = useState(false)
-  const [audioLoaded, setAudioLoaded] = useState(false)
-  const [currentThemeId, setCurrentThemeId] = useState(null)
+  const [showMusicPrompt, setShowMusicPrompt] = useState(true)
 
-  const FuzzyOverlay = () => (
-    <motion.div
-      animate={{
-        opacity: [0.1, 0.15, 0.1],
-        backgroundPosition: ['0% 0%', '130% 100%', '56% 0%'],
-      }}
-      transition={{
-        repeat: Infinity,
-        duration: 0.05,
-        ease: 'linear',
-      }}
-      style={{
-        backgroundImage: 'url("/noise2.jpg")',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundSize: '150% 100%',
-        pointerEvents: 'none',
-        opacity: 1,
-        zIndex: 3,
-      }}
-      className="absolute inset-0"
-    />
-  )
+  const FuzzyOverlay = () => {
+    return (
+      <motion.div
+        animate={{
+          opacity: [0.1, 0.15, 0.1],
+          backgroundPosition: ['0% 0%', '130% 100%', '56% 0%'],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 0.05,
+          ease: 'linear',
+        }}
+        style={{
+          backgroundImage: 'url("/noise2.jpg")',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundSize: '150% 100%',
+          pointerEvents: 'none',
+          opacity: 1,
+          zIndex: 3,
+        }}
+        className="absolute inset-0"
+      />
+    )
+  }
 
-  const togglePlay = useCallback(
-    (e) => {
-      e.preventDefault()
-      if (!audioLoaded || !audioRef.current) return
-      if (audioRef.current.paused) {
-        audioRef.current
-          .play()
-          .then(() => setIsPlaying(true))
-          .catch((error) => {
-            console.error('播放失敗:', error)
-            setIsPlaying(false)
-          })
-      } else {
-        audioRef.current.pause()
-        setIsPlaying(false)
-      }
-    },
-    [audioLoaded]
-  )
-
-  const handleAcceptMusic = useCallback(() => {
-    setShowMusicPrompt(false)
-    if (audioLoaded && audioRef.current) {
+  const togglePlay = () => {
+    if (audioRef.current.paused) {
       audioRef.current
         .play()
-        .then(() => setIsPlaying(true))
+        .then(() => {
+          setIsPlaying(true)
+        })
         .catch((error) => {
-          console.error('播放失敗:', error)
           setIsPlaying(false)
         })
+    } else {
+      audioRef.current.pause()
+      setIsPlaying(false)
     }
-  }, [audioLoaded])
+  }
 
-  const handleDeclineMusic = useCallback(() => {
+  const handleAcceptMusic = () => {
     setShowMusicPrompt(false)
-  }, [])
+    audioRef.current
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch((error) => {
+        console.log('播放失敗:', error)
+        setIsPlaying(false)
+      })
+  }
 
-  useEffect(() => {
-    const handleRouteChange = (url) => {
-      const newThemeId = new URL(url, window.location.origin).searchParams.get(
-        'branch_themes_id'
-      )
-      if (newThemeId !== currentThemeId) {
-        if (audioRef.current) {
-          audioRef.current.pause()
-          setIsPlaying(false)
-        }
-        setShowMusicPrompt(true)
-        setCurrentThemeId(newThemeId)
-      }
-    }
-
-    router.events.on('routeChangeStart', handleRouteChange)
-
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange)
-    }
-  }, [router, currentThemeId])
+  const handleDeclineMusic = () => {
+    setShowMusicPrompt(false)
+  }
 
   useEffect(() => {
     const { branch_themes_id } = router.query
-    if (branch_themes_id && branch_themes_id !== currentThemeId) {
+    if (branch_themes_id) {
       setLoading(true)
-      setVideoLoaded(false)
-      setAudioLoaded(false)
-      setCurrentThemeId(branch_themes_id)
       getThemeDetails(branch_themes_id).finally(() => {
         setLoading(false)
         setShowMusicPrompt(true)
@@ -126,166 +95,24 @@ const Banner = () => {
         delay: Math.random() * 0.5,
       }))
     )
-  }, [router.query, getThemeDetails, currentThemeId])
+  }, [router.query, getThemeDetails])
 
-  useEffect(() => {
-    if (themeDetails.bg_music) {
-      if (audioRef.current) {
-        audioRef.current.src = `/music/${themeDetails.bg_music}`
-        setAudioLoaded(false)
-        setIsPlaying(false)
-      }
-    }
-    if (themeDetails.theme_mp4) {
-      setVideoLoaded(false)
-    }
-  }, [themeDetails.bg_music, themeDetails.theme_mp4])
-
-  useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-
-    const handleCanPlayThrough = () => {
-      setAudioLoaded(true)
-    }
-    const handleError = (e) => console.error('音訊錯誤:', e)
-
-    audio.addEventListener('canplaythrough', handleCanPlayThrough)
-    audio.addEventListener('error', handleError)
-
-    return () => {
-      audio.removeEventListener('canplaythrough', handleCanPlayThrough)
-      audio.removeEventListener('error', handleError)
-    }
-  }, [themeDetails.bg_music])
-
-  const openModal = (e) => {
-    e.preventDefault()
-    setModalOpen(true)
-  }
+  const openModal = () => setModalOpen(true)
   const closeModal = () => setModalOpen(false)
 
-  const createStars = useCallback(
-    (count) =>
-      Array.from({ length: count }, (_, index) => (
-        <FaStar key={index} style={{ marginRight: '6px' }} />
-      )),
-    []
-  )
+  const createStars = (count) => {
+    return Array.from({ length: count }, (_, index) => (
+      <FaStar key={index} style={{ marginRight: '6px' }} />
+    ))
+  }
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        minHeight: 'calc(100vh - 100px)',
-        display: 'flex',
-        alignItems: 'center',
-        overflow: 'hidden',
-      }}
-    >
-      <video
-        key={themeDetails.theme_mp4}
-        autoPlay
-        loop
-        muted
-        playsInline
-        onLoadedData={() => setVideoLoaded(true)}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          objectFit: 'cover',
-          zIndex: 1,
-          display: videoLoaded ? 'block' : 'none',
-        }}
-      >
-        <source src={`/mp4/${themeDetails.theme_mp4}`} type="video/mp4" />
-        您的瀏覽器不支援 video 標籤。
-      </video>
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background:
-            'linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(155, 155, 155, 0.1))',
-          zIndex: 2,
-        }}
-      />
-      <FuzzyOverlay />
-      <div
-        className="container px-5 md-px-1"
-        style={{ position: 'relative', zIndex: 4 }}
-      >
-        <div className="row">
-          <div className="col-12 col-md-6">
-            <h1 className={myStyle.h1}>{themeDetails.theme_name}</h1>
-            <p className={myStyle.p}>{themeDetails.theme_desc}</p>
-            <hr className={myStyle.hr} />
-            <div className={myStyle.comment}>
-              <div className={myStyle.section}>
-                <span className={myStyle.title}>主題與劇情</span>
-                <span className={myStyle.star}>
-                  {createStars(themeDetails.storyline)}
-                </span>
-              </div>
-              <div className={myStyle.section}>
-                <span className={myStyle.title}>謎題與設計</span>
-                <span className={myStyle.star}>
-                  {createStars(themeDetails.puzzle_design)}
-                </span>
-              </div>
-              <div className={myStyle.section}>
-                <span className={myStyle.title}>環境與氛圍</span>
-                <span className={myStyle.star}>
-                  {createStars(themeDetails.atmosphere)}
-                </span>
-                <button className={myStyle.warning} onClick={openModal}>
-                  注意事項
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className={myStyle.play}>
-        <div className={myStyle.playerWrapper}>
-          {isPlaying && (
-            <div className={myStyle.soundBarsContainer}>
-              {soundBars.map((bar, i) => (
-                <div
-                  key={i}
-                  className={myStyle.soundBar}
-                  style={{
-                    '--min-height': `${bar.minHeight}px`,
-                    '--max-height': `${bar.maxHeight}px`,
-                    animationDelay: `${bar.delay}s`,
-                  }}
-                />
-              ))}
-            </div>
-          )}
-          <div
-            className="d-flex justify-content-center align-items-center"
-            style={{ height: '100%' }}
-          >
-            <button onClick={togglePlay} className={myStyle.playerButton}>
-              {isPlaying ? <FaPause /> : <FaPlay />}
-            </button>
-          </div>
-        </div>
-
-        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-        <audio ref={audioRef} loop>
-          <source src={`/music/${themeDetails.bg_music}`} type="audio/mpeg" />
-          您的瀏覽器不支援 audio 元素。
-        </audio>
-      </div>
-
-      {showMusicPrompt && (
-        <div className={myStyle.musicPromptOverlay}>
+    <>
+      <BasicModal03
+        open={showMusicPrompt}
+        onClose={handleDeclineMusic}
+        modalTitle="Do you want to listen to music?"
+        modalBody={
           <div className={myStyle.musicPrompt}>
             <p>是否播放背景音樂來增強您的體驗？</p>
             <div className={myStyle.musicPromptButtons}>
@@ -303,8 +130,115 @@ const Banner = () => {
               </button>
             </div>
           </div>
+        }
+      />
+      <div
+        style={{
+          position: 'relative',
+          minHeight: 'calc(100vh - 100px)',
+          display: 'flex',
+          alignItems: 'center',
+          overflow: 'hidden',
+        }}
+      >
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 1,
+          }}
+        >
+          <source src={`/mp4/01.mp4`} type="video/mp4" />
+          您的瀏覽器不支持 video 標籤。
+        </video>
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background:
+              'linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(155, 155, 155, 0.1))',
+            zIndex: 2,
+          }}
+        />
+        <FuzzyOverlay />
+        <div
+          className="container px-5 md-px-1"
+          style={{ position: 'relative', zIndex: 4 }}
+        >
+          <div className="row">
+            <div className="col-12 col-md-6">
+              <h1 className={myStyle.h1}>{themeDetails.theme_name}</h1>
+              <p className={myStyle.p}>{themeDetails.theme_desc}</p>
+              <hr className={myStyle.hr} />
+              <div className={myStyle.comment}>
+                <div className={myStyle.section}>
+                  <span className={myStyle.title}>主題與劇情</span>
+                  <span className={myStyle.star}>
+                    {createStars(themeDetails.storyline)}
+                  </span>
+                </div>
+                <div className={myStyle.section}>
+                  <span className={myStyle.title}>謎題與設計</span>
+                  <span className={myStyle.star}>
+                    {createStars(themeDetails.puzzle_design)}
+                  </span>
+                </div>
+                <div className={myStyle.section}>
+                  <span className={myStyle.title}>環境與氛圍</span>
+                  <span className={myStyle.star}>
+                    {createStars(themeDetails.atmosphere)}
+                  </span>
+                  <button className={myStyle.warning} onClick={openModal}>
+                    注意事項
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+        <div className={myStyle.play}>
+          <div className={myStyle.playerWrapper}>
+            {isPlaying && (
+              <div className={myStyle.soundBarsContainer}>
+                {soundBars.map((bar, i) => (
+                  <div
+                    key={i}
+                    className={myStyle.soundBar}
+                    style={{
+                      '--min-height': `${bar.minHeight}px`,
+                      '--max-height': `${bar.maxHeight}px`,
+                      animationDelay: `${bar.delay}s`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ height: '100%' }}
+            >
+              <button onClick={togglePlay} className={myStyle.playerButton}>
+                {isPlaying ? <FaPause /> : <FaPlay />}
+              </button>
+            </div>
+          </div>
+
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <audio ref={audioRef} loop>
+            <source src="/music/music02.mp3" type="audio/mpeg" />
+            您的瀏覽器不支持 audio 元素。
+          </audio>
+        </div>
+      </div>
 
       <BasicModal02
         open={modalOpen}
@@ -356,7 +290,7 @@ const Banner = () => {
           </div>
         }
       />
-    </div>
+    </>
   )
 }
 
