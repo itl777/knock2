@@ -1,5 +1,4 @@
-  
-  .title {
+.title {
     color: gainsboro;
     font-size: 40px;
     text-align: center;
@@ -19,7 +18,7 @@
   }
   
   .gameContent {
-    background-color: rgb(255, 250, 247);
+    background-color: #f1f1f1;
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -89,6 +88,7 @@
   .card:focus {
     outline: 3px solid #c8a54b;
     outline-offset: 2px;
+    outline-style: none;
   }
   
   .imageComparisonContainer {
@@ -103,13 +103,14 @@
     width: 100%;
     padding-bottom: 56.25%; 
   }
-  .p{
+  
+  .p {
     text-align: center;
     margin-bottom: 10px;
     color: rgb(69, 69, 69);
   }
-
-  .p2{
+  
+  .p2 {
     text-align: center;
     margin-top: 10px;
     color: rgb(69, 69, 69);
@@ -153,25 +154,75 @@
   .riddleContainer {
     margin-top: 20px;
     text-align: center;
-    max-width: 500px;  /* 可以根據需要調整 */
+    max-width: 500px;
     margin-left: auto;
     margin-right: auto;
   }
   
   .riddle {
     margin-bottom: 20px;
-    text-align: left;  /* 讓謎語文字左對齊 */
+    text-align: left;
   }
   
   .riddle p {
-    margin-bottom: 5px;  /* 在問題和輸入框之間添加一些空間 */
+    margin-bottom: 5px;
   }
   
   .riddle input {
     margin-top: 10px;
-    width: 100%;  /* 讓輸入框寬度與容器相同 */
-    box-sizing: border-box;  /* 確保 padding 不會增加總寬度 */
-    padding: 5px;  /* 可以根據需要調整 */
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px;
   }
-
   
+  /* 新增的樣式 */
+  
+  /* 介紹畫面、關卡完成畫面和遊戲完成畫面的共同樣式 */
+  .introScreen, .levelCompleteScreen, .gameCompletedScreen {
+    text-align: center;
+    padding: 30px;
+    background-color: #f1f1f1;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  /* 介紹圖片、關卡完成圖片和遊戲完成圖片的樣式 */
+  .introImage, .levelCompleteImage, .gameCompletedImage {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+  
+  /* 開始遊戲按鈕和下一關按鈕的共同樣式 */
+  .startButton, .nextLevelButton {
+    background-color: #f1f1f1;
+    border: 1.5px solid #B99755;
+    color: #B99755;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+  }
+  
+  /* 按鈕懸停效果 */
+  .startButton:hover, .nextLevelButton:hover {
+    background-color: #B99755;
+    color: white;
+  }
+  
+  /* 遊戲訊息樣式 */
+  .message {
+    text-align: center;
+    font-size: 18px;
+    color: #ececec;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }

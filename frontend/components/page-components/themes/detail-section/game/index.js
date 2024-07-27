@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useReducer,
-  useMemo,
-} from 'react'
+import React, { useEffect, useCallback, useReducer, useMemo } from 'react'
 import styles from './game.module.css'
 
 const cardImages = [
@@ -26,13 +20,17 @@ const differences = [
 ]
 
 const riddles = [
-  { question: '我有眼睛卻看不見，有翅膀卻飛不動，我是什麼？', answer: '針' },
-  { question: '什麼東西，越熱越涼快，越冷越暖和？', answer: '冰箱' },
-  { question: '有什麼東西沒人愛吃，卻天天都在吃？', answer: '虧' },
+  { question: '什麼東西在桌上可以看到，卻永遠無法使用？', answer: '影子' },
+  {
+    question: '每一天都帶來光明和溫暖，但你永遠無法直視他？',
+    answer: '太陽',
+  },
+  { question: '什麼東西能打開所有鎖，但自己卻永遠關不上？', answer: '鑰匙' },
 ]
 
 const initialState = {
-  currentLevel: 1,
+  gameStarted: false,
+  currentLevel: 0,
   cards: [],
   flippedCards: [],
   matchedPairs: 0,
@@ -40,6 +38,8 @@ const initialState = {
   solvedRiddles: 0,
   isProcessing: false,
   message: '',
+  showLevelComplete: false,
+  gameCompleted: false,
 }
 
 const reducer = (state, action) => {
@@ -51,6 +51,8 @@ const reducer = (state, action) => {
   })
 
   switch (action.type) {
+    case 'START_GAME':
+      return ensureArrays({ ...state, gameStarted: true, currentLevel: 1 })
     case 'INIT_LEVEL1':
       return ensureArrays({
         ...state,
@@ -77,8 +79,6 @@ const reducer = (state, action) => {
         flippedCards: [],
       })
     case 'FOUND_DIFFERENCE':
-      console.log('Before FOUND_DIFFERENCE:', state.foundDifferences)
-      console.log('Adding difference:', action.payload)
       return ensureArrays({
         ...state,
         foundDifferences: [...(state.foundDifferences || []), action.payload],
@@ -92,11 +92,21 @@ const reducer = (state, action) => {
       return ensureArrays({
         ...state,
         currentLevel: state.currentLevel + 1,
+        showLevelComplete: false,
       })
     case 'SET_PROCESSING':
       return ensureArrays({ ...state, isProcessing: action.payload })
     case 'SET_MESSAGE':
       return ensureArrays({ ...state, message: action.payload })
+    case 'SHOW_LEVEL_COMPLETE':
+      return ensureArrays({ ...state, showLevelComplete: true })
+    case 'COMPLETE_GAME':
+      return ensureArrays({ ...state, gameCompleted: true })
+    case 'RESET_LEVEL2':
+      return ensureArrays({
+        ...state,
+        foundDifferences: [],
+      })
     default:
       return ensureArrays(state)
   }
@@ -115,15 +125,18 @@ export default function Game() {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
-    console.log('Initial state:', state)
-    const shuffledCards = shuffleArray([...cardImages, ...cardImages])
-    const cards = shuffledCards.map((image, index) => ({
-      image,
-      index,
-      flipped: false,
-    }))
-    dispatch({ type: 'INIT_LEVEL1', payload: cards })
-  }, [])
+    if (state.currentLevel === 1 && state.cards.length === 0) {
+      const shuffledCards = shuffleArray([...cardImages, ...cardImages])
+      const cards = shuffledCards.map((image, index) => ({
+        image,
+        index,
+        flipped: false,
+      }))
+      dispatch({ type: 'INIT_LEVEL1', payload: cards })
+    } else if (state.currentLevel === 2) {
+      dispatch({ type: 'RESET_LEVEL2' })
+    }
+  }, [state.currentLevel, state.cards.length])
 
   const checkMatch = useCallback(
     (flippedPair) => {
@@ -131,11 +144,7 @@ export default function Game() {
       if (card1.image === card2.image) {
         dispatch({ type: 'MATCH_PAIR' })
         if (state.matchedPairs + 1 === 6) {
-          dispatch({ type: 'SET_MESSAGE', payload: '恭喜你完成第一關！' })
-          setTimeout(() => {
-            dispatch({ type: 'NEXT_LEVEL' })
-            dispatch({ type: 'SET_MESSAGE', payload: '' })
-          }, 2000)
+          dispatch({ type: 'SHOW_LEVEL_COMPLETE' })
         }
       } else {
         setTimeout(() => {
@@ -196,13 +205,11 @@ export default function Game() {
       if (!state.foundDifferences.includes(index)) {
         dispatch({ type: 'FOUND_DIFFERENCE', payload: index })
         if (state.foundDifferences.length + 1 === 5) {
-          dispatch({ type: 'SET_MESSAGE', payload: '恭喜你完成第二關！' })
-          setTimeout(() => {
-            dispatch({ type: 'NEXT_LEVEL' })
-            dispatch({ type: 'SET_MESSAGE', payload: '' })
-          }, 2000)
+          dispatch({ type: 'SHOW_LEVEL_COMPLETE' })
         }
       }
+      // 強制更新狀態以觸發重新渲染
+      dispatch({ type: 'SET_MESSAGE', payload: '' })
     },
     [state.foundDifferences]
   )
@@ -214,10 +221,7 @@ export default function Game() {
         dispatch({ type: 'SOLVE_RIDDLE' })
         if (state.solvedRiddles + 1 === riddles.length) {
           setTimeout(() => {
-            dispatch({
-              type: 'SET_MESSAGE',
-              payload: '恭喜你完成第三關，通過所有關卡！',
-            })
+            dispatch({ type: 'COMPLETE_GAME' })
           }, 500)
         } else {
           setTimeout(() => {
@@ -265,79 +269,154 @@ export default function Game() {
     [state.cards, flipCard]
   )
 
+  const IntroScreen = () => (
+    <div className="container">
+      <h1 className={styles.title}>\密室逃脫小遊戲/</h1>
+      <div className={styles.introScreen}>
+        <img src="/game/intro.png" alt="Intro" className={styles.introImage} />
+        <p className={styles.p}>
+          在前往密室逃脫前，玩個小遊戲，
+          <br />
+          準備好挑戰你的觀察力和智慧了嗎？
+        </p>
+        <button
+          className={styles.startButton}
+          onClick={() => dispatch({ type: 'START_GAME' })}
+        >
+          開始遊戲
+        </button>
+      </div>
+    </div>
+  )
+
+  const LevelCompleteScreen = () => (
+    <div className={styles.levelCompleteScreen}>
+      <h2 className={styles.title2}>恭喜完成第{state.currentLevel}關！</h2>
+      <div>
+        <img
+          src={`/game/complete${state.currentLevel}.png`}
+          alt={`Level ${state.currentLevel} Complete`}
+          className={styles.levelCompleteImage}
+        />
+      </div>
+      <button
+        className={styles.nextLevelButton}
+        onClick={() => dispatch({ type: 'NEXT_LEVEL' })}
+      >
+        下一關
+      </button>
+    </div>
+  )
+
+  const GameCompletedScreen = () => (
+    <div className={styles.gameCompletedScreen}>
+      <h2>恭喜你完成所有關卡！</h2>
+      <div className="mt-4">
+        <img
+          src="/game/complete3.png"
+          alt="Game Completed"
+          className={styles.gameCompletedImage}
+        />
+      </div>
+      <p>你成功逃出密室了！</p>
+    </div>
+  )
+
   return (
     <div className="container mt-2 d-block justify-content-center">
-      <h1 className={styles.title}>\密室逃脫小遊戲/</h1>
-      {state.message && <div className={styles.message}>{state.message}</div>}
-      <div className={styles.gameContent}>
-        {state.currentLevel === 1 && (
-          <div className={styles.level}>
-            <h2 className={styles.title2}>第一關：翻牌配對</h2>
-            <div className={styles.cardGrid}>{cardElements}</div>
-          </div>
-        )}
-
-        {state.currentLevel === 2 && (
-          <div className={styles.level}>
-            <h2 className={styles.title2}>第二關：找出不同</h2>
-            <p className={styles.p}>在兩張圖片中找出5處不同之處</p>
-            <div className={styles.imageComparisonContainer}>
-              <div className={styles.imageWrapper}>
-                <img className={styles.image} src="/game/A.png" alt="圖片1" />
-                <img className={styles.image} src="/game/S.png" alt="圖片2" />
-                {differences.map((diff, index) => (
-                  <button
-                    key={index}
-                    className={`${styles.difference} ${
-                      state.foundDifferences.includes(index) ? styles.found : ''
-                    }`}
-                    style={{
-                      left: diff.x,
-                      top: diff.y,
-                    }}
-                    onClick={() => handleDifferenceClick(index)}
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        handleDifferenceClick(index)
-                      }
-                    }}
-                    tabIndex="0"
-                    aria-label={`找不同點 ${index + 1}`}
-                  ></button>
-                ))}
-              </div>
-            </div>
-            <p className={styles.p2}>
-              找到的不同：{state.foundDifferences.length}/5
-            </p>
-          </div>
-        )}
-
-        {state.currentLevel === 3 && (
-          <div className={styles.level}>
-            <h2 className={styles.title2}>第三關：謎語遊戲</h2>
-            <p className={styles.p}>回答以下三個謎題以通關：</p>
-            <div className={styles.riddleContainer}>
-              {riddles.map((riddle, index) => (
-                <div key={index} className={styles.riddle}>
-                  <p>
-                    {index + 1}. {riddle.question}
-                  </p>
-                  <input
-                    type="text"
-                    placeholder="請輸入答案"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        checkAnswer(index, e.target.value)
-                      }
-                    }}
-                  />
+      {!state.gameStarted && <IntroScreen />}
+      {state.gameStarted && !state.gameCompleted && (
+        <>
+          <h1 className={styles.title}>\密室逃脫小遊戲/</h1>
+          {state.message && (
+            <div className={styles.message}>{state.message}</div>
+          )}
+          {state.showLevelComplete ? (
+            <LevelCompleteScreen />
+          ) : (
+            <div className={styles.gameContent}>
+              {state.currentLevel === 1 && (
+                <div className={styles.level}>
+                  <h2 className={styles.title2}>第一關：翻牌配對</h2>
+                  <div className={styles.cardGrid}>{cardElements}</div>
                 </div>
-              ))}
+              )}
+
+              {state.currentLevel === 2 && (
+                <div className={styles.level}>
+                  <h2 className={styles.title2}>第二關：找出不同</h2>
+                  <p className={styles.p}>在兩張圖片中找出5處不同之處</p>
+                  <div className={styles.imageComparisonContainer}>
+                    <div className={styles.imageWrapper}>
+                      <img
+                        className={styles.image}
+                        src="/game/A.png"
+                        alt="圖片1"
+                      />
+                      <img
+                        className={styles.image}
+                        src="/game/S.png"
+                        alt="圖片2"
+                      />
+                      {differences.map((diff, index) => (
+                        <button
+                          key={index}
+                          className={`${styles.difference} ${
+                            state.foundDifferences.includes(index)
+                              ? styles.found
+                              : ''
+                          }`}
+                          style={{
+                            left: diff.x,
+                            top: diff.y,
+                          }}
+                          onClick={() => handleDifferenceClick(index)}
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              handleDifferenceClick(index)
+                            }
+                          }}
+                          tabIndex="0"
+                          aria-label={`找不同點 ${index + 1}`}
+                        ></button>
+                      ))}
+                    </div>
+                  </div>
+                  <p className={styles.p2}>
+                    找到的不同：{state.foundDifferences.length}/5
+                  </p>
+                </div>
+              )}
+
+              {state.currentLevel === 3 && (
+                <div className={styles.level}>
+                  <h2 className={styles.title2}>第三關：謎語遊戲</h2>
+                  <p className={styles.p}>回答以下三個謎題以通關：</p>
+                  <div className={styles.riddleContainer}>
+                    {riddles.map((riddle, index) => (
+                      <div key={index} className={styles.riddle}>
+                        <p>
+                          {index + 1}. {riddle.question}
+                        </p>
+                        <input
+                          type="text"
+                          placeholder="請輸入答案"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              checkAnswer(index, e.target.value)
+                            }
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </>
+      )}
+      {state.gameCompleted && <GameCompletedScreen />}
     </div>
   )
 }
