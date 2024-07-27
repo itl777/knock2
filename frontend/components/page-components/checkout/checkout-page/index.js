@@ -252,7 +252,7 @@ export default function CheckoutPage() {
               {isAddressSelectModalOpen && (
                 <SelectAddressModal onClose={closeAddressSelectModal} />
               )}
-              {orderAddress ? (
+              {!!orderAddress ? (
                 <RecipientButtonSelected
                   key={orderAddress.id}
                   recipientName={orderAddress.recipient_name}

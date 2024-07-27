@@ -2,7 +2,6 @@ import express from "express";
 import db from "../utils/connect.js";
 // import moment from "moment-timezone";
 import bodyParser from "body-parser";
-import { sendNotificationToUser, sendNotificationToAll } from './notifications.js'
 
 const router = express.Router();
 
@@ -370,7 +369,6 @@ router.post("/api/checkout", async (req, res) => {
       await db.query(deleteCartSql, [memberId]);
       // 取得綠界訂單需要的資料
       // const productNames = orderDetailResults.map(({ product_name }) => product_name);
-      sendNotificationToUser( memberId , '新增訂單成功！' );
     }
 
     // 返回结果到前端

@@ -10,7 +10,7 @@ import { FaPhoneAlt } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 import { IoIosArrowForward } from 'react-icons/io'
 
-const RecipientBtnSelected = styled(Button)(() => ({
+const RecipientBtnSelected = styled(Button)(({}) => ({
   gridColumn: 'span 2',
   display: 'flex',
   justifyContent: 'space-between',
