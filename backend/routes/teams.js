@@ -255,7 +255,7 @@ WHERE join_user_id = ${user_id}`;
 
   if (!rows.length) {
     // 沒有該筆資料
-    return res.json({ success: false, error: "此隊伍還沒有人申請加入" });
+    return res.json({ success: false, error: "此用戶還沒有加入團隊" });
   }
 
   res.json({ success: true, members: rows.length ,data: rows });

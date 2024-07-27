@@ -19,7 +19,7 @@ export default function TeamPage() {
             <></>
           ) : (
             <div>
-              <UserTeam />
+              <UserTeam auth={auth} />
             </div>
           )}
           <div>

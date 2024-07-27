@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from '@/components/page-components/teams/teams.module.css'
 
-import { useAuth } from '@/context/auth-context'
 import {
   GET_DATA,
   GET_ALL_MEMBER,
@@ -21,8 +20,7 @@ import {
   Typography,
 } from './mui_style'
 
-export default function UserTeam() {
-  const { auth } = useAuth()
+export default function UserTeam( {auth} ) {
 
   const { data: allTeamData, isLoading: isAllTeamDataLoading } =
     useFetch(GET_DATA)

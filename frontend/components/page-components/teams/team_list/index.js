@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-// import { useRouter } from 'next/router'
-
+import { useRouter } from 'next/router'
 import { GET_DATA } from '@/configs/api-path'
 
 import styles from '@/components/page-components/teams/teams.module.css'
@@ -10,20 +9,21 @@ import MyPagination from './pagination'
 import SelectT from './selectT'
 
 export default function TeamList() {
-  // const router = useRouter()
+  const router = useRouter()
+  const { query } = router
+  const initialPage = query.page ? parseInt(query.page) : 1
 
   const [data, setData] = useState({
     success: false,
     rows: [],
   })
 
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(initialPage)
   const [totalPages, setTotalPages] = useState(1)
   const [branchID, setBranchID] = useState('')
   const [difficulty, setDifficulty] = useState('')
   const [order, setOrder] = useState('')
   const [teamStatus, setTeamStatus] = useState('')
-  // const [perPage] = useState(6)
 
   const fetchData = async () => {
     const params = new URLSearchParams({ page })
@@ -43,17 +43,35 @@ export default function TeamList() {
     try {
       const response = await fetch(`${GET_DATA}?${params.toString()}`)
       const result = await response.json()
-      const { rows, totalPages } = result
-      setData({ success: true, rows })
-      setTotalPages(totalPages)
+      console.log('API result:', result)
+
+      if (result.success) {
+        // const { rows, totalPages } = result
+        setData({ success: true, rows: result.rows })
+        setTotalPages(result.totalPages)
+      } else if (result.redirect) {
+        const newPage = new URLSearchParams(result.redirect).get('page')
+        if (newPage) {
+          setPage(parseInt(newPage))
+          router.push({ pathname: '/teams', query: { page: newPage } })
+        }
+        setData({ success: false, rows: [] })
+      } else {
+        setData({ success: false, rows: [] })
+      }
     } catch (error) {
       console.error('Error fetching data:', error)
+      setData({ success: false, rows: [] })
     }
   }
 
   useEffect(() => {
-    fetchData(page)
+    fetchData()
   }, [branchID, order, difficulty, teamStatus, page])
+
+  useEffect(() => {
+    setPage(initialPage)
+  }, [query.page])
 
   return (
     <>
@@ -127,27 +145,33 @@ export default function TeamList() {
             </div>
           </div>
           <div className="row">
-            {data.rows.map((r) => {
-              return (
-                <div className="col-12 col-md-6 col-lg-4" key={r.team_id}>
-                  <Card
-                    team_id={r.team_id}
-                    key={r.team_id}
-                    branchName={r.branch_name}
-                    themeImg={r.theme_img}
-                    themeName={r.theme_name}
-                    difficulty={r.difficulty}
-                    suitablePlayers={r.suitable_players}
-                    themeTime={r.theme_Time}
-                    rick_name={r.nick_name}
-                    reservation_date={r.reservation_date}
-                    start_time={r.start_time}
-                    team_title={r.team_title}
-                    team_status={r.team_status}
-                  />
-                </div>
-              )
-            })}
+            {data.rows.length > 0 ? (
+              data.rows.map((r) => {
+                return (
+                  <div className="col-12 col-md-6 col-lg-4" key={r.team_id}>
+                    <Card
+                      team_id={r.team_id}
+                      key={r.team_id}
+                      branchName={r.branch_name}
+                      themeImg={r.theme_img}
+                      themeName={r.theme_name}
+                      difficulty={r.difficulty}
+                      suitablePlayers={r.suitable_players}
+                      themeTime={r.theme_Time}
+                      rick_name={r.nick_name}
+                      reservation_date={r.reservation_date}
+                      start_time={r.start_time}
+                      team_title={r.team_title}
+                      team_status={r.team_status}
+                    />
+                  </div>
+                )
+              })
+            ) : (
+              <div className="col-12">
+                <p>沒有符合條件的團隊</p>
+              </div>
+            )}
           </div>
           <div>
             <MyPagination
