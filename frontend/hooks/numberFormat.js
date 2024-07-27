@@ -25,3 +25,13 @@ export const formatDateWithWeekday = (dateString) => {
   }
   return date.toLocaleDateString('zh-TW', options) // 範例：2024年7月17日 (星期二)
 }
+
+export const formatDate = (dateString) => {
+  const date = new Date(dateString)
+  const options = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  }
+  return date.toLocaleDateString('zh-TW', options) // 範例：2024年7月17日
+}

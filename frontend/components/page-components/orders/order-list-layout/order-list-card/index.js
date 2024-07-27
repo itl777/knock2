@@ -96,6 +96,7 @@ export default function OrderListCard({
                     ? `${PRODUCT_IMG}/${detail.product_img}`
                     : ''
                 }
+                productId={detail.product_id}
               />
             ))}
         </div>

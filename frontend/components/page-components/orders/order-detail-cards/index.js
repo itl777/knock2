@@ -28,7 +28,7 @@ export default function OrderDetailCards({ order_id }) {
   useEffect(() => {
     fetchOrderData(order_id)
     if (order) {
-      if (order.order_status_id === 3) {
+      if (order.deliver === 1) {
         setShowReviewDialog(true) // 已完成才可以評價
       } else {
         setShowReviewDialog(false)
@@ -54,6 +54,7 @@ export default function OrderDetailCards({ order_id }) {
           {detail.map((v, i) => (
             <OrderItemDetail
               key={v.product_id}
+              productId={v.product_id}
               productName={v.product_name}
               originalPrice={v.order_unit_price}
               // discountedPrice={v.order_unit_price}

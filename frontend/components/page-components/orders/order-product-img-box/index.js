@@ -28,7 +28,7 @@ export default function OrderProductImgBox({
         margin: '0',
         borderRadius: 'var(--img-radius)',
         '&:hover': {
-          boxShadow: '0 0 8px 0 rgb(34, 34, 34, 0.4)',
+          backgroundColor: 'transparent',
         },
       }}
       onClick={() => {

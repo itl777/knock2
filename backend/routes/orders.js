@@ -270,6 +270,8 @@ router.get("/:orderId", async (req, res) => {
         discount_amount,
         discount_percentage,
         discount_max,
+        o.deliver,
+        o.cancel,
         CAST(SUM(od.order_quantity * od.order_unit_price) AS UNSIGNED) AS subtotal_price,
         CAST(SUM(od.order_quantity * od.order_unit_price + o.deliver_fee) AS UNSIGNED) AS total_price
       FROM orders o

@@ -1,5 +1,5 @@
 import styles from './order-detail-info.module.css'
-import { formatPrice } from '@/hooks/numberFormat'
+import { formatPrice, formatDate } from '@/hooks/numberFormat'
 import OrderDetailRow from '../order-detail-row'
 
 export default function OrderDetailInfo({
@@ -16,7 +16,7 @@ export default function OrderDetailInfo({
 }) {
   return (
     <div className={styles.orderInfoBox}>
-      <OrderDetailRow label="訂單日期" content={order_date} />
+      <OrderDetailRow label="訂單日期" content={formatDate(order_date)} />
 
       {!!merchant_trade_no && (
         <OrderDetailRow label="訂單編號" content={merchant_trade_no} />

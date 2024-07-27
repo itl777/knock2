@@ -9,6 +9,7 @@ import { useSnackbar } from '@/context/snackbar-context'
 // hooks
 import useFetchAllOrders from '@/hooks/fetchAllOrder'
 import usePayment from '@/hooks/usePayment'
+import { formatDate } from '@/hooks/numberFormat'
 // components
 import OrderListCard from './order-list-card'
 import ConfirmDialog from '@/components/UI/confirm-dialog'
@@ -132,7 +133,7 @@ export default function OrderListLayout({ status, initialPage = 1 }) {
             key={v.order_id}
             order_id={v.order_id}
             merchant_trade_no={v.merchant_trade_no}
-            order_date={v.order_date}
+            order_date={formatDate(v.order_date)}
             total_price={v.subtotal_price - v.discountTotal + v.deliver_fee}
             payment_type={v.payment_type}
             full_address={v.full_address}
