@@ -5,7 +5,7 @@ import Card02 from '@/components/UI/cards-themes'
 import { Box } from '@mui/joy'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-import styles from './section3.module.css'
+import styles from './section3.module.scss'
 import HomeBtn from '@/components/UI/home-btn'
 import _ from 'lodash'
 
