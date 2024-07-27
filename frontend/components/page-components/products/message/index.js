@@ -81,7 +81,7 @@ export default function Message() {
 
   useEffect(() => {
     socket.on('chat message', ({ room, username, type, message }) => {
-      console.log('前台clint:', { room, username, type, message })
+      // console.log('前台clint:', { room, username, type, message })
       setMessages((prevMsg) => [...prevMsg, { room, username, type, message }])
     })
 
@@ -90,7 +90,7 @@ export default function Message() {
       setMessages(history)
     })
     socket.on('disconnect', () => {
-      console.log('前端用戶斷開連接')
+      // console.log('前端用戶斷開連接')
       // socket.emit('user_offline', room)
     })
 
@@ -107,19 +107,17 @@ export default function Message() {
       const formData = new FormData()
       formData.append('file', selectedImage)
 
-      console.log(' formData.append:', formData)
+      // console.log(' formData.append:', formData)
       try {
         const res = await fetch('http://localhost:3001/products/upload', {
           method: 'POST',
           body: formData,
           enctype: 'multipart/form-data',
         })
-        console.log('---fecth res', res)
+        // console.log('---fecth res', res)
         const resData = await res.json()
         setUploadImg(resData.filePath)
         setType('img')
-        console.log('---fecth type:', type)
-        console.log('-----fetch', resData)
       } catch (e) {
         console.log(e)
       }
@@ -135,12 +133,12 @@ export default function Message() {
     e.preventDefault()
     if (message) {
       // 傳給server
-      console.log('發送訊息:', room, username, type, message)
+      // console.log('發送訊息:', room, username, type, message)
       socket.emit('chat message', { room, username, type, message })
       // setMessages((prevMsg) => [...prevMsg, { room, username, message }])
       setMessage('')
     } else if (uploadImg) {
-      console.log('發送圖片:', room, username, type, uploadImg)
+      // console.log('發送圖片:', room, username, type, uploadImg)
       socket.emit('chat message', {
         room,
         username,
@@ -361,7 +359,7 @@ export default function Message() {
                 ref={inputFileRef}
                 onChange={(event) => {
                   setSelectedImage(event.target.files[0])
-                  console.log(event.target.files[0])
+                  // console.log(event.target.files[0])
                 }}
               />
             </div>
