@@ -13,21 +13,13 @@
   letter-spacing: var(--letter-spacing-2);
 }
 
-.userTab :hover {
-  background-color: var(--bg-grey-light);
-  transform: translateX(2px);
+.userTab>li:hover {
+  background-color: rgb(185, 151, 85, 0.2);
+  transform: translateX(4px);
 }
 
-.userTab>* :hover {
+.userTab>li:hover> a {
   color: var(--sec-1);
-}
-
-
-.userTab a {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-  width: 100%;
 }
 
 .active {
@@ -38,8 +30,12 @@
   color: white;
 }
 
-
-
+.userTab a {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+}
 
 @media screen and (max-width: 800px) {
   .userTab {

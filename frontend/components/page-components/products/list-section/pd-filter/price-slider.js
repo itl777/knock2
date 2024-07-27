@@ -56,9 +56,9 @@ const AirbnbSlider = styled(Slider)(({ theme }) => ({
   },
 }))
 
-export default function PriceSlider() {
+export default function PriceSlider({price, setPrice}) {
   const router = useRouter()
-  const [price, setPrice] = useState([500, 1500])
+  // const [price, setPrice] = useState([500, 1500])
 
   const handlePriceChange = (e) => {
     const newPrice = e.target.value

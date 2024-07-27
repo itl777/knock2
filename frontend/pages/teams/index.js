@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useAuth } from '@/context/auth-context'
 import IndexLayout from '@/components/layout'
 import styles from '@/components/page-components/teams/teams.module.css'
