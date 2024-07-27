@@ -64,6 +64,7 @@ export default function FavCard({ dbData, onDragEnd, onDragStart }) {
           .pd-card:hover {
             transform: rotate(8deg) scale(1.1);
             box-shadow: 5px 4px 3px rgba(0, 0, 0, 0.2);
+            cursor: grab;
           }
           .img-div {
             width: 82px;

@@ -33,7 +33,6 @@ export default function AvatarFormItem({ avatar = '', open }) {
     }
   `
 
-
   return (
     <Avatar onClick={open}>
       {avatar !== '' ? (

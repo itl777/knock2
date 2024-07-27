@@ -58,7 +58,6 @@ const customTheme = createTheme({
     MuiMenuItem: {
       styleOverrides: {
         root: {
-          
           fontFamily: 'Noto Serif JP, serif',
           '&.Mui-selected': {
             backgroundColor: selectedBackgroundColor,

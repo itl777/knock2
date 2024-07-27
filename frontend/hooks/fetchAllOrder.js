@@ -6,10 +6,10 @@ const useFetchAllOrders = () => {
   const [allOrderDetails, setAllOrderDetails] = useState([])
   const [totalPages, setTotalPages] = useState(1)
 
-  const fetchAllOrders = async (member_id, status, page) => {
+  const fetchAllOrders = async (member_id, status, page, product_name) => {
     try {
       const response = await fetch(
-        `${ORDER_LIST_GET}?member_id=${member_id}&status=${status}&page=${page}`
+        `${ORDER_LIST_GET}?member_id=${member_id}&status=${status}&page=${page}&product_name=${product_name}`
       )
 
       if (!response.ok) {

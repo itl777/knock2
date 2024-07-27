@@ -41,7 +41,7 @@ const TwoFactorAuthStepper = ({
   return (
     <ThemeProvider theme={theme}>
       <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((step, index) => (
+        {steps.map((step) => (
           <Step key={step.label}>
             <Tooltip title={step.description} arrow>
               <StepLabel sx={{ fontFamily: 'Noto Serif JP' }}>

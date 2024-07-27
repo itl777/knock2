@@ -12,7 +12,7 @@ import AddressInfoRow from '../address-info-row'
 import { FaPhoneAlt } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 
-const RecipientBtnEdit = styled('div')(({}) => ({
+const RecipientBtnEdit = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'start',
@@ -39,11 +39,18 @@ export default function RecipientButtonEdit({
   href = null,
   addressId, // 接收父層 SelectAddressModal 資料
 }) {
-  const { handleAddressDelete, handleSelectAddress, openAddressEditModal, goToEditModal } = useAddress()
+  const {
+    handleAddressDelete,
+    handleSelectAddress,
+    openAddressEditModal,
+    goToEditModal,
+  } = useAddress()
   const { openConfirmDialog } = useConfirmDialog()
 
   const handleDeleteClick = () => {
-    openConfirmDialog(() => {handleAddressDelete(addressId)})
+    openConfirmDialog(() => {
+      handleAddressDelete(addressId)
+    })
   }
 
   return (
@@ -61,7 +68,14 @@ export default function RecipientButtonEdit({
 
             <div className={styles.btnDivider}> </div>
 
-            <TextButton btnText="編輯" type="sec" href={null} onClick={()=>{goToEditModal(addressId)}} />
+            <TextButton
+              btnText="編輯"
+              type="sec"
+              href={null}
+              onClick={() => {
+                goToEditModal(addressId)
+              }}
+            />
 
             <div className={styles.btnDivider}> </div>
 
@@ -88,16 +102,3 @@ export default function RecipientButtonEdit({
     </div>
   )
 }
-
-
-/*
-<div className={styles.iconTextRow}>
-  <FaPhoneAlt />
-  <p className={styles.contentText}>{phone}</p>
-</div>
-<div className={styles.iconTextRow}>
-  <FaLocationDot />
-  <p className={styles.contentText}>{address}</p>
-</div>
-*/
-
