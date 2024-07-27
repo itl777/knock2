@@ -30,6 +30,11 @@ export default function CouponPromoteButton({
           background: '#222',
           fontSize: '16px',
           padding: "8px 16px 8px 80px",
+          ':hover': {
+            color: 'var(--pri-1)',
+            border: '1px solid var(--pri-1)',
+            backgroundColor: 'rgb(34, 34, 34, 0.1)',
+          },
           // disabled style by Iris
           '&.Mui-disabled': {
             color: 'var(--text-grey)',

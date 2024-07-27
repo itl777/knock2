@@ -62,7 +62,7 @@ router.get("/list", async (req, res) => {
 
     switch (status) {
       case "ongoing":
-        condition = `(o.rtn_code IS NULL OR o.rtn_code = 0 ) AND o.cancel != 1 AND o.order_date + INTERVAL 7 DAY < CURDATE()`;
+        condition = `(o.rtn_code IS NULL OR o.rtn_code = 0 ) AND o.cancel = 0 AND o.order_date + INTERVAL 7 DAY > CURDATE()`;
         break;
       case "shipping":
         condition = `o.rtn_code = 1 AND o.cancel = 0 AND o.deliver = 0`;
@@ -71,7 +71,7 @@ router.get("/list", async (req, res) => {
         condition = `o.rtn_code = 1 AND o.cancel = 0 AND o.deliver = 1`;
         break;
       case "canceled":
-        condition = `o.cancel = 1 OR (o.rtn_code = 0 AND o.order_date + interval 10 day > CURDATE())`;
+        condition = `o.cancel = 1 OR (o.rtn_code = 0 AND o.order_date + interval 7 day <= CURDATE())`;
         break;
       default:
         return res
