@@ -14,6 +14,8 @@ import {
 
 import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
 import PdBtnContained from '@/components/UI/pd-btn-contained'
+import { Padding } from '@mui/icons-material'
+import { color } from 'framer-motion'
 
 export default function Card01({
   team_id = 0,
@@ -21,13 +23,13 @@ export default function Card01({
   themeImg = 'theme-img.png',
   themeName = '',
   difficulty = '',
-  suitablePlayers = '',
+  max_players = '',
   team_title = '',
   rick_name = '',
   reservation_date = '',
   start_time = '',
   themeTime = 0,
-  team_status ='',
+  team_status = '',
 }) {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
@@ -75,6 +77,45 @@ export default function Card01({
         >
           {branchName}
         </Typography>
+        <Typography
+          sx={{
+            position: 'absolute',
+            top: '5px',
+            right: '15px',
+            paddingTop: '10px',
+            color: '#B99755',
+            zIndex: 1,
+            height: '100px',
+            width: '100px',
+            textAlign: 'center',
+            background: '#222222c4',
+            borderRadius: '45% 45% 0 0',
+          }}
+        >
+          {team_status === '募集中' ? (
+            <>
+              <div>\募集中/</div>
+              <Image
+                src={`/ghost/ghost_05.png`}
+                alt=""
+                width={78}
+                height={60}
+              />
+            </>
+          ) : null}
+          {team_status === '已成團' ? (
+            <>
+              <div>已成團！</div>
+              <Image
+                src={`/ghost/ghost_06.png`}
+                alt=""
+                width={78}
+                height={60}
+              />
+            </>
+          ) : null}
+        </Typography>
+
         <AspectRatio ratio="375/240">
           <Image
             src={`/themes-main/${themeImg}`}
@@ -132,16 +173,23 @@ export default function Card01({
           color: '#B99755',
         }}
       >
-        <span>
-          團隊名稱：
-          <br />
+        <h6 className="pb-2">
+          {/* 團隊名：
+          <br /> */}
           {team_title}
-        </span>
+        </h6>
         <span>團長：{rick_name}</span>
         <span>
           時間：{formatDateToTaiwan(reservation_date)} {formatTime(start_time)}
         </span>
-        <span>長度：{themeTime} 分鐘</span>
+        <div className="row">
+          <div className="col-6">
+            <span>長度：{themeTime} 分鐘</span>
+          </div>
+          <div className="col-6">
+            <span>徵求人數：{max_players}</span>
+          </div>
+        </div>
       </CardContent>
       <CardOverflow>
         <CardContent
@@ -155,7 +203,7 @@ export default function Card01({
             },
           }}
         >
-          <div style={{ margin: '0 auto', paddingTop: '0px ' }}>
+          <div style={{ margin: '0 auto', paddingTop: '3px ' }}>
             {' '}
             <Link href={`/teams/${team_id}`}>
               <button className={styles.button}>更多詳情</button>

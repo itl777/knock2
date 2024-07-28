@@ -5,15 +5,16 @@ import { useAuth } from '@/context/auth-context'
 import Image from 'next/image'
 import { AspectRatio } from '@mui/joy'
 
+import TeamDetails from '@/components/page-components/teams/team_page/teamdetails'
+import JoinTeamModal from '@/components/page-components/teams/join-team-modal'
+import ManagerTeamModal from '@/components/page-components/teams/manager-team-modal'
 import TeamMemberComponent from '@/components/page-components/teams/member'
 import ChatArea from '@/components/page-components/teams/chat_area'
-import BasicModal02 from '@/components/page-components/teams/team-modal-2'
 
-import { API_SERVER, ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
+import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
 
 import styles from '@/components/page-components/teams/teams.module.css'
-import useDateFormatter from '@/hooks/useDateFormatter'
-import Link from 'next/link'
+// import useDateFormatter from '@/hooks/useDateFormatter'
 
 export default function TeamInfo() {
   const router = useRouter()
@@ -22,9 +23,10 @@ export default function TeamInfo() {
   const [isMember, setIsMember] = useState(false)
   const [showMembers, setShowMembers] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
+  const [modalOpenJoin, setModalOpenJoin] = useState(false)
   const [memberCount, setMemberCount] = useState(0)
   // const [memberData, setMemberData] = useState([])
-  const { formatDateToTaiwan, formatTime } = useDateFormatter()
+  // const { formatDateToTaiwan, formatTime } = useDateFormatter()
 
   const fetchTeamData = async (team_id) => {
     const url = ONE_TEAM + team_id
@@ -50,7 +52,6 @@ export default function TeamInfo() {
       const data = await res.json()
 
       if (data.success) {
-        // setMemberData(data.data)
         setMemberCount(data.data.length)
         console.log('成功取得團員資料', data.data)
 
@@ -71,7 +72,6 @@ export default function TeamInfo() {
 
   const handleJoinTeam = async () => {
     const { team_id } = router.query
-
     const joinData = {
       join_team_id: team_id,
       join_user_id: auth.id,
@@ -89,7 +89,9 @@ export default function TeamInfo() {
       const result = await res.json()
 
       if (result.success) {
-        alert('成功加入團隊')
+        // alert('成功加入團隊')
+        fetchMemberData(team_id)
+        // closeModalJoin
       } else {
         console.error('加入團隊失敗:', result.error)
         alert('加入團隊失敗')
@@ -99,6 +101,7 @@ export default function TeamInfo() {
       alert('加入團隊時發生錯誤')
     }
   }
+
   useEffect(() => {
     if (router.isReady) {
       const { team_id } = router.query
@@ -110,8 +113,12 @@ export default function TeamInfo() {
   }, [router.isReady])
 
   const openModal = () => setModalOpen(true)
+  const openModalJoin = () => setModalOpenJoin(true)
   const closeModal = () => setModalOpen(false)
-
+  const closeModalJoin = () => setModalOpenJoin(false)
+  const handleTeamReady = async () => {
+    // Your API request to set the team as ready
+  }
   if (!teamData) {
     return <div>Loading...</div>
   }
@@ -127,102 +134,73 @@ export default function TeamInfo() {
             <div className={`${styles.teamsSection} row`}>
               <div className={styles.borderbox} key={teamData.team_id}>
                 <div className="row">
-                  <div className="col-12 col-md-3">
-                    <div className={styles.teamTitle}>
-                      <h3>
-                        <Link
-                          href={`/themes/themes-details/${teamData.theme_id}`}
-                        >
-                          {teamData.theme_name}
-                        </Link>
-                      </h3>
-                    </div>
-                    <div className="teamPhoto">
-                      <AspectRatio ratio="375/240">
-                        <Image
-                          src={`/themes-main/${teamData.theme_img}`}
-                          alt=""
-                          width={'579'}
-                          height={'415'}
-                        />
-                      </AspectRatio>
-                    </div>
-                  </div>
-                  <div className="col-12 col-md-9">
-                    <h5>團名：{teamData.team_title}</h5>
-                    <p>
-                      冒險時間：
-                      {formatDateToTaiwan(teamData.reservation_date)}{' '}
-                      {formatTime(teamData.start_time)}
-                      <br />
-                      冒險長度：{teamData.theme_Time} 分鐘
-                      <br />
-                      地區：{teamData.branch_name}
-                      <br />
-                      申請人數/人數上限：{memberCount}/ {teamData.team_limit}
-                    </p>
-                    <hr />
-                    <p>
-                      團長
-                      <br />
-                      {teamData.nick_name}
-                      <br />
-                      <Image
-                        src={
-                          teamData.avatar
-                            ? `${API_SERVER}/avatar/${teamData.avatar}`
-                            : ''
-                        }
-                        height={40}
-                        width={40}
-                        alt={`${teamData.nick_name} avatar`}
-                      />
-                      ：{teamData.team_note}
-                    </p>
-                  </div>
+                  <TeamDetails teamData={teamData} memberCount={memberCount} />
                 </div>
-
                 <div className="row">
-                  {!auth.id ? (
-                    <></>
+                  {teamData.team_status === '已成團' ? (
+                    <>
+                      <div style={{ textAlign: 'center', padding: '16px' }}>
+                        <h4>此隊伍已成團</h4>
+                        <Image
+                          src={`/ghost/ghost_05.png`}
+                          alt=""
+                          width={150}
+                          height={100}
+                        />
+                      </div>
+                    </>
                   ) : (
-                    <div style={{ textAlign: 'center', paddingTop: '24px' }}>
-                      {auth.id === teamData.user_id ? (
-                        <>
-                          <button
-                            onClick={openModal}
-                            // onClick={handleTeamSetting}
-                            className={styles.buttonBrown}
-                          >
-                            管理團員
-                          </button>
-                        </>
-                      ) : isMember ? (
-                        <div>您已申請加入此團隊</div>
+                    <>
+                      {!auth.id ? (
+                        <></>
                       ) : (
-                        <>
-                          <button
-                            onClick={handleJoinTeam}
-                            className={styles.buttonBrown}
-                          >
-                            申請加入
-                          </button>
-                        </>
+                        <div style={{ textAlign: 'center', padding: '16px' }}>
+                          {auth.id === teamData.user_id ? (
+                            <>
+                              <button
+                                onClick={openModal}
+                                // onClick={handleTeamSetting}
+                                className={styles.buttonBrown}
+                              >
+                                管理團員
+                              </button>
+                            </>
+                          ) : isMember ? (
+                            <>
+                              <h4>您已申請加入此團隊</h4>
+                              <Image
+                                src={`/ghost/ghost_03.png`}
+                                alt=""
+                                width={150}
+                                height={100}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={openModalJoin}
+                                className={styles.buttonBrown}
+                              >
+                                申請加入
+                              </button>
+                            </>
+                          )}
+                        </div>
                       )}
-                    </div>
+                    </>
                   )}
                 </div>
               </div>
             </div>
           </div>
-          <>
-            <div className="container">
-              <ChatArea chat_at={teamData.team_id} chat_by={auth.id} />
-            </div>
-          </>
         </div>
+        <>
+          <div className="container">
+            <ChatArea chat_at={teamData.team_id} chat_by={auth.id} />
+          </div>
+        </>
       </IndexLayout>
-      <BasicModal02
+      <ManagerTeamModal
         open={modalOpen}
         onClose={closeModal}
         modalTitle="管理團員"
@@ -235,6 +213,23 @@ export default function TeamInfo() {
         }
         buttonLabel="我已閱讀"
         onButtonClick={closeModal}
+        TeamReady={handleTeamReady}
+      />
+      <JoinTeamModal
+        open={modalOpenJoin}
+        onClose={closeModalJoin}
+        modalTitle="申請加入"
+        modalBody={
+          <div>
+            加入後，需等待團長審核
+            <br />
+            待人數到達預定上限後即可成團。
+          </div>
+        }
+        modalBody2={<div>已成功加入隊伍！ </div>}
+        buttonLabel="確定加入！"
+        onButtonClick={handleJoinTeam}
+        buttonLabel2="確定"
       />
     </>
   )

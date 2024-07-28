@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from '@/components/page-components/teams/teams.module.css'
 
-import { useAuth } from '@/context/auth-context'
 import {
   GET_DATA,
   GET_ALL_MEMBER,
@@ -21,9 +20,7 @@ import {
   Typography,
 } from './mui_style'
 
-export default function UserTeam() {
-  const { auth } = useAuth()
-
+export default function UserTeam({ auth }) {
   const { data: allTeamData, isLoading: isAllTeamDataLoading } =
     useFetch(GET_DATA)
   const { data: userData, isLoading: isUserDataLoading } = useFetch(
@@ -52,12 +49,14 @@ export default function UserTeam() {
   }
 
   // 加入的隊伍
-  const filteredTeams = allTeamData.rows.filter((team) =>
-    joinTeamData?.data?.some(
-      (member) =>
-        member.join_team_id === team.team_id && member.join_user_id === auth.id
-    )
-  )
+  const filteredTeams =
+    allTeamData?.rows?.filter((team) =>
+      joinTeamData?.data?.some(
+        (member) =>
+          member.join_team_id === team.team_id &&
+          member.join_user_id === auth.id
+      )
+    ) || []
 
   // 計算隊員數量
   const teamMemberCount = {}
@@ -87,7 +86,9 @@ export default function UserTeam() {
                     <div
                       className={`col-12 col-lg-6 ${styles.teamlistblock} ${styles.teamlistblock1}`}
                     >
-                      <h4 style={{ textAlign: 'center' }}>您帶領的團隊</h4>
+                      <h4 className={styles.teamPaTitle}>您帶領的團隊</h4>
+
+                      <div className={styles.titleBL}></div>
                       {userData.success ? (
                         <>
                           <table className={styles.teamTable}>
@@ -127,51 +128,58 @@ export default function UserTeam() {
                           </table>
                         </>
                       ) : (
-                        <>
-                          <div className={styles.noDataInfo}>
-                            沒有參與隊伍的紀錄
-                          </div>
-                        </>
+                        <div className={styles.noDataInfo}>
+                          您還沒有開團記錄
+                        </div>
                       )}
                       <div className={styles.bb2}></div>
                     </div>
                     <div className="col-12 col-lg-6">
-                      <h4 style={{ textAlign: 'center' }}>您參加的團隊</h4>
-                      <table className={styles.teamTable}>
-                        <thead>
-                          <tr>
-                            <th>團名</th>
-                            <th>行程</th>
-                            <th>日期時間</th>
-                            <th>人數</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredTeams.map((r) => {
-                            return (
-                              <>
-                                <tr key={r.team_id}>
-                                  <td>
-                                    {' '}
-                                    <Link href={`/teams/${r.team_id}`}>
-                                      {r.team_title}
-                                    </Link>
-                                  </td>
-                                  <td>{r.theme_name}</td>
-                                  <td>
-                                    {formatDateToTaiwan(r.reservation_date)}{' '}
-                                    {formatTime(r.start_time)}
-                                  </td>
-                                  <td>
-                                    {teamMemberCount[r.team_id] || 0} /{' '}
-                                    {r.team_limit}
-                                  </td>
-                                </tr>
-                              </>
-                            )
-                          })}
-                        </tbody>
-                      </table>
+                      <h4 className={styles.teamPaTitle}>您參加的團隊</h4>
+
+                      <div className={styles.titleBL}></div>
+
+                      {joinTeamData?.success && filteredTeams.length > 0 ? (
+                        <table className={styles.teamTable}>
+                          <thead>
+                            <tr>
+                              <th>團名</th>
+                              <th>行程</th>
+                              <th>日期時間</th>
+                              <th>人數</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredTeams.map((r) => {
+                              return (
+                                <>
+                                  <tr key={r.team_id}>
+                                    <td>
+                                      {' '}
+                                      <Link href={`/teams/${r.team_id}`}>
+                                        {r.team_title}
+                                      </Link>
+                                    </td>
+                                    <td>{r.theme_name}</td>
+                                    <td>
+                                      {formatDateToTaiwan(r.reservation_date)}{' '}
+                                      {formatTime(r.start_time)}
+                                    </td>
+                                    <td>
+                                      {teamMemberCount[r.team_id] || 0} /{' '}
+                                      {r.team_limit}
+                                    </td>
+                                  </tr>
+                                </>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <div className={styles.noDataInfo}>
+                          您還沒有加入團隊
+                        </div>
+                      )}
                     </div>
                     <div className={styles.bb}></div>
                   </div>

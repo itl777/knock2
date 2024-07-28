@@ -86,7 +86,7 @@ JOIN branches b ON bt.branch_id = b.branch_id
 //  theme_name, difficulty, max_players, reservation_date, s.start_time, theme_img, s.theme_Time, team_status, team_limit 
 
   const sql = `SELECT reservation_id, r.user_id, nick_name, team_id, team_title, 
- b.branch_id, b.branch_name, 
+ b.branch_id, b.branch_name, team_limit, max_players,
  t.theme_name, t.difficulty, t.max_players, r.reservation_date, s.start_time, theme_img, s.theme_Time, team_status, team_limit 
   FROM reservations r
   JOIN branch_themes bt ON r.branch_themes_id = bt.branch_themes_id
@@ -189,8 +189,8 @@ router.get("/api/team_info_:team_id", async (req, res) => {
 
   // reservation_id, team_id, u.user_id, team_note, team_title, theme_name, difficulty, nick_name,
   // branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, avatar
-  const sql = `SELECT reservation_id, team_id, u.user_id, bt.theme_id,team_note, team_title, theme_name, difficulty, nick_name,
-              branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, avatar, team_limit
+  const sql = `SELECT reservation_id, team_id, u.user_id, nick_name, avatar,bt.theme_id,team_note, team_title, theme_name, difficulty,
+              branch_name, reservation_date, s.start_time, theme_img, s.theme_Time, theme_desc,  team_limit, team_status
   FROM reservations r
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
   JOIN \`branches\` b ON bt.branch_id = b.branch_id
@@ -255,7 +255,7 @@ WHERE join_user_id = ${user_id}`;
 
   if (!rows.length) {
     // 沒有該筆資料
-    return res.json({ success: false, error: "此隊伍還沒有人申請加入" });
+    return res.json({ success: false, error: "此用戶還沒有加入團隊" });
   }
 
   res.json({ success: true, members: rows.length ,data: rows });
@@ -327,14 +327,6 @@ router.post("/api/manage_member", async (req, res) => {
 
     const [result] = await db.query(sql, values);
 
-  // const updatePromises = members.map((member) => {
-  //   const {m_status, no }= member;
-  //   const sql = "UPDATE `teams_members` SET `m_status` = ? WHERE `no` = ?";
-  //   return db.query(sql, [m_status, no]);
-  // });
-  
-  // try {
-  // const results = await Promise.all(updatePromises);
   output.success = true;
   output.result = results;  
 }catch (ex) {
@@ -343,6 +335,30 @@ router.post("/api/manage_member", async (req, res) => {
 
   res.json(output);
 });
+
+// 團隊成團的API
+router.post("/api/team_start", async (req, res) => {
+  const output = {
+    success: false,
+    code: 0,
+    result: {},
+  };
+
+  let body = { ...req.body };
+  body.create_at = new Date();
+
+  const { chat_at, chat_by, chat_text } = body;
+  try {
+  const sql = "UPDATE`teams_list` SET `team_status` = CASE '已成團'";
+  const [result] = await db.query(sql, [chat_at, chat_by, chat_text, body.create_at]);
+
+  }catch (ex) {
+    output.error = ex.message;
+  }
+
+  res.json(output);
+});
+
 
 // 新增留言的API
 router.post("/api/chat/add", async (req, res) => {
