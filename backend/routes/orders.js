@@ -48,7 +48,8 @@ const getPaymentType = (payment_type) => {
 };
 
 router.get("/list", async (req, res) => {
-  const { member_id, status, page, product_name } = req.query;
+  const { member_id, status, page, product_name, start_date, end_date } =
+    req.query;
   const perPage = 5; // 每頁筆數
   let currentPage = parseInt(page) || 1;
   const offset = (currentPage - 1) * perPage;
@@ -62,7 +63,7 @@ router.get("/list", async (req, res) => {
 
     switch (status) {
       case "ongoing":
-        condition = `(o.rtn_code IS NULL OR o.rtn_code = 0 ) AND o.cancel = 0 AND o.order_date + INTERVAL 7 DAY > CURDATE()`;
+        condition = `((o.rtn_code IS NULL OR o.rtn_code = 0 ) AND o.cancel = 0 AND o.order_date + INTERVAL 7 DAY > CURDATE())`;
         break;
       case "shipping":
         condition = `o.rtn_code = 1 AND o.cancel = 0 AND o.deliver = 0`;
@@ -71,7 +72,8 @@ router.get("/list", async (req, res) => {
         condition = `o.rtn_code = 1 AND o.cancel = 0 AND o.deliver = 1`;
         break;
       case "canceled":
-        condition = `o.cancel = 1 OR (o.rtn_code = 0 AND o.order_date + interval 7 day <= CURDATE())`;
+        condition = `(o.cancel = 1 OR (o.rtn_code = 0 AND o.order_date + INTERVAL 7 DAY <= CURDATE()))`;
+        break;
         break;
       default:
         return res
@@ -86,6 +88,10 @@ router.get("/list", async (req, res) => {
         JOIN product_management pm ON pm.product_id = od.order_product_id 
         WHERE pm.product_name LIKE '%${product_name}%'
       )`;
+    }
+
+    if (start_date && end_date) {
+      condition += ` AND o.order_date BETWEEN '${start_date}' AND '${end_date}'`;
     }
 
     // 取得訂單資料
