@@ -112,9 +112,10 @@ export default function ReservationPage({ status }) {
       {!isLogin && <RedirectionGuide />}
       {isLogin && (
         <div className={styles.listContainer}>
-          {reservationData.map((v) => (
+          {reservationData.map((v, i) => (
             <ReservationListCards
-            key={v.reservation_id}
+              key={v.reservation_id}
+              index={i}
               reservation_date={v.reservation_date}
               theme_name={`${v.theme_name} / ${
                 v.branch_name ? v.branch_name : ''
@@ -126,7 +127,7 @@ export default function ReservationPage({ status }) {
               created_at={v.created_at}
               payment_date={v.payment_date}
               payment_type={v.payment_type}
-              rtn_code = {v.rtn_code}
+              rtn_code={v.rtn_code}
               reservation_status_id={v.reservation_status_id}
               cancel={v.cancel}
               handleCancel={handleCancel(

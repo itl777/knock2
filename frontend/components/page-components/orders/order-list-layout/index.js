@@ -162,6 +162,7 @@ export default function OrderListLayout({ status, initialPage = 1 }) {
         allOrderData.map((v, i) => (
           <OrderListCard
             key={v.order_id}
+            index={i}
             order_id={v.order_id}
             merchant_trade_no={v.merchant_trade_no}
             order_date={formatDate(v.order_date)}

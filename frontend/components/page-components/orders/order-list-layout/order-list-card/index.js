@@ -23,6 +23,7 @@ export default function OrderListCard({
   orderDetailData,
   handlePayment, // 接收父層 order list layout
   handleCancel, // 接收父層 order list layout
+  index,
 }) {
   const router = useRouter()
 
@@ -54,12 +55,16 @@ export default function OrderListCard({
     }
   }
 
+  const getDelay = () => {
+    return index % 2 === 0 ? 0 : 200
+  }
+
   useEffect(() => {
     AOS.init()
   }, [])
 
   return (
-    <div className={styles.orderBox} data-aos="fade-right">
+    <div className={styles.orderBox} data-aos="fade-right" data-aos-delay={getDelay()}>
       <CardHeader
         title={order_date}
         btn1Text="詳情"
