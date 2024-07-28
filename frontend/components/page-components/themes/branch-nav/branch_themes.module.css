@@ -3,6 +3,73 @@
     display: flex;
     justify-content: space-between;
   }
+
+  .filterContainer {
+    margin-bottom: 20px;
+    display: flex;
+    margin-right: 16px;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .filterContainer select {
+    margin-right: 20px;
+    padding: 10px 15px;
+    background-color: #222222;
+    color: #d9d9d9;
+    border-radius: 10px;
+    border: 2px solid #d9d9d9;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position-x: 95%;
+    background-position-y: 50%;
+    padding-right: 30px;
+  }
+  
+  .filterContainer select:hover,
+  .filterContainer select:focus {
+    background-color: #333333;
+    box-shadow: 0 0 10px rgba(217, 217, 217, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .filterContainer select:focus {
+    outline: none;
+    border-color: #bd9f4b;
+  }
+  
+  .filterContainer select option {
+    background-color: #222222;
+    color: #d9d9d9;
+    padding: 10px;
+  }
+  
+  .filterContainer select option:hover,
+  .filterContainer select option:focus,
+  .filterContainer select option:active,
+  .filterContainer select option:checked {
+    background-color: #333333 !important;
+    color: #d9d9d9 !important;
+  }
+  
+  /* 為了更好的跨瀏覽器支持 */
+  .filterContainer select::-ms-expand {
+    display: none;
+  }
+  
+  /* 嘗試覆蓋 WebKit 瀏覽器的預設樣式 */
+  .filterContainer select::-webkit-selection {
+    background-color: #333333;
+  }
+  
+  .filterContainer select::selection {
+    background-color: #333333;
+  }
   
   .tabList {
     margin: 80px;

@@ -4,6 +4,10 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <title>客服聊天室</title>
     <link rel="stylesheet" href="/CSS/msg.css" />
+    <!-- <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  /> -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
@@ -17,16 +21,40 @@
       <div class="sidebar">
         <ul id="userCard"></ul>
 
-        <div class="card">
+        <!-- 範例卡片 -->
+        <!-- <div class="card">
           <div class="card-left">
             <i class="fa-solid fa-user"></i>
           </div>
           <div class="card-body">
             <h3 class="card-title">範例卡片</h3>
-            <p class="card-text">聊天訊息</p>
+            <p class="card-text">已讀訊息</p>
             <button class="btn btn-primary">進入聊天</button>
           </div>
+        </div> -->
+
+        <!-- --------- -->
+                 <!-- Notifications HTML start -->
+        <div id="notificationsModal" class="hidden">
+          <div class="overlay"></div>
+          <div class="modalBody">
+            <h3>發送全站通知</h3>
+            <textarea id="notificationsMessage" ></textarea>
+            <div class="buttons">
+              <span id="sendNotificationsResult" class="result"></span>
+              <div>
+                <button id="closeModalBtn" type="button" class="notificationsBtn">Close</button>
+                <button id="sendNotificationsBtn" type="button" class="notificationsBtn">Send</button>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <div class="card news">
+          <button id="openModalBtn" type="button" class="notificationsBtn"> Notifications </button>
+        </div>
+        <!-- Notifications HTML end -->
+
       </div>
 
       <div class="rightArea">
@@ -68,9 +96,18 @@
 
         online = data;
         if (online.length === 0) {
-          console.log("AllRoom 為空");
+          // console.log("AllRoom 為空");
           const li = document.createElement("li");
-          li.textContent = "目前沒有在線用戶";
+          // li.textContent = "目前沒有在線用戶";
+          li.innerHTML = `
+            <div class="card">
+            
+              <div class="nouser-body">
+                <h3 class="card-title">目前無在線用戶</h3>
+               
+              </div>
+            </div>
+          `;
           userCard.appendChild(li);
         } else {
           online.forEach((itemData) => {
@@ -91,7 +128,7 @@
             </div>
           `;
             userCard.appendChild(li);
-            console.log("----------append li");
+            // console.log("----------append li");
           });
         }
       });
@@ -102,7 +139,7 @@
       });
 
       function joinRoom(e, selectedRoom) {
-        console.log("進入joinRoom fun---");
+        // console.log("進入joinRoom fun---");
         e.preventDefault();
         socket.emit("joinRoom", { room: selectedRoom, username });
         //  清空原本留言
@@ -114,7 +151,7 @@
 
       // 定期更新
       setInterval(() => {
-        console.log("更新---------------", online);
+        // console.log("更新---------------", online);
         socket.emit("AllRoom");
       }, 5000);
 
@@ -181,6 +218,51 @@
         socket.off("joinRoom");
         console.log("後台client:", reason);
       });
+
+          /* Notifications script start */
+          const openModalBtn = document.querySelector("#openModalBtn");
+      const notificationsModal = document.querySelector("#notificationsModal");
+      const closeModalBtn = document.querySelector("#closeModalBtn");
+      const overlay = document.querySelector(".overlay");
+      const notificationsMessage = document.querySelector("#notificationsMessage");
+      const sendNotificationsBtn = document.querySelector("#sendNotificationsBtn");
+      const sendNotificationsResult = document.querySelector("#sendNotificationsResult");
+      
+      const sentToAll = async () => {
+        const url = "http://localhost:3001/notifications/send-all";
+        const options = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ message: notificationsMessage.value }),
+        };
+        const result = await fetch(url, options)
+        const data = await result.json();
+          if (data.success) {
+            notificationsMessage.value = '';
+            sendNotificationsResult.innerText = "發送成功！";
+            setTimeout(() => {
+              sendNotificationsResult.innerText = "";
+            }, 3000);
+          }
+      };  
+
+      const modalOpen = () => {
+        notificationsModal.classList.remove("hidden");
+        notificationsMessage.value = '';
+      }
+
+      const modalClose = () => {
+        notificationsModal.classList.add("hidden");
+        notificationsMessage.value = '';
+      }
+
+      openModalBtn.addEventListener("click", () => modalOpen());
+      closeModalBtn.addEventListener("click", () => modalClose());
+      overlay.addEventListener("click", () => modalClose());
+      sendNotificationsBtn.addEventListener("click", () => sentToAll());
+    /* Notifications script end */
     </script>
   </body>
 </html>

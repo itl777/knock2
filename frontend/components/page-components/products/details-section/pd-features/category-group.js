@@ -12,9 +12,9 @@ export default function CategoryGroup({ productData }) {
     <>
       <div className="d-flex">
         <ProductTag tag={data.category_name} />
-        <ProductTag tag={data.duration +'分鐘'} />
+        <ProductTag tag={data.duration + '分鐘'} />
         <ProductTag tag={data.age} />
-        <ProductTag tag={data.players } />
+        <ProductTag tag={data.players} />
       </div>
     </>
   )

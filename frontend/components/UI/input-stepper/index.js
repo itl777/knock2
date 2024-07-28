@@ -4,6 +4,7 @@ import styles from './input-stepper.module.css'
 import { useEffect, useState } from 'react'
 // contexts
 import { useConfirmDialog } from '@/context/confirm-dialog-context'
+import { useCart } from '@/context/cart-context'
 // components
 import ConfirmDialog from '../confirm-dialog'
 // icons
@@ -15,9 +16,14 @@ export default function InputStepper({
   stepperValue = 1,
   onQuantityChange, //通知父層更新
   productName, // 接受父層的資料
+  productId,
+  couponId,
+  minimumOrder,
+  price,
 }) {
   const [value, setValue] = useState(stepperValue)
   const { openConfirmDialog } = useConfirmDialog()
+  const { handleRemoveCouponFromCart } = useCart()
 
   // 通知 cart-context.js 更新
   useEffect(() => {
@@ -47,6 +53,9 @@ export default function InputStepper({
     const newStepperValue = +value - 1
     setValue(newStepperValue)
     onQuantityChange(newStepperValue)
+    if (couponId && newStepperValue * price < minimumOrder) {
+      handleRemoveCouponFromCart(couponId, productId)
+    }
   }
 
   // 點擊「確定刪除」後

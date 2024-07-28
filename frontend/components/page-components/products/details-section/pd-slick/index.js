@@ -28,7 +28,7 @@ function PdSlick({ product_id }) {
     customPaging: function (i) {
       return (
         <a>
-          <img src={`${PRODUCT_IMG}/${data[i]}.jpg`} alt='productImg'/>
+          <img src={`${PRODUCT_IMG}/${data[i]}.jpg`} alt="productImg" />
         </a>
       )
     },
@@ -46,7 +46,7 @@ function PdSlick({ product_id }) {
         {data.map((v, i) => {
           return (
             <div key={i} className={myStyle['slider-img']}>
-              <img src={`${PRODUCT_IMG}/${v}.jpg`} alt='productImg'/>
+              <img src={`${PRODUCT_IMG}/${v}.jpg`} alt="productImg" />
             </div>
           )
         })}

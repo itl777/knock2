@@ -7,9 +7,7 @@ import myStyle from './features.module.css'
 import { useFavoriteProduct } from '@/hooks/useFavoriteProduct'
 
 export default function BtnGroup({ product_id, product_name }) {
-  // 從context來的quantity
-  const { quantity, setQuantity } = useProduct()
-  const { buyQuantity, setBuyQuantity } = useProduct() // ****** Iris Added
+  const { buyQuantity } = useProduct() // ****** Iris Added
   const { handleAddToCart } = useCart() // ****** Iris Added
   const { toggleButton, data } = useFavoriteProduct(product_id)
 
@@ -35,13 +33,6 @@ export default function BtnGroup({ product_id, product_name }) {
             />
           )}
 
-          {/* <Image
-            className={myStyle['sm-likeStyle']}
-            src="/ghost/ghost_10.png"
-            width={44}
-            height={37}
-            alt="Picture"
-          /> */}
           <PdBtnOutlined
             btnText={data.includes(product_id) ? '已收藏' : '加入收藏'}
             onClick={toggleButton}

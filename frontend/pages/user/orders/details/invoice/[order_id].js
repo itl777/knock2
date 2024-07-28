@@ -11,7 +11,7 @@ export default function InvoicePage() {
 
   return (
     <>
-      <IndexLayout title="訂單發票" background="light">
+      <IndexLayout title="訂單發票" pageName="user" background="light">
         <UserLayout
           userTab={null}
           sectionRight={<InvoicePaper order_id={order_id} />}

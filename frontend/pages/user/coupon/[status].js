@@ -24,7 +24,7 @@ export default function CouponPage() {
 
   return (
     <>
-      <IndexLayout title="商品訂單" background="light">
+      <IndexLayout title="商品訂單" pageName="user" background="light">
         <UserLayout
           userTab={<UserTab />}
           userTabSec={<UserTabSec tabItems={tabItems} />}

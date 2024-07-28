@@ -5,6 +5,8 @@ import CircleBtn from '@/components/UI/circle-btn'
 import myStyle from '../list.module.css'
 import { RiGhostLine } from 'react-icons/ri'
 import { BiGhost } from 'react-icons/bi'
+import { TbArrowBigDown } from 'react-icons/tb'
+import 'animate.css/animate.css'
 
 export default function TopMatter() {
   const canvasRef = useRef(null)
@@ -36,7 +38,6 @@ export default function TopMatter() {
         render: {
           sprite: {
             texture: 'http://localhost:3000/ghost/ghost_01.png',
-            // texture: 'http://localhost:3000/svg/ghost-solid.svg',
             xScale: 0.5,
             yScale: 0.5,
           },
@@ -242,6 +243,12 @@ export default function TopMatter() {
       />
       <div className={myStyle.text}>
         <a href="#buy">Board Game Store</a>
+        <div  className={`${myStyle.arrowIcon}`}>點擊我，立即購物！</div>
+        {/* <div
+          className={`${myStyle.arrowIcon} animate__animated animate__shakeY animate__infinite animate__slow`}
+        >
+          <TbArrowBigDown />
+        </div> */}
       </div>
 
       <style jsx>

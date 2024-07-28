@@ -9,7 +9,7 @@ export default function Favorite() {
   return (
     <>
       <ProductProvider>
-        <IndexLayout title="我的收藏" background="light">
+        <IndexLayout title="我的收藏" pageName="user" background="light">
           <UserLayout
             userTab={<UserTab />}
             sectionRight={<FavoriteSection />}

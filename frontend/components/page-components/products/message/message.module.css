@@ -140,7 +140,7 @@
   display: flex;
   align-items: center;
 }
-.msgLeftImg{
+.msgLeftImg {
   padding: 8px;
   background-color: rgb(205, 204, 201);
   border-radius: 8px;
@@ -151,7 +151,7 @@
   width: 100%;
   height: 100%;
 }
-.msgLeftSticker{
+.msgLeftSticker {
   margin-left: 14px;
   display: flex;
   align-items: center;
@@ -160,34 +160,34 @@
   height: 100%;
 }
 .msgRight::before {
-content: '';
-position: absolute;
-top: 10px;
-left: 48px;
-width: 15px;
-height: 15px;
-z-index: -100;
-background-color: rgb(205, 204, 201);
-transform:  rotate(45deg);
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 48px;
+  width: 15px;
+  height: 15px;
+  z-index: -100;
+  background-color: rgb(205, 204, 201);
+  transform: rotate(45deg);
 }
-.msgLeft::after{
-content: '';
-position: absolute;
-z-index: -100;
-top: 10px;
-right: -4px;
-width: 15px;
-height: 15px;
-background-color: rgb(205, 204, 201);
-transform:  rotate(45deg);
+.msgLeft::after {
+  content: '';
+  position: absolute;
+  z-index: -100;
+  top: 10px;
+  right: -4px;
+  width: 15px;
+  height: 15px;
+  background-color: rgb(205, 204, 201);
+  transform: rotate(45deg);
 }
-#adminImg{
+#adminImg {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 100px;
 }
 /* emoji */
-.emojiArea{
+.emojiArea {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -196,25 +196,27 @@ transform:  rotate(45deg);
   cursor: pointer;
   position: relative;
 }
-.emojiArea button ,.stickersArea button,.uploadImgArea button{
+.emojiArea button,
+.stickersArea button,
+.uploadImgArea button {
   border: none;
   background-color: transparent;
 }
-.emojiPicker{
-position: absolute;
-bottom: 50px;
-z-index: 999;
+.emojiPicker {
+  position: absolute;
+  bottom: 50px;
+  z-index: 999;
 }
-.emojiArea button:hover{
+.emojiArea button:hover {
   color: var(--sec-1);
 }
 
-#form button:hover{
+#form button:hover {
   color: var(--sec-1);
 }
 
 /* 貼圖 */
-.stickersArea{
+.stickersArea {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -224,36 +226,36 @@ z-index: 999;
   position: relative;
 }
 
-.stickersArea button:hover{
+.stickersArea button:hover {
   color: var(--sec-1);
 }
-.stickerWindow{
+.stickerWindow {
   position: absolute;
   bottom: 50px;
-z-index: 999;
-width: 230px;
-/* height: 200px; */
-background-color: #eef1f6;
-border-radius: 8px;
+  z-index: 999;
+  width: 230px;
+  /* height: 200px; */
+  background-color: #eef1f6;
+  border-radius: 8px;
 
-/* display: flex;
+  /* display: flex;
 align-items: center;
 justify-content: space-around; */
 }
-.stickerImgArea{
-display: grid;
-grid-template-columns: auto auto auto;
-gap:10px;
-margin: 10px;
+.stickerImgArea {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 10px;
+  margin: 10px;
 }
-.stickerImg{
+.stickerImg {
   width: 45px;
   height: auto;
 }
-.stickerImg:hover{
+.stickerImg:hover {
   width: 100%;
 }
-.uploadImgArea{
+.uploadImgArea {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -262,11 +264,11 @@ margin: 10px;
   cursor: pointer;
   position: relative;
 }
-.uploadImgArea button:hover{
+.uploadImgArea button:hover {
   color: var(--sec-1);
 }
-#originalInput{
-display: none;
+#originalInput {
+  display: none;
 }
 
 .uploadWindow {
@@ -279,20 +281,37 @@ display: none;
   padding: 6px;
   border-radius: 8px;
   background-color: var(--bg-grey-light);
-border:1px solid var(--input-grey);
-display: flex;
-justify-content: center;
-align-items: center;
-  
+  border: 1px solid var(--input-grey);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.uploadWindow img{
+.uploadWindow img {
   width: 100%;
   height: 100%;
 }
-.sendImg{
-position: absolute;
-right: 0;
-bottom: 55px;
-z-index: 999;
-width: 26px;
+.sendImg {
+  position: absolute;
+  right: 0;
+  bottom: 55px;
+  z-index: 999;
+  width: 26px;
+}
+
+@media screen and (max-width: 580px) {
+  .fix {
+    height: 460px;
+    max-height: calc(100vh - 189px);
+    width: 90%;
+  }
+  .messageInp {
+    width: 100%;
+  }
+  .emojiPicker {
+  left: -15px;
+  }
+  /* 貼圖 */
+  .stickerWindow {
+    left: -20px;
+  }
 }

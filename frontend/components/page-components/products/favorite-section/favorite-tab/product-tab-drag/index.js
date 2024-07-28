@@ -6,6 +6,7 @@ import { useDragFavorite } from '@/hooks/useDragFavorite'
 import EmptyFavorite from '../empty-favorite'
 import { PRODUCT_LIST } from '@/configs/api-path'
 import { useAuth } from '@/context/auth-context'
+import OrderReviewDialog from './order-review-dialog/index'
 
 export default function ProductTabDrag({ favData }) {
   let favDataRows = favData['rows'] || []
@@ -55,10 +56,8 @@ export default function ProductTabDrag({ favData }) {
       const res = await fetch(url)
       const resData = await res.json()
       if (resData.success) {
-        // console.log('會員有資料')
         setTitle(resData.rows[0].title.split(','))
       } else {
-        // console.log('會員沒有資料')
         setTitle(['收藏夾1', '收藏夾2', '收藏夾3'])
         // db新增收藏標題資料
         setFavoriteTitle(auth.id, '收藏夾1,收藏夾2,收藏夾3')
@@ -96,29 +95,10 @@ export default function ProductTabDrag({ favData }) {
         body: JSON.stringify({ title: newTitle }),
       })
       const resData = await res.json()
-
     } catch (e) {
       console.error(e)
     }
   }
-
-  // *********** localStorage **************
-  // useEffect(() => {
-  //   console.log(localStorage.getItem('titles')) //null
-  //   if (localStorage.getItem('titles') === null) {
-  //     setTitle(['收藏夾1', '收藏夾2', '收藏夾3'])
-  //   } else {
-  //     const localItem = localStorage.getItem('titles')
-  //     console.log('localItem', localItem)
-  //     console.log('split:', localItem.split(','))
-  //     setTitle(localItem.split(','))
-  //   }
-  // }, [])
-
-  // useEffect(() => {
-  //   localStorage.setItem('titles', title)
-  // }, [title])
-  // *********** localStorage **************
 
   function handleClick(index) {
     const input = document.createElement('input')
@@ -195,38 +175,6 @@ export default function ProductTabDrag({ favData }) {
   const handleDragLeave = (e) => {
     e.currentTarget.style.backgroundColor = '#f2f2f2'
   }
-
-  // const handleDragEnd = (e) => {
-  //   console.log('handleDragEnd進')
-  //   e.target.classList.add('animate__animated', 'animate__swing')
-  //   console.log('classList',e.target.classList)
-  //   setTimeout(() => {
-  //     e.target.classList.remove('animate__animated', 'animate__swing')
-  //   }, 2000)
-  // }
-  // const handleDragEnd = useCallback(() => {
-  //   if (targetDrag.id) {
-  //     const element = document.getElementById(targetDrag.id)
-
-  //     if (element) {
-  //       element.classList.add('animate__animated', 'animate__swing')
-  //       console.log('e.target.classList', element.classList)
-  //       setTimeout(() => {
-  //         element.classList.remove('animate__animated', 'animate__swing')
-  //       }, 2000)
-  //     }
-  //   }
-  // }, [targetDrag.id])
-
-  // useEffect(() => {
-  //   const container = document.querySelector('.container')
-  //   if (targetDrag.id) {
-  //     container.addEventListener('dragend', handleDragEnd)
-  //     return () => {
-  //       container.removeEventListener('dragend', handleDragEnd)
-  //     }
-  //   }
-  // }, [targetDrag.id, handleDragEnd])
 
   // 無收藏顯示頁面
   if (favDataRows.length === 0) {
@@ -341,6 +289,9 @@ export default function ProductTabDrag({ favData }) {
               ))}
           </div>
         </div>
+
+        {/* 提示 */}
+        <OrderReviewDialog />
       </div>
       <style jsx>
         {`

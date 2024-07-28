@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import styles from './coupon-container.module.css'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import AOS from 'aos'
 // contexts
 import { useAuth } from '@/context/auth-context'
 // components
@@ -63,9 +64,21 @@ export default function CouponContainer({ status }) {
     }
   }, [auth.id, currentPage, status])
 
+  useEffect(() => {
+    AOS.init()
+  }, [])
+
+  useEffect(() => {
+    AOS.refresh()
+  }, [status, currentPage])
+
   return (
     <>
-      <section className={styles.couponSection}>
+      <section
+        key={status}
+        className={styles.couponSection}
+        data-aos="fade-right"
+      >
         <div>
           <UserHeader title={`${title}的優惠券`} btnHidden={true} />
         </div>
