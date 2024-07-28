@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { API_SERVER, GET_MEMBER, MANAGE_MEMBER } from '@/configs/api-path'
+import {
+  API_SERVER,
+  GET_MEMBER,
+  MANAGE_MEMBER,
+  TEAM_START,
+} from '@/configs/api-path'
 import Image from 'next/image'
 import CustomRadioGroup from './radio'
 
@@ -94,11 +99,11 @@ const TeamMemberComponent = ({
       console.error('提交資料時發生錯誤:', error)
     }
   }
-  useEffect(() => {
-    if (onHandleSubmit) {
-      onHandleSubmit(handleSubmit)
-    }
-  }, [handleSubmit, onHandleSubmit])
+  // useEffect(() => {
+  //   if (onHandleSubmit) {
+  //     onHandleSubmit(handleSubmit)
+  //   }
+  // }, [handleSubmit, onHandleSubmit])
   return (
     <div>
       <h4 style={{ padding: '12px 0' }}>目前申請加入的使用者</h4>
@@ -142,14 +147,14 @@ const TeamMemberComponent = ({
           <></>
         )} */}
       </div>
-      {/* <button onClick={handleSubmit}>
+      <button onClick={handleSubmit}>
         {status === 'manageable' && '管理完畢'}
         {status === 'ready' && '準備成團'}
         {status === 'exceed' && '人數過多'}
-      </button> */}
-      {/* <button onClick={handleSubmit} disabled={selectedCount > team_limit}>
+      </button>
+      <button onClick={handleSubmit} disabled={selectedCount > team_limit}>
         管理完畢
-      </button> */}
+      </button>
     </div>
   )
 }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { MANAGE_MEMBER, TEAM_START } from '@/configs/api-path'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
