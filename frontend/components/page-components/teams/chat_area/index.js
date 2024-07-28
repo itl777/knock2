@@ -14,7 +14,7 @@ const ChatArea = ({ chat_at, chat_by }) => {
     <>
       <div className={styles.borderbox}>
         <div className="row">
-          <h4 style={{ textAlign: 'center' }}>留言區</h4>
+          <h4 style={{ textAlign: 'center', padding: '12px' }}>留言區</h4>
           {!chat_by ? (
             <></>
           ) : (

@@ -9,55 +9,88 @@ const ManagerTeamModal = ({
   modalBody,
   open,
   onClose,
-  buttonLabel,
-  onButtonClick,
   team_id,
-  team_limit,
+  TeamReady,
+  memberData = [],
+  refreshTeamData,
   // modalW = '840px',
   // modalH = '750px',
 }) => {
-  const [selectedCount, setSelectedCount] = useState(0)
-  const [teamLimit, setTeamLimit] = useState(0)
+  const handleMember = async () => {
+    const memberStatusData = memberData.map((member) => ({
+      no: member.no,
+      m_status: member.m_status,
+    }))
+    console.log('提交資料:', memberStatusData)
 
-  const handleMemberCountChange = (count, limit) => {
-    setSelectedCount(count)
-    setTeamLimit(limit)
+    try {
+      const response = await fetch(MANAGE_MEMBER, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(memberStatusData),
+      })
+
+      const result = await response.json()
+      if (response.ok) {
+        // alert('已修改')
+      } else {
+        alert('未進行修改')
+      }
+    } catch (error) {
+      console.error('提交資料時發生錯誤:', error)
+    }
+  }
+
+  const handleStartTeam = async () => {
+    try {
+      const response = await fetch(TEAM_START, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ team_id }),
+      })
+
+      const result = await response.json()
+      if (result.success) {
+        alert('團隊已成團')
+        refreshTeamData()
+      } else {
+        alert('團隊成團失敗')
+      }
+    } catch (error) {
+      console.error('提交資料時發生錯誤:', error)
+    }
   }
 
   const handleButtonClick = () => {
-    if (selectedCount <= teamLimit) {
-      console.log('111')
-      // modalBody.props.handleSubmit()
-    }
-    if (selectedCount === teamLimit) {
-      console.log('222')
-      // Add your TeamReady API request logic here
-      // Example:
-      // await fetch('/api/team-ready', { method: 'POST', body: JSON.stringify({ team_id }) });
+    if (TeamReady === 'ready') {
+      handleMember()
+      handleStartTeam()
+    } else if (TeamReady === 'going') {
+      handleMember()
+    } else if (TeamReady === 'over') {
+      return
     }
     onClose()
   }
-  const renderButton = () => {
-    if (selectedCount < teamLimit) {
-      return (
-        <Button sx={button} variant="contained" onClick={handleButtonClick}>
-          管理完畢
-        </Button>
-      )
-    } else if (selectedCount === teamLimit) {
-      return (
-        <Button sx={button} variant="contained" onClick={handleButtonClick}>
-          準備成團
-        </Button>
-      )
-    } else if (selectedCount > teamLimit) {
-      return (
-        <Button sx={button} variant="contained" style={{ color: 'red' }}>
-          人數過多
-        </Button>
-      )
+
+  const getButtonLabel = () => {
+    if (TeamReady === 'ready') {
+      return '確認成團'
+    } else if (TeamReady === 'over') {
+      return '重新設定'
     }
+    return '確認'
   }
+
+  useEffect(() => {
+    if (TeamReady === 'ready') {
+      console.log()
+    }
+  })
 
   return (
     <Modal open={open} onClose={onClose}>
@@ -65,9 +98,10 @@ const ManagerTeamModal = ({
         <h6 style={modalHeader}>{modalTitle}</h6>
         <hr />
         <div style={modalContent}>
-          {React.cloneElement(modalBody, {
+          {modalBody}
+          {/* {React.cloneElement(modalBody, {
             onMemberCountChange: handleMemberCountChange,
-          })}
+          })} */}
         </div>
         <div
           style={{
@@ -76,7 +110,15 @@ const ManagerTeamModal = ({
             marginTop: '1rem',
           }}
         >
-          {renderButton()}
+          {/* {renderButton()} */}
+          <Button
+            style={button}
+            variant="contained"
+            color="primary"
+            onClick={handleButtonClick}
+          >
+            {getButtonLabel()}
+          </Button>
         </div>
       </Box>
     </Modal>

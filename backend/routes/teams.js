@@ -311,6 +311,11 @@ router.post("/api/manage_member", async (req, res) => {
  
   let members = req.body;
 
+  if (members.length === 0) {
+    output.error = "No members to update";
+    return res.json(output);
+  }
+
   try {
     let sql = "UPDATE `teams_members` SET `m_status` = CASE `no` ";
     const values = [];
@@ -328,7 +333,7 @@ router.post("/api/manage_member", async (req, res) => {
     const [result] = await db.query(sql, values);
 
   output.success = true;
-  output.result = results;  
+  output.result = result;  
 }catch (ex) {
     output.error = ex.message;
   }
@@ -344,14 +349,20 @@ router.post("/api/team_start", async (req, res) => {
     result: {},
   };
 
-  let body = { ...req.body };
-  body.create_at = new Date();
+  // let body = { ...req.body };
+  // body.last_modified_at = new Date();
 
-  const { chat_at, chat_by, chat_text } = body;
+  const { team_id } = req.body;
   try {
-  const sql = "UPDATE`teams_list` SET `team_status` = CASE '已成團'";
-  const [result] = await db.query(sql, [chat_at, chat_by, chat_text, body.create_at]);
+  const sql = "UPDATE `teams_list` SET `team_status` = '已成團', `last_modified_at` = NOW() WHERE `team_id` = ?";
+  const [result] = await db.query(sql, [team_id]);
 
+  if (result.affectedRows > 0) {
+    output.success = true;
+    output.result = result;
+  } else {
+    output.error = '更新失敗，找不到對應的 team_id';
+  }
   }catch (ex) {
     output.error = ex.message;
   }
