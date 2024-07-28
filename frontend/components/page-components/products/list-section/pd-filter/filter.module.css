@@ -221,13 +221,13 @@
     width: 50px;
     height: auto;
     top: 18px;
-    left: 50px;
+    left: 27px;
   }
   .ghostRight {
     width: 40px;
     height: auto;
     top: 20px;
-    right: 50px;
+    right: 30px;
   }
   .top-input{
     display: flex;

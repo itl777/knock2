@@ -76,7 +76,9 @@ export default function Notifications({ anchorEl, open, onClose }) {
                   icon={<FaCircle />}
                   severity={message.is_read === '1' ? 'success' : 'info'}
                 >
-                  <Typography variant="body1">{message.message}</Typography>
+                  <Typography variant="body1" noWrap={true}>
+                    {message.message}
+                  </Typography>
                   <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <Chip
                       label={message.type}

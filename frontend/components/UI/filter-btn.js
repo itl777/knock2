@@ -14,7 +14,7 @@ export default function FilterBtn({
       variant="outlined"
       sx={{
         color: 'black',
-        fontFamily: 'Noto Sans TC',
+        fontFamily: 'Noto Serif JP',
         borderRadius: '100px',
         margin: margin,
         marginLeft: marginLeft,

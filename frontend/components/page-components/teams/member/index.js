@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react'
-import { API_SERVER, GET_MEMBER, MANAGE_MEMBER } from '@/configs/api-path'
+import {
+  API_SERVER,
+  GET_MEMBER,
+  MANAGE_MEMBER,
+  TEAM_START,
+} from '@/configs/api-path'
 import Image from 'next/image'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import CustomRadioGroup from './radio'
 
 const TeamMemberComponent = ({
   team_id,
   team_limit = 0,
   onMemberCountChange,
+  onHandleSubmit,
 }) => {
   const [memberData, setMemberData] = useState([])
   const [selectedCount, setSelectedCount] = useState(0)
+  const [status, setStatus] = useState('')
 
   const fetchMemberData = async (team_id) => {
     const url = GET_MEMBER + team_id
@@ -34,12 +39,20 @@ const TeamMemberComponent = ({
       console.error('取得團員資料時發生錯誤:', error)
     }
   }
-
+  const getStatus = (count, limit) => {
+    if (count > limit) return 'exceed'
+    if (count === limit) return 'ready'
+    return 'manageable'
+  }
   useEffect(() => {
     if (team_id) {
       fetchMemberData(team_id)
     }
   }, [team_id])
+
+  useEffect(() => {
+    onMemberCountChange(selectedCount, team_limit)
+  }, [selectedCount, team_limit])
 
   const handleRadioChange = (no, value) => {
     const memberAccept = parseInt(value)
@@ -86,40 +99,59 @@ const TeamMemberComponent = ({
       console.error('提交資料時發生錯誤:', error)
     }
   }
+  // useEffect(() => {
+  //   if (onHandleSubmit) {
+  //     onHandleSubmit(handleSubmit)
+  //   }
+  // }, [handleSubmit, onHandleSubmit])
   return (
     <div>
-      <h4>目前申請加入的使用者</h4>
+      <h4 style={{ padding: '12px 0' }}>目前申請加入的使用者</h4>
       {memberData.map((member) => (
         <div key={member.join_user_id}>
-          <Image
-            src={member.avatar ? `${API_SERVER}/avatar/${member.avatar}` : ''}
-            height={40}
-            width={40}
-            alt={`${member.nick_name} avatar`}
-          />
-          {member.nick_name}
-          <div>
-            <RadioGroup
-              row
-              aria-labelledby="demo-row-radio-buttons-group-label"
-              name={`radio-${member.no}`}
-              value={member.m_status === 1 ? '1' : '0'}
-              onChange={(e) => handleRadioChange(member.no, e.target.value)}
-            >
-              <FormControlLabel value="1" control={<Radio />} label="Y" />
-              <FormControlLabel value="0" control={<Radio />} label="N" />
-            </RadioGroup>
+          <div style={{ padding: '12px 0 6px 12px', fontSize: '24px' }}>
+            <Image
+              src={member.avatar ? `${API_SERVER}/avatar/${member.avatar}` : ''}
+              height={40}
+              width={40}
+              alt={`${member.nick_name} avatar`}
+            />
+            <span style={{ marginLeft: '6px' }}>{member.nick_name}</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <CustomRadioGroup
+              key={member.no}
+              member={member}
+              handleRadioChange={handleRadioChange}
+            />
           </div>
         </div>
       ))}
       <div style={{ textAlign: 'center' }}>
         團員/上限: {selectedCount} / {team_limit}
-        {selectedCount > team_limit && (
+        {status === 'ready' && <div>人數達標，要成團了嗎？</div>}
+        {status === 'exceed' && (
           <div style={{ color: 'red', textAlign: 'center' }}>
             人數超過上限，請重新設定
           </div>
-        )}{' '}
+        )}
+        {/* {selectedCount === team_limit ? (
+          <>
+            <div>人數達標，要成團了嗎？</div>
+          </>
+        ) : selectedCount > team_limit ? (
+          <div style={{ color: 'red', textAlign: 'center' }}>
+            人數超過上限，請重新設定
+          </div>
+        ) : (
+          <></>
+        )} */}
       </div>
+      <button onClick={handleSubmit}>
+        {status === 'manageable' && '管理完畢'}
+        {status === 'ready' && '準備成團'}
+        {status === 'exceed' && '人數過多'}
+      </button>
       <button onClick={handleSubmit} disabled={selectedCount > team_limit}>
         管理完畢
       </button>

@@ -76,72 +76,128 @@ ORDER BY t.theme_id DESC
 };
 
 // 主題詳情
-const getThemesDetails = async (branch_themes_id, selectedDate) => {
+const getThemesDetails = async (branch_themes_id, selectedDate, user_id) => {
+  console.log(
+    `Starting getThemesDetails for branch_themes_id: ${branch_themes_id}, selectedDate: ${selectedDate}, user_id: ${user_id}`
+  );
+
   const sql = `
-SELECT 
-  bt.branch_themes_id,
-  t.theme_id,
-  t.theme_name,
-  t.theme_img,
-  t.theme_banner,
-  t.min_players,
-  t.max_players,
-  t.theme_time,
-  t.difficulty,
-  t.price,
-  t.deposit,
-  t.theme_desc,
-  t.theme_mp4,
-  t.bg_music,
-  b.branch_name,
-  f.storyline,
-  f.puzzle_design,
-  f.atmosphere,
-  c.coupon_name,
-  c.discount_percentage,
-  JSON_ARRAYAGG(
-    JSON_OBJECT(
-      'sessions_id', s.sessions_id,
-      'start_time', DATE_FORMAT(s.start_time, '%H:%i'),
-      'end_time', DATE_FORMAT(s.end_time, '%H:%i'),
-      'theme_time', s.theme_time,
-      'intervals', s.intervals,
-      'is_booked', IF(EXISTS (
-        SELECT 1 FROM reservations r 
-        WHERE r.session_id = s.sessions_id 
-        AND r.branch_themes_id = bt.branch_themes_id
-        AND r.reservation_date = ?
-        AND r.reservation_status_id = 1
-        AND r.cancel = 0
-      ), 1, 0)
+  SELECT 
+    bt.branch_themes_id,
+    t.theme_id,
+    t.theme_name,
+    t.theme_img,
+    t.theme_banner,
+    t.min_players,
+    t.max_players,
+    t.theme_time,
+    t.difficulty,
+    t.price,
+    t.deposit,
+    t.theme_desc,
+    t.theme_mp4,
+    t.bg_music,
+    b.branch_name,
+    f.storyline,
+    f.puzzle_design,
+    f.atmosphere,
+    JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'sessions_id', s.sessions_id,
+        'start_time', DATE_FORMAT(s.start_time, '%H:%i'),
+        'end_time', DATE_FORMAT(s.end_time, '%H:%i'),
+        'theme_time', s.theme_time,
+        'intervals', s.intervals,
+        'is_booked', IF(EXISTS (
+          SELECT 1 FROM reservations r 
+          WHERE r.session_id = s.sessions_id 
+          AND r.branch_themes_id = bt.branch_themes_id
+          AND r.reservation_date = ?
+          AND r.reservation_status_id = 1
+          AND r.cancel = 0
+        ), 1, 0)
+      )
+    ) AS sessions,
+    (SELECT JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'coupon_name', c.coupon_name,
+        'discount_amount', c.discount_amount,
+        'discount_percentage', c.discount_percentage
+      )
+    ) FROM coupons c
+    WHERE c.coupon_types_id = 3
+    AND c.valid_from <= NOW()
+    AND c.valid_until >= NOW()
+    AND (c.max_usage_per_user > (
+      SELECT COUNT(*) FROM user_coupons uc
+      WHERE uc.coupon_id = c.id AND uc.user_id = ?
+    ) OR c.max_usage_per_user = 0)
+    AND NOT EXISTS (
+      SELECT 1 FROM user_coupons uc
+      WHERE uc.coupon_id = c.id AND uc.user_id = ?
     )
-  ) AS sessions
-FROM branch_themes bt
-JOIN themes t ON bt.theme_id = t.theme_id
-JOIN branches b ON bt.branch_id = b.branch_id
-LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
-JOIN sessions s ON bt.theme_id = s.theme_id
-LEFT JOIN coupons c ON bt.id = c.id
-WHERE bt.branch_themes_id = ?
-GROUP BY bt.branch_themes_id, t.theme_id, t.theme_name, t.theme_img, t.theme_banner, t.min_players, t.max_players, t.theme_time, t.difficulty, t.price, t.deposit, t.theme_desc,t.theme_mp4,t.bg_music, b.branch_name, f.storyline, f.puzzle_design, f.atmosphere, c.coupon_name, c.discount_percentage;
+    ) AS available_coupons
+  FROM branch_themes bt
+  JOIN themes t ON bt.theme_id = t.theme_id
+  JOIN branches b ON bt.branch_id = b.branch_id
+  LEFT JOIN feedback f ON bt.feedback_id = f.feedback_id
+  JOIN sessions s ON bt.theme_id = s.theme_id
+  WHERE bt.branch_themes_id = ?
+  GROUP BY bt.branch_themes_id, t.theme_id, t.theme_name, t.theme_img, t.theme_banner, t.min_players, t.max_players, t.theme_time, t.difficulty, t.price, t.deposit, t.theme_desc,t.theme_mp4,t.bg_music, b.branch_name, f.storyline, f.puzzle_design, f.atmosphere;
   `;
 
   try {
-    const [rows] = await db.query(sql, [selectedDate, branch_themes_id]);
+    console.log("Executing SQL query...");
+    const [rows] = await db.query(sql, [
+      selectedDate,
+      user_id,
+      user_id,
+      branch_themes_id,
+    ]);
+    console.log(`Query executed. Rows returned: ${rows.length}`);
 
     if (rows && rows.length > 0) {
-      // 確保 sessions 是一個數組
+      console.log("Processing query results...");
+
+      // 解析 sessions
       if (typeof rows[0].sessions === "string") {
         try {
           rows[0].sessions = JSON.parse(rows[0].sessions);
+          console.log(`Parsed sessions. Count: ${rows[0].sessions.length}`);
         } catch (parseError) {
           console.error("Error parsing sessions JSON:", parseError);
-          rows[0].sessions = []; // 如果解析失敗，設置為空數組
+          rows[0].sessions = [];
         }
       }
 
-      console.log("Sessions data:", JSON.stringify(rows[0].sessions, null, 2));
+      // 解析 available_coupons
+      if (typeof rows[0].available_coupons === "string") {
+        try {
+          rows[0].available_coupons = JSON.parse(rows[0].available_coupons);
+          console.log(
+            `Parsed available_coupons. Count: ${rows[0].available_coupons.length}`
+          );
+        } catch (parseError) {
+          console.error("Error parsing available_coupons JSON:", parseError);
+          rows[0].available_coupons = [];
+        }
+      } else if (rows[0].available_coupons === null) {
+        console.log("No available coupons found.");
+        rows[0].available_coupons = [];
+      }
 
+      // 檢查並記錄可用優惠券
+      if (Array.isArray(rows[0].available_coupons)) {
+        console.log("Available coupons:", rows[0].available_coupons);
+      } else {
+        console.warn(
+          "available_coupons is not an array:",
+          rows[0].available_coupons
+        );
+        rows[0].available_coupons = [];
+      }
+
+      console.log("Theme details processed successfully.");
       return {
         success: true,
         theme: rows[0],
@@ -169,11 +225,20 @@ router.get("/details/:branch_themes_id", async (req, res) => {
   const date = req.query.date
     ? new Date(req.query.date).toISOString().split("T")[0]
     : new Date().toISOString().split("T")[0];
-  console.log("Received request for branch_themes_id:", branch_themes_id);
-  console.log("Formatted date:", date);
+  const user_id = req.query.user_id;
+
+  console.log(
+    `Received request for branch_themes_id: ${branch_themes_id}, date: ${date}, user_id: ${user_id}`
+  );
+
+  if (!user_id) {
+    return res
+      .status(400)
+      .json({ success: false, message: "User ID is required" });
+  }
 
   try {
-    const data = await getThemesDetails(branch_themes_id, date);
+    const data = await getThemesDetails(branch_themes_id, date, user_id);
     console.log("getThemesDetails result:", JSON.stringify(data, null, 2));
     res.json(data);
   } catch (error) {
@@ -485,7 +550,11 @@ router.get("/sessions-status", async (req, res) => {
 // ---------------------------------------------------------------------------------
 
 router.post("/api/reservations", async (req, res) => {
+  let connection;
   try {
+    connection = await db.getConnection();
+    await connection.beginTransaction();
+
     const {
       user_id,
       branch_themes_id,
@@ -493,27 +562,27 @@ router.post("/api/reservations", async (req, res) => {
       session_id,
       participants,
       remark,
+      coupon_name, // 新增：從請求中獲取優惠券名稱
     } = req.body;
 
     // 獲取主題的訂金金額
-    const [themeRows] = await db.query(
-      `SELECT t.deposit 
+    const [themeRows] = await connection.query(
+      `SELECT t.deposit, t.theme_name, b.branch_name
        FROM themes t 
        JOIN branch_themes bt ON t.theme_id = bt.theme_id 
+       JOIN branches b ON bt.branch_id = b.branch_id
        WHERE bt.branch_themes_id = ?`,
       [branch_themes_id]
     );
 
     if (themeRows.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "未找到對應的主題" });
+      throw new Error("未找到對應的主題");
     }
 
-    const deposit = themeRows[0].deposit;
+    const { deposit, theme_name, branch_name } = themeRows[0];
 
     // 插入預約數據
-    const [result] = await db.query(
+    const [result] = await connection.query(
       "INSERT INTO reservations (user_id, branch_themes_id, reservation_date, session_id, participants, remark) VALUES (?, ?, ?, ?, ?, ?)",
       [
         user_id,
@@ -525,17 +594,55 @@ router.post("/api/reservations", async (req, res) => {
       ]
     );
 
-    res.status(201).json({
+    const reservation_id = result.insertId;
+
+    // 處理優惠券
+    let appliedCoupon = null;
+    if (coupon_name) {
+      const [coupon] = await connection.query(
+        "SELECT id, discount_amount, discount_percentage FROM coupons WHERE coupon_name = ? AND valid_until >= CURDATE()",
+        [coupon_name]
+      );
+
+      if (coupon.length > 0) {
+        await connection.query(
+          "INSERT INTO user_coupons (user_id, coupon_id, reservation_id) VALUES (?, ?, ?)",
+          [user_id, coupon[0].id, reservation_id]
+        );
+        appliedCoupon = coupon[0];
+      }
+    }
+
+    await connection.commit();
+
+    const responseData = {
       success: true,
       message: "預約創建成功",
-      reservation_id: result.insertId,
+      reservation_id: reservation_id,
       deposit: deposit,
-    });
+      theme_name: theme_name,
+      branch_name: branch_name,
+    };
+
+    if (appliedCoupon) {
+      responseData.appliedCoupon = {
+        name: coupon_name,
+        discount_amount: appliedCoupon.discount_amount,
+        discount_percentage: appliedCoupon.discount_percentage,
+      };
+    }
+
+    res.status(201).json(responseData);
   } catch (error) {
+    if (connection) await connection.rollback();
     console.error("創建預約失敗:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "創建預約失敗", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "創建預約失敗",
+      error: error.message,
+    });
+  } finally {
+    if (connection) connection.release();
   }
 });
 export default router;

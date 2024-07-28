@@ -5,14 +5,16 @@ export default function Description({ description }) {
   const [dbData, setDbData] = useState([])
 
   useEffect(() => {
-    const newData = description.split(';') 
+    const newData = description.split(';')
     setDbData(newData)
   }, [description])
 
   return (
     <>
       {dbData.map((value, index) => (
-        <p className={myStyle.description} key={index}>{value}</p>
+        <p className={myStyle.description} key={index}>
+          {value}
+        </p>
       ))}
     </>
   )

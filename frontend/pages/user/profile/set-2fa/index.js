@@ -24,7 +24,7 @@ export default function Profile() {
   }, [auth.id, authIsReady])
   return (
     <>
-      <IndexLayout title="兩步驟驗證" background="light">
+      <IndexLayout title="兩步驟驗證" pageName="user" background="light">
         <UserLayout userTab={<UserTab />} sectionRight={<UserSet2fa />} />
       </IndexLayout>
     </>

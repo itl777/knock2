@@ -15,8 +15,8 @@ import SubmitBtn from '@/pages/teams/submit-btn'
 export default function TeamsAdd() {
   const { auth } = useAuth()
   const router = useRouter()
+  const { reservation_id } = router.query
 
-  const [modalOpen, setModalOpen] = useState(false)
   const [reservationData, setReservationData] = useState(null)
   const [createTeam, setCreateTeam] = useState({
     success: false,
@@ -26,13 +26,14 @@ export default function TeamsAdd() {
     team_note: '',
   })
 
+  const [error, setError] = useState('')
   const [titleError, setTitleError] = useState('')
   const [limitError, setLimitError] = useState('')
   const [checkboxError, setCheckboxError] = useState('')
-  const [isFormValid, setIsFormValid] = useState(false)
+  // const [isFormValid, setIsFormValid] = useState(false)
   const [checkboxChecked, setCheckboxChecked] = useState(false)
-
-  const { reservation_id } = router.query
+  const [disableSubmit, setDisableSubmit] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
 
   useEffect(() => {
     if (reservation_id) {
@@ -56,47 +57,63 @@ export default function TeamsAdd() {
     }
   }
 
-  useEffect(() => {
-    const isTitleValid = createTeam.team_title.length > 3
-    const isLimitValid = limitError === ''
-    const isCheckboxValid = checkboxChecked
+  const validateForm = () => {
+    let valid = true
+    if (createTeam.team_title.length < 3) {
+      setTitleError('團隊名稱需大於3個字')
+      valid = false
+    } else {
+      setTitleError('')
+    }
 
-    setIsFormValid(isTitleValid && isLimitValid && isCheckboxValid)
-  }, [createTeam.team_title, limitError, checkboxChecked])
+    if (error) {
+      valid = false
+    }
 
+    if (!document.getElementById('readCheck').checked) {
+      setCheckboxError('請閱讀注意事項')
+      valid = false
+    } else {
+      setCheckboxError('')
+    }
+
+    return valid
+  }
   const handleInputChange = (e) => {
     const { name, value } = e.target
     setCreateTeam({ ...createTeam, [name]: value })
 
+    if (name === 'team_limit' && reservationData) {
+      const maxLimit = reservationData.max_players - 1
+      if (parseInt(value, 10) > maxLimit) {
+        setError(`此行程團員上限為${maxLimit}人`)
+      } else {
+        setError('')
+      }
+    }
+
     if (name === 'team_title') {
-      if (value.length <= 2) {
+      if (value.length < 3) {
         setTitleError('團隊名稱需大於3個字')
       } else {
         setTitleError('')
       }
     }
 
-    if (name === 'team_limit' && reservationData) {
-      const maxLimit = reservationData.max_players - 1
-      if (parseInt(value, 10) > maxLimit) {
-        setLimitError(`此行程團員上限為${maxLimit}人`)
-      } else {
-        setLimitError('')
-      }
+    // Validate form fields and enable/disable submit button
+    if (validateForm()) {
+      setDisableSubmit(false)
+    } else {
+      setDisableSubmit(true)
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const checkbox = document.getElementById('readCheck')
-
-    if (!checkbox.checked) {
-      setCheckboxError('請閱讀注意事項')
-      return
-    } else {
-      setCheckboxError('')
+    // Check if the form is valid before submission
+    if (!validateForm()) {
+      return // Prevent submission if form is invalid
     }
-
     try {
       const res = await fetch(CREATE_TEAM, {
         method: 'POST',
@@ -120,6 +137,7 @@ export default function TeamsAdd() {
       alert('創建團隊時發生錯誤')
     }
   }
+
   const openModal = () => {
     if (window.innerWidth < 992) {
       setModalOpen(true)
@@ -128,12 +146,16 @@ export default function TeamsAdd() {
   const closeModal = () => {
     setModalOpen(false)
     document.getElementById('readCheck').checked = true
+    setCheckboxError('')
+    if (validateForm()) {
+      setDisableSubmit(false)
+    }
   }
   return (
     <>
       <IndexLayout title="糾團" background="dark">
-        <div>
-          <h2>新增團隊</h2>
+        <div className={styles.pageTitle}>
+          <h2 style={{ color: '#B99755' }}>新增團隊</h2>
         </div>
         <div className={styles.teamsPage}>
           <div className="container">
@@ -243,7 +265,7 @@ export default function TeamsAdd() {
                       <SubmitBtn
                         btnText="建立團隊"
                         color="grey"
-                        disabled={!isFormValid}
+                        disableSubmit={disableSubmit}
                       />
                     </div>
                   </form>

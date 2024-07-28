@@ -1,9 +1,9 @@
-import Avatar from '@mui/joy/Avatar'
 import { useAuth } from '@/context/auth-context'
 import { API_SERVER } from '@/configs/api-path'
+import { useNotifications } from '@/context/notifications-context'
+import Avatar from '@mui/joy/Avatar'
 import Badge from '@mui/material/Badge'
 import { styled } from '@mui/material/styles'
-import { useNotifications } from '@/context/notifications-context'
 import { motion } from 'framer-motion'
 
 const StyledBadge = styled(Badge)(() => ({
@@ -46,7 +46,7 @@ export default function AvatarIcon() {
         variant="solid"
         alt={auth.nickname}
         src={auth.avatar ? `${API_SERVER}/avatar/${auth.avatar}` : ''}
-        sx={{ width: 32, height: 32 }}
+        sx={{ width: 32, height: 32, zIndex: -1 }}
       />
     </>
   )

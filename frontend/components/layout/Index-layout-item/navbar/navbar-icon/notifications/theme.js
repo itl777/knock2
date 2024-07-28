@@ -49,11 +49,12 @@ const customTheme = createTheme({
     MuiMenu: {
       styleOverrides: {
         root: {
-          top: '34px',
+          top: '32px',
+          left: '6px',
         },
         paper: {
           backgroundColor: menuBackGroundColor,
-          borderRadius: '0 0 16px 16px',
+          borderRadius: '0 0 0px 16px',
           maxHeight: '700px',
           width: '450px',
         },

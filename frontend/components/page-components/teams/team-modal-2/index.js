@@ -32,12 +32,12 @@ export default function BasicModal02({
     fontFamily: 'Noto Serif JP',
     fontSize: '16px',
     borderRadius: '30px',
-    backgroundColor: 'white',
-    color: '#222222',
+    backgroundColor: '#B99755',
+    color: 'white',
     padding: '10px 30px',
     '&:hover': {
-      backgroundColor: '#222222',
-      color: 'white',
+      backgroundColor: 'white',
+      color: '#B99755',
       boxShadow: 'none',
     },
     boxShadow: 'none',
@@ -54,10 +54,6 @@ export default function BasicModal02({
         >
           {modalBody}
         </div>
-        <hr></hr>
-        {/* <div style={{ letterSpacing: '1.4px' }}>
-          如有任何疑問請直接私訊粉絲團或來電 0928-007799/0907-101822
-        </div> */}
         <div
           style={{
             display: 'flex',

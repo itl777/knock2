@@ -7,7 +7,7 @@ export default function BuyBtn({ btnText = '直接購買', product_id }) {
       <Button
         href={`product-details/${product_id}`}
         sx={{
-          fontFamily: 'Noto Sans TC',
+          fontFamily: 'Noto Serif JP',
           color: 'black',
           width: '100%',
           '&:hover': {

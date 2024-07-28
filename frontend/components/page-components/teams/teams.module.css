@@ -94,6 +94,23 @@
     }
 }
 
+.preteamcard{
+    border:#B99755 1px dashed;
+    padding: 12px 6px;
+}
+
+.teamPaTitle{
+    text-align: center;
+    padding: 12px 0;
+
+}
+.titleBL{
+    border-bottom: #B99755 3px solid;
+    width:150px;
+    height: 12px;
+    margin: 0 auto 24px;
+}
+
 .teamForm .sty input{
     font-size: 1rem;
     font-style: normal;

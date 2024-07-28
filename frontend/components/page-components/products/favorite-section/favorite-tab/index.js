@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import TabContext from '@mui/lab/TabContext'
@@ -8,7 +8,6 @@ import FormatAlignLeftRoundedIcon from '@mui/icons-material/FormatAlignLeftRound
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration'
 import ProductTabList from './product-tab-list'
 import myStyle from './favorite-tab.module.css'
-import AppsIcon from '@mui/icons-material/Apps'
 import MyPagination from '../../pagination'
 import { useProduct } from '@/context/product-context'
 import ProductTabDrag from './product-tab-drag'
@@ -22,7 +21,7 @@ export default function FavoriteTab() {
   }
   // ----MUI
 
-  const { favoriteData,cardChange } = useProduct()
+  const { favoriteData } = useProduct()
 
   return (
     <Box sx={{ width: '100%', typography: 'body1' }}>
@@ -49,12 +48,12 @@ export default function FavoriteTab() {
         <TabPanel value="1">
           {/* 一般卡片列表 */}
           <ProductTabList favData={favoriteData} />
-          <MyPagination favoriteData={favoriteData}/>
+          <MyPagination favoriteData={favoriteData} />
         </TabPanel>
 
         <TabPanel value="2">
           {/* 有分類的卡片列表 */}
-          <ProductTabDrag favData={favoriteData}/>
+          <ProductTabDrag favData={favoriteData} />
         </TabPanel>
       </TabContext>
     </Box>
