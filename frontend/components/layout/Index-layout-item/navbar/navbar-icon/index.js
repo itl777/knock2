@@ -47,7 +47,7 @@ export default function NavbarIcon({ handleMobileMenu }) {
             />
           </Link>
         </li>
-        <li>
+        <li style={{ position: 'relative', zIndex: 100 }}>
           <ClearButton
             onClick={handleNavMenuOpen}
             btnText={auth.id ? <AvatarIcon /> : <FaCircleUser />}
