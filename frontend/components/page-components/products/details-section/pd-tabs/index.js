@@ -83,7 +83,7 @@ export default function PdTabs({ data }) {
         sx={{
           width: '100%',
           typography: 'body1',
-          fontFamily: 'Noto Sans TC',
+          fontFamily: 'Noto Serif JP',
           maxWidth: '1200px',
         }}
       >
