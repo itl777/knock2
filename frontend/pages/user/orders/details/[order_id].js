@@ -12,7 +12,7 @@ export default function OrderDetailsPage() {
 
   return (
     <>
-      <IndexLayout title="訂單詳情" background="light">
+      <IndexLayout title="訂單詳情" pageName="user" background="light">
         <UserLayout
           userTab={<UserTab />}
           sectionRight={<OrderDetailCards order_id={order_id} />}

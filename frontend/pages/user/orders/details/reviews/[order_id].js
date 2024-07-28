@@ -14,7 +14,7 @@ export default function OrderReviewsPage() {
   
   return (
     <>
-      <IndexLayout title="訂單評價" background="light">
+      <IndexLayout title="訂單評價" pageName="user" background="light">
         <UserLayout
           userTab={<UserTab />}
           sectionRight={<OrderReviewsSection order_id={order_id} />}
