@@ -17,6 +17,7 @@ const customTheme = createTheme({
         root: {
           height: '40px',
           width: '100%',
+          marginBottom: '24px',
           color: '#757575',
           fontFamily: 'Noto Serif JP, serif',
           '& .MuiSelect-select': {

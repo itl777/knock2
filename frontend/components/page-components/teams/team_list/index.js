@@ -84,7 +84,7 @@ export default function TeamList() {
 
           {/* 篩選排序 */}
           <div className="row pb-5">
-            <h4>篩選排序</h4>
+            <h4 className={styles.secTitle}>篩選排序</h4>
             <div className="col-12 col-md-6 col-lg-3">
               <SelectT
                 name="branch"

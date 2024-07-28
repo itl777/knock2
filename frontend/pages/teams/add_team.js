@@ -66,7 +66,7 @@ export default function TeamsAdd() {
       setTitleError('')
     }
 
-    if (error) {
+    if (limitError) {
       valid = false
     }
 
@@ -83,12 +83,12 @@ export default function TeamsAdd() {
     const { name, value } = e.target
     setCreateTeam({ ...createTeam, [name]: value })
 
-    if (name === 'team_limit' && reservationData) {
+    if (name === 'team_limit') {
       const maxLimit = reservationData.max_players - 1
       if (parseInt(value, 10) > maxLimit) {
-        setError(`此行程團員上限為${maxLimit}人`)
+        setLimitError(`此行程團員上限為${maxLimit}人`)
       } else {
-        setError('')
+        setLimitError('')
       }
     }
 
@@ -100,7 +100,6 @@ export default function TeamsAdd() {
       }
     }
 
-    // Validate form fields and enable/disable submit button
     if (validateForm()) {
       setDisableSubmit(false)
     } else {
