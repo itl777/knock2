@@ -10,19 +10,12 @@ import { formatIntlNumber } from '@/hooks/numberFormat'
 
 import { useCart } from '@/context/cart-context' // ****** Iris Added
 
-
 export default function FavCardLarge({ dbData }) {
   const { cardChange, setCardChange } = useProduct()
   const [isId, setIsId] = useState(0)
 
   const { buyQuantity } = useProduct() // ****** Iris Added
   const { handleAddToCart } = useCart() // ****** Iris Added
-
-  const imgStyle = {
-    width: ' 100%',
-    height: '100%',
-    borderRadius: '12px 12px 0 0',
-  }
 
   const { data } = useProductImg(isId)
   useEffect(() => {
@@ -46,14 +39,6 @@ export default function FavCardLarge({ dbData }) {
               alt="..."
             />
           )}
-          {/* <Image
-            src="/products/p1-1.jpg"
-            width={81}
-            height={113}
-            style={imgStyle}
-            draggable="false"
-            alt="..."
-          /> */}
           <DeleteIconBtn
             cardChange={cardChange}
             setCardChange={setCardChange}
@@ -67,7 +52,7 @@ export default function FavCardLarge({ dbData }) {
           <p className={myStyle['card-text']}>
             ${formatIntlNumber(dbData.price)}
           </p>
-          
+
           <BlackBtn
             btnText={'加入購物車'}
             href={null}
@@ -80,7 +65,7 @@ export default function FavCardLarge({ dbData }) {
               )
             }} // ****** Iris Added
           />
-          
+
           {/* <BlackBtn btnText={'加入購物車'} /> */}
         </div>
       </div>
