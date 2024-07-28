@@ -33,7 +33,7 @@ export default function Reservation() {
   const [discount, setDiscount] = useState('')
   const [remark, setRemark] = useState('')
 
-  const { themeDetails, getThemeDetails } = useTheme()
+  const { themeDetails, getThemeDetails, updateAvailableCoupons } = useTheme()
   const [loading, setLoading] = useState(true)
   const router = useRouter()
   const { loginFormSwitch } = useLoginModal()
@@ -55,11 +55,9 @@ export default function Reservation() {
   // 帶入資料
   useEffect(() => {
     const { branch_themes_id } = router.query
-    console.log('branch_themes_id changed:', branch_themes_id)
-
-    if (branch_themes_id && !loading) {
+    if (branch_themes_id && auth?.id) {
       setLoading(true)
-      getThemeDetails(branch_themes_id)
+      getThemeDetails(branch_themes_id, auth.id)
         .then(() => {
           setLoading(false)
           updateDateFromSelection()
@@ -69,7 +67,7 @@ export default function Reservation() {
           setLoading(false)
         })
     }
-  }, [router.query.branch_themes_id])
+  }, [router.query.branch_themes_id, auth?.id, getThemeDetails])
 
   // 選單
   useEffect(() => {
@@ -99,6 +97,12 @@ export default function Reservation() {
     if (checked && userProfile) {
       setName(userProfile.name || userProfile.nickname || '')
       setMobilePhone(userProfile.mobile_phone || '')
+      // 清除姓名和電話的錯誤訊息
+      setErrors((prev) => ({
+        ...prev,
+        name: undefined,
+        mobile_phone: undefined,
+      }))
     } else {
       setName('')
       setMobilePhone('')
@@ -150,7 +154,7 @@ export default function Reservation() {
         setPeople(value.toString())
         break
       case 'discount':
-        setDiscount(value.toString())
+        setDiscount(value)
         break
       default:
         break
@@ -173,6 +177,7 @@ export default function Reservation() {
       reservation_date: date,
       session_id: parseInt(timeSlot),
       participants: parseInt(people),
+      coupon_name: discount,
       remark,
     }
 
@@ -232,32 +237,45 @@ export default function Reservation() {
           return response.json()
         })
         .then((data) => {
+          console.log('Reservation response:', data)
           if (data.success) {
-            const reservation_id = data.reservation_id // iris added
+            const reservation_id = data.reservation_id
             // 找到選中的時間段
             const selectedSession = themeDetails.sessions.find(
               (session) => session.sessions_id.toString() === timeSlot
             )
 
-            router.push({
-              pathname: '/themes/checkout',
-              query: {
-                ...formData,
-                reservation_id: reservation_id,  // iris added
-                deposit: data.deposit,
-                name,
-                mobile_phone,
-                timeSlot,
-                sessionTime: selectedSession
-                  ? `${selectedSession.start_time} - ${selectedSession.end_time}`
-                  : '',
-                people,
-                discount: themeDetails.coupon_name,
-                themeName: themeDetails.theme_name,
-                branchName: themeDetails.branch_name,
-                themeImage: themeDetails.theme_img,
-                remark,
-              },
+            // 清除優惠券選擇
+            setDiscount('')
+
+            // 更新可用優惠券
+            return updateAvailableCoupons(
+              themeDetails.branch_themes_id,
+              auth.id
+            ).then((updatedCoupons) => {
+              console.log('Updated available coupons:', updatedCoupons)
+
+              // 導航到結賬頁面
+              router.push({
+                pathname: '/themes/checkout',
+                query: {
+                  ...formData,
+                  reservation_id: reservation_id,
+                  deposit: data.deposit,
+                  name,
+                  mobile_phone,
+                  timeSlot,
+                  sessionTime: selectedSession
+                    ? `${selectedSession.start_time} - ${selectedSession.end_time}`
+                    : '',
+                  people,
+                  discount: discount,
+                  themeName: data.theme_name,
+                  branchName: data.branch_name,
+                  themeImage: themeDetails.theme_img,
+                  remark,
+                },
+              })
             })
           } else {
             throw new Error(data.message || '預約創建失敗')
@@ -294,12 +312,15 @@ export default function Reservation() {
               placeholder="姓名"
               onChange={handleNameChange}
             />
-            {(errors.name?._errors || []).map((error, index) => (
-              <span key={index} className={myStyle.error}>
-                {error}
-              </span>
-            ))}
+            {errors.name &&
+              errors.name._errors &&
+              errors.name._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
           </div>
+
           <div className={myStyle.p}>
             <Input02
               className={myStyle.p}
@@ -309,11 +330,13 @@ export default function Reservation() {
               placeholder="手機"
               onChange={handleMobileChange}
             />
-            {(errors.mobile_phone?._errors || []).map((error, index) => (
-              <span key={index} className={myStyle.error}>
-                {error}
-              </span>
-            ))}
+            {errors.mobile_phone &&
+              errors.mobile_phone._errors &&
+              errors.mobile_phone._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
           </div>
           {showProfileCheckbox && (
             <Box>
@@ -403,22 +426,30 @@ export default function Reservation() {
           </div>
 
           <div className={myStyle.p}>
-            <Select03
-              name="discount"
-              value={discount}
-              placeholder="優惠項目"
-              options={
-                themeDetails.coupon_name && themeDetails.discount_percentage
-                  ? [
-                      {
-                        text: `${themeDetails.coupon_name} ${themeDetails.discount_percentage}折`,
-                        value: themeDetails.coupon_name,
-                      },
-                    ]
-                  : []
-              }
-              onChange={(e) => handleSelectChange(e, 'discount')}
-            />
+            <div className={myStyle.p}>
+              <div className={myStyle.p}>
+                <Select03
+                  name="discount"
+                  value={discount}
+                  placeholder="優惠項目"
+                  options={[
+                    { text: '無', value: 'none' },
+                    ...(Array.isArray(themeDetails.available_coupons) &&
+                    themeDetails.available_coupons.length > 0
+                      ? themeDetails.available_coupons.map((coupon) => ({
+                          text: `${coupon.coupon_name} ${
+                            coupon.discount_percentage
+                              ? `${coupon.discount_percentage}折`
+                              : `${coupon.discount_amount}元`
+                          }`,
+                          value: coupon.coupon_name,
+                        }))
+                      : []),
+                  ]}
+                  onChange={(e) => handleSelectChange(e, 'discount')}
+                />
+              </div>
+            </div>
           </div>
           <div className={myStyle.p}>
             <Textarea01

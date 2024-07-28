@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react'
 import MoreThemes from '@/components/page-components/themes/detail-section/more-themes'
 import BookingBtn from './booking-btn'
+import Game from './game'
 
 export default function DetailSection({ Banner, Item, Step, Calendar }) {
   const sectionRef = useRef(null)
@@ -28,6 +29,7 @@ export default function DetailSection({ Banner, Item, Step, Calendar }) {
       <div id="step-section">{Step}</div>
       {Calendar}
       <BookingBtn targetId="step-section" />
+      <Game />
       <MoreThemes />
     </div>
   )
