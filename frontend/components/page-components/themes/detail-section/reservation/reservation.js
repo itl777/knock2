@@ -97,6 +97,12 @@ export default function Reservation() {
     if (checked && userProfile) {
       setName(userProfile.name || userProfile.nickname || '')
       setMobilePhone(userProfile.mobile_phone || '')
+      // 清除姓名和電話的錯誤訊息
+      setErrors((prev) => ({
+        ...prev,
+        name: undefined,
+        mobile_phone: undefined,
+      }))
     } else {
       setName('')
       setMobilePhone('')
@@ -148,7 +154,7 @@ export default function Reservation() {
         setPeople(value.toString())
         break
       case 'discount':
-        setDiscount(value.toString())
+        setDiscount(value)
         break
       default:
         break
@@ -306,12 +312,15 @@ export default function Reservation() {
               placeholder="姓名"
               onChange={handleNameChange}
             />
-            {(errors.name?._errors || []).map((error, index) => (
-              <span key={index} className={myStyle.error}>
-                {error}
-              </span>
-            ))}
+            {errors.name &&
+              errors.name._errors &&
+              errors.name._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
           </div>
+
           <div className={myStyle.p}>
             <Input02
               className={myStyle.p}
@@ -321,11 +330,13 @@ export default function Reservation() {
               placeholder="手機"
               onChange={handleMobileChange}
             />
-            {(errors.mobile_phone?._errors || []).map((error, index) => (
-              <span key={index} className={myStyle.error}>
-                {error}
-              </span>
-            ))}
+            {errors.mobile_phone &&
+              errors.mobile_phone._errors &&
+              errors.mobile_phone._errors.map((error, index) => (
+                <span key={index} className={myStyle.error}>
+                  {error}
+                </span>
+              ))}
           </div>
           {showProfileCheckbox && (
             <Box>
@@ -415,25 +426,30 @@ export default function Reservation() {
           </div>
 
           <div className={myStyle.p}>
-            <Select03
-              name="discount"
-              value={discount}
-              placeholder="優惠項目"
-              options={
-                Array.isArray(themeDetails.available_coupons) &&
-                themeDetails.available_coupons.length > 0
-                  ? themeDetails.available_coupons.map((coupon) => ({
-                      text: `${coupon.coupon_name} ${
-                        coupon.discount_percentage
-                          ? `${coupon.discount_percentage}折`
-                          : `${coupon.discount_amount}元`
-                      }`,
-                      value: coupon.coupon_name,
-                    }))
-                  : [{ text: '無可用優惠券', value: '' }]
-              }
-              onChange={(e) => handleSelectChange(e, 'discount')}
-            />
+            <div className={myStyle.p}>
+              <div className={myStyle.p}>
+                <Select03
+                  name="discount"
+                  value={discount}
+                  placeholder="優惠項目"
+                  options={[
+                    { text: '無', value: 'none' },
+                    ...(Array.isArray(themeDetails.available_coupons) &&
+                    themeDetails.available_coupons.length > 0
+                      ? themeDetails.available_coupons.map((coupon) => ({
+                          text: `${coupon.coupon_name} ${
+                            coupon.discount_percentage
+                              ? `${coupon.discount_percentage}折`
+                              : `${coupon.discount_amount}元`
+                          }`,
+                          value: coupon.coupon_name,
+                        }))
+                      : []),
+                  ]}
+                  onChange={(e) => handleSelectChange(e, 'discount')}
+                />
+              </div>
+            </div>
           </div>
           <div className={myStyle.p}>
             <Textarea01
