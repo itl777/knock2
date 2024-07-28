@@ -10,10 +10,10 @@ export default function TeamPage() {
   const { auth } = useAuth()
   return (
     <>
-      <IndexLayout title="糾團" background="dark">
+      <IndexLayout title="揪團" background="dark">
         <div className={styles.teamsPage}>
           <div className={styles.pageTitle}>
-            <h2>糾團頁面</h2>
+            <h2>揪團頁面</h2>
           </div>
           {!auth.id ? (
             <></>

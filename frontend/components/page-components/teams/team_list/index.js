@@ -163,6 +163,7 @@ export default function TeamList() {
                       start_time={r.start_time}
                       team_title={r.team_title}
                       team_status={r.team_status}
+                      max_players={r.team_limit}
                     />
                   </div>
                 )

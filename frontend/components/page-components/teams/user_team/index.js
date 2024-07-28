@@ -20,8 +20,7 @@ import {
   Typography,
 } from './mui_style'
 
-export default function UserTeam( {auth} ) {
-
+export default function UserTeam({ auth }) {
   const { data: allTeamData, isLoading: isAllTeamDataLoading } =
     useFetch(GET_DATA)
   const { data: userData, isLoading: isUserDataLoading } = useFetch(
@@ -87,7 +86,9 @@ export default function UserTeam( {auth} ) {
                     <div
                       className={`col-12 col-lg-6 ${styles.teamlistblock} ${styles.teamlistblock1}`}
                     >
-                      <h4 style={{ textAlign: 'center' }}>您帶領的團隊</h4>
+                      <h4 className={styles.teamPaTitle}>您帶領的團隊</h4>
+
+                      <div className={styles.titleBL}></div>
                       {userData.success ? (
                         <>
                           <table className={styles.teamTable}>
@@ -134,7 +135,10 @@ export default function UserTeam( {auth} ) {
                       <div className={styles.bb2}></div>
                     </div>
                     <div className="col-12 col-lg-6">
-                      <h4 style={{ textAlign: 'center' }}>您參加的團隊</h4>
+                      <h4 className={styles.teamPaTitle}>您參加的團隊</h4>
+
+                      <div className={styles.titleBL}></div>
+
                       {joinTeamData?.success && filteredTeams.length > 0 ? (
                         <table className={styles.teamTable}>
                           <thead>

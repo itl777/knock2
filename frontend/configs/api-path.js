@@ -81,6 +81,7 @@ export const GET_MEMBER = `${API_SERVER}/teams/api/team_member_at_`
 export const USER_JOIN_TEAM = `${API_SERVER}/teams/api/user_join_team_`
 export const MANAGE_MEMBER = `${API_SERVER}/teams/api/manage_member`
 export const JOIN_TEAM = `${API_SERVER}/teams/api/team_join/add/`
+export const TEAM_START = `${API_SERVER}/teams/api/team_start`
 export const R_CREATE_TEAM = `${API_SERVER}/teams/api/create_rid_`
 export const CREATE_TEAM = `${API_SERVER}/teams/api/create_team/`
 

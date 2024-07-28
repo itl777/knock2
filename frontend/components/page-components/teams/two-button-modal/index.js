@@ -2,15 +2,20 @@ import React from 'react'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
-import styles from './basic-modal.module.css'
+import { BorderColor } from '@mui/icons-material'
+// import styles from './basic-modal.module.css'
 
-export default function BasicModal02({
+export default function TeamManagerModal({
   modalTitle = 'Modal Title',
   modalBody,
   open,
   onClose,
+  buttonLabel,
+  buttonLabel2,
   // modalW = '840px',
   // modalH = '750px',
+  onButtonClick,
+  onButtonClick2,
 }) {
   const style = {
     position: 'absolute',
@@ -19,12 +24,24 @@ export default function BasicModal02({
     transform: 'translate(-50%, -50%)',
     // width: modalW,
     // height: modalH,
-    bgcolor: 'black',
+    bgcolor: '#222222',
     // bgcolor: 'background.paper',
     borderRadius: '1rem',
     boxShadow: 'var(--card-shadow)',
-    padding: '2.5rem',
+    padding: '1.5rem',
+    border: '1px solid #B99755',
     color: '#B99755',
+  }
+
+  const modalHeader = {
+    marginBottom: '1.5rem',
+    textAlign: 'center',
+  }
+
+  const modalContent = {
+    maxHeight: '500px',
+    overflowY: 'auto',
+    lineHeight: '40px',
   }
 
   const button = {
@@ -35,6 +52,7 @@ export default function BasicModal02({
     backgroundColor: '#B99755',
     color: 'white',
     padding: '10px 30px',
+    margin: '12px 24px',
     '&:hover': {
       backgroundColor: 'white',
       color: '#B99755',
@@ -44,16 +62,11 @@ export default function BasicModal02({
   }
 
   return (
-    <Modal open={open} onClose={() => {}}>
+    <Modal open={open} onClose={onClose}>
       <Box sx={style}>
-        <h6 className={styles.modalHeader}>{modalTitle}</h6>
-        <hr></hr>
-        <div
-          className={styles.modalContent}
-          style={{ maxHeight: '500px', overflowY: 'auto', lineHeight: '40px' }}
-        >
-          {modalBody}
-        </div>
+        <h6 style={modalHeader}>{modalTitle}</h6>
+        <hr />
+        <div style={modalContent}>{modalBody}</div>
         <div
           style={{
             display: 'flex',
@@ -61,8 +74,11 @@ export default function BasicModal02({
             marginTop: '1rem',
           }}
         >
-          <Button sx={button} variant="contained" onClick={onClose}>
-            確定
+          <Button sx={button} variant="contained" onClick={onButtonClick}>
+            {buttonLabel}
+          </Button>
+          <Button sx={button} variant="contained" onClick={onButtonClick2}>
+            {buttonLabel2}
           </Button>
         </div>
       </Box>
