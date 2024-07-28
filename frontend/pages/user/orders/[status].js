@@ -36,7 +36,7 @@ export default function OrdersPage() {
   // const orderStatusId = getOrderStatusId(status)
 
   return (
-    <IndexLayout title="商品訂單" background="light">
+    <IndexLayout title="商品訂單" pageName="user" background="light">
       <UserLayout
         userTab={<UserTab />}
         userTabSec={<UserTabSec tabItems={tabItems} />}

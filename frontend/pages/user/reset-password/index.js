@@ -42,7 +42,7 @@ export default function Profile() {
 
   return (
     <>
-      <IndexLayout title="重設密碼" background="light">
+      <IndexLayout title="重設密碼" pageName="user" background="light">
         <UserLayout
           userTab={auth.id ? <UserTab /> : ''}
           sectionRight={

@@ -27,7 +27,7 @@ export default function Profile() {
 
   return (
     <>
-      <IndexLayout title="會員中心" pageName="profile" background="light">
+      <IndexLayout title="會員中心" pageName="user" background="light">
         <UserLayout userTab={<UserTab />} sectionRight={<UserProfileForm />} />
       </IndexLayout>
     </>

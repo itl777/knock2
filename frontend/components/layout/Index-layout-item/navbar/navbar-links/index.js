@@ -43,7 +43,7 @@ export default function NavbarLinks({ pageName, menuState }) {
         </li>
         <li>
           <Link href="/user/profile">
-            <span className={styles[pageName === 'profile' ? 'page-name' : '']}>
+            <span className={styles[pageName === 'user' ? 'page-name' : '']}>
               會員中心
             </span>
           </Link>

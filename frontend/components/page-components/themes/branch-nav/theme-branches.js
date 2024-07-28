@@ -146,7 +146,6 @@ export default function ThemeBranches() {
         value={selectedBranch}
         onChange={handleChange}
         sx={{ bgcolor: 'transparent' }}
-        centered
       >
         <TabList disableUnderline className={myStyles.tabList}>
           <hr className={myStyles.hr} />
