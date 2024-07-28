@@ -72,7 +72,7 @@ export default function OrderItemCheckout({ type = 'def' }) {
         )
         return (
           <div key={v.product_id}>
-            <div className={styles.itemBox} >
+            <div className={styles.itemBox}>
               <OrderProductImgBox
                 imgSrc={`${PRODUCT_IMG}/${v.product_img}`}
                 productId={v.product_id}
@@ -103,6 +103,10 @@ export default function OrderItemCheckout({ type = 'def' }) {
                     handleQuantityChange(v.product_id, newQuantity)
                   }
                   productName={v.product_name} // 將商品名稱傳給子元件
+                  productId={v.product_id}
+                  couponId={v.cart_product_coupon_id}
+                  minimumOrder={v.minimum_order}
+                  price={v.price}
                 />
               </div>
 

@@ -13,7 +13,7 @@ export default function OrderItemDetail({
 }) {
   return (
     <div className={styles.itemBox}>
-      <OrderProductImgBox imgSrc={productImg} />
+      <OrderProductImgBox imgSrc={productImg} productId={productId} />
 
       <div className={styles.itemInfo}>
         <p>{productName}</p>

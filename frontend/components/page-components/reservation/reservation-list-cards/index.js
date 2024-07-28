@@ -1,8 +1,10 @@
-import React from 'react'
+import { useEffect } from 'react'
 import styles from './reservation-list-cards.module.css'
+import AOS from 'aos'
 // components
 import OrderDetailRow from '../../orders/order-detail-row'
 import CardHeader from '../../orders/order-list-layout/card-header'
+import { formatDate, formatDateWithWeekday } from '@/hooks/numberFormat'
 
 export default function ReservationListCards({
   reservation_date = 'reservation_date',
@@ -13,15 +15,15 @@ export default function ReservationListCards({
   deposit,
   created_at,
   payment_date,
+  payment_type,
   cancel,
   rtn_code,
   reservation_status_id = 0,
   handleCancel,
   handlePayment,
+  index,
 }) {
-  
   const currentDate = new Date().toJSON().slice(0, 10)
-  
 
   const getPaymentDate = () => {
     if (rtn_code === 1) {
@@ -37,27 +39,36 @@ export default function ReservationListCards({
     }
   }
 
-
   // 是否顯示取消訂單
   const showCancelBtn = () => {
-    return cancel === 0 && reservation_date > currentDate
-      ? false
-      : true
+    return cancel === 0 && reservation_date > currentDate ? false : true
   }
 
   // 是否顯示重新付款
   const showPaymentBtn = () => {
-    return (!rtn_code || rtn_code === 0 ) &&
+    return (!rtn_code || rtn_code === 0) &&
       cancel === 0 &&
       reservation_date > currentDate
       ? false
       : true
   }
 
+  const getDelay = () => {
+    return index % 2 === 0 ? 0 : 200
+  }
+
+  useEffect(() => {
+    AOS.init()
+  }, [])
+
   return (
-    <div className={styles.reservationContainer}>
+    <div
+      className={styles.reservationContainer}
+      data-aos="fade-right"
+      data-aos-delay={getDelay()}
+    >
       <CardHeader
-        title={reservation_date}
+        title={formatDate(reservation_date)}
         btn1Text={'取消訂單'}
         btn1Hidden={showCancelBtn()}
         btn1OnClick={handleCancel} // 從父層 reservation page 設定
@@ -76,13 +87,19 @@ export default function ReservationListCards({
 
         <div className={styles.reservationRight}>
           <div className={styles.reservationInfoBox}>
-            <OrderDetailRow label="行程日期" content={reservation_date} />
+            <OrderDetailRow
+              label="行程日期"
+              content={formatDateWithWeekday(reservation_date)}
+            />
             <OrderDetailRow label="密室主題" content={theme_name} />
             <OrderDetailRow label="預約場次" content={session} />
             <OrderDetailRow label="預約人數" content={`${participants} 人`} />
             <OrderDetailRow label="訂金金額" content={deposit} />
-            <OrderDetailRow label="成立日期" content={created_at} />
-            <OrderDetailRow label="付款日期" content={getPaymentDate()} />
+            <OrderDetailRow label="成立日期" content={formatDate(created_at)} />
+            <OrderDetailRow
+              label="付款日期"
+              content={`${getPaymentDate()} / ${payment_type}`}
+            />
           </div>
         </div>
       </div>
