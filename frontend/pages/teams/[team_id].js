@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import IndexLayout from '@/components/layout'
 import { useAuth } from '@/context/auth-context'
+import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
+
+import IndexLayout from '@/components/layout'
 import Image from 'next/image'
-// import { AspectRatio } from '@mui/joy'
 
 import TeamDetails from '@/components/page-components/teams/team_page/teamdetails'
 import JoinTeamModal from '@/components/page-components/teams/join-team-modal'
 import ManagerTeamModal from '@/components/page-components/teams/manager-team-modal'
 import TeamMemberComponent from '@/components/page-components/teams/TeamMemberComponent'
 import ChatArea from '@/components/page-components/teams/chat_area'
-
-import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
 
 import styles from '@/components/page-components/teams/teams.module.css'
 
@@ -21,7 +20,6 @@ export default function TeamInfo() {
   const [teamData, setTeamData] = useState([])
   const [isMember, setIsMember] = useState(false)
   const [memberData, setMemberData] = useState([])
-  // const [showMembers, setShowMembers] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenJoin, setModalOpenJoin] = useState(false)
   const [memberCount, setMemberCount] = useState(0)

@@ -5,7 +5,7 @@ import styles from '@/components/page-components/teams/teams.module.css'
 import { useFetch } from '@/hooks/useTeamFetch'
 import { NO_TEAM } from '@/configs/api-path'
 
-export default function PreTeam({ user_id = '' }) {
+export default function ReserDisplay({ user_id = '' }) {
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
   }
