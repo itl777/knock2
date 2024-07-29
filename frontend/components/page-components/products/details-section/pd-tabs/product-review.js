@@ -47,17 +47,24 @@ export default function ProductReview({ product_id }) {
               <div className={myStyle.mask}>
                 <Image
                   src={`${API_SERVER}/avatar/${value.avatar}`}
-                  width={97}
-                  height={95}
+                  width={100}
+                  height={100}
                   alt="Picture of the author"
                 />
               </div>
               {/* 星星 */}
-              <div className="text-nowrap mx-5">
+              <div className={`${myStyle.starArea} text-nowrap`}>
                 <ReviewStar size={'small'} rate={value.rate} />
               </div>
 
               <div className={myStyle.customerReview}>
+
+               {/* 星星780出現 */}
+               <div className={`${myStyle.star780} text-nowrap`}>
+                <ReviewStar size={'small'} rate={value.rate} />
+              </div>
+
+
                 {/* 內容 */}
                 <div className={myStyle.content}>
                   {value.review ? value.review : '非常喜歡!'}
@@ -67,12 +74,12 @@ export default function ProductReview({ product_id }) {
                 {/* "d-flex justify-content-end" */}
                 <div className={myStyle.customer}>
                   <div>
-                    <p>購買人：</p>
+                    {/* <p>購買人：</p> */}
                     <p>{value.nick_name[0] + 'OO'}</p>
                   </div>
 
                   <div>
-                    <p>評價日期：</p>
+                    {/* <p>評價日期：</p> */}
                     <p>{value.order_date}</p>
                   </div>
                 </div>
