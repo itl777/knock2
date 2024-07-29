@@ -1,4 +1,4 @@
-import styles from '../teams.module.css'
+import styles from '@/components/page-components/teams/teams.module.css'
 
 export default function TeamsNotice() {
   return (
