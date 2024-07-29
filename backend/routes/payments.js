@@ -16,7 +16,7 @@ const {
   HASHIV_INVOICE,
 } = process.env;
 const ngrok =
-  "https://3909-2001-b400-e258-2bc6-e55b-77bf-751c-f3e0.ngrok-free.app/payments";
+  "https://825c-1-160-16-90.ngrok-free.app/payments";
 
 const options = {
   OperationMode: "Test",
