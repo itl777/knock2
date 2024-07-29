@@ -8,9 +8,10 @@ import {
   USER_JOIN_TEAM,
 } from '@/configs/api-path'
 import { useFetch } from '@/hooks/useTeamFetch'
-import PreTeam from './preteam'
+import ReserDisplay from './reser_display'
 
 import Link from 'next/link'
+
 import moment from 'moment-timezone'
 
 import {
@@ -31,6 +32,7 @@ export default function UserTeam({ auth }) {
   )
   const { data: teamMemberData, isLoading: isTeamMemberDataLoading } =
     useFetch(GET_ALL_MEMBER)
+
 
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY/MM/DD')
@@ -183,7 +185,7 @@ export default function UserTeam({ auth }) {
                     </div>
                     <div className={styles.bb}></div>
                   </div>
-                  <PreTeam user_id={auth.id} />
+                  <ReserDisplay user_id={auth.id} />
                 </Typography>
               </AccordionDetails>
             </Accordion>

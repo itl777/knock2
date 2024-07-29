@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 import { ADD_CHAT } from '@/configs/api-path'
 
-import styles from '@/pages/teams/teams.module.css'
+import styles from '@/components/page-components/teams/teams.module.css'
 // import SubmitBtn from '@/pages/teams/submit-btn'
 
 export default function AddChatForm({ chat_at, chat_by, onSubmit }) {

@@ -12,7 +12,7 @@ const TeamDetails = ({ teamData, memberCount }) => {
 
   return (
     <div className="row">
-      <div className={`col-12 col-md-4 px-3 ${styles.teamlistblock1}`}>
+      <div className={`col-12 col-md-4 px-3 pb-5 ${styles.teamlistblock1}`}>
         <div className={styles.teamTitle}>
           <h3>
             <Link href={`/themes/themes-details/${teamData.theme_id}`}>
@@ -33,8 +33,8 @@ const TeamDetails = ({ teamData, memberCount }) => {
           </div>
         </Tooltip>
       </div>
-      <div className="col-12 col-md-8 px-3">
-        <h5>團隊名：{teamData.team_title}</h5>
+      <div className="col-12 col-md-8 px-5">
+        <h5 className="pt-3">團隊名：{teamData.team_title}</h5>
         <div className="py-3">
           冒險時間：
           {formatDateToTaiwan(teamData.reservation_date)}{' '}

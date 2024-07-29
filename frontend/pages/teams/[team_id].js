@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import IndexLayout from '@/components/layout'
 import { useAuth } from '@/context/auth-context'
+import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
+
+import IndexLayout from '@/components/layout'
 import Image from 'next/image'
-import { AspectRatio } from '@mui/joy'
 
 import TeamDetails from '@/components/page-components/teams/team_page/teamdetails'
 import JoinTeamModal from '@/components/page-components/teams/join-team-modal'
 import ManagerTeamModal from '@/components/page-components/teams/manager-team-modal'
-import TeamMemberComponent from '@/components/page-components/teams/member'
+import TeamMemberComponent from '@/components/page-components/teams/TeamMemberComponent'
 import ChatArea from '@/components/page-components/teams/chat_area'
 
-import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
-
 import styles from '@/components/page-components/teams/teams.module.css'
-// import useDateFormatter from '@/hooks/useDateFormatter'
 
 export default function TeamInfo() {
   const router = useRouter()
   const { auth } = useAuth()
   const [teamData, setTeamData] = useState([])
   const [isMember, setIsMember] = useState(false)
-  const [showMembers, setShowMembers] = useState(false)
+  const [memberData, setMemberData] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenJoin, setModalOpenJoin] = useState(false)
   const [memberCount, setMemberCount] = useState(0)
-  // const [memberData, setMemberData] = useState([])
-  // const { formatDateToTaiwan, formatTime } = useDateFormatter()
+  const [teamReady, setTeamReady] = useState('going')
 
   const fetchTeamData = async (team_id) => {
     const url = ONE_TEAM + team_id
@@ -66,9 +63,6 @@ export default function TeamInfo() {
       console.error('取得團員資料時發生錯誤:', error)
     }
   }
-  const handleTeamSetting = () => {
-    setShowMembers(!showMembers)
-  }
 
   const handleJoinTeam = async () => {
     const { team_id } = router.query
@@ -89,9 +83,7 @@ export default function TeamInfo() {
       const result = await res.json()
 
       if (result.success) {
-        // alert('成功加入團隊')
         fetchMemberData(team_id)
-        // closeModalJoin
       } else {
         console.error('加入團隊失敗:', result.error)
         alert('加入團隊失敗')
@@ -113,12 +105,10 @@ export default function TeamInfo() {
   }, [router.isReady])
 
   const openModal = () => setModalOpen(true)
-  const openModalJoin = () => setModalOpenJoin(true)
   const closeModal = () => setModalOpen(false)
+  const openModalJoin = () => setModalOpenJoin(true)
   const closeModalJoin = () => setModalOpenJoin(false)
-  const handleTeamReady = async () => {
-    // Your API request to set the team as ready
-  }
+
   if (!teamData) {
     return <div>Loading...</div>
   }
@@ -159,7 +149,6 @@ export default function TeamInfo() {
                             <>
                               <button
                                 onClick={openModal}
-                                // onClick={handleTeamSetting}
                                 className={styles.buttonBrown}
                               >
                                 管理團員
@@ -208,12 +197,17 @@ export default function TeamInfo() {
           <TeamMemberComponent
             team_id={router.query.team_id}
             team_limit={teamData.team_limit}
-            onMemberCountChange={setMemberCount}
+            onMemberCountChange={setTeamReady}
+            onStatusChange={setTeamReady}
+            memberData={memberData}
+            onMemberDataChange={setMemberData}
+            // onMemberCountChange={setMemberCount}
           />
         }
-        buttonLabel="我已閱讀"
-        onButtonClick={closeModal}
-        TeamReady={handleTeamReady}
+        team_id={router.query.team_id}
+        TeamReady={teamReady}
+        memberData={memberData}
+        refreshTeamData={() => fetchTeamData(router.query.team_id)}
       />
       <JoinTeamModal
         open={modalOpenJoin}
