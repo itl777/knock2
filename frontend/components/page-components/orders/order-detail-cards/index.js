@@ -27,12 +27,11 @@ export default function OrderDetailCards({ order_id }) {
 
   useEffect(() => {
     fetchOrderData(order_id)
-    if (order) {
-      if (order.deliver === 1) {
-        setShowReviewDialog(true) // 已完成才可以評價
-      } else {
-        setShowReviewDialog(false)
-      }
+
+    if (order.deliver === 1) {
+      setShowReviewDialog(true) // 已完成才可以評價
+    } else {
+      setShowReviewDialog(false)
     }
   }, [order_id, anyReviewed])
 
@@ -55,7 +54,7 @@ export default function OrderDetailCards({ order_id }) {
             <OrderItemDetail
               key={v.product_id}
               productId={v.product_id}
-              productName={v.product_name}
+              productName={`${v.product_name} ${order.deliver}`}
               originalPrice={v.order_unit_price}
               // discountedPrice={v.order_unit_price}
               discountedPrice={calculateProductDiscount(
@@ -90,7 +89,7 @@ export default function OrderDetailCards({ order_id }) {
             order_status_name={order?.order_status_name}
           />
 
-          {showReviewDialog && (
+          {setShowReviewDialog && (
             <OrderReviewDialog
               order_id={order_id}
               content={anyReviewed ? '已收到您的評價！' : undefined}
