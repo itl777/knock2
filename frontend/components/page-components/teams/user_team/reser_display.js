@@ -5,7 +5,7 @@ import styles from '@/components/page-components/teams/teams.module.css'
 import { useFetch } from '@/hooks/useTeamFetch'
 import { NO_TEAM } from '@/configs/api-path'
 
-export default function PreTeam({ user_id = '' }) {
+export default function ReserDisplay({ user_id = '' }) {
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
   }
@@ -37,16 +37,16 @@ export default function PreTeam({ user_id = '' }) {
                 key={r.reservation_id}
               >
                 <div className="row">
+                  <div className="col-3">
+                    行程
+                    <br />
+                    {r.theme_name}
+                  </div>
                   <div className="col-9">
                     日期時間
                     <br />
                     {formatDateToTaiwan(r.reservation_date)}{' '}
                     {formatTime(r.start_time)}
-                  </div>
-                  <div className="col-3">
-                    行程
-                    <br />
-                    {r.theme_name}
                   </div>
                 </div>
                 <div

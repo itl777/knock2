@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import moment from 'moment-timezone'
 import { DISPLAY_CHAT } from '@/configs/api-path'
 import { API_SERVER } from '@/configs/api-path'
-import styles from '@/pages/teams/teams.module.css'
+import styles from '@/components/page-components/teams/teams.module.css'
 import Image from 'next/image'
 
 const ChatDisplay = ({ chat_at, submissionCount }) => {
@@ -41,13 +41,17 @@ const ChatDisplay = ({ chat_at, submissionCount }) => {
                   height={26}
                   alt={`${chat.nick_name} avatar`}
                 />
-                {chat.nick_name}
+                <span style={{ marginLeft: '12px' }}>{chat.nick_name}</span>
                 <br />
-                {moment(chat.create_at)
-                  .tz('Asia/Taipei')
-                  .format('YYYY年MM月DD日 HH:mm')}
+                <span style={{ marginLeft: '12px' }}>
+                  {' '}
+                  ~{' '}
+                  {moment(chat.create_at)
+                    .tz('Asia/Taipei')
+                    .format('YYYY年MM月DD日 HH:mm')}
+                </span>
               </div>
-              <div>{chat.chat_text}</div>
+              <div style={{padding:'0 0 12px 24px'}}>{chat.chat_text}</div>
               <hr />
             </div>
           </div>

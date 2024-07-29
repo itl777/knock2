@@ -12,10 +12,10 @@ import {
   Box,
 } from '@mui/joy'
 
-import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
-import PdBtnContained from '@/components/UI/pd-btn-contained'
-import { Padding } from '@mui/icons-material'
-import { color } from 'framer-motion'
+// import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
+// import PdBtnContained from '@/components/UI/pd-btn-contained'
+// import { Padding } from '@mui/icons-material'
+// import { color } from 'framer-motion'
 
 export default function Card01({
   team_id = 0,
@@ -207,7 +207,6 @@ export default function Card01({
             {' '}
             <Link href={`/teams/${team_id}`}>
               <button className={styles.button}>更多詳情</button>
-              {/* <PdBtnContained btnText="更多詳情" color="black" /> */}
             </Link>
           </div>
         </CardContent>

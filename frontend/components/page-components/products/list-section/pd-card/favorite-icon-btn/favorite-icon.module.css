@@ -31,7 +31,7 @@
     transform: rotate(-50deg);
   }
   25% {
-    transform:translateY(-50px) rotate(50deg);
+    transform: translateY(-50px) rotate(50deg);
   }
   50% {
     transform: translateX(20px) rotate(-10deg);
@@ -43,9 +43,21 @@
   80% {
     width: 50%;
     transform: translateY(-50px) rotate(20deg);
-  }  
+  }
   100% {
     display: none;
   }
-  
+}
+
+@media screen and (max-width: 550px) {
+  .likeStyle {
+    right: 0;
+    top: -60px;
+  }
+
+  .likeBefore::before {
+    width: 80px;
+    height: auto;
+    right: 0;
+  }
 }

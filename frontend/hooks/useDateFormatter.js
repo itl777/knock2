@@ -6,11 +6,15 @@ const useDateFormatter = () => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY年MM月DD日')
   }, [])
 
+  const formatShortDate = useCallback((dateString) => {
+    return moment(dateString).tz('Asia/Taipei').format('YYYY/MM/DD')
+  }, [])
+
   const formatTime = useCallback((timeString) => {
     return moment(timeString, 'HH:mm:ss').format('A hh:mm')
   }, [])
 
-  return { formatDateToTaiwan, formatTime }
+  return { formatDateToTaiwan, formatShortDate, formatTime }
 }
 
 export default useDateFormatter
