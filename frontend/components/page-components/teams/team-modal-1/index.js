@@ -9,6 +9,7 @@ export default function BasicModal02({
   modalBody,
   open,
   onClose,
+  modalW = '90%',
   // modalW = '840px',
   // modalH = '750px',
 }) {
@@ -17,7 +18,7 @@ export default function BasicModal02({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    // width: modalW,
+    width: modalW,
     // height: modalH,
     bgcolor: '#222222',
     // bgcolor: 'background.paper',
@@ -27,21 +28,21 @@ export default function BasicModal02({
     color: '#B99755',
     lineHeight: '1.5',
   }
-  // const [modalWidth, setModalWidth] = useState(modalW)
-  // useEffect(() => {
-  //   const handleResize = () => {
-  //     if (window.innerWidth <= 992) {
-  //       setModalWidth('450px')
-  //     } else {
-  //       setModalWidth(modalW)
-  //     }
-  //   }
+  const [modalWidth, setModalWidth] = useState(modalW)
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 992) {
+        setModalWidth('450px')
+      } else {
+        setModalWidth(modalW)
+      }
+    }
 
-  //   window.addEventListener('resize', handleResize)
-  //   handleResize() // Call initially to set the correct width
+    window.addEventListener('resize', handleResize)
+    handleResize() // Call initially to set the correct width
 
-  //   return () => window.removeEventListener('resize', handleResize)
-  // }, [modalW])
+    return () => window.removeEventListener('resize', handleResize)
+  }, [modalW])
 
   const button = {
     border: '1px solid black',
