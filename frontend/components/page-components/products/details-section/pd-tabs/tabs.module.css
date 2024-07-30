@@ -25,7 +25,6 @@
   text-align: justify;
 }
 .reviewArea {
-  /* d-flex justify-content-center my-5 position-relative */
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -52,7 +51,6 @@
   gap: 0.625rem;
 }
 .noReview {
-  /* "pb-5 d-flex justify-content-center align-items-center" */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -60,7 +58,6 @@
   font-weight: 'bold';
 }
 .reviewed{
-  /*className="add-line pb-5 d-flex justify-content-between align-items-center"> */
 display: flex;
 justify-content: center;
 align-items: center;
@@ -77,8 +74,32 @@ position: relative;
   bottom: 32px;
   background: #d9d9d9;
 }
+.starArea{
+  margin: 0 3.125rem;
+}
+.star780{
+  display: none;
+}
 .mask{
   mask: url(/products/mask.svg);
   mask-repeat: no-repeat;
   mask-position: center;
+}
+@media screen and (max-width: 780px) {
+  .customer {
+    display: block;
+  }
+  .star780{
+    display: flex;
+  }
+.starArea{
+  display: none;
+}
+.customerReview{
+  margin-left: 1.25rem;
+}
+.customer div p {
+  font-size: 10px;
+}
+
 }
