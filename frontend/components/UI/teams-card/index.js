@@ -206,7 +206,21 @@ export default function Card01({
           <div style={{ margin: '0 auto', paddingTop: '3px ' }}>
             {' '}
             <Link href={`/teams/${team_id}`}>
-              <button className={styles.button}>更多詳情</button>
+              {team_status === '募集中' ? (
+                <>
+                  <button className={styles.button}>更多詳情</button>
+                </>
+              ) : null}
+              {team_status === '已成團' ? (
+                <>
+                  <button
+                    className={styles.button}
+                    style={{ backgroundColor: '#B99755' }}
+                  >
+                    觀看記錄
+                  </button>
+                </>
+              ) : null}
             </Link>
           </div>
         </CardContent>

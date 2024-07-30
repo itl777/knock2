@@ -84,7 +84,7 @@ export default function TeamsAdd() {
     setCreateTeam({ ...createTeam, [name]: value })
 
     if (name === 'team_limit') {
-      const maxLimit = reservationData.max_players - 1
+      const maxLimit = reservationData.participants - 1
       if (parseInt(value, 10) > maxLimit) {
         setLimitError(`此行程團員上限為${maxLimit}人`)
       } else {
@@ -109,9 +109,8 @@ export default function TeamsAdd() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    // Check if the form is valid before submission
     if (!validateForm()) {
-      return // Prevent submission if form is invalid
+      return
     }
     try {
       const res = await fetch(CREATE_TEAM, {
@@ -177,19 +176,16 @@ export default function TeamsAdd() {
                         <div className="displayDetail">
                           <div>主題名稱: {reservationData.theme_name}</div>
                           <div>
-                            預約日期:{' '}
+                            行程日期:{' '}
                             {moment(reservationData.reservation_date).format(
                               'YYYY年MM月DD日'
                             )}
                           </div>
                           <div>
-                            時間: {reservationData.start_time} ~{' '}
+                            活動時間: {reservationData.start_time} ~{' '}
                             {reservationData.end_time}
                           </div>
-                          <div>
-                            人數: {reservationData.min_players} ~{' '}
-                            {reservationData.max_players} 人
-                          </div>
+                          <div>預約人數: {reservationData.participants} 人</div>
                         </div>
                       </div>
                     ) : (
