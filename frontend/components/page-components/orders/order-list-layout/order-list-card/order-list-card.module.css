@@ -10,16 +10,17 @@
 .orderBody {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  gap: 1.5rem;
 }
 
 .orderInfoRowBox {
+  width: 40%;
   margin-bottom: 1.25rem;
 }
 
 .imgListBox {
+  width: 60%;
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
   gap: 1rem;
 }
@@ -30,7 +31,12 @@
     gap: 1.5rem;
   }
 
+  .orderInfoRowBox {
+    width: 100%;
+  }
+
   .imgListBox {
+    width: 100%;
     justify-content: flex-start;
     flex-wrap: wrap;
   }

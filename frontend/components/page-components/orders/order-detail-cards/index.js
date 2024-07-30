@@ -27,13 +27,15 @@ export default function OrderDetailCards({ order_id }) {
 
   useEffect(() => {
     fetchOrderData(order_id)
+  }, [order_id, anyReviewed])
 
+  useEffect(() => {
     if (order.deliver === 1) {
       setShowReviewDialog(true) // 已完成才可以評價
     } else {
       setShowReviewDialog(false)
     }
-  }, [order_id, anyReviewed])
+  }, [order])
 
   return (
     <div className={styles.orderDetailContainer}>
@@ -89,7 +91,7 @@ export default function OrderDetailCards({ order_id }) {
             order_status_name={order?.order_status_name}
           />
 
-          {setShowReviewDialog && (
+          {showReviewDialog && (
             <OrderReviewDialog
               order_id={order_id}
               content={anyReviewed ? '已收到您的評價！' : undefined}
