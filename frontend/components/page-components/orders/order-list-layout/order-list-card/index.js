@@ -59,6 +59,14 @@ export default function OrderListCard({
     return index % 2 === 0 ? 0 : 200
   }
 
+  const getPaymentType = () => {
+    if (status === 'canceled') {
+      return '已取消'
+    } else {
+      return payment_type
+    }
+  }
+
   useEffect(() => {
     AOS.init()
   }, [])
@@ -77,15 +85,15 @@ export default function OrderListCard({
         btn3OnClick={handleCancel}
       />
       <div className={styles.orderBody}>
-        <div>
-          <div className={styles.orderInfoRowBox}>
+        <div  className={styles.orderInfoRowBox}>
+  
             <IconTextRow content={merchant_trade_no} />
             <IconTextRow
-              content={`${formatPrice(total_price)} / ${payment_type}`}
+              content={`${formatPrice(total_price)} / ${getPaymentType()}`}
               icon={HiOutlineCreditCard}
             />
             <IconTextRow content={full_address} icon={HiOutlineCube} />
-          </div>
+  
 
           <OrderStatusTag statusText={getStatus()} />
         </div>
