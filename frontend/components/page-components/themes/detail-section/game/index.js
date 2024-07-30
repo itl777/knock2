@@ -11,12 +11,14 @@ const cardImages = [
 ]
 const cardBackImage = '/game/card.jpg'
 
-const differences = [
-  { x: '18%', y: '10%' },
-  { x: '40%', y: '92%' },
-  { x: '42%', y: '10%' },
-  { x: '80%', y: '80%' },
-  { x: '50%', y: '36%' },
+const objectToFind = { name: '鑰匙鬼鬼', image: '/game/key.png' }
+
+const balloonPositions = [
+  { x: '26%', y: '14%' },
+  { x: '31.8%', y: '84.5%' },
+  { x: '66%', y: '20%' },
+  { x: '71%', y: '82%' },
+  { x: '79%', y: '51%' },
 ]
 
 const riddles = [
@@ -193,22 +195,12 @@ export default function Game() {
 
   const handleDifferenceClick = useCallback(
     (index) => {
-      if (!Array.isArray(state.foundDifferences)) {
-        console.error(
-          'foundDifferences is not an array:',
-          state.foundDifferences
-        )
-        dispatch({ type: 'FOUND_DIFFERENCE', payload: index })
-        return
-      }
-
       if (!state.foundDifferences.includes(index)) {
         dispatch({ type: 'FOUND_DIFFERENCE', payload: index })
-        if (state.foundDifferences.length + 1 === 5) {
+        if (state.foundDifferences.length + 1 === balloonPositions.length) {
           dispatch({ type: 'SHOW_LEVEL_COMPLETE' })
         }
       }
-      // 強制更新狀態以觸發重新渲染
       dispatch({ type: 'SET_MESSAGE', payload: '' })
     },
     [state.foundDifferences]
@@ -344,21 +336,26 @@ export default function Game() {
 
               {state.currentLevel === 2 && (
                 <div className={styles.level}>
-                  <h2 className={styles.title2}>第二關：找出不同</h2>
-                  <p className={styles.p}>在兩張圖片中找出5處不同之處</p>
+                  <h2 className={styles.title2}>第二關：尋找物品</h2>
+                  <div className={styles.objectToFindContainer}>
+                    <img
+                      src={objectToFind.image}
+                      alt={objectToFind.name}
+                      className={styles.objectToFindImage}
+                    />
+                    <p>
+                      在圖片中找出所有的{objectToFind.name}（共
+                      {balloonPositions.length}個）
+                    </p>
+                  </div>
                   <div className={styles.imageComparisonContainer}>
                     <div className={styles.imageWrapper}>
                       <img
                         className={styles.image}
-                        src="/game/A.png"
-                        alt="圖片1"
+                        src="/game/find.jpg"
+                        alt="尋找物品場景"
                       />
-                      <img
-                        className={styles.image}
-                        src="/game/S.png"
-                        alt="圖片2"
-                      />
-                      {differences.map((diff, index) => (
+                      {balloonPositions.map((position, index) => (
                         <button
                           key={index}
                           className={`${styles.difference} ${
@@ -367,8 +364,8 @@ export default function Game() {
                               : ''
                           }`}
                           style={{
-                            left: diff.x,
-                            top: diff.y,
+                            left: position.x,
+                            top: position.y,
                           }}
                           onClick={() => handleDifferenceClick(index)}
                           onKeyPress={(e) => {
@@ -377,17 +374,17 @@ export default function Game() {
                             }
                           }}
                           tabIndex="0"
-                          aria-label={`找不同點 ${index + 1}`}
+                          aria-label={`${objectToFind.name} ${index + 1}`}
                         ></button>
                       ))}
                     </div>
                   </div>
                   <p className={styles.p2}>
-                    找到的不同：{state.foundDifferences.length}/5
+                    找到的{objectToFind.name}：{state.foundDifferences.length}/
+                    {balloonPositions.length}
                   </p>
                 </div>
               )}
-
               {state.currentLevel === 3 && (
                 <div className={styles.level}>
                   <h2 className={styles.title2}>第三關：謎語遊戲</h2>
