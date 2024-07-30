@@ -46,9 +46,9 @@ export default function DetailSection({ Banner, Item, Step, Calendar }) {
         <div id="step-section">{Step}</div>
       </AnimatedSection>
       <AnimatedSection>{Calendar}</AnimatedSection>
-      <AnimatedSection>
-        <BookingBtn targetId="step-section" />
-      </AnimatedSection>
+
+      <BookingBtn targetId="step-section" />
+
       <AnimatedSection>
         <Game />
       </AnimatedSection>
