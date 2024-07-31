@@ -170,7 +170,7 @@ export default function TeamList() {
               })
             ) : (
               <div className="col-12">
-                <p>沒有符合條件的團隊</p>
+                <p style={{ textAlign: 'center' }}>沒有符合條件的團隊</p>
               </div>
             )}
           </div>

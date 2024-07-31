@@ -27,6 +27,7 @@ const AccordionSummary = styled((props) => <MuiAccordionSummary {...props} />)(
     //   textAlign: 'center',
     // },
     '& .MuiTypography-body1': {
+      fontFamily: 'Noto Serif JP, serif',
       textAlign: 'center',
       margin: '0 auto',
       fontSize: '22px',

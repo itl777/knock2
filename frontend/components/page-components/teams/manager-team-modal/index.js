@@ -97,12 +97,7 @@ const ManagerTeamModal = ({
       <Box sx={{ ...style, width: '500px' }}>
         <h6 style={modalHeader}>{modalTitle}</h6>
         <hr />
-        <div style={modalContent}>
-          {modalBody}
-          {/* {React.cloneElement(modalBody, {
-            onMemberCountChange: handleMemberCountChange,
-          })} */}
-        </div>
+        <div style={modalContent}>{modalBody}</div>
         <div
           style={{
             display: 'flex',
@@ -110,7 +105,6 @@ const ManagerTeamModal = ({
             marginTop: '1rem',
           }}
         >
-          {/* {renderButton()} */}
           <Button
             style={button}
             variant="contained"
@@ -134,7 +128,8 @@ const style = {
   transform: 'translate(-50%, -50%)',
   // width: modalW,
   // height: modalH,
-  bgcolor: 'black',
+  bgcolor: '#222222',
+  // bgcolor: 'black',
   // bgcolor: 'background.paper',
   borderRadius: '1rem',
   boxShadow: 'var(--card-shadow)',

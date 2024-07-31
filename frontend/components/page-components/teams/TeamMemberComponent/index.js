@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { API_SERVER, GET_MEMBER } from '@/configs/api-path'
-import Image from 'next/image'
+import { GET_MEMBER } from '@/configs/api-path'
+import UserAvatar from '@/components/page-components/teams/user_avatar'
 import CustomRadioGroup from './radio'
 
 const TeamMemberComponent = ({
@@ -54,7 +54,6 @@ const TeamMemberComponent = ({
       status = 'over'
       onStatusChange('over')
     }
-    // console.log('TeamReady status:', status)
     onMemberCountChange(status)
     onMemberDataChange(memberData)
   }, [selectedCount, team_limit, onMemberCountChange, onMemberDataChange])
@@ -86,12 +85,7 @@ const TeamMemberComponent = ({
       {memberData.map((member) => (
         <div key={member.join_user_id}>
           <div style={{ padding: '12px 0 6px 12px', fontSize: '18px' }}>
-            <Image
-              src={member.avatar ? `${API_SERVER}/avatar/${member.avatar}` : ''}
-              height={40}
-              width={40}
-              alt={`${member.nick_name} avatar`}
-            />
+            <UserAvatar avatar={member.avatar} nickName={member.nick_name} />
             <span style={{ marginLeft: '10px' }}>{member.nick_name}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>

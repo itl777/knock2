@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/auth-context'
 import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
@@ -130,13 +131,19 @@ export default function TeamInfo() {
                   {teamData.team_status === '已成團' ? (
                     <>
                       <div style={{ textAlign: 'center', padding: '16px' }}>
-                        <h4>此隊伍已成團</h4>
-                        <Image
-                          src={`/ghost/ghost_05.png`}
-                          alt=""
-                          width={150}
-                          height={100}
-                        />
+                        <Link href="./" style={{ color: '#FFF' }}>
+                          <h4>
+                            此隊伍已成團，
+                            <br />
+                            要去尋找其他團隊嗎？
+                          </h4>
+                          <Image
+                            src={`/ghost/ghost_05.png`}
+                            alt=""
+                            width={150}
+                            height={100}
+                          />
+                        </Link>
                       </div>
                     </>
                   ) : (
@@ -156,7 +163,7 @@ export default function TeamInfo() {
                             </>
                           ) : isMember ? (
                             <>
-                              <h4>您已申請加入此團隊</h4>
+                              <h4>\ 您已申請加入此團隊 /</h4>
                               <Image
                                 src={`/ghost/ghost_03.png`}
                                 alt=""
