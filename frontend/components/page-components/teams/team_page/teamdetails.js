@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { AspectRatio } from '@mui/joy'
 import Link from 'next/link'
-import useDateFormatter from '@/hooks/useDateFormatter'
+import { formatDateToTaiwan, formatTime } from '@/hooks/useDateFormatter'
 import { API_SERVER } from '@/configs/api-path'
+import UserAvatar from '@/components/page-components/teams/user_avatar'
 import styles from '@/components/page-components/teams/teams.module.css'
 import Tooltip from '@mui/material/Tooltip'
 
 const TeamDetails = ({ teamData, memberCount }) => {
-  const { formatDateToTaiwan, formatTime } = useDateFormatter()
-
   return (
     <div className="row">
       <div className={`col-12 col-md-4 px-3 pb-5 ${styles.teamlistblock1}`}>
@@ -36,7 +35,7 @@ const TeamDetails = ({ teamData, memberCount }) => {
       <div className="col-12 col-md-8 px-5">
         <h5 className="pt-3">團隊名：{teamData.team_title}</h5>
         <div className="py-3">
-          冒險時間：
+          行程時間：
           {formatDateToTaiwan(teamData.reservation_date)}{' '}
           {formatTime(teamData.start_time)}
           <br />
@@ -44,20 +43,25 @@ const TeamDetails = ({ teamData, memberCount }) => {
           <br />
           地區：{teamData.branch_name}
           <br />
-          申請人數/人數上限：{memberCount}/ {teamData.team_limit}
+          申請人數/人數上限：{memberCount} / {teamData.team_limit}
         </div>
         <hr />
         <div
           style={{ fontSize: '24px', paddingTop: '2px', paddingBottom: '5px' }}
         >
-          <Image
+          <UserAvatar
+            avatar={teamData.avatar}
+            nickName={teamData.nick_name}
+            apiServer={API_SERVER}
+          />
+          {/* <Image
             src={
               teamData.avatar ? `${API_SERVER}/avatar/${teamData.avatar}` : ''
             }
             height={40}
-            width={52}
+            width={40}
             alt={`${teamData.nick_name} avatar`}
-          />
+          /> */}
           <span style={{ marginLeft: '15px' }}>{teamData.nick_name}</span>
         </div>
         <div style={{ fontSize: '16px' }}>

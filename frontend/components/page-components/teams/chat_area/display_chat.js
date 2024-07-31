@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import moment from 'moment-timezone'
 import { DISPLAY_CHAT } from '@/configs/api-path'
-import { API_SERVER } from '@/configs/api-path'
 import styles from '@/components/page-components/teams/teams.module.css'
-import Image from 'next/image'
+import UserAvatar from '@/components/page-components/teams/user_avatar'
+
+import { formatDateTime } from '@/hooks/useDateFormatter'
+// import Image from 'next/image'
 
 const ChatDisplay = ({ chat_at, submissionCount }) => {
   const [chatData, setChatData] = useState([])
@@ -35,23 +36,16 @@ const ChatDisplay = ({ chat_at, submissionCount }) => {
           <div key={chat.chat_id}>
             <div className="row">
               <div className={styles.chatlist}>
-                <Image
-                  src={chat.avatar ? `${API_SERVER}/avatar/${chat.avatar}` : ''}
+                <UserAvatar
+                  avatar={chat.avatar}
+                  nickName={chat.nick_name}
                   width={26}
                   height={26}
-                  alt={`${chat.nick_name} avatar`}
                 />
-                <span style={{ marginLeft: '12px' }}>{chat.nick_name}</span>
-                <br />
-                <span style={{ marginLeft: '12px' }}>
-                  {' '}
-                  ~{' '}
-                  {moment(chat.create_at)
-                    .tz('Asia/Taipei')
-                    .format('YYYY年MM月DD日 HH:mm')}
-                </span>
+                <span style={{ marginLeft: '12px' }}>{chat.nick_name}：</span>
               </div>
-              <div style={{padding:'0 0 12px 24px'}}>{chat.chat_text}</div>
+              <div style={{ padding: '0 0 12px 24px' }}>{chat.chat_text}</div>
+              <div style={{ padding: '0 0 12px 24px' }}>-- {formatDateTime(chat.create_at)}</div>
               <hr />
             </div>
           </div>

@@ -112,6 +112,10 @@
     margin: 0 auto 24px;
 }
 
+.titleLink a{
+    color: #b99755;;
+}
+
 .teamForm .sty input{
     font-size: 1rem;
     font-style: normal;
