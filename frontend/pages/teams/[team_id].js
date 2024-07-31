@@ -3,9 +3,9 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/context/auth-context'
 import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
+import { useSnackbar } from '@/context/snackbar-context'
 
 import IndexLayout from '@/components/layout'
-import Image from 'next/image'
 
 import TeamDetails from '@/components/page-components/teams/team_page/teamdetails'
 import JoinTeamModal from '@/components/page-components/teams/join-team-modal'
@@ -26,6 +26,7 @@ export default function TeamInfo() {
   const [modalOpenJoin, setModalOpenJoin] = useState(false)
   const [memberCount, setMemberCount] = useState(0)
   const [teamReady, setTeamReady] = useState('going')
+  const { openSnackbar } = useSnackbar()
 
   const fetchTeamData = async (team_id) => {
     const url = ONE_TEAM + team_id
@@ -35,12 +36,12 @@ export default function TeamInfo() {
 
       if (data.success) {
         setTeamData(data.data)
-        console.log('成功取得團隊資料', data.data)
+        // console.log('成功取得團隊資料', data.data)
       } else {
-        console.error('取得團隊資料失敗:', data.error)
+        // console.error('取得團隊資料失敗:', data.error)
       }
     } catch (error) {
-      console.error('取得團隊資料時發生錯誤:', error)
+      // console.error('取得團隊資料時發生錯誤:', error)
     }
   }
 
@@ -52,17 +53,17 @@ export default function TeamInfo() {
 
       if (data.success) {
         setMemberCount(data.data.length)
-        console.log('成功取得團員資料', data.data)
+        // console.log('成功取得團員資料', data.data)
 
         const isUserMember = data.data.some(
           (member) => member.join_user_id === auth.id
         )
         setIsMember(isUserMember)
       } else {
-        console.error('團員資料取得失敗:', data.error)
+        // console.error('團員資料取得失敗:', data.error)
       }
     } catch (error) {
-      console.error('取得團員資料時發生錯誤:', error)
+      // console.error('取得團員資料時發生錯誤:', error)
     }
   }
 
@@ -87,12 +88,12 @@ export default function TeamInfo() {
       if (result.success) {
         fetchMemberData(team_id)
       } else {
-        console.error('加入團隊失敗:', result.error)
-        alert('加入團隊失敗')
+        // console.error('加入團隊失敗:', result.error)
+        openSnackbar('加入團隊失敗', 'error')
       }
     } catch (error) {
-      console.error('Error joining team:', error)
-      alert('加入團隊時發生錯誤')
+      // console.error('Error joining team:', error)
+      openSnackbar('加入團隊時發生錯誤', 'error')
     }
   }
 
@@ -121,7 +122,7 @@ export default function TeamInfo() {
         <div className={styles.teamsPage}>
           <div className="container">
             <div className={styles.pageTitle}>
-              <h2>團隊內頁</h2>
+              <h2>團隊頁面</h2>
             </div>
             <div className={`${styles.teamsSection} row`}>
               <div className={styles.borderbox} key={teamData.team_id}>

@@ -254,9 +254,6 @@ export default function TeamsAdd() {
                       <div style={{ color: 'red' }}>{checkboxError}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                      {/* <Button onClick={1} className={styles.buttonBrown}>
-                        建立團隊
-                      </Button> */}
                       <SubmitBtn
                         btnText="建立團隊"
                         color="#B99577"
