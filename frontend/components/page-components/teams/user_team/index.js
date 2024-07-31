@@ -1,18 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
-  GET_DATA,
   GET_ALL_MEMBER,
-  GET_USER_DATA,
+  USER_LEAD_TEAM,
   USER_JOIN_TEAM,
 } from '@/configs/api-path'
 import { useFetch } from '@/hooks/useTeamFetch'
 import ReserDisplay from './reser_display'
 import TeamTable from './team_table'
 
-import Link from 'next/link'
-
-import moment from 'moment-timezone'
 import styles from '@/components/page-components/teams/teams.module.css'
 
 import {
@@ -21,12 +17,18 @@ import {
   AccordionDetails,
   Typography,
 } from './mui_style'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 
 export default function UserTeam({ auth }) {
-  const { data: allTeamData, isLoading: isAllTeamDataLoading } =
-    useFetch(GET_DATA)
-  const { data: userData, isLoading: isUserDataLoading } = useFetch(
-    `${GET_USER_DATA}${auth.id}`
+  const [expanded, setExpanded] = useState(false)
+
+  const handleChange = (panel) => (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : false)
+  }
+
+  const { data: leadTeamData, isLoading: isLeadTeamDataLoading } = useFetch(
+    `${USER_LEAD_TEAM}${auth.id}`
   )
   const { data: joinTeamData, isLoading: isJoinTeamDataLoading } = useFetch(
     `${USER_JOIN_TEAM}${auth.id}`
@@ -34,32 +36,13 @@ export default function UserTeam({ auth }) {
   const { data: teamMemberData, isLoading: isTeamMemberDataLoading } =
     useFetch(GET_ALL_MEMBER)
 
-  const formatDateToTaiwan = (dateString) => {
-    return moment(dateString).tz('Asia/Taipei').format('YYYY/MM/DD')
-  }
-  const formatTime = (timeString) => {
-    return moment(timeString, 'HH:mm:ss').format('A hh:mm')
-  }
-
   if (
-    isUserDataLoading ||
+    isLeadTeamDataLoading ||
     isJoinTeamDataLoading ||
-    isTeamMemberDataLoading ||
-    isAllTeamDataLoading
+    isTeamMemberDataLoading
   ) {
     return <div>Now Loading...</div>
   }
-
-  // 加入的隊伍
-  const filteredTeams =
-    allTeamData?.rows?.filter((team) =>
-      joinTeamData?.data?.some(
-        (member) =>
-          member.join_team_id === team.team_id &&
-          member.join_user_id === auth.id
-      )
-    ) || []
-
   // 計算隊員數量
   const teamMemberCount = {}
   teamMemberData?.data?.forEach((member) => {
@@ -75,8 +58,12 @@ export default function UserTeam({ auth }) {
       <div className={styles.teamsPage}>
         <div className="container">
           <div className="row pb-3">
-            <Accordion>
+            <Accordion
+              expanded={expanded === 'panel1'}
+              onChange={handleChange('panel1')}
+            >
               <AccordionSummary
+                expandIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
@@ -95,40 +82,24 @@ export default function UserTeam({ auth }) {
                       className={`col-12 col-lg-6 ${styles.teamlistblock} ${styles.teamlistblock1}`}
                     >
                       <h4 className={styles.teamPaTitle}>您帶領的團隊</h4>
-
                       <div className={styles.titleBL}></div>
-                      {userData.success ? (
-                        <>
-                          <TeamTable
-                            Data={userData.rows}
-                            MemberCount={teamMemberCount}
-                          />
-                        </>
-                      ) : (
-                        <div className={styles.noDataInfo}>
-                          您還沒有開團記錄
-                        </div>
-                      )}
+                      <TeamTable
+                        Data1={leadTeamData.recruiting}
+                        Data2={leadTeamData.formed}
+                        MemberCount={teamMemberCount}
+                      />
                       <div className={styles.bb2}></div>
                     </div>
                     <div className="col-12 col-lg-6">
                       <h4 className={styles.teamPaTitle}>您參加的團隊</h4>
-
                       <div className={styles.titleBL}></div>
-
-                      {joinTeamData?.success && filteredTeams.length > 0 ? (
-                        <>
-                          <TeamTable
-                            Data={filteredTeams}
-                            MemberCount={teamMemberCount}
-                          />
-                        </>
-
-                      ) : (
-                        <div className={styles.noDataInfo}>
-                          您還沒有加入團隊
-                        </div>
-                      )}
+                      <>
+                        <TeamTable
+                          Data1={joinTeamData.recruiting}
+                          Data2={joinTeamData.formed}
+                          MemberCount={teamMemberCount}
+                        />
+                      </>
                     </div>
                     <div className={styles.bb}></div>
                   </div>
