@@ -67,7 +67,23 @@
   background-size: cover;
 }
 
-@media screen and (max-width: 1120px) {
+
+@media screen and (max-width: 480px) {
+  .checkoutLeft {
+    padding: 1.5rem;
+  }
+  
+  .checkoutRight {
+    padding: 1.5rem;
+  }
+
+  .btnStyle {
+    position: static;
+    right: auto;
+    bottom: auto;
+    width: 100%; 
+    margin-top: 50px; 
+  }
   .contentContainer {
     flex-direction: column;
   }
@@ -80,24 +96,6 @@
   .checkoutRightMain {
     display: flex;
   }
-  .btnStyle {
-    position: static;
-    right: auto;
-    bottom: auto;
-    width: 100%; 
-    margin-top: 50px; 
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .checkoutLeft {
-    padding: 1.5rem;
-  }
-  
-  .checkoutRight {
-    padding: 1.5rem;
-  }
-
   .btnStyle {
     position: static;
     right: auto;

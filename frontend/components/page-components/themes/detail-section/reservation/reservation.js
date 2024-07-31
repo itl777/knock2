@@ -433,7 +433,7 @@ export default function Reservation() {
                   value={discount}
                   placeholder="優惠項目"
                   options={[
-                    { text: '無', value: 'none' },
+                    { text: '無', value: '無' },
                     ...(Array.isArray(themeDetails.available_coupons) &&
                     themeDetails.available_coupons.length > 0
                       ? themeDetails.available_coupons.map((coupon) => ({
