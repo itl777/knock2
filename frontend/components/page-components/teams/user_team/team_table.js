@@ -16,7 +16,7 @@ const TeamTable = ({ Data, MemberCount }) => {
         </tr>
       </thead>
       <tbody>
-        {Data.rows.map((r) => (
+        {Data.map((r) => (
           <tr key={r.team_id}>
             <td>
               <Link href={`/teams/${r.team_id}`}>{r.team_title}</Link>

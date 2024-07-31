@@ -4,7 +4,7 @@ import Modal from '@mui/material/Modal'
 import Button from '@mui/material/Button'
 import styles from './basic-modal.module.css'
 
-export default function BasicModal02({
+export default function TeamModal01({
   modalTitle = 'Modal Title',
   modalBody,
   open,

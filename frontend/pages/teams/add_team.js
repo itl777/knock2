@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import IndexLayout from '@/components/layout'
 import styles from '@/components/page-components/teams/teams.module.css'
-import moment from 'moment-timezone'
+import { formatDateToTaiwan, formatTime } from '@/hooks/useDateFormatter'
 import { useSnackbar } from '@/context/snackbar-context'
 import LINK from 'next/link'
 import { useAuth } from '@/context/auth-context'
 import { R_CREATE_TEAM, CREATE_TEAM } from '@/configs/api-path'
 
-import BasicModal02 from '../../components/page-components/teams/team-modal-1'
+import TeamModal01 from '../../components/page-components/teams/team-modal-1'
 import TeamsNotice from '@/components/page-components/teams/add_team/add_notice'
-
-import SubmitBtn from '@/pages/teams/submit-btn'
+import SubmitBtn from '@/components/page-components/teams/add_team/submit-btn'
 
 export default function TeamsAdd() {
   const { auth } = useAuth()
@@ -175,13 +174,13 @@ export default function TeamsAdd() {
                           <div>主題名稱: {reservationData.theme_name}</div>
                           <div>
                             行程日期:{' '}
-                            {moment(reservationData.reservation_date).format(
-                              'YYYY年MM月DD日'
+                            {formatDateToTaiwan(
+                              reservationData.reservation_date
                             )}
                           </div>
                           <div>
-                            活動時間: {reservationData.start_time} ~{' '}
-                            {reservationData.end_time}
+                            活動時間: {formatTime(reservationData.start_time)} ~{' '}
+                            {formatTime(reservationData.end_time)}
                           </div>
                           <div>預約人數: {reservationData.participants} 人</div>
                         </div>
@@ -255,9 +254,12 @@ export default function TeamsAdd() {
                       <div style={{ color: 'red' }}>{checkboxError}</div>
                     </div>
                     <div style={{ textAlign: 'center' }}>
+                      {/* <Button onClick={1} className={styles.buttonBrown}>
+                        建立團隊
+                      </Button> */}
                       <SubmitBtn
                         btnText="建立團隊"
-                        color="grey"
+                        color="#B99577"
                         disableSubmit={disableSubmit}
                       />
                     </div>
@@ -273,12 +275,12 @@ export default function TeamsAdd() {
           </div>
         </div>
       </IndexLayout>
-      <BasicModal02
+      <TeamModal01
         open={modalOpen}
         onClose={closeModal}
         modalTitle="注意事項"
         modalBody={<TeamsNotice />}
-      ></BasicModal02>
+      ></TeamModal01>
     </>
   )
 }

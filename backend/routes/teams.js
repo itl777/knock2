@@ -246,7 +246,7 @@ router.get("/api/user_join_team_:user_id", async (req, res) => {
     return res.json({ success: false, error: "沒有編號" });
   }
 
-  const sql =`SELECT  no, join_team_id, team_title, team_limit, team_status
+  const sql =`SELECT  no, join_team_id, join_user_id, team_title, team_limit, team_status
 FROM teams_members
 join teams_list t on join_team_id = team_id
 WHERE join_user_id = ${user_id} AND team_status = "募集中"`;

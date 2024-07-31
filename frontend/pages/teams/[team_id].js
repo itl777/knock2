@@ -12,6 +12,7 @@ import JoinTeamModal from '@/components/page-components/teams/join-team-modal'
 import ManagerTeamModal from '@/components/page-components/teams/manager-team-modal'
 import TeamMemberComponent from '@/components/page-components/teams/TeamMemberComponent'
 import ChatArea from '@/components/page-components/teams/chat_area'
+import StatusReport from '@/components/page-components/teams/team_page/statusReport'
 
 import styles from '@/components/page-components/teams/teams.module.css'
 
@@ -130,21 +131,15 @@ export default function TeamInfo() {
                 <div className="row">
                   {teamData.team_status === '已成團' ? (
                     <>
-                      <div style={{ textAlign: 'center', padding: '16px' }}>
-                        <Link href="./" style={{ color: '#FFF' }}>
-                          <h4>
-                            此隊伍已成團，
-                            <br />
-                            要去尋找其他團隊嗎？
-                          </h4>
-                          <Image
-                            src={`/ghost/ghost_05.png`}
-                            alt=""
-                            width={150}
-                            height={100}
-                          />
-                        </Link>
-                      </div>
+                      {auth.id === teamData.user_id ? (
+                        <StatusReport status="1" />
+                      ) : (
+                        <>
+                          <Link href="./" style={{ color: '#FFF' }}>
+                            <StatusReport status="2" />
+                          </Link>
+                        </>
+                      )}
                     </>
                   ) : (
                     <>
@@ -163,13 +158,7 @@ export default function TeamInfo() {
                             </>
                           ) : isMember ? (
                             <>
-                              <h4>\ 您已申請加入此團隊 /</h4>
-                              <Image
-                                src={`/ghost/ghost_03.png`}
-                                alt=""
-                                width={150}
-                                height={100}
-                              />
+                              <StatusReport status="3" />
                             </>
                           ) : (
                             <>

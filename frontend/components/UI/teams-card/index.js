@@ -1,7 +1,6 @@
 import styles from './cards.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
-// import moment from 'moment-timezone'
 import { formatDateToTaiwan, formatTime } from '@/hooks/useDateFormatter'
 import {
   AspectRatio,
@@ -70,7 +69,7 @@ export default function Card01({
             position: 'absolute',
             top: '20px',
             right: '15px',
-            padding: '15px',
+            padding: '10px 0',
             // paddingTop: '10px',
             color: '#B99755',
             zIndex: 1,
@@ -106,7 +105,7 @@ export default function Card01({
           ) : null}
         </Typography>
 
-        <AspectRatio ratio="375/240">
+        <AspectRatio ratio="375/240" style={{ borderRadius: '3px 3px 0 0' }}>
           <Image
             src={`/themes-main/${themeImg}`}
             alt=""
@@ -163,11 +162,7 @@ export default function Card01({
           color: '#B99755',
         }}
       >
-        <h6 className="pb-2">
-          {/* 團隊名：
-          <br /> */}
-          {team_title}
-        </h6>
+        <h6 className="pb-2">{team_title}</h6>
         <span>團長：{rick_name}</span>
         <span>
           時間：{formatDateToTaiwan(reservation_date)} {formatTime(start_time)}

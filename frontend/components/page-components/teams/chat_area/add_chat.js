@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useSnackbar } from '@/context/snackbar-context'
 
 import { ADD_CHAT } from '@/configs/api-path'
 
 import styles from '@/components/page-components/teams/teams.module.css'
-import { useSnackbar } from '@/context/snackbar-context'
 
 export default function AddChatForm({ chat_at, chat_by, onSubmit }) {
   const [chatText, setChatText] = useState('')
@@ -33,12 +33,9 @@ export default function AddChatForm({ chat_at, chat_by, onSubmit }) {
 
     if (response.ok) {
       openSnackbar('留言已送出!', 'success')
-      // alert('留言已送出!')
       setChatText('')
       onSubmit()
     } else {
-      // alert('留言發送失敗...')
-
       openSnackbar('留言發送失敗...', 'error')
     }
   }
@@ -58,7 +55,6 @@ export default function AddChatForm({ chat_at, chat_by, onSubmit }) {
           />
           <div style={{ textAlign: 'center', marginTop: '12px' }}>
             <button className={styles.buttonBrown}>送出留言</button>
-            {/* <SubmitBtn btnText="送出留言" color="grey" /> */}
           </div>
         </form>
       </div>
