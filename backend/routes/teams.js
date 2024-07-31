@@ -171,7 +171,7 @@ return {
 }
 }
 
-router.get("/api/no_team_:user_id", async (req, res) => {
+router.get("/api/res_team_:user_id", async (req, res) => {
   const data = await noTeamData(req)
   res.json(data);
 

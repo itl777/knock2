@@ -17,16 +17,8 @@ import {
   AccordionDetails,
   Typography,
 } from './mui_style'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 
 export default function UserTeam({ auth }) {
-  const [expanded, setExpanded] = useState(false)
-
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false)
-  }
-
   const { data: leadTeamData, isLoading: isLeadTeamDataLoading } = useFetch(
     `${USER_LEAD_TEAM}${auth.id}`
   )
@@ -58,12 +50,8 @@ export default function UserTeam({ auth }) {
       <div className={styles.teamsPage}>
         <div className="container">
           <div className="row pb-3">
-            <Accordion
-              expanded={expanded === 'panel1'}
-              onChange={handleChange('panel1')}
-            >
+            <Accordion>
               <AccordionSummary
-                expandIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                 aria-controls="panel1-content"
                 id="panel1-header"
               >
