@@ -56,7 +56,7 @@ export default function OrderDetailCards({ order_id }) {
             <OrderItemDetail
               key={v.product_id}
               productId={v.product_id}
-              productName={`${v.product_name} ${order.deliver}`}
+              productName={`${v.product_name}`}
               originalPrice={v.order_unit_price}
               // discountedPrice={v.order_unit_price}
               discountedPrice={calculateProductDiscount(

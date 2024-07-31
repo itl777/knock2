@@ -39,13 +39,16 @@ export default function CheckoutSuccess() {
             key={detail.product_id}
             productName={detail.product_name}
             originalPrice={detail.order_unit_price}
-            discountedPrice={calculateProductDiscount(
-              detail.order_unit_price,
-              detail.order_quantity,
-              detail.discount_amount,
-              0,
-              detail.discount_max
-            )}
+            discountedPrice={
+              detail.order_unit_price -
+              calculateProductDiscount(
+                detail.order_unit_price,
+                detail.order_quantity,
+                detail.discount_amount,
+                detail.discount_percentage,
+                detail.discount_max
+              )
+            }
             productImg={`${PRODUCT_IMG}/${detail.product_img}`}
             orderQty={detail.order_quantity}
           />

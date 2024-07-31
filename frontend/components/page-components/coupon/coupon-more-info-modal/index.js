@@ -81,7 +81,7 @@ export default function CouponMoreInfoModal({
               coupon.discount_percentage
             )}
           />
-          {coupon.products && (
+          {coupon.coupon_type_id === 2 && (
             <CouponInfoRow
               label="指定商品詳情"
               content={coupon.products.map((p) => p.product_name).join(', ')}

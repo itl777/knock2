@@ -1,8 +1,24 @@
-// @/components/page-components/themes/detail-section.js
 import React, { useEffect, useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import MoreThemes from '@/components/page-components/themes/detail-section/more-themes'
 import BookingBtn from './booking-btn'
 import Game from './game'
+
+const AnimatedSection = ({ children }) => {
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true })
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 50 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      transition={{ duration: 1 }}
+    >
+      {children}
+    </motion.div>
+  )
+}
 
 export default function DetailSection({ Banner, Item, Step, Calendar }) {
   const sectionRef = useRef(null)
@@ -25,12 +41,20 @@ export default function DetailSection({ Banner, Item, Step, Calendar }) {
   return (
     <div ref={sectionRef}>
       {Banner}
-      {Item}
-      <div id="step-section">{Step}</div>
-      {Calendar}
+      <AnimatedSection>{Item}</AnimatedSection>
+      <AnimatedSection>
+        <div id="step-section">{Step}</div>
+      </AnimatedSection>
+      <AnimatedSection>{Calendar}</AnimatedSection>
+
       <BookingBtn targetId="step-section" />
-      <Game />
-      <MoreThemes />
+
+      <AnimatedSection>
+        <Game />
+      </AnimatedSection>
+      <AnimatedSection>
+        <MoreThemes />
+      </AnimatedSection>
     </div>
   )
 }

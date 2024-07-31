@@ -6,9 +6,7 @@ import { useRouter } from 'next/router'
 import { outlinedInputClasses } from '@mui/material/OutlinedInput'
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
-import { FaMagnifyingGlass } from 'react-icons/fa6'
 import { BsSearch } from 'react-icons/bs'
-import { height } from '@mui/system'
 
 const customTheme = (outerTheme) =>
   createTheme({
@@ -37,6 +35,7 @@ const customTheme = (outerTheme) =>
             fontFamily: 'Noto Serif JP',
           },
           root: {
+            fontFamily: 'Noto Serif JP',
             height: '45px',
             [`&:hover .${outlinedInputClasses.notchedOutline}`]: {
               borderColor: 'var(--TextField-brandBorderHoverColor)',
@@ -50,6 +49,7 @@ const customTheme = (outerTheme) =>
       MuiInput: {
         styleOverrides: {
           root: {
+            fontFamily: 'Noto Serif JP',
             '&::before': {
               borderBottom: '2px solid var(--TextField-brandBorderColor)',
             },

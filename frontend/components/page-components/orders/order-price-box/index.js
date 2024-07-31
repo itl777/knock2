@@ -11,7 +11,7 @@ export default function OrderPriceBox({ discountedPrice, originalPrice }) {
   }
 
   const getSecondPrice = () => {
-    if (discountedPrice > 0) {
+    if (discountedPrice > 0 && discountedPrice !== originalPrice) {
       return formatPrice(originalPrice)
     } else {
       return null

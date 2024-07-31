@@ -1,5 +1,6 @@
 .orderStatusTag {
   display: inline-block;
+  margin-top: 0.5rem;
   padding: .375rem 0.75rem;
   border-radius: .5rem;
 }

@@ -112,6 +112,7 @@ export default function OrderListLayout({ status, initialPage = 1 }) {
 
   useEffect(() => {
     setPage(1)
+    setSearchTerm('')
     setStartDate(start)
     setEndDate(end)
     fetchAllOrders(auth.id, status, 1, '', start, end)

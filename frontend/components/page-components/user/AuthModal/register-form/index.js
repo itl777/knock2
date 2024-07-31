@@ -30,6 +30,7 @@ export default function RegisterForm() {
     registerState,
     registerData,
     registerErrors,
+    quickInput,
     handleRegisterChange,
     registerSubmit,
     loginFormSwitch,
@@ -47,7 +48,24 @@ export default function RegisterForm() {
         >
           <form className={styles.forms} onSubmit={registerSubmit}>
             <div className={styles.title}>
-              <h3>會員註冊</h3>
+              <ClearButton
+                btnText={<h3>會員註冊</h3>}
+                onClick={() =>
+                  quickInput(
+                    {
+                      account: 'ez003612@gmail.com',
+                      password: 'asdasdasd',
+                    },
+                    {
+                      account: 'ez003612@gmail.com',
+                      password: 'qweqweqwe',
+                      reenter_password: 'qweqweqwe',
+                      name: '銀耳機',
+                    },
+                    { account: 'ez003612@gmail.com' }
+                  )
+                }
+              />
             </div>
             <div className={styles.box}>
               <AuthFormInput

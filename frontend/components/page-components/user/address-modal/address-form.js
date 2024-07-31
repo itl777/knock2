@@ -5,9 +5,9 @@ import { API_SERVER } from '@/configs/api-path'
 import { useAuth } from '@/context/auth-context'
 
 // components
-import ErrorHint from '@/components/UI/error-hint'
 import OrderInputBox from '@/components/page-components/checkout/order-input-box'
 import OrderSelectBox from '@/components/page-components/checkout/order-select-box'
+import ClearButton from '@/components/UI/clear-button'
 
 export default function AddressForm({
   addressData,
@@ -29,8 +29,8 @@ export default function AddressForm({
         ...v,
         city_name: city_name,
       }))
-      setSelectedCity(value)
       setSelectedDistrict('')
+      setSelectedCity(value)
       fetchDistrictOptions(value)
     }
 
@@ -47,6 +47,19 @@ export default function AddressForm({
       ...v,
       [name]: value,
     }))
+  }
+
+  const quickInput = async () => {
+    setAddressData({
+      recipient_name: '銀耳機',
+      mobile_phone: '0912345678',
+      city_id: 1,
+      district_id: 5,
+      address: '復興南路一段390號2樓',
+    })
+    setSelectedCity(1)
+    await fetchDistrictOptions(1)
+    setSelectedDistrict(5)
   }
 
   // fetch options
@@ -94,7 +107,9 @@ export default function AddressForm({
   useEffect(() => {
     // fetch options
     fetchCityOptions()
-    fetchDistrictOptions(addressData?.city_id)
+    if (addressData?.city_id) {
+      fetchDistrictOptions(addressData?.city_id)
+    }
     // set selected
     setSelectedCity(addressData?.city_id)
     setSelectedDistrict(addressData?.district_id)
@@ -147,6 +162,10 @@ export default function AddressForm({
             errorText={addressFormErrors.address || ''}
             onChange={handleInputChange}
             // onBlur={handleBlur}
+          />
+          <ClearButton
+            btnText={<span style={{ color: '#FFF' }}>快速輸入</span>}
+            onClick={quickInput}
           />
         </div>
       </form>
