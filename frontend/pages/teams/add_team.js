@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import IndexLayout from '@/components/layout'
 import styles from '@/components/page-components/teams/teams.module.css'
 import moment from 'moment-timezone'
+import { useSnackbar } from '@/context/snackbar-context'
 import LINK from 'next/link'
 import { useAuth } from '@/context/auth-context'
 import { R_CREATE_TEAM, CREATE_TEAM } from '@/configs/api-path'
@@ -16,6 +17,7 @@ export default function TeamsAdd() {
   const { auth } = useAuth()
   const router = useRouter()
   const { reservation_id } = router.query
+  const { openSnackbar } = useSnackbar()
 
   const [reservationData, setReservationData] = useState(null)
   const [createTeam, setCreateTeam] = useState({
@@ -26,11 +28,9 @@ export default function TeamsAdd() {
     team_note: '',
   })
 
-  const [error, setError] = useState('')
   const [titleError, setTitleError] = useState('')
   const [limitError, setLimitError] = useState('')
   const [checkboxError, setCheckboxError] = useState('')
-  // const [isFormValid, setIsFormValid] = useState(false)
   const [checkboxChecked, setCheckboxChecked] = useState(false)
   const [disableSubmit, setDisableSubmit] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -124,15 +124,13 @@ export default function TeamsAdd() {
       const result = await res.json()
 
       if (result.success) {
-        alert('成功創建團隊')
+        openSnackbar('成功創建團隊！', 'success')
         router.push('/teams')
       } else {
-        console.error('創建團隊失敗:', result.error)
-        alert('創建團隊失敗')
+        openSnackbar('創建團隊失敗', 'error')
       }
     } catch (error) {
-      console.error('創建團隊時發生錯誤:', error)
-      alert('創建團隊時發生錯誤')
+      openSnackbar('創建團隊時發生錯誤', 'error')
     }
   }
 

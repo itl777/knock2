@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react'
 import { ADD_CHAT } from '@/configs/api-path'
 
 import styles from '@/components/page-components/teams/teams.module.css'
-// import SubmitBtn from '@/pages/teams/submit-btn'
+import { useSnackbar } from '@/context/snackbar-context'
 
 export default function AddChatForm({ chat_at, chat_by, onSubmit }) {
   const [chatText, setChatText] = useState('')
   const [isValid, setIsValid] = useState(false)
+  const { openSnackbar } = useSnackbar()
 
   useEffect(() => {
     const length = chatText.length
@@ -31,11 +32,14 @@ export default function AddChatForm({ chat_at, chat_by, onSubmit }) {
     })
 
     if (response.ok) {
-      alert('留言已送出!')
+      openSnackbar('留言已送出!', 'success')
+      // alert('留言已送出!')
       setChatText('')
       onSubmit()
     } else {
-      alert('Failed to submit chat.')
+      // alert('留言發送失敗...')
+
+      openSnackbar('留言發送失敗...', 'error')
     }
   }
 
