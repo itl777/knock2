@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useEffect} from 'react'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import TabContext from '@mui/lab/TabContext'
@@ -11,6 +11,8 @@ import myStyle from './favorite-tab.module.css'
 import MyPagination from '../../pagination'
 import { useProduct } from '@/context/product-context'
 import ProductTabDrag from './product-tab-drag'
+import useScreenSize from '@/hooks/useScreenSize'
+import ComponentOnly from './computer-only'
 
 export default function FavoriteTab() {
   // ----MUI
@@ -20,6 +22,11 @@ export default function FavoriteTab() {
     setValue(newValue)
   }
   // ----MUI
+  const userClientWidth = useScreenSize()
+  const [screenWidth, setScreenWidth] = useState(userClientWidth)
+  useEffect(() => {
+    setScreenWidth(userClientWidth)
+  }, [userClientWidth])
 
   const { favoriteData } = useProduct()
 
@@ -53,7 +60,12 @@ export default function FavoriteTab() {
 
         <TabPanel value="2">
           {/* 有分類的卡片列表 */}
-          <ProductTabDrag favData={favoriteData} />
+
+          {screenWidth > 1250 ? (
+            <ProductTabDrag favData={favoriteData} />
+          ) : (
+            <ComponentOnly />
+          )}
         </TabPanel>
       </TabContext>
     </Box>
