@@ -21,10 +21,10 @@ export default function Step() {
   }, [router.query, getThemeDetails])
   return (
     <>
+      <h2 className={myStyle.h1}>
+        {themeDetails.theme_name} - {themeDetails.branch_name}{' '}
+      </h2>
       <div className="container">
-        <h2 className={myStyle.h1}>
-          {themeDetails.theme_name} - {themeDetails.branch_name}{' '}
-        </h2>
         <hr className={myStyle.line} />
         <div className="row mt-5 d-flex justify-content-center">
           <div className="col-6 col-md-2 d-flex flex-column align-items-center mb-4">
