@@ -308,6 +308,7 @@ router.get("/:orderId", async (req, res) => {
     order.order_date = formatOrderDate(order.order_date, dateFormat);
     order.invoice_date = formatOrderDate(order.invoice_date, dateTimeFormat);
     order.payment_date = formatOrderDate(order.payment_date, dateTimeFormat);
+    order.payment_type = getPaymentType(order.payment_type)
 
     // 取得訂單詳細資料
     const orderDetailsSql = `

@@ -79,6 +79,7 @@ export default function OrderDetailCards({ order_id }) {
           <OrderDetailInfo
             order_date={order?.order_date}
             merchant_trade_no={order?.merchant_trade_no}
+            payment_type={order?.payment_type}
             subtotal_price={order?.subtotal_price}
             deliver_fee={order?.deliver_fee}
             discount_total={order?.discountTotal}
