@@ -10,9 +10,9 @@ export default function CategoryBtn() {
   const tabItems = [
     { key: 'category_id=1', name: '派對遊戲', path: '?category_id=1' },
     { key: 'category_id=2', name: '陣營遊戲', path: '?category_id=2' },
-    { key: 'category_id=3', name: '策略遊戲', path: '?category_id=3' },
+    { key: 'category_id=3', name: '家庭遊戲', path: '?category_id=3' },
     { key: 'category_id=4', name: '兒童遊戲', path: '?category_id=4' },
-    { key: 'category_id=5', name: '家庭遊戲', path: '?category_id=5' },
+    { key: 'category_id=5', name: '策略遊戲', path: '?category_id=5' },
   ]
   const isActive = (key) => {
     let { category_id } = router.query
