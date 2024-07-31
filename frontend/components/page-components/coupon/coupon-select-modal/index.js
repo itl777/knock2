@@ -13,6 +13,7 @@ import NoData from '@/components/UI/no-data'
 import TinyButton from '@/components/UI/tiny-button'
 import CheckoutCouponBtn from '../../checkout/checkout-coupon-btn'
 import ProductCouponTag from '../product-coupon-tag'
+import FilterBtn from '@/components/UI/filter-btn'
 
 export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
   const {
@@ -184,6 +185,10 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
     return disabled
   }
 
+  const goToGetCoupon = () => {
+    router.push('/coupon')
+  }
+
   // useEffect(() => {
   //   if (product_id !== null) {
   //     getItemCouponBtn()
@@ -226,6 +231,7 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
           content={wholeSiteCouponContent}
         />
       )}
+
       {modalCoupons.length >= 0 && (
         <>
           <ModalLayout
@@ -262,6 +268,8 @@ export default function CouponSelectModal({ type = 'all', product_id = 0 }) {
                   />
                 ))
               )}
+
+              <FilterBtn btnText="優惠券抽獎活動" onClick={goToGetCoupon} />
             </div>
           </ModalLayout>
         </>

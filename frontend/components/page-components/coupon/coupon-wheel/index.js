@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styles from './coupon-wheel.module.css'
 import axios from 'axios'
+import { motion } from 'framer-motion'
 // contexts
 import { useSnackbar } from '@/context/snackbar-context'
 import { useCart } from '@/context/cart-context'
@@ -132,6 +133,18 @@ export default function CouponWheel({
     }
   }
 
+  const handleWinCoupons = () => {
+    const coupon = RandArray(availableCoupons)
+    setWinCoupon({
+      coupon_id: coupon.id,
+      coupon_name: coupon.coupon_name,
+      valid_until: coupon.valid_until,
+      minimum_order: coupon.minimum_order,
+    })
+    triggerConfetti()
+    setIsDialogOpen(true)
+  }
+
   // 使用亂數取 array
   const RandArray = (array) => {
     var rand = (Math.random() * array.length) | 0
@@ -242,8 +255,19 @@ export default function CouponWheel({
           })}
         </div>
         {/* 中央的圓形div和圖片 */}
-        <div className={styles.ghostImgBox}>
-          <img className={styles.ghostImg} src="/ghost/ghost_11.png" />
+        <div className={styles.ghostImgBox} onClick={handleWinCoupons}>
+          <motion.img
+            className={styles.ghostImg}
+            src="/ghost/ghost_11.png"
+            animate={{
+              rotate: [-15, 15, -15],
+            }}
+            transition={{
+              duration: 1.5,
+              ease: 'easeInOut',
+              repeat: Infinity,
+            }}
+          />
         </div>
         {/* 指針 */}
         <div className={styles.pointer}></div>
