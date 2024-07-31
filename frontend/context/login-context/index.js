@@ -27,6 +27,7 @@ export function LoginContextProvider({ children }) {
   const [totpEnabled, setTotpEnabled] = useState(false)
   const [userIdData, setUserIdData] = useState(0)
   const [totpDataState, setTotpDataState] = useState('')
+
   const handleLoginChange = (e) => {
     const { name, value } = e.target
     const newLoginData = { ...loginData, [name]: value }
@@ -218,6 +219,16 @@ export function LoginContextProvider({ children }) {
     }
   }
 
+  const quickInput = (
+    login = { account: '', password: '' },
+    register = { account: '', password: '', reenter_password: '', name: '' },
+    forgotPassword = { account: '' }
+  ) => {
+    setLoginData(login)
+    setRegisterData(register)
+    setForgotPasswordData(forgotPassword)
+  }
+
   // FormSwitch
   const loginFormSwitch = (formName) => {
     stopCountdownTimer(0)
@@ -355,6 +366,8 @@ export function LoginContextProvider({ children }) {
         handleForgotPasswordChange,
         forgotPasswordSubmit,
         recaptchaRef,
+        // quickInput
+        quickInput,
         // FormSwitch
         loginFormSwitch,
         //CountdownTimer

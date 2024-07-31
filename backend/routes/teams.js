@@ -222,7 +222,7 @@ router.get("/api/chat/get_chat_at_:team_id", async (req, res) => {
 FROM \`teams_chats\` 
 JOIN \`users\` ON chat_by = user_id
 WHERE chat_at = ${team_id} AND chat_display = 1
-ORDER BY create_at DESC`;
+ORDER BY create_at ASC`;
 
 //  `SELECT nick_name, chat_text, chat_display, create_at, avatar
 //   FROM teams_chats
@@ -246,9 +246,19 @@ router.get("/api/user_join_team_:user_id", async (req, res) => {
     return res.json({ success: false, error: "沒有編號" });
   }
 
-  const sql =`SELECT *
+  const sql =`SELECT  no, join_team_id, team_title, team_limit, team_status
 FROM teams_members
-WHERE join_user_id = ${user_id}`;
+join teams_list t on join_team_id = team_id
+WHERE join_user_id = ${user_id} AND team_status = "募集中"`;
+
+// const sql2 =`SELECT  no, join_team_id, team_title, team_limit, team_status
+// FROM teams_members
+// join teams_list t on join_team_id = team_id
+// WHERE join_user_id = ${user_id} AND team_status = "已成團"`;
+
+// const sql =`SELECT *
+// FROM teams_members
+// WHERE join_user_id = ${user_id}`;
 
   const [rows] = await db.query(sql);
 

@@ -9,6 +9,7 @@ import {
 } from '@/configs/api-path'
 import { useFetch } from '@/hooks/useTeamFetch'
 import ReserDisplay from './reser_display'
+import TeamTable from './team_table'
 
 import Link from 'next/link'
 
@@ -32,7 +33,6 @@ export default function UserTeam({ auth }) {
   )
   const { data: teamMemberData, isLoading: isTeamMemberDataLoading } =
     useFetch(GET_ALL_MEMBER)
-
 
   const formatDateToTaiwan = (dateString) => {
     return moment(dateString).tz('Asia/Taipei').format('YYYY/MM/DD')
@@ -84,7 +84,13 @@ export default function UserTeam({ auth }) {
               </AccordionSummary>
               <AccordionDetails component="div">
                 <Typography component="div">
-                  <div className="row">
+                  <div
+                    className="row"
+                    style={{
+                      borderTop: '1px solid #B99755',
+                      paddingTop: '10px',
+                    }}
+                  >
                     <div
                       className={`col-12 col-lg-6 ${styles.teamlistblock} ${styles.teamlistblock1}`}
                     >
@@ -93,41 +99,10 @@ export default function UserTeam({ auth }) {
                       <div className={styles.titleBL}></div>
                       {userData.success ? (
                         <>
-                          <table className={styles.teamTable}>
-                            <thead>
-                              <tr>
-                                <th>團名</th>
-                                <th>行程</th>
-                                <th>日期時間</th>
-                                <th>人數</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {userData.rows.map((r) => {
-                                return (
-                                  <>
-                                    <tr key={r.team_id}>
-                                      <td>
-                                        {' '}
-                                        <Link href={`/teams/${r.team_id}`}>
-                                          {r.team_title}
-                                        </Link>
-                                      </td>
-                                      <td>{r.theme_name}</td>
-                                      <td>
-                                        {formatDateToTaiwan(r.reservation_date)}{' '}
-                                        {formatTime(r.start_time)}
-                                      </td>
-                                      <td>
-                                        {teamMemberCount[r.team_id] || 0} /{' '}
-                                        {r.team_limit}
-                                      </td>
-                                    </tr>
-                                  </>
-                                )
-                              })}
-                            </tbody>
-                          </table>
+                          <TeamTable
+                            Data={userData}
+                            MemberCount={teamMemberCount}
+                          />
                         </>
                       ) : (
                         <div className={styles.noDataInfo}>

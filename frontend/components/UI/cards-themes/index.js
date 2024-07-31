@@ -15,7 +15,7 @@ import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
 
 export default function Card02({
   branchName = '',
-  themeImg = 'theme-img.png',
+  themeImg = '',
   themeName = '',
   difficulty = '',
   introduction = '',
@@ -47,13 +47,6 @@ export default function Card02({
     router.push(`/themes/themes-details/${branch_themes_id}`)
   }
 
-  const style = {
-    border: '1px solid #222222',
-    padding: '7px 13px 7px 13px',
-    borderRadius: '20px',
-    fontWeight: 'normal',
-  }
-
   return (
     <Card
       variant="plain"
@@ -81,7 +74,7 @@ export default function Card02({
         </Typography>
         <AspectRatio ratio="375/240">
           <Image
-            src={`/themes-main/${themeImg}`}
+            src={`/themes-main/${themeImg.replace(/\.[^/.]+$/, '.png')}`}
             alt=""
             width={375}
             height={240}

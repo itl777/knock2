@@ -29,6 +29,7 @@ export default function ForgotPasswordForm() {
     forgotPasswordState,
     forgotPasswordData,
     forgotForgotPasswordErrors,
+    quickInput,
     handleForgotPasswordChange,
     forgotPasswordSubmit,
     loginFormSwitch,
@@ -46,7 +47,24 @@ export default function ForgotPasswordForm() {
         >
           <form className={styles.forms} onSubmit={forgotPasswordSubmit}>
             <div className={styles.title}>
-              <h3>忘記密碼</h3>
+              <ClearButton
+                btnText={<h3>忘記密碼</h3>}
+                onClick={() => {
+                  quickInput(
+                    {
+                      account: 'ez003612@gmail.com',
+                      password: 'asdasdasd',
+                    },
+                    {
+                      account: 'ez003612@gmail.com',
+                      password: 'qweqweqwe',
+                      reenter_password: 'qweqweqwe',
+                      name: '銀耳機',
+                    },
+                    { account: 'ez003612@gmail.com' }
+                  )
+                }}
+              />
             </div>
             <div className={styles.box}>
               <AuthFormInput
