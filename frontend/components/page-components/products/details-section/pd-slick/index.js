@@ -39,6 +39,7 @@ function PdSlick({ product_id }) {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
+    arrows: false,
   }
   return (
     <div>
