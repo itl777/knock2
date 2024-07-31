@@ -5,7 +5,6 @@ import { API_SERVER } from '@/configs/api-path'
 import { useAuth } from '@/context/auth-context'
 
 // components
-import ErrorHint from '@/components/UI/error-hint'
 import OrderInputBox from '@/components/page-components/checkout/order-input-box'
 import OrderSelectBox from '@/components/page-components/checkout/order-select-box'
 
@@ -94,7 +93,9 @@ export default function AddressForm({
   useEffect(() => {
     // fetch options
     fetchCityOptions()
-    fetchDistrictOptions(addressData?.city_id)
+    if (addressData?.city_id) {
+      fetchDistrictOptions(addressData?.city_id)
+    }
     // set selected
     setSelectedCity(addressData?.city_id)
     setSelectedDistrict(addressData?.district_id)
