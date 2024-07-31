@@ -255,7 +255,7 @@ export default function CouponWheel({
           })}
         </div>
         {/* 中央的圓形div和圖片 */}
-        <div className={styles.ghostImgBox} onClick={handleWinCoupons}>
+        <button className={styles.ghostImgBox} onClick={handleWinCoupons}>
           <motion.img
             className={styles.ghostImg}
             src="/ghost/ghost_11.png"
@@ -268,7 +268,7 @@ export default function CouponWheel({
               repeat: Infinity,
             }}
           />
-        </div>
+        </button>
         {/* 指針 */}
         <div className={styles.pointer}></div>
       </div>

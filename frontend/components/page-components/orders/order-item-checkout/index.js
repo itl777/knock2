@@ -88,14 +88,12 @@ export default function OrderItemCheckout({ type = 'def' }) {
                   <OrderPriceBox
                     originalPrice={v.price}
                     discountedPrice={
-                      v.price -
                       calculateProductDiscount(
                         v.price,
                         v.cart_product_quantity,
                         v.discount_amount,
                         v.discount_percentage,
                         v.minimum_order,
-                        v.discount_max
                       )
                     }
                   />

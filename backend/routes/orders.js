@@ -203,7 +203,7 @@ router.get("/list", async (req, res) => {
         .forEach((item) => {
           const total = item.order_quantity * item.order_unit_price;
           if (item.discount_percentage) {
-            const percentage = 1 - item.discount_percentage / 100;
+            const percentage = (1 - item.discount_percentage / 100).toFixed(2);
             const discount = Math.floor(total * percentage);
             productDiscount +=
               discount >= item.discount_max ? item.discount_max : discount;
@@ -218,7 +218,7 @@ router.get("/list", async (req, res) => {
       const excludeProductTotal =
         order.subtotal_price - discountedProductOriginalTotal;
       if (order.discount_percentage) {
-        const percentage = 1 - order.discount_percentage / 100;
+        const percentage = (1 - order.discount_percentage / 100).toFixed(2);
         const discount = Math.floor(excludeProductTotal * percentage);
         orderDiscount +=
           discount > order.discount_max ? order.discount_max : discount;
@@ -343,7 +343,7 @@ router.get("/:orderId", async (req, res) => {
     orderDetails.forEach((item) => {
       const total = item.order_quantity * item.order_unit_price;
       if (item.discount_percentage) {
-        const percentage = 1 - item.discount_percentage / 100;
+        const percentage = (1 - item.discount_percentage / 100).toFixed(2);
         const discount = Math.floor(total * percentage);
         productDiscount +=
           discount >= item.discount_max ? item.discount_max : discount;
@@ -358,7 +358,7 @@ router.get("/:orderId", async (req, res) => {
     const excludeProductTotal =
       order.subtotal_price - discountedProductOriginalTotal;
     if (order.discount_percentage) {
-      const percentage = 1 - order.discount_percentage / 100;
+      const percentage = (1 - order.discount_percentage / 100).toFixed(2);
       const discount = Math.floor(excludeProductTotal * percentage);
       orderDiscount +=
         discount > order.discount_max ? order.discount_max : discount;

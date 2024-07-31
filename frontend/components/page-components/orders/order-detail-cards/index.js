@@ -64,8 +64,7 @@ export default function OrderDetailCards({ order_id }) {
                 v.order_quantity,
                 v.discount_amount,
                 v.discount_percentage,
-                0,
-                v.discount_max
+                v.minimum_order
               )}
               productImg={
                 v.product_img ? `${PRODUCT_IMG}/${v.product_img}` : ''
