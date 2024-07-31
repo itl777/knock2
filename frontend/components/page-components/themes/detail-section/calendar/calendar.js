@@ -13,7 +13,6 @@ const Calendar = ({ branch_themes_id }) => {
   const { setDateSessionsStatus } = useSession()
   const router = useRouter()
   const { id } = router.query
-  const isReady = router.isReady
 
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [daysInMonth, setDaysInMonth] = useState([])
@@ -22,6 +21,12 @@ const Calendar = ({ branch_themes_id }) => {
   const [year, setYear] = useState(currentDate.year())
   const { updateSelectedDate } = useContext(DateContext)
   const [calendarData, setCalendarData] = useState({})
+
+  const isDateInAllowedRange = (date) => {
+    const today = dayjs()
+    const threeMonthsLater = today.add(3, 'month')
+    return date.isAfter(today, 'day') && date.isBefore(threeMonthsLater, 'day')
+  }
 
   const fetchCalendarData = async (year, month) => {
     if (!branch_themes_id) return
@@ -75,13 +80,18 @@ const Calendar = ({ branch_themes_id }) => {
         const date = dayjs(`${year}-${month + 1}-${i}`)
         const dateString = date.format('YYYY-MM-DD')
         const dayData = calendarData[dateString] || {}
+        const isAllowed = isDateInAllowedRange(date)
         const isPastOrToday =
           date.isBefore(dayjs(), 'day') || date.isSame(dayjs(), 'day')
         days.push({
           day: i,
           currentMonth: true,
-          status: isPastOrToday ? 'disabled' : dayData.status || 'open',
-          clickable: !isPastOrToday && dayData.status !== 'full',
+          status: isPastOrToday
+            ? 'disabled'
+            : isAllowed
+            ? dayData.status || 'open'
+            : 'disabled',
+          clickable: isAllowed && !isPastOrToday && dayData.status !== 'full',
         })
       }
 
