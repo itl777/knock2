@@ -128,7 +128,7 @@ router.get("/list", async (req, res) => {
       LEFT JOIN coupons ON coupons.id = o.order_coupon_id
       WHERE o.member_id = ? AND ${condition}
       GROUP BY o.id
-      ORDER BY o.id DESC
+      ORDER BY o.order_date DESC, o.id desc
       LIMIT ? OFFSET ?;
     `;
 
@@ -154,32 +154,32 @@ router.get("/list", async (req, res) => {
 
     // 取得訂單商品圖片
     const orderDetailsSql = `
-      SELECT 
-        od.order_id,
-        od.order_product_id AS product_id,
-        pm.product_name,
-        od.order_quantity,
-        od.product_coupon_id AS coupon_id,
-        c.discount_amount,
-        c.discount_percentage,
-        c.discount_max,
-        od.order_unit_price,
-        o.rtn_code,
-        o.payment_date,
-        o.deliver,
-        o.cancel,
-        img.product_img
-      FROM order_details od
-      LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
-      LEFT JOIN (
-        SELECT img_product_id, product_img,
-          ROW_NUMBER() OVER (PARTITION BY img_product_id ORDER BY img_id) AS rn
-        FROM product_img
-      ) img ON img.img_product_id = od.order_product_id AND img.rn = 1
-      LEFT JOIN orders o ON o.id = od.order_id
-      LEFT JOIN coupons c ON c.id = od.product_coupon_id
-      WHERE od.order_id IN (SELECT id FROM orders WHERE member_id = ? AND ${condition});
-    `;
+    SELECT 
+      od.order_id,
+      od.order_product_id AS product_id,
+      pm.product_name,
+      od.order_quantity,
+      od.product_coupon_id AS coupon_id,
+      c.discount_amount,
+      c.discount_percentage,
+      c.discount_max,
+      od.order_unit_price,
+      o.rtn_code,
+      o.payment_date,
+      o.deliver,
+      o.cancel,
+      img.product_img
+    FROM order_details od
+    LEFT JOIN product_management pm ON pm.product_id = od.order_product_id
+    LEFT JOIN (
+      SELECT img_product_id, product_img,
+        ROW_NUMBER() OVER (PARTITION BY img_product_id ORDER BY img_id) AS rn
+      FROM product_img
+    ) img ON img.img_product_id = od.order_product_id AND img.rn = 1
+    LEFT JOIN orders o ON o.id = od.order_id
+    LEFT JOIN coupons c ON c.id = od.product_coupon_id
+    WHERE od.order_id IN (SELECT id FROM orders WHERE member_id = ? AND ${condition});
+  `;
 
     const [orderDetails] = await db.query(orderDetailsSql, [member_id]);
 

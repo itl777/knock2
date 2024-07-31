@@ -107,6 +107,11 @@ export default function ReservationPage({ status }) {
     }
   }, [auth.id, router.isReady, authIsReady, currentPage, status])
 
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [status])
+
+
   return (
     <>
       {!isLogin && <RedirectionGuide />}
