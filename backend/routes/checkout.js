@@ -165,11 +165,14 @@ router.get("/api/cart", async (req, res) => {
       JOIN product_management AS pm
       ON pm.product_id = cm.cart_product_id
       JOIN (
-        SELECT img_product_id, MIN(product_img) as product_img
+        SELECT img_product_id, product_img
         FROM product_img
-        GROUP BY img_product_id
-      ) AS pi
-      ON pi.img_product_id = cm.cart_product_id
+        WHERE (img_product_id, img_id) IN (
+            SELECT img_product_id, MIN(img_id)
+            FROM product_img
+            GROUP BY img_product_id
+        )
+      ) AS pi ON pi.img_product_id = cm.cart_product_id
       LEFT JOIN coupons AS c
       ON c.id = cm.cart_product_coupon_id
       WHERE cm.cart_member_id = ?
