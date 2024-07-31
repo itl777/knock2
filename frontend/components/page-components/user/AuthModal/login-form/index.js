@@ -33,6 +33,7 @@ export default function LoginForm() {
     loginErrors,
     handleLoginChange,
     loginSubmit,
+    quickInput,
     loginFormSwitch,
     totpEnabled, // 2FA
     totpDataState,
@@ -49,16 +50,62 @@ export default function LoginForm() {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <figure className={styles.ghost}>
-            <Image src="/ghost/ghost_04.png" alt="" width={133} height={138} />
-            <Image src="/ghost/ghost_13.png" alt="" width={115} height={115} />
-          </figure>
+          <ClearButton
+            btnText={
+              <figure className={styles.ghost}>
+                <Image
+                  src="/ghost/ghost_04.png"
+                  alt=""
+                  width={133}
+                  height={138}
+                />
+                <Image
+                  src="/ghost/ghost_13.png"
+                  alt=""
+                  width={115}
+                  height={115}
+                />
+              </figure>
+            }
+            onClick={() =>
+              quickInput(
+                {
+                  account: 'test7@test.com',
+                  password: '12345678',
+                },
+                {
+                  account: '',
+                  password: '',
+                  reenter_password: '',
+                  name: '',
+                },
+                { account: '' }
+              )
+            }
+          />
           <form
             className={styles.forms}
             onSubmit={totpEnabled ? login2faSubmit : loginSubmit}
           >
             <div className={styles.title}>
-              <h3>會員登入</h3>
+              <ClearButton
+                btnText={<h3>會員登入</h3>}
+                onClick={() =>
+                  quickInput(
+                    {
+                      account: 'ez003612@gmail.com',
+                      password: 'asdasdasd',
+                    },
+                    {
+                      account: 'ez003612@gmail.com',
+                      password: 'qweqweqwe',
+                      reenter_password: 'qweqweqwe',
+                      name: '銀耳機',
+                    },
+                    { account: 'ez003612@gmail.com' }
+                  )
+                }
+              />
             </div>
             <div className={styles.box}>
               {totpEnabled === true ? (
@@ -101,7 +148,24 @@ export default function LoginForm() {
               />
             </div>
             <div className={styles.links}>
-              <span>——— 或選擇其他方式登入 ———</span>
+              <ClearButton
+                btnText={<span>——— 或選擇其他方式登入 ———</span>}
+                onClick={() =>
+                  quickInput(
+                    {
+                      account: 'lala@mail.com',
+                      password: 'wwwwqqqq',
+                    },
+                    {
+                      account: '',
+                      password: '',
+                      reenter_password: '',
+                      name: '',
+                    },
+                    { account: '' }
+                  )
+                }
+              />
             </div>
             <div className={styles.links}>
               <ThirdPartyLoginButton />
