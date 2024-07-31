@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import { AspectRatio } from '@mui/joy'
 import Link from 'next/link'
 import { formatDateToTaiwan, formatTime } from '@/hooks/useDateFormatter'
-import { API_SERVER } from '@/configs/api-path'
 import UserAvatar from '@/components/page-components/teams/user_avatar'
 import styles from '@/components/page-components/teams/teams.module.css'
 import Tooltip from '@mui/material/Tooltip'
@@ -49,19 +48,7 @@ const TeamDetails = ({ teamData, memberCount }) => {
         <div
           style={{ fontSize: '24px', paddingTop: '2px', paddingBottom: '5px' }}
         >
-          <UserAvatar
-            avatar={teamData.avatar}
-            nickName={teamData.nick_name}
-            apiServer={API_SERVER}
-          />
-          {/* <Image
-            src={
-              teamData.avatar ? `${API_SERVER}/avatar/${teamData.avatar}` : ''
-            }
-            height={40}
-            width={40}
-            alt={`${teamData.nick_name} avatar`}
-          /> */}
+          <UserAvatar avatar={teamData.avatar} nickName={teamData.nick_name} />
           <span style={{ marginLeft: '15px' }}>{teamData.nick_name}</span>
         </div>
         <div style={{ fontSize: '16px' }}>
