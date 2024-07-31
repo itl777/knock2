@@ -81,9 +81,10 @@ position: relative;
   display: none;
 }
 .mask{
-  mask: url(/products/mask.svg);
-  mask-repeat: no-repeat;
-  mask-position: center;
+  mask: url('/products/mask.svg') no-repeat center;
+  -webkit-mask: url('/products/mask.svg') no-repeat center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
 }
 @media screen and (max-width: 780px) {
   .customer {

@@ -107,9 +107,9 @@ export default function PdFilter() {
               <div
                 className={`${myStyle['bottom-center']} col-lg-4 d-flex flex-column justify-content-center align-items-center`}
               >
-                <div className={myStyle.text}>
+                {/* <div className={myStyle.text}>
                   <TfiMoney />
-                </div>
+                </div> */}
                 <div>
                   <PriceSlider price={price} setPrice={setPrice}/>
                 </div>
