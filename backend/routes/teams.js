@@ -25,10 +25,9 @@ const searchData = async (req) => {
   let difficulty = req.query.difficulty || req.params.difficulty || "";
   let teamSearch = req.query.team_id || req.params.team_id || "";
   let userSearch = req.query.user_id || req.params.user_id || "";
-  let start_date = req.query.startdate || "";
-  let end_date = req.query.enddate || "";
+  let reservation_date = req.query.startdate || "";
   
-  let sort = req.query.sort || "reservation_id";
+  let sort = req.query.sort || "reservation_date";
   const order = req.query.order || "DESC";
 
   let where = " WHERE 1 ";
@@ -66,8 +65,7 @@ JOIN users u ON r.user_id = u.user_id
 JOIN sessions s ON r.session_id = s.sessions_id
 JOIN teams_list team ON team.r_id = reservation_id
 JOIN branches b ON bt.branch_id = b.branch_id
-  ${where}`;
-  // ORDER BY ${sort} ${order}
+${where}`;
   console.log(t_sql);
   const [[{ totalRows }]] = await db.query(t_sql);
 
@@ -153,7 +151,8 @@ const noTeamData = async (req) => {
   LEFT JOIN \`teams_list\` team ON r_id = reservation_id
   JOIN \`users\` u ON r.user_id = u.user_id
   JOIN \`sessions\` s ON r.session_id = s.sessions_id
-  WHERE team_id IS NULL ${where}`;
+  WHERE team_id IS NULL ${where}
+  ORDER BY reservation_date DESC`;
 
 // const [rows] = await db.query(sql);
   [rows] = await db.query(sql);
@@ -436,8 +435,8 @@ const createTeam = async (req) => {
     return res.json({ success: false, error: "沒有編號" });
   }
 
-  const sql =`SELECT reservation_id, theme_name, b.branch_id, u.user_id, nick_name, branch_name, 
-  reservation_date, s.start_time, s.end_time , theme_img, s.theme_Time, min_players, max_players
+  const sql =`SELECT reservation_id, theme_name, b.branch_id, u.user_id, nick_name, branch_name, participants,
+  reservation_date, s.start_time, s.end_time , theme_img, s.theme_Time
   FROM reservations r
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
   JOIN \`branches\` b ON bt.branch_id = b.branch_id
