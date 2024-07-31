@@ -137,6 +137,7 @@ router.get("/", async (req, res) => {
         LEFT JOIN reservation_status rs ON rs.id = r.reservation_status_id
         LEFT JOIN sessions s ON s.sessions_id = r.session_id
       WHERE r.user_id = ? AND ${condition}
+      ORDER BY r.reservation_date desc
       LIMIT ?, ?;
     `;
 
