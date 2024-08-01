@@ -24,6 +24,7 @@ const customTheme = createTheme({
             padding: '8px 16px',
             color: `${selectedTextColor}`, // 設置選擇後文字顏色
             background: `#333333`,
+            borderRadius: `9px`,
           },
           '& .MuiOutlinedInput-notchedOutline': {
             border: `${borderWidth} solid ${borderColor}`,
@@ -76,9 +77,8 @@ const customTheme = createTheme({
         root: {
           fontFamily: 'Noto Serif JP, serif',
           '&.Mui-selected': {
-            // backgroundColor: selectedBackgroundColor,
-            background: `#333333`,
-            // color: selectedTextColor,
+            background: `#222222`,
+            borderRadius: `9px`,
           },
           '&.Mui-selected:hover': {
             backgroundColor: selectedBackgroundColorHover,

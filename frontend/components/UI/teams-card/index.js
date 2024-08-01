@@ -1,8 +1,7 @@
 import styles from './cards.module.scss'
 import Image from 'next/image'
 import Link from 'next/link'
-import moment from 'moment-timezone'
-
+import { formatDateToTaiwan, formatTime } from '@/hooks/useDateFormatter'
 import {
   AspectRatio,
   Card,
@@ -11,11 +10,6 @@ import {
   Typography,
   Box,
 } from '@mui/joy'
-
-// import { MdOutlineGroup, MdOutlineAccessTime } from 'react-icons/md'
-// import PdBtnContained from '@/components/UI/pd-btn-contained'
-// import { Padding } from '@mui/icons-material'
-// import { color } from 'framer-motion'
 
 export default function Card01({
   team_id = 0,
@@ -42,13 +36,6 @@ export default function Card01({
       default:
         return '#222222' // 默認顏色
     }
-  }
-
-  const formatDateToTaiwan = (dateString) => {
-    return moment(dateString).tz('Asia/Taipei').format('YYYY/MM/DD')
-  }
-  const formatTime = (timeString) => {
-    return moment(timeString, 'HH:mm:ss').format('A hh:mm')
   }
 
   return (
@@ -80,16 +67,18 @@ export default function Card01({
         <Typography
           sx={{
             position: 'absolute',
-            top: '5px',
+            top: '20px',
             right: '15px',
-            paddingTop: '10px',
+            padding: '10px 0',
+            // paddingTop: '10px',
             color: '#B99755',
             zIndex: 1,
             height: '100px',
             width: '100px',
             textAlign: 'center',
+            // background: '#FFF',
             background: '#222222c4',
-            borderRadius: '45% 45% 0 0',
+            borderRadius: '50%',
           }}
         >
           {team_status === '募集中' ? (
@@ -116,7 +105,7 @@ export default function Card01({
           ) : null}
         </Typography>
 
-        <AspectRatio ratio="375/240">
+        <AspectRatio ratio="375/240" style={{ borderRadius: '3px 3px 0 0' }}>
           <Image
             src={`/themes-main/${themeImg}`}
             alt=""
@@ -173,11 +162,7 @@ export default function Card01({
           color: '#B99755',
         }}
       >
-        <h6 className="pb-2">
-          {/* 團隊名：
-          <br /> */}
-          {team_title}
-        </h6>
+        <h6 className="pb-2">{team_title}</h6>
         <span>團長：{rick_name}</span>
         <span>
           時間：{formatDateToTaiwan(reservation_date)} {formatTime(start_time)}
