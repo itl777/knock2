@@ -64,8 +64,7 @@ export default function OrderDetailCards({ order_id }) {
                 v.order_quantity,
                 v.discount_amount,
                 v.discount_percentage,
-                0,
-                v.discount_max
+                v.minimum_order
               )}
               productImg={
                 v.product_img ? `${PRODUCT_IMG}/${v.product_img}` : ''
@@ -80,6 +79,7 @@ export default function OrderDetailCards({ order_id }) {
           <OrderDetailInfo
             order_date={order?.order_date}
             merchant_trade_no={order?.merchant_trade_no}
+            payment_type={order?.payment_type}
             subtotal_price={order?.subtotal_price}
             deliver_fee={order?.deliver_fee}
             discount_total={order?.discountTotal}

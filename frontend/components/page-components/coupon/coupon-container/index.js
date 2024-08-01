@@ -107,13 +107,13 @@ export default function CouponContainer({ status }) {
         </div>
       </section>
 
-      {pageCoupons.length > 0 && (
+      {/* {pageCoupons.length > 0 && (
         <UserPagination
           page={currentPage}
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-      )}
+      )} */}
     </>
   )
 }

@@ -8,6 +8,7 @@ export default function OrderDetailInfo({
   deliver_fee,
   total_price,
   payment_date,
+  payment_type,
   full_address,
   order_status_id,
   discount_total,
@@ -32,7 +33,10 @@ export default function OrderDetailInfo({
         <OrderDetailRow label="合計" content={formatPrice(total_price)} />
       )}
       {!paymentHidden && !!payment_date && (
-        <OrderDetailRow label="付款時間" content={payment_date} />
+        <OrderDetailRow
+          label="付款時間"
+          content={`${payment_date} / ${payment_type}`}
+        />
       )}
       {!paymentHidden && <OrderDetailRow label="地址" content={full_address} />}
 

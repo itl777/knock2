@@ -203,7 +203,7 @@ router.get("/list", async (req, res) => {
         .forEach((item) => {
           const total = item.order_quantity * item.order_unit_price;
           if (item.discount_percentage) {
-            const percentage = 1 - item.discount_percentage / 100;
+            const percentage = (1 - item.discount_percentage / 100).toFixed(2);
             const discount = Math.floor(total * percentage);
             productDiscount +=
               discount >= item.discount_max ? item.discount_max : discount;
@@ -218,7 +218,7 @@ router.get("/list", async (req, res) => {
       const excludeProductTotal =
         order.subtotal_price - discountedProductOriginalTotal;
       if (order.discount_percentage) {
-        const percentage = 1 - order.discount_percentage / 100;
+        const percentage = (1 - order.discount_percentage / 100).toFixed(2);
         const discount = Math.floor(excludeProductTotal * percentage);
         orderDiscount +=
           discount > order.discount_max ? order.discount_max : discount;
@@ -308,6 +308,7 @@ router.get("/:orderId", async (req, res) => {
     order.order_date = formatOrderDate(order.order_date, dateFormat);
     order.invoice_date = formatOrderDate(order.invoice_date, dateTimeFormat);
     order.payment_date = formatOrderDate(order.payment_date, dateTimeFormat);
+    order.payment_type = getPaymentType(order.payment_type)
 
     // 取得訂單詳細資料
     const orderDetailsSql = `
@@ -343,7 +344,7 @@ router.get("/:orderId", async (req, res) => {
     orderDetails.forEach((item) => {
       const total = item.order_quantity * item.order_unit_price;
       if (item.discount_percentage) {
-        const percentage = 1 - item.discount_percentage / 100;
+        const percentage = (1 - item.discount_percentage / 100).toFixed(2);
         const discount = Math.floor(total * percentage);
         productDiscount +=
           discount >= item.discount_max ? item.discount_max : discount;
@@ -358,7 +359,7 @@ router.get("/:orderId", async (req, res) => {
     const excludeProductTotal =
       order.subtotal_price - discountedProductOriginalTotal;
     if (order.discount_percentage) {
-      const percentage = 1 - order.discount_percentage / 100;
+      const percentage = (1 - order.discount_percentage / 100).toFixed(2);
       const discount = Math.floor(excludeProductTotal * percentage);
       orderDiscount +=
         discount > order.discount_max ? order.discount_max : discount;

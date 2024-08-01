@@ -1,8 +1,13 @@
 import { FaArrowLeftLong } from 'react-icons/fa6'
 import IconButton from '@mui/material/IconButton'
 import { useRouter } from 'next/router'
+import ClearButton from '@/components/UI/clear-button'
 
-export default function UserProfileFormTitle({ text = '', href }) {
+export default function UserProfileFormTitle({
+  text = '',
+  href,
+  quickInput = '',
+}) {
   const router = useRouter()
   const hrefHandler = () => {
     if (href) {
@@ -18,6 +23,12 @@ export default function UserProfileFormTitle({ text = '', href }) {
           </IconButton>
         ) : null}
         <h5>{text}</h5>
+        {quickInput === '' ? null : (
+          <ClearButton
+            btnText={<span style={{ color: '#FFF' }}>快速輸入</span>}
+            onClick={quickInput}
+          />
+        )}
       </div>
       <style jsx>{`
         .title {
