@@ -43,7 +43,7 @@ export default function ReservationSuccessSection() {
   }
 
   useEffect(() => {
-    if (router.isReady && authIsReady && auth.id && reservation_id > 0) {
+    if (router.isReady && authIsReady && auth.id) {
       fetchOneReservation(reservation_id)
     }
   }, [router.isReady, authIsReady, auth.id, reservation_id])
