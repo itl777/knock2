@@ -52,28 +52,30 @@ export default function ReservationSuccessSection() {
     <section className={styles.sectionContainer}>
       <h3 className={styles.titleStyles}>{title}</h3>
 
-      <div className={styles.contentContainer}>
-        <img className={styles.ghostImg} src="/ghost/ghost_03.png" alt="" />
+      {res && (
+        <div className={styles.contentContainer}>
+          <img className={styles.ghostImg} src="/ghost/ghost_03.png" alt="" />
 
-        <SuccessRows
-          label="密室主題"
-          content={`${res.branch_name} - ${res.theme_name}`}
-        />
-        <SuccessRows
-          label="預約日期"
-          content={formatDateWithWeekday(res.reservation_date)}
-        />
-        <SuccessRows label="預約人數" content={`${res.participants} 人`} />
-        <SuccessRows
-          label="預約場次"
-          content={`${res.start_time} ~ ${res.end_time}`}
-        />
+          <SuccessRows
+            label="密室主題"
+            content={`${res.branch_name} - ${res.theme_name}`}
+          />
+          <SuccessRows
+            label="預約日期"
+            content={formatDateWithWeekday(res.reservation_date)}
+          />
+          <SuccessRows label="預約人數" content={`${res.participants} 人`} />
+          <SuccessRows
+            label="預約場次"
+            content={`${res.start_time} ~ ${res.end_time}`}
+          />
 
-        <SuccessDeposit
-          deposit={`訂金金額：${res.deposit} 元`}
-          payment_date={res.payment_date}
-        />
-      </div>
+          <SuccessDeposit
+            deposit={`訂金金額：${res.deposit} 元`}
+            payment_date={res.payment_date}
+          />
+        </div>
+      )}
 
       <div className={styles.btnStack}>
         <OutlineBtn
