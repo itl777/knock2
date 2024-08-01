@@ -5,7 +5,6 @@ import theme from '@/context/theme'
 
 export default function SubmitBtn({
   btnText = '沒設定',
-  color = 'grey',
   onClick,
   disableSubmit,
 }) {
@@ -14,7 +13,6 @@ export default function SubmitBtn({
       <ThemeProvider theme={theme}>
         <Button
           variant="contained"
-          color={color}
           type="submit"
           onClick={onClick} // ****** Iris Added
           disableSubmit={disableSubmit}
@@ -27,8 +25,7 @@ export default function SubmitBtn({
             letterSpacing: '2.16px',
             width: '180px',
             padding: '10px 19px',
-            // backgroundColor: disabled ? 'red' : theme.palette[color].main,
-            // color: disabled ? '#FFF' : '#000',
+            backgroundColor: disableSubmit ? 'gray' : '#B99755',
             '&:hover': {
               // backgroundColor: disabled ? '#B0B0B0' : theme.palette[color].dark,
             },

@@ -3,10 +3,9 @@ import { useRouter } from 'next/router'
 import { GET_DATA } from '@/configs/api-path'
 
 import styles from '@/components/page-components/teams/teams.module.css'
+import SelectT from './selectT'
 import Card from '@/components/UI/teams-card'
 import MyPagination from './pagination'
-
-import SelectT from './selectT'
 
 export default function TeamList() {
   const router = useRouter()
@@ -46,7 +45,6 @@ export default function TeamList() {
       console.log('API result:', result)
 
       if (result.success) {
-        // const { rows, totalPages } = result
         setData({ success: true, rows: result.rows })
         setTotalPages(result.totalPages)
       } else if (result.redirect) {

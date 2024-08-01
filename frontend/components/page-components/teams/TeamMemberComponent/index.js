@@ -26,12 +26,12 @@ const TeamMemberComponent = ({
           (member) => member.m_status === 1
         ).length
         setSelectedCount(initialCount)
-        console.log('成功取得團員資料', data.data)
+        // console.log('成功取得團員資料', data.data)
       } else {
-        console.error('團員資料取得失敗:', data.error)
+        // console.error('團員資料取得失敗:', data.error)
       }
     } catch (error) {
-      console.error('取得團員資料時發生錯誤:', error)
+      // console.error('取得團員資料時發生錯誤:', error)
     }
   }
   useEffect(() => {
@@ -99,12 +99,6 @@ const TeamMemberComponent = ({
       ))}
       <div style={{ textAlign: 'center', paddingTop: '12px' }}>
         團員/上限: {selectedCount} / {team_limit}
-        {selectedCount === team_limit && <div>人數達標，要成團了嗎？</div>}
-        {selectedCount > team_limit && (
-          <div style={{ color: 'red', textAlign: 'center' }}>
-            人數超過上限，請重新設定
-          </div>
-        )}
       </div>
     </div>
   )

@@ -38,7 +38,7 @@
         <div id="notificationsModal" class="hidden">
           <div class="overlay"></div>
           <div class="modalBody">
-            <h3>發送全站通知</h3>
+            <h3 onclick="quickInput()">發送全站通知</h3>
             <textarea id="notificationsMessage" ></textarea>
             <div class="buttons">
               <span id="sendNotificationsResult" class="result"></span>
@@ -219,8 +219,8 @@
         console.log("後台client:", reason);
       });
 
-          /* Notifications script start */
-          const openModalBtn = document.querySelector("#openModalBtn");
+    /* Notifications script start */
+      const openModalBtn = document.querySelector("#openModalBtn");
       const notificationsModal = document.querySelector("#notificationsModal");
       const closeModalBtn = document.querySelector("#closeModalBtn");
       const overlay = document.querySelector(".overlay");
@@ -228,6 +228,9 @@
       const sendNotificationsBtn = document.querySelector("#sendNotificationsBtn");
       const sendNotificationsResult = document.querySelector("#sendNotificationsResult");
       
+      const quickInput = () =>{
+        notificationsMessage.value = '限時優惠，今日全館八折起！！！！'
+      }
       const sentToAll = async () => {
         const url = "http://localhost:3001/notifications/send-all";
         const options = {
