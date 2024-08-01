@@ -43,6 +43,7 @@
   height: 96px;
   padding: 10px;
   border-radius: 50%;
+  border: none;
   background-color: var(--pri-1);
   display: flex;
   justify-content: center;

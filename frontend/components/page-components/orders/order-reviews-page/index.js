@@ -91,8 +91,9 @@ export default function OrderReviewsSection({ order_id }) {
       console.log(data)
 
       if (data.success) {
+        fetchOrderReviews()
         openSnackbar('您的評價已送出！', 'success')
-        window.location.reload()
+        // window.location.reload()
       }
     } catch (error) {
       console.error('提交表單時出錯', error)
