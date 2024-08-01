@@ -14,6 +14,7 @@ const Calendar = ({ branch_themes_id }) => {
   const router = useRouter()
   const { id } = router.query
 
+  //
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [daysInMonth, setDaysInMonth] = useState([])
   const [selectedDate, setSelectedDate] = useState(null)
@@ -96,7 +97,8 @@ const Calendar = ({ branch_themes_id }) => {
       }
 
       // 加入下個月的天數
-      for (let i = 1; i < 7 - endDayOfWeek; i++) {
+      const daysNeeded = (7 - ((startDayOfWeek + endOfMonth.date()) % 7)) % 7
+      for (let i = 1; i <= daysNeeded; i++) {
         days.push({
           day: i,
           currentMonth: false,
@@ -247,13 +249,13 @@ const Calendar = ({ branch_themes_id }) => {
             <table className={myStyle.table}>
               <thead>
                 <tr>
+                  <td>Su</td>
                   <td>Mo</td>
                   <td>Tu</td>
                   <td>We</td>
                   <td>Th</td>
                   <td>Fr</td>
                   <td>Sa</td>
-                  <td>Su</td>
                 </tr>
               </thead>
               <tbody>{renderWeeks()}</tbody>
