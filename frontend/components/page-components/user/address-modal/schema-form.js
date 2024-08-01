@@ -35,7 +35,7 @@ const schemaForm = z.object({
     .number({
       message: '請選擇縣市',
     })
-    .min(2, {
+    .min(1, {
       message: '請選擇縣市',
     }),
   address: z
