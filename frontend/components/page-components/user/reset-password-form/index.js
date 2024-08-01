@@ -110,6 +110,12 @@ export default function ResetPasswordForm({ user_id }) {
             <UserProfileFormTitle
               text={'修改密碼'}
               href={auth.id ? '/user/profile' : null}
+              quickInput={() =>
+                setResetPasswordData({
+                  new_password: 'asdasdasd',
+                  reenter_new_password: 'asdasdasd',
+                })
+              }
             />
             {auth.id ? (
               <UserProfileInput
