@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
-import IndexLayout from '@/components/layout'
 import { useAuth } from '@/context/auth-context'
-import Image from 'next/image'
-// import { AspectRatio } from '@mui/joy'
+import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
+import { useSnackbar } from '@/context/snackbar-context'
+
+import IndexLayout from '@/components/layout'
 
 import TeamDetails from '@/components/page-components/teams/team_page/teamdetails'
 import JoinTeamModal from '@/components/page-components/teams/join-team-modal'
 import ManagerTeamModal from '@/components/page-components/teams/manager-team-modal'
 import TeamMemberComponent from '@/components/page-components/teams/TeamMemberComponent'
 import ChatArea from '@/components/page-components/teams/chat_area'
-
-import { ONE_TEAM, GET_MEMBER, JOIN_TEAM } from '@/configs/api-path'
+import StatusReport from '@/components/page-components/teams/team_page/statusReport'
 
 import styles from '@/components/page-components/teams/teams.module.css'
 
@@ -21,11 +22,11 @@ export default function TeamInfo() {
   const [teamData, setTeamData] = useState([])
   const [isMember, setIsMember] = useState(false)
   const [memberData, setMemberData] = useState([])
-  // const [showMembers, setShowMembers] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOpenJoin, setModalOpenJoin] = useState(false)
   const [memberCount, setMemberCount] = useState(0)
   const [teamReady, setTeamReady] = useState('going')
+  const { openSnackbar } = useSnackbar()
 
   const fetchTeamData = async (team_id) => {
     const url = ONE_TEAM + team_id
@@ -35,12 +36,12 @@ export default function TeamInfo() {
 
       if (data.success) {
         setTeamData(data.data)
-        console.log('成功取得團隊資料', data.data)
+        // console.log('成功取得團隊資料', data.data)
       } else {
-        console.error('取得團隊資料失敗:', data.error)
+        // console.error('取得團隊資料失敗:', data.error)
       }
     } catch (error) {
-      console.error('取得團隊資料時發生錯誤:', error)
+      // console.error('取得團隊資料時發生錯誤:', error)
     }
   }
 
@@ -52,17 +53,17 @@ export default function TeamInfo() {
 
       if (data.success) {
         setMemberCount(data.data.length)
-        console.log('成功取得團員資料', data.data)
+        // console.log('成功取得團員資料', data.data)
 
         const isUserMember = data.data.some(
           (member) => member.join_user_id === auth.id
         )
         setIsMember(isUserMember)
       } else {
-        console.error('團員資料取得失敗:', data.error)
+        // console.error('團員資料取得失敗:', data.error)
       }
     } catch (error) {
-      console.error('取得團員資料時發生錯誤:', error)
+      // console.error('取得團員資料時發生錯誤:', error)
     }
   }
 
@@ -87,12 +88,12 @@ export default function TeamInfo() {
       if (result.success) {
         fetchMemberData(team_id)
       } else {
-        console.error('加入團隊失敗:', result.error)
-        alert('加入團隊失敗')
+        // console.error('加入團隊失敗:', result.error)
+        openSnackbar('加入團隊失敗', 'error')
       }
     } catch (error) {
-      console.error('Error joining team:', error)
-      alert('加入團隊時發生錯誤')
+      // console.error('Error joining team:', error)
+      openSnackbar('加入團隊時發生錯誤', 'error')
     }
   }
 
@@ -121,7 +122,7 @@ export default function TeamInfo() {
         <div className={styles.teamsPage}>
           <div className="container">
             <div className={styles.pageTitle}>
-              <h2>團隊內頁</h2>
+              <h2>團隊頁面</h2>
             </div>
             <div className={`${styles.teamsSection} row`}>
               <div className={styles.borderbox} key={teamData.team_id}>
@@ -131,15 +132,15 @@ export default function TeamInfo() {
                 <div className="row">
                   {teamData.team_status === '已成團' ? (
                     <>
-                      <div style={{ textAlign: 'center', padding: '16px' }}>
-                        <h4>此隊伍已成團</h4>
-                        <Image
-                          src={`/ghost/ghost_05.png`}
-                          alt=""
-                          width={150}
-                          height={100}
-                        />
-                      </div>
+                      {auth.id === teamData.user_id ? (
+                        <StatusReport status="1" />
+                      ) : (
+                        <>
+                          <Link href="./" style={{ color: '#FFF' }}>
+                            <StatusReport status="2" />
+                          </Link>
+                        </>
+                      )}
                     </>
                   ) : (
                     <>
@@ -158,13 +159,7 @@ export default function TeamInfo() {
                             </>
                           ) : isMember ? (
                             <>
-                              <h4>您已申請加入此團隊</h4>
-                              <Image
-                                src={`/ghost/ghost_03.png`}
-                                alt=""
-                                width={150}
-                                height={100}
-                              />
+                              <StatusReport status="3" />
                             </>
                           ) : (
                             <>

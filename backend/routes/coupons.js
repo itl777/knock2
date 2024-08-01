@@ -65,7 +65,6 @@ router.get("/", async (req, res) => {
       LEFT JOIN product_management pm ON pm.product_id = cpa.coupon_product_id
       WHERE cm.member_id = ? AND ${condition}
       ORDER BY cm.id DESC
-      LIMIT ?, ?;
     `;
 
     countSql = `
@@ -322,7 +321,7 @@ router.get("/product", async (req, res) => {
     JOIN coupon_types ct ON ct.id = c.coupon_type_id
     LEFT JOIN coupon_product_associations cpa ON cpa.coupon_id = c.id
     LEFT JOIN product_management pm ON pm.product_id = cpa.coupon_product_id
-    LEFT JOIN cart_member cam ON cam.cart_product_id = cpa.coupon_product_id
+    LEFT JOIN cart_member cam ON cam.cart_product_id = cpa.coupon_product_id AND cam.cart_product_coupon_id = cpa.coupon_id
     WHERE cm.member_id = ? AND c.coupon_type_id = 2 AND cm.used_at IS NULL AND c.valid_until >= NOW();
   `;
 

@@ -25,10 +25,9 @@ const searchData = async (req) => {
   let difficulty = req.query.difficulty || req.params.difficulty || "";
   let teamSearch = req.query.team_id || req.params.team_id || "";
   let userSearch = req.query.user_id || req.params.user_id || "";
-  let start_date = req.query.startdate || "";
-  let end_date = req.query.enddate || "";
+  let reservation_date = req.query.startdate || "";
   
-  let sort = req.query.sort || "reservation_id";
+  let sort = req.query.sort || "reservation_date";
   const order = req.query.order || "DESC";
 
   let where = " WHERE 1 ";
@@ -66,8 +65,7 @@ JOIN users u ON r.user_id = u.user_id
 JOIN sessions s ON r.session_id = s.sessions_id
 JOIN teams_list team ON team.r_id = reservation_id
 JOIN branches b ON bt.branch_id = b.branch_id
-  ${where}`;
-  // ORDER BY ${sort} ${order}
+${where}`;
   console.log(t_sql);
   const [[{ totalRows }]] = await db.query(t_sql);
 
@@ -153,7 +151,8 @@ const noTeamData = async (req) => {
   LEFT JOIN \`teams_list\` team ON r_id = reservation_id
   JOIN \`users\` u ON r.user_id = u.user_id
   JOIN \`sessions\` s ON r.session_id = s.sessions_id
-  WHERE team_id IS NULL ${where}`;
+  WHERE team_id IS NULL ${where}
+  ORDER BY reservation_date DESC`;
 
 // const [rows] = await db.query(sql);
   [rows] = await db.query(sql);
@@ -172,7 +171,7 @@ return {
 }
 }
 
-router.get("/api/no_team_:user_id", async (req, res) => {
+router.get("/api/res_team_:user_id", async (req, res) => {
   const data = await noTeamData(req)
   res.json(data);
 
@@ -223,7 +222,7 @@ router.get("/api/chat/get_chat_at_:team_id", async (req, res) => {
 FROM \`teams_chats\` 
 JOIN \`users\` ON chat_by = user_id
 WHERE chat_at = ${team_id} AND chat_display = 1
-ORDER BY create_at DESC`;
+ORDER BY create_at ASC`;
 
 //  `SELECT nick_name, chat_text, chat_display, create_at, avatar
 //   FROM teams_chats
@@ -240,28 +239,80 @@ ORDER BY create_at DESC`;
   res.json({ success: true, data: rows });
 });
 
-// 搜尋使用者加入哪些團隊的API
-router.get("/api/user_join_team_:user_id", async (req, res) => {
-  const user_id = +req.params.user_id || 0;
-  if (!user_id) {
-    return res.json({ success: false, error: "沒有編號" });
+
+// 搜尋使用者帶領哪些團隊的API
+  const sqlLead = `
+  SELECT team_id, team_title, t.theme_name, team_limit, r.reservation_date, s.start_time, team_status
+  FROM reservations r
+  JOIN branch_themes bt ON r.branch_themes_id = bt.branch_themes_id
+  JOIN branches b ON bt.branch_id = b.branch_id
+  JOIN themes t ON bt.theme_id = t.theme_id
+  JOIN teams_list team ON team.r_id = reservation_id
+  JOIN users u ON r.user_id = u.user_id
+  JOIN sessions s ON r.session_id = s.sessions_id
+  WHERE r.user_id = ?`;
+
+  const sqlLeadRecruiting = `${sqlLead} AND team_status = "募集中"`;
+  const sqlLeadFormed =`${sqlLead} AND team_status = "已成團"`;
+
+  router.get("/api/user_lead_team_:user_id", async (req, res) => {
+    const user_id = +req.params.user_id || 0;
+    if (!user_id) {
+      return res.json({ success: false, error: "沒有編號" });
+    }
+  
+  try {
+    const [recruitingRows] = await db.query(sqlLeadRecruiting, [user_id]);
+    const [formedRows] = await db.query(sqlLeadFormed, [user_id]);
+
+    res.json({
+      success: true,
+      recruiting: recruitingRows,
+      formed: formedRows
+    });
+  } catch (error) {
+    res.json({ success: false, error: "資料庫查詢失敗" });
   }
-
-  const sql =`SELECT *
-FROM teams_members
-WHERE join_user_id = ${user_id}`;
-
-  const [rows] = await db.query(sql);
-
-  if (!rows.length) {
-    // 沒有該筆資料
-    return res.json({ success: false, error: "此用戶還沒有加入團隊" });
-  }
-
-  res.json({ success: true, members: rows.length ,data: rows });
 });
 
+// 搜尋使用者加入哪些團隊的API
+const sqlJoin = `
+SELECT team_id , team_title, t.theme_name, team_limit, r.reservation_date, s.start_time, team_status
+FROM teams_members
+JOIN teams_list team on join_team_id = team_id
+JOIN reservations r ON r_id = reservation_id
+JOIN branch_themes bt ON r.branch_themes_id = bt.branch_themes_id
+JOIN branches b ON bt.branch_id = b.branch_id
+JOIN themes t ON bt.theme_id = t.theme_id
+JOIN sessions s ON r.session_id = s.sessions_id
+WHERE join_user_id = ?`;
 
+const sqlJoinRecruiting = `${sqlJoin} AND team_status = "募集中"`;
+const sqlJoinFormed =`${sqlJoin} AND team_status = "已成團"`;
+
+  router.get("/api/user_join_team_:user_id", async (req, res) => {
+    const user_id = +req.params.user_id || 0;
+    if (!user_id) {
+      return res.json({ success: false, error: "沒有編號" });
+    }
+  
+  try {
+    const [recruitingRows] = await db.query(sqlJoinRecruiting, [user_id]);
+    const [formedRows] = await db.query(sqlJoinFormed, [user_id]);
+
+    res.json({
+      success: true,
+      recruiting: recruitingRows,
+      formed: formedRows
+    });
+  } catch (error) {
+    res.json({ success: false, error: "資料庫查詢失敗" });
+  }
+});
+
+//
+
+//計算隊員的API
 router.get("/api/all_member", async (req, res) => {
 
   const sql =`SELECT no, join_team_id, join_user_id
@@ -436,8 +487,8 @@ const createTeam = async (req) => {
     return res.json({ success: false, error: "沒有編號" });
   }
 
-  const sql =`SELECT reservation_id, theme_name, b.branch_id, u.user_id, nick_name, branch_name, 
-  reservation_date, s.start_time, s.end_time , theme_img, s.theme_Time, min_players, max_players
+  const sql =`SELECT reservation_id, theme_name, b.branch_id, u.user_id, nick_name, branch_name, participants,
+  reservation_date, s.start_time, s.end_time , theme_img, s.theme_Time
   FROM reservations r
   JOIN \`branch_themes\` bt ON r.branch_themes_id = bt.branch_themes_id
   JOIN \`branches\` b ON bt.branch_id = b.branch_id

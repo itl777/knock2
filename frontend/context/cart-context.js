@@ -138,7 +138,7 @@ export const CartProvider = ({ children }) => {
         coupon_id: coupon_id,
         product_id: product_id,
       })
-      fetchMemberCart()
+      await fetchMemberCart()
       fetchMemberCartCoupons()
       fetchMemberCartProductCoupons()
       calculateDiscountTotal()
@@ -157,7 +157,7 @@ export const CartProvider = ({ children }) => {
         coupon_id: coupon_id,
         product_id: product_id,
       })
-      fetchMemberCart()
+      await fetchMemberCart()
       fetchMemberCartCoupons()
       fetchMemberCartProductCoupons()
       calculateDiscountTotal()
@@ -257,8 +257,9 @@ export const CartProvider = ({ children }) => {
         }
       } else if (item.discount_percentage) {
         if (itemOriginalPrice >= (item.minimum_order ?? 0)) {
-          const percentage = 1 - item.discount_percentage / 100
+          const percentage = (1 - item.discount_percentage / 100).toFixed(2)
           const discount = Math.floor(itemOriginalPrice * percentage)
+          console.log(percentage,itemOriginalPrice, discount  );
 
           itemDiscount =
             discount >= (item.discount_max ?? 0)
@@ -285,7 +286,7 @@ export const CartProvider = ({ children }) => {
 
         generalDiscountMin = item.minimum_order ?? 0
       } else if (item.discount_percentage) {
-        generalPercentage = 1 - item.discount_percentage / 100
+        generalPercentage = (1 - item.discount_percentage / 100).toFixed(2)
         generalDiscountMaX = item.discount_max ?? 0
         generalDiscountMin = item.minimum_order ?? 0
       }
@@ -468,10 +469,11 @@ export const CartProvider = ({ children }) => {
     product_quantity,
     discount_amount,
     discount_percentage,
-    minimum_order,
-    discount_max
+    minimum_order
+    // discount_max
   ) => {
     let discountPrice = 0
+    minimum_order = !minimum_order ? 0 : minimum_order
     const productOriginalTotal = price * product_quantity
     if (discount_amount) {
       if (
@@ -479,15 +481,15 @@ export const CartProvider = ({ children }) => {
         productOriginalTotal >= discount_amount
       ) {
         discountPrice = price - discount_amount
-        discountPrice = discountPrice >= discount_max ? discountPrice : price
+        // discountPrice = discountPrice >= discount_max ? discountPrice : price
       }
     } else if (discount_percentage) {
       if (productOriginalTotal >= minimum_order) {
-        discountPrice = Math.floor(price * (1 - discount_percentage / 100))
+        const percentage = (discount_percentage / 100).toFixed(2)
+        discountPrice = Math.floor(price * percentage)
         // discountPrice = discountPrice >= discount_max ? discountPrice : price
       }
     }
-
     return discountPrice
   }
 
@@ -539,6 +541,12 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     setCartBadgeQty(checkoutItems.length)
   }, [checkoutItems])
+
+
+  // useEffect(() => {
+  //   fetchMemberCart()
+  // }, [discountTotal])
+
 
   useEffect(() => {
     calculateDiscountTotal()

@@ -27,14 +27,15 @@ export default function OrderDetailCards({ order_id }) {
 
   useEffect(() => {
     fetchOrderData(order_id)
-    if (order) {
-      if (order.deliver === 1) {
-        setShowReviewDialog(true) // 已完成才可以評價
-      } else {
-        setShowReviewDialog(false)
-      }
-    }
   }, [order_id, anyReviewed])
+
+  useEffect(() => {
+    if (order.deliver === 1) {
+      setShowReviewDialog(true) // 已完成才可以評價
+    } else {
+      setShowReviewDialog(false)
+    }
+  }, [order])
 
   return (
     <div className={styles.orderDetailContainer}>
@@ -55,7 +56,7 @@ export default function OrderDetailCards({ order_id }) {
             <OrderItemDetail
               key={v.product_id}
               productId={v.product_id}
-              productName={v.product_name}
+              productName={`${v.product_name}`}
               originalPrice={v.order_unit_price}
               // discountedPrice={v.order_unit_price}
               discountedPrice={calculateProductDiscount(
@@ -63,8 +64,7 @@ export default function OrderDetailCards({ order_id }) {
                 v.order_quantity,
                 v.discount_amount,
                 v.discount_percentage,
-                0,
-                v.discount_max
+                v.minimum_order
               )}
               productImg={
                 v.product_img ? `${PRODUCT_IMG}/${v.product_img}` : ''
@@ -79,6 +79,7 @@ export default function OrderDetailCards({ order_id }) {
           <OrderDetailInfo
             order_date={order?.order_date}
             merchant_trade_no={order?.merchant_trade_no}
+            payment_type={order?.payment_type}
             subtotal_price={order?.subtotal_price}
             deliver_fee={order?.deliver_fee}
             discount_total={order?.discountTotal}

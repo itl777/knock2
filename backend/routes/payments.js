@@ -14,9 +14,10 @@ const {
   MERCHANTID_INVOICE,
   HASHKEY_INVOICE,
   HASHIV_INVOICE,
+  NGROK,
 } = process.env;
-const ngrok =
-  "https://3909-2001-b400-e258-2bc6-e55b-77bf-751c-f3e0.ngrok-free.app/payments";
+
+const ngrok = `${NGROK}/payments`;
 
 const options = {
   OperationMode: "Test",

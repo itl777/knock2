@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { API_SERVER, GET_MEMBER } from '@/configs/api-path'
-import Image from 'next/image'
+import { GET_MEMBER } from '@/configs/api-path'
+import UserAvatar from '@/components/page-components/teams/user_avatar'
 import CustomRadioGroup from './radio'
 
 const TeamMemberComponent = ({
@@ -26,12 +26,12 @@ const TeamMemberComponent = ({
           (member) => member.m_status === 1
         ).length
         setSelectedCount(initialCount)
-        console.log('成功取得團員資料', data.data)
+        // console.log('成功取得團員資料', data.data)
       } else {
-        console.error('團員資料取得失敗:', data.error)
+        // console.error('團員資料取得失敗:', data.error)
       }
     } catch (error) {
-      console.error('取得團員資料時發生錯誤:', error)
+      // console.error('取得團員資料時發生錯誤:', error)
     }
   }
   useEffect(() => {
@@ -54,7 +54,6 @@ const TeamMemberComponent = ({
       status = 'over'
       onStatusChange('over')
     }
-    // console.log('TeamReady status:', status)
     onMemberCountChange(status)
     onMemberDataChange(memberData)
   }, [selectedCount, team_limit, onMemberCountChange, onMemberDataChange])
@@ -86,12 +85,7 @@ const TeamMemberComponent = ({
       {memberData.map((member) => (
         <div key={member.join_user_id}>
           <div style={{ padding: '12px 0 6px 12px', fontSize: '18px' }}>
-            <Image
-              src={member.avatar ? `${API_SERVER}/avatar/${member.avatar}` : ''}
-              height={40}
-              width={40}
-              alt={`${member.nick_name} avatar`}
-            />
+            <UserAvatar avatar={member.avatar} nickName={member.nick_name} />
             <span style={{ marginLeft: '10px' }}>{member.nick_name}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -105,12 +99,6 @@ const TeamMemberComponent = ({
       ))}
       <div style={{ textAlign: 'center', paddingTop: '12px' }}>
         團員/上限: {selectedCount} / {team_limit}
-        {selectedCount === team_limit && <div>人數達標，要成團了嗎？</div>}
-        {selectedCount > team_limit && (
-          <div style={{ color: 'red', textAlign: 'center' }}>
-            人數超過上限，請重新設定
-          </div>
-        )}
       </div>
     </div>
   )

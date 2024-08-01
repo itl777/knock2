@@ -3,6 +3,8 @@ import Slider, { SliderThumb } from '@mui/material/Slider'
 import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import { useRouter } from 'next/router'
+import { formatPrice } from '@/hooks/numberFormat'
+
 
 const AirbnbSlider = styled(Slider)(({ theme }) => ({
   color: 'rgba(0, 0, 0, 1)',
@@ -56,7 +58,7 @@ const AirbnbSlider = styled(Slider)(({ theme }) => ({
   },
 }))
 
-export default function PriceSlider({price, setPrice}) {
+export default function PriceSlider({ price, setPrice }) {
   const router = useRouter()
   // const [price, setPrice] = useState([500, 1500])
 
@@ -76,6 +78,9 @@ export default function PriceSlider({price, setPrice}) {
     )
     setPrice(newPrice)
   }
+  const valueLabelFormat = (value) => {
+    return `${formatPrice(value)}`
+  }
 
   return (
     <Box sx={{ width: 270, alignItems: 'end', display: 'flex' }}>
@@ -88,6 +93,7 @@ export default function PriceSlider({price, setPrice}) {
           index === 0 ? 'Minimum price' : 'Maximum price'
         }
         defaultValue={[500, 1500]}
+        valueLabelFormat={valueLabelFormat}
         value={price}
         onChange={handlePriceChange}
       />

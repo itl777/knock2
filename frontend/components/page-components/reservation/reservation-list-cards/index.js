@@ -39,6 +39,14 @@ export default function ReservationListCards({
     }
   }
 
+  const getPaymentType = () => {
+    if (rtn_code === 1) {
+      return ` / ${payment_type}`
+    } else {
+      return ''
+    }
+  }
+
   // 是否顯示取消訂單
   const showCancelBtn = () => {
     return cancel === 0 && reservation_date > currentDate ? false : true
@@ -98,7 +106,7 @@ export default function ReservationListCards({
             <OrderDetailRow label="成立日期" content={formatDate(created_at)} />
             <OrderDetailRow
               label="付款日期"
-              content={`${getPaymentDate()} / ${payment_type}`}
+              content={`${getPaymentDate()} ${getPaymentType()}`}
             />
           </div>
         </div>

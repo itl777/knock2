@@ -3,7 +3,6 @@ import MuiAccordion from '@mui/material/Accordion'
 import MuiAccordionSummary from '@mui/material/AccordionSummary'
 import MuiAccordionDetails from '@mui/material/AccordionDetails'
 import MuiTypography from '@mui/material/Typography'
-// import { PiTextAlignCenter } from 'react-icons/pi'
 
 const Accordion = styled((props) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -27,6 +26,7 @@ const AccordionSummary = styled((props) => <MuiAccordionSummary {...props} />)(
     //   textAlign: 'center',
     // },
     '& .MuiTypography-body1': {
+      fontFamily: 'Noto Serif JP, serif',
       textAlign: 'center',
       margin: '0 auto',
       fontSize: '22px',

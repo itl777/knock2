@@ -125,7 +125,7 @@ const getThemesDetails = async (branch_themes_id, selectedDate, user_id) => {
         'discount_percentage', c.discount_percentage
       )
     ) FROM coupons c
-    WHERE c.coupon_types_id = 3
+    WHERE c.coupon_type_id = 3
     AND c.valid_from <= NOW()
     AND c.valid_until >= NOW()
     AND (c.max_usage_per_user > (
