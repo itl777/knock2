@@ -1,0 +1,139 @@
+<%- include('../parts/head') %>
+    <%- include('../parts/navbar') %>
+        <!-- 主內容 -->
+        <div class="container mt-3">
+            <div class="row">
+                <div class="col-12 mt-4 mb-3">
+                    <h2>庫存列表</h2>
+                </div>
+           
+
+                <div class="col-8 mx-auto">
+
+                    <!-- 新增庫存 -->
+                    <nav class="navbar navbar-light bg-light">
+                        <div class="container-fluid d-flex justify-content-end">
+                            <div>
+
+                                <!--  新增庫存 -->
+                                <a class="btn btn-primary" href="add-Warehousing.php">
+                                    <i class="bi bi-bag-plus-fill"></i>
+                                    新增庫存
+                                </a>
+                                <a class="btn btn-danger" href="javascript: deleteAll()">
+                                    <i class="bi bi-trash-fill"></i>刪除多筆
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+                    <!-- 搜尋列結束 -->
+
+                    <!-- 表單開始 -->
+                    <table id="ProductTable" class="table table-striped table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th scope="col"><input class="form-check-input" type="checkbox" id="check_all" value=""
+                                    aria-label="delete_box"></th>
+                                <th scope="col">編號</th>
+                                <th scope="col">入庫日期</th>
+                                <th scope="col">入庫人員</th>
+                                <th scope="col">最後編輯人員</th>
+                                <th scope="col" class="text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let row of rows) { %>
+                            <tr>
+                                 <!-- 多選 -->
+                                 <td> <input class="form-check-input delete_box" type="checkbox"
+                                    value="<%= row.product_id %>" aria-label="delete_box"></td>
+                                <td><%= row.warehousing_id %></td>
+                                <td><%= row.warehousing_date %></td>
+                                <td><%= row.warehousing_person %></td>
+                                <td><%= row.last_modified_by %></td>
+    
+                                <!-- 按鈕 -->
+                                <td class="text-end">
+                                    <a class="btn btn-warning" href="edit-warehousing.php?warehousing_id=<%= row.warehousing_id %>">
+                                        <i class="bi bi-pen-fill"></i>編輯
+                                    </a>
+                                    <a class="btn btn-danger" href="javascript: deleteOne(<%= row.warehousing_id %>)">
+                                        <i class="bi bi-trash-fill"></i>刪除
+                                    </a>
+                                </td>
+                            </tr>
+                        <% } %>
+    
+    
+                    </tbody>
+                </table>
+
+                        </tbody>
+                    </table>
+                    <!-- 表單結束 -->
+
+                    <!-- 分頁開始 -->
+                    <nav aria-label="Page navigation example" class="my-3 d-flex justify-content-center">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= Math.max(1, page - 1) %>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            <% for (let i=page - 5; i <=page + 5; i++) { %>
+                                <% if (i>= 1 && i <= totalPages) { %>
+                                        <li class="page-item <%= page === i ? 'active' : '' %>">
+                                            <a class="page-link" href="?page=<%= i %>">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                        <% } %>
+                                            <% } %>
+
+                                                <li class="page-item">
+                                                    <a class="page-link"
+                                                        href="?page=<%= Math.min(totalPages, page + 1) %>"
+                                                        aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                        </ul>
+                    </nav>
+
+
+                    <!-- 分頁結束 -->
+
+                </div>
+
+            </div>
+        </div>
+        <%- include('../parts/script') %>
+            <script>
+                const deleteOne = (id) => {
+                    if (confirm(`是否要刪除編號為 ${id} 的資料?`)) {
+                        fetch(`/productCMS/api/${id}`, {
+                            method: "DELETE",
+                        })
+                            .then((r) => r.json())
+                            .then((result) => {
+                                console.log(JSON.stringify(result));
+                                if (result.success) {
+                                    location.reload();
+                                }
+                            });
+                    }
+                };
+
+                $("#check_all").click(() => {
+        if ($("#check_all").prop("checked")) {
+            console.log('true')
+            $(".delete_box").prop("checked", true);
+
+        } else {
+            console.log('false')
+            $(".delete_box").prop("checked", false);
+        }
+    })
+            </script>
+            <%- include('../parts/foot') %>

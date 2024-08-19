@@ -1,0 +1,361 @@
+<%- include('../parts/head') %>
+    <%- include('../parts/navbar') %>
+
+
+        <!-- 新增form -->
+        <div class="container mt-3 py-2">
+            <div class="row">
+                <div class="col-10 col-lg-6 mx-auto">
+                    <h2 class="text-center p-3 mt-3"><i class="fa-solid fa-ghost"></i></i>新商品上架</h2>
+
+                    <div class="text-end">
+                        <a id="fake-data" class="m-3 btn btn-primary" href="javascript:fake()">快速新增</a>
+                    </div>
+
+                    <form name="form1" class="needs-validation" novalidate onsubmit="sendData(event)"
+                        oninput="formChanged(event)">
+
+                        <!-- 商品名稱 -->
+                        <div class="m-3">
+                            <label for="product_name" class="form-label">商品名稱</label>
+                            <input type="text" id="product_name" name="product_name" class="form-control" required>
+                            <div class="invalid-feedback">
+                                請輸入商品名稱
+                            </div>
+                        </div>
+                        <!-- 商品分類 -->
+                        <div class="m-3">
+                            <label for="category_id" class="form-label">商品分類</label>
+                            <select name="category_id" id="category_id" class="form-select"
+                                aria-label="Default select example" required>
+                                <option selected disabled value="">商品分類</option>
+                                <% category_result.forEach(category=> { %>
+                                    <option value="<%= category.category_id %>">
+                                        <%= category.category_name %>
+                                    </option>
+                                    <% }); %>
+                            </select>
+                        </div>
+                        <!-- 價格 -->
+                        <div class="m-3">
+                            <label for="price" class="form-label">商品單價</label>
+                            <input type="number" class="form-control" name="price" id="price" required>
+
+                            <div class="invalid-feedback">
+                                請輸入商品單價
+                            </div>
+                        </div>
+
+
+
+                        <!-- 配件 -->
+                        <div class="m-3">
+                            <label for="components" class="form-label">配件</label>
+                            <input type="text" class="form-control" name="components" id="components" required>
+
+                            <div class="invalid-feedback">
+                                請輸入遊戲配件
+                            </div>
+                        </div>
+
+                        <!-- 玩家人數 -->
+                        <div class="m-3">
+                            <label for="players" class="form-label">玩家人數</label>
+                            <input type="text" class="form-control" name="players" id="players" required>
+
+                            <div class="invalid-feedback">
+                                請輸入玩家人數
+                            </div>
+                        </div>
+
+                        <!-- 遊戲時長 -->
+                        <div class="m-3">
+                            <label for="duration" class="form-label">遊戲時長</label>
+                            <input type="number" class="form-control" name="duration" id="duration" required>
+
+                            <div class="invalid-feedback">
+                                請輸入遊戲時長
+                            </div>
+                        </div>
+
+                        <!-- 建議年齡 -->
+                        <div class="m-3">
+                            <label for="age" class="form-label">建議遊玩年齡</label>
+                            <input type="text" class="form-control" name="age" id="age" required>
+
+                            <div class="invalid-feedback">
+                                請輸入建議遊玩年齡
+                            </div>
+                        </div>
+
+                        <!-- 狀態   -->
+                        <div class="m-3">
+                            <label for="status" class="form-label">商品狀態</label>
+
+
+
+                            <select name="status" id="status" class="form-select" aria-label="Default select example"
+                                required>
+
+                                <option selected disabled value="">狀態</option>
+                                <% status_result.forEach(status=> { %>
+
+                                    <option value="<%= status.status_id %>">
+                                        <%= status.status %>
+                                    </option>
+
+                                    <% }); %>
+                            </select>
+
+                            <div class="invalid-feedback">
+                                請輸入商品狀態
+                            </div>
+                        </div>
+
+                        <!-- 欄位新增end -->
+
+                        <!-- 輸入商品介紹 -->
+                        <div class="m-3">
+                            <label for="summary" class="form-label">商品介紹</label>
+                            <textarea class="form-control" id="summary" name="summary" rows="5"></textarea>
+                        </div>
+
+                         <!-- 輸入商品description -->
+                    <div class="m-3">
+                        <label for="description" class="form-label">商品描述</label>
+                        <textarea class="form-control" id="description" name="description" rows="10"></textarea>
+                    </div>
+
+                        <!-- 商品圖片 -->
+                        <!-- <div class="m-3">
+                    <div class="btn btn-warning" onclick="photos.click()">點選上傳一張圖片</div>
+                    <div hidden>
+                        <input type="file" id="photos" name="photos[]" multiple accept="image/*" onchange="uploadFile()" />
+                    </div>
+                    <div class="show_img"></div>
+                </div> -->
+
+
+
+                        <div class="text-end">
+                            <input class="m-3 btn btn-primary" type="submit" value="上架商品">
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">新增成功</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-success" role="alert">資料新增成功</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="location.href='/productCMS'">
+                            到列表頁
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            繼續新增
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <%- include('../parts/script') %>
+
+
+            <script>
+                // BT表單驗證
+                (function () {
+                    'use strict' //聲明嚴格模式
+
+
+                    var forms = document.querySelectorAll('.needs-validation')
+
+                    Array.prototype.slice.call(forms)
+                        .forEach(function (form) {
+                            form.addEventListener('submit', function (event) {
+                                if (!form.checkValidity()) {
+                                    event.preventDefault()
+                                    event.stopPropagation()
+                                }
+
+                                form.classList.add('was-validated')
+                            }, false)
+                        })
+                })()
+
+                // ---------BT的end
+
+                // TODO 圖片的JS
+                const container = document.querySelector(".show_img");
+
+                function uploadFile() {
+                    const fd = new FormData(document.form1);
+
+                    fetch("api/add-photos-api.php", {
+                        method: "POST",
+                        body: fd, // enctype="multipart/form-data"
+                    })
+                        .then((r) => r.json())
+                        .then((data) => {
+                            console.log({
+                                data
+                            });
+                            if (data.success && data.files.length) {
+                                let str = "";
+                                for (let i of data.files) {
+                                    str += `
+                        <input type="hidden" name="product_img" value="${data.newId}">
+                        <div class="my-card">
+                        <img
+                        src="./imgs/${i}"
+                        alt=""
+                        />
+                        </div>
+                        `;
+                                }
+                                container.innerHTML = str;
+
+                            }
+                        });
+                }
+
+                // 圖片end
+
+                // 取得參照
+                const nameField = document.form1.product_name;
+                const priceField = document.form1.price;
+                const cateField = document.form1.category_id;
+                const cmpField = document.form1.components;
+                const playersField = document.form1.players;
+                const durField = document.form1.duration;
+                const ageField = document.form1.age;
+                const summaryField = document.form1.summary;
+                const descriptionField = document.form1.description;
+                
+
+
+                let myState = {
+                    product_name: "",
+                    price: "",
+                    // product_img: "",
+                    summary: "",
+                    components: "",
+                    players: "",
+                    duration: "",
+                    age: "",
+                    category_id: "",
+                    status: "",
+                };
+
+                const formChanged = (e) => {
+                    myState = { ...myState, [e.target.name]: e.target.value };
+
+                    // console.log(myState);
+                };
+
+
+                const sendData = e => {
+                    e.preventDefault();
+
+                    let isPass = true; // 表單有沒有通過檢查
+
+                    if (nameField.value.length < 2) {
+                        isPass = false;
+                    }
+                    if (Number(priceField.value) < 1) {
+                        isPass = false;
+                    }
+                    if (cateField.value === '') {
+                        isPass = false;
+
+                    }
+
+                    if (cmpField.value.length < 2) {
+                        isPass = false;
+                    }
+                    if (playersField.value.length < 2) {
+                        isPass = false;
+                    }
+                    if (Number(durField.value) < 2) {
+                        isPass = false;
+                    }
+                    if (ageField.value.length < 2) {
+                        isPass = false;
+                    }
+
+
+
+
+                    if (isPass) {
+                        // const fd = new FormData(document.form1);
+                        fetch('/productCMS/add', {
+                            method: 'POST',
+                            body: JSON.stringify(myState),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        }).then(r => r.json())
+                            .then(data => {
+                                // 如果資料新增成功跳modal提示
+                                if (data.success) {
+                                    myModal.show();
+                                } else {
+                                    console.log("新增失敗");
+                                }
+                            })
+                            .catch(ex => console.log(ex))
+                    }
+                }
+
+                // 帶入假資料
+                const fake = () => {
+                nameField.value="名畫神偷(快速)";
+                priceField.value=1090;
+                cateField.value=3;
+                cmpField.value="200 張名畫牌";
+                playersField.value="2-8人";
+                durField.value=60;
+                ageField.value="8歲以上"
+                summaryField.value="每輪中，一名玩家扮演神偷，從美術館展覽中偷取1至3幅畫，隨後在拍賣會中將之脫手";
+                descriptionField.value="《心靈迷宮》是一款升級版的桌上遊戲，擁有更豐富的遊戲內容和更高的遊戲品質。玩家透過傳遞情報的方式、內容來推測各玩家的陣營，同時想辦法達成獲勝條件：獲得藍色或紅色情報。同時，隱藏在兩隊之中的特工也會為了自己的獲勝，而擾亂戰局......";
+                myState = {
+                    product_name: "名畫神偷(快速)",
+                    price: 1090,
+                    // product_img: "",
+                    summary: "每輪中，一名玩家扮演神偷，從美術館展覽中偷取1至3幅畫，隨後在拍賣會中將之脫手",
+                    components: "200 張名畫牌",
+                    players: "2-8人",
+                    duration: 60,
+                    age: "8歲以上",
+                    category_id: 3,
+                    status: 2,
+                    description:"《心靈迷宮》是一款升級版的桌上遊戲，擁有更豐富的遊戲內容和更高的遊戲品質。玩家透過傳遞情報的方式、內容來推測各玩家的陣營，同時想辦法達成獲勝條件：獲得藍色或紅色情報。同時，隱藏在兩隊之中的特工也會為了自己的獲勝，而擾亂戰局......",
+                };
+                
+                }
+
+                // 從bootstrap來的JS物件
+                const myModal = new bootstrap.Modal('#staticBackdrop');
+
+            </script>
+
+
+            <%- include('../parts/foot') %>

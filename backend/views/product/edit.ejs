@@ -1,0 +1,330 @@
+<%- include('../parts/head') %>
+    <%- include('../parts/navbar') %>
+
+
+        <!-- 編輯form -->
+        <div class="container mt-3 py-2">
+            <div class="row mt-5">
+                <div class="col-10 col-lg-6 mx-auto">
+                    <h2 class="text-center p-3 mt-3"><i class="fa-solid fa-ghost"></i>商品資料編輯</h2>
+
+                    <form name="form1" class="needs-validation" novalidate onsubmit="sendData(event)">
+
+
+                        <!-- 商品名稱 -->
+                        <div class="m-3">
+                            <label for="product_name" class="form-label">商品名稱</label>
+                            <input type="text" id="product_name" name="product_name" class="form-control" required
+                                value="<%= allRow.product_name %>">
+                            <div class="invalid-feedback">
+                                此為必填欄位
+                            </div>
+                        </div>
+                        <!-- 價格 -->
+                        <div class="m-3">
+                            <label for="price" class="form-label">商品單價</label>
+                            <input type="number" class="form-control" name="price" id="price" required
+                                value="<%= allRow.price %>">
+
+                            <div class="invalid-feedback">
+                                請輸入商品單價
+                            </div>
+                        </div>
+
+                        <!-- 商品分類  -->
+                        <div class="m-3">
+                            <label for="category_id" class="form-label">商品分類</label>
+                            <select name="category_id" id="category_id" required class="form-select"
+                                aria-label="Default select example">
+
+                                <% category_result.forEach(category=> { %>
+
+                                    <option <%= category.category_id === allRow.category_id ?"selected":"" %> value="<%= category.category_id %>">
+                                        <%= category.category_name %>
+                                    </option>
+                                        <% }); %>
+
+                            </select>
+                        </div>
+
+                        <!-- 配件 -->
+                        <div class="m-3">
+                            <label for="components" class="form-label">配件</label>
+                            <input type="text" class="form-control" name="components" id="components" required
+                                value="<%= allRow.components %>">
+
+                            <div class="invalid-feedback">
+                                請輸入桌遊配件
+                            </div>
+                        </div>
+
+                        <!-- 玩家人數 -->
+                        <div class="m-3">
+                            <label for="players" class="form-label">玩家人數</label>
+                            <input type="text" class="form-control" name="players" id="players" required
+                                value="<%= allRow.players %>">
+
+                            <div class="invalid-feedback">
+                                請輸入玩家人數
+                            </div>
+                        </div>
+
+                        <!-- 遊戲時長 -->
+                        <div class="m-3">
+                            <label for="duration" class="form-label">遊戲時長</label>
+                            <input type="number" class="form-control" name="duration" id="duration" required
+                                value="<%= allRow.duration %>">
+
+                            <div class="invalid-feedback">
+                                請輸入遊戲時長
+                            </div>
+                        </div>
+
+                        <!-- 建議年齡 -->
+                        <div class="m-3">
+                            <label for="age" class="form-label">建議遊玩年齡</label>
+                            <input type="text" class="form-control" name="age" id="age" required
+                                value="<%= allRow.age %>">
+
+                            <div class="invalid-feedback">
+                                請輸入建議遊玩年齡
+                            </div>
+                        </div>
+
+                        <!-- 狀態  -->
+                        <div class="m-3">
+                            <label for="status" class="form-label">商品狀態</label>
+                            <select name="status" id="status" required class="form-select"
+                                aria-label="Default select example">
+
+                                <% status_result.forEach(status=> {%>
+
+                                    <option <%= status.status_id === allRow.status ? "selected":"" %> value="<%= status.status_id %>">
+                                        <%= status.status %>
+                                    </option>
+                                
+                                            <% }) %>
+
+
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- 輸入商品介紹 -->
+                        <div class="m-3">
+                            <label for="summary" class="form-label">商品介紹</label>
+                            <textarea class="form-control" id="summary" name="summary" rows="10"><%= allRow.summary %>
+                </textarea>
+                        </div>
+
+                    <!-- 輸入商品description -->
+                    <div class="m-3">
+                        <label for="description" class="form-label">商品描述</label>
+                        <textarea class="form-control" id="description" name="description" rows="10"><%= allRow.description %>
+                    </textarea>
+                    </div>
+                        <div class="text-end">
+                            <input class="m-3 btn btn-primary" type="submit" value="完成編輯">
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">新增成功</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-success" role="alert">資料新增成功</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="location.href='/productCMS'">
+                            到列表頁
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            繼續新增
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <%- include('../parts/script') %>
+
+
+            <script>
+                // BT表單驗證
+                (function () {
+                    'use strict' //聲明嚴格模式
+
+
+                    var forms = document.querySelectorAll('.needs-validation')
+
+                    Array.prototype.slice.call(forms)
+                        .forEach(function (form) {
+                            form.addEventListener('submit', function (event) {
+                                if (!form.checkValidity()) {
+                                    event.preventDefault()
+                                    event.stopPropagation()
+                                }
+
+                                form.classList.add('was-validated')
+                            }, false)
+                        })
+                })()
+
+                // ---------BT的end
+
+                // TODO 圖片的JS
+                const container = document.querySelector(".show_img");
+
+                function uploadFile() {
+                    const fd = new FormData(document.form1);
+
+                    fetch("api/add-photos-api.php", {
+                        method: "POST",
+                        body: fd, // enctype="multipart/form-data"
+                    })
+                        .then((r) => r.json())
+                        .then((data) => {
+                            console.log({
+                                data
+                            });
+                            if (data.success && data.files.length) {
+                                let str = "";
+                                for (let i of data.files) {
+                                    str += `
+                        <input type="hidden" name="product_img" value="${data.newId}">
+            <div class="my-card">
+              <img
+                src="./imgs/${i}"
+                alt=""
+              />
+            </div>
+            `;
+                                }
+                                container.innerHTML = str;
+
+                            }
+                        });
+                }
+
+                // 圖片end
+
+                // 取得參照
+                const nameField = document.form1.product_name;
+                const priceField = document.form1.price;
+                const cateField = document.form1.category_id;
+                const cmpField = document.form1.components;
+                const playersField = document.form1.players;
+                const durField = document.form1.duration;
+                const ageField = document.form1.age;
+
+
+                let myState = {
+                    product_name: "",
+                    price: "",
+                    // product_img: "",
+                    summary: "",
+                    components: "",
+                    players: "",
+                    duration: "",
+                    age: "",
+                    category_id: "",
+                    status: "",
+                };
+
+                const formChanged = (e) => {
+                    // react style, react 風格
+                    myState = { ...myState, [e.target.name]: e.target.value };
+
+                    console.log(myState);
+                };
+
+
+                const sendData = e => {
+                    e.preventDefault();
+
+                    let isPass = true; // 表單有沒有通過檢查
+
+                    if (nameField.value.length < 2) {
+                        isPass = false;
+                    }
+                    if (Number(priceField.value) < 1) {
+                        isPass = false;
+                    }
+                    if (cateField.value === '') {
+                        isPass = false;
+
+                    }
+
+                    if (cmpField.value.length < 2) {
+                        isPass = false;
+                    }
+                    if (playersField.value.length < 2) {
+                        isPass = false;
+                    }
+                    if (Number(durField.value) < 2) {
+                        isPass = false;
+                    }
+                    if (ageField.value.length < 2) {
+                        isPass = false;
+                    }
+
+
+
+
+                    if (isPass) {
+                        const fd = new FormData(document.form1);
+                        fetch(`/productCMS/api/<%= allRow.product_id %>`, {
+                            method: 'PUT',
+                            body: fd
+                            
+                        }).then(r => r.json())
+                            .then(data => {
+                                console.log('data');
+                                console.log(data);
+                                // 如果資料新增成功跳modal提示
+                                if (data.success) {
+                                    myModal.show();
+                                } else {
+                                    console.log("新增失敗");
+                                }
+                            })
+                            .catch(ex => console.log(ex))
+                    }
+                }
+
+                // 假資料產生
+                const fake = () => {
+                    fetch('../database/fake-data/fake-productM.php')
+                        .then((r) => r.json())
+                        .then(data => {
+                            console.log('成功產生資料');
+                            console.log(data);
+                        }
+
+                        )
+                }
+
+                // 從bootstrap來的JS物件
+                const myModal = new bootstrap.Modal('#staticBackdrop');
+
+            </script>
+
+
+            <%- include('../parts/foot') %>

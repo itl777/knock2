@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import morgan from "morgan";
+import db from "./utils/connect-mysql.js"
 
 // 路由模組
 import themes from "./routes/themes.js";
@@ -14,10 +15,16 @@ import payments from "./routes/payments.js";
 import coupons from "./routes/coupons.js";
 import reservations from "./routes/reservations.js";
 import notifications from "./routes/notifications.js";
+import pdRouter from "./routes/productCMS.js"
+import whRouter from "./routes/warehousing.js"
+
+// Socket.io
 import './msg-socket.js'
 
 // 掛載 express
 const app = express();
+
+app.set("view engine", "ejs")
 
 // middleware
 app.use(express.urlencoded({ extended: true }));
@@ -34,6 +41,13 @@ app.use(cors(corsOptions));
 
 // 使用套件紀錄 http 請求 **** added by iris
 app.use(morgan("dev"));
+
+// title
+app.use((req, res, next) => {
+  res.locals.title = "密室逃脫";
+  next();
+})
+
 
 // 自訂頂層的 middleware
 app.use((req, res, next) => {
@@ -52,6 +66,8 @@ app.use((req, res, next) => {
 
 // *********設定靜態內容資料夾*********
 app.use(express.static("public"));
+app.use("/bootstrap", express.static("node_modules/bootstrap/dist"));
+
 
 // 路由模組
 app.use("/themes", themes);
@@ -64,6 +80,10 @@ app.use("/payments", payments);
 app.use("/coupons", coupons);
 app.use("/reservations", reservations);
 app.use("/notifications", notifications);
+app.use("/productCMS", pdRouter);
+app.use("/warehousing", whRouter);
+
+
 
 // 偵聽 port
 app.listen(3001, function () {
