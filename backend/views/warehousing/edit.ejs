@@ -11,21 +11,21 @@
             <form name="form1" class="needs-validation" novalidate onsubmit="sendData(event)">
 
                 <!-- warehousing_id 送出表單攜帶的 -->
-                <input type="hidden" name="warehousing_id" value="<?= $warehousing_id ?>">
+                <input type="hidden" name="warehousing_id" value="<%= whRows['warehousing_id'] %>">
                 <!-- 新增人員，不可修改 -->
                 <div>
                     <div class="row">
                         <div class="col-6">
                             <div class="mb-3">
                                 <label for="warehousing_date" class="form-label">入庫日期</label>
-                                <input type="datetime-local" class="form-control" id="warehousing_date" name="warehousing_date" value="<?= $warehousingRow['created_at'] ?>" disabled>
+                                <input type="datetime-local" class="form-control" id="warehousing_date" name="warehousing_date" value="<%= whRows['created_at'] %>" disabled>
                                 <div class="form-text"></div>
                             </div>
                         </div>
                         <div class="col-6">
                             <div class="mb-3">
                                 <label for="warehousing_person" class="form-label">入庫人員</label>
-                                <input type="text" class="form-control" id="warehousing_person" name="warehousing_person" value="<?= $warehousingRow['warehousing_person'] ?>" disabled>
+                                <input type="text" class="form-control" id="warehousing_person" name="warehousing_person" value="<%= whRows['warehousing_person'] %>" disabled>
                                 <div class="form-text"></div>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                         <div class="col-6">
                             <div class="mb-3">
                                 <label for="warehousing_date" class="form-label">最後編輯日</label>
-                                <input type="datetime-local" class="form-control" id="warehousing_date" name="warehousing_date" value="<?= $warehousingRow['last_modified_at'] ?>" disabled>
+                                <input type="datetime-local" class="form-control" id="warehousing_date" name="warehousing_date" value="<%= whRows['last_modified_at'] %>" disabled>
                                 <div class="form-text"></div>
                             </div>
                         </div>
@@ -43,7 +43,7 @@
                         <div class="col-6">
                             <div class="mb-3">
                                 <label for="last_modified_by" class="form-label">最後編輯人員</label>
-                                <input type="text" required class="form-control" id="last_modified_by" name="last_modified_by" value="<?= $warehousingRow['last_modified_by'] ?>">
+                                <input type="text" required class="form-control" id="last_modified_by" name="last_modified_by" value="<%= whRows['last_modified_by'] %>">
                                 <div class="invalid-feedback">請輸入編輯人員</div>
                             </div>
                         </div>
@@ -76,19 +76,13 @@
                             <td>
                                 <select class="form-select" aria-label="Default select example" id="product_id" name="product_id">
 
-
-                                    <?php foreach ($allRows as $r) :
-                                        if ($r['product_id'] === $warehousingRow['product_id']) :
-
-                                    ?>
-                                            <option selected value="<?= $r['product_id'] ?>"><?= $r['product_name'] ?></option>
-                                    <?php endif;
-                                    endforeach; ?>
+                                            <option selected value="<%= whRows['product_id'] %>"><%= whRows['product_name'] %></option>
+                                 
 
                                 </select>
                             </td>
                             <td>
-                                <input required type="number" class="form-control" id="quantity" name="quantity" value="<?= $warehousingRow['quantity'] ?>">
+                                <input required type="number" class="form-control" id="quantity" name="quantity" value="<%= whRows['quantity'] %>">
                                 <div class="invalid-feedback">需大於一盒</div>
                             </td>
 

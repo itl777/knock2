@@ -122,7 +122,6 @@ router.post("/add", async (req, res) => {
 
 // 刪除多筆
 router.delete("/api/delete", async (req, res) => {
-    console.log('進入/api/delete')
   const output = {
     success: false,
     code: 500,
@@ -153,8 +152,8 @@ router.delete("/api/:product_id", async (req, res) => {
   if (!product_id) {
     return res.json(output);
   }
-  const sql = `DELETE FROM product_management WHERE product_id =${product_id}`;
-  const [result] = await db.query(sql);
+  const sql = `DELETE FROM product_management WHERE product_id =?`;
+  const [result] = await db.query(sql,product_id);
   output.result = result;
   output.success = !!result.affectedRows;
 
@@ -179,9 +178,9 @@ router.get("/edit/:product_id", async (req, res) => {
   const category_sql = "SELECT * FROM product_category";
   const [category_result] = await db.query(category_sql);
 
-  const sql = `SELECT * FROM product_management WHERE product_id =${product_id}`;
+  const sql = `SELECT * FROM product_management WHERE product_id =?`;
 
-  const [rows] = await db.query(sql);
+  const [rows] = await db.query(sql,product_id);
   if (!rows.length) {
     return res.redirect("/productCMS");
   }
@@ -212,7 +211,6 @@ router.put("/api/:product_id", upload.none(), async (req, res) => {
     const [result] = await db.query(sql, [req.body, product_id]);
     output.result = result;
     output.success = !!(result.affectedRows && result.changedRows);
-    console.log(output.success);
   } catch (ex) {
     output.error = ex;
   }
