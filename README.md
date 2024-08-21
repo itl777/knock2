@@ -5,7 +5,7 @@
 除了預約服務，我們還提供多元化的互動功能。您可以自行開團或加入他人的團隊，並在專屬留言板上與團內成員互動交流。此外，我們還銷售各類桌上遊戲，讓您能夠在家中或與朋友一同享受遊戲的樂趣。
 
 ## 網站架構
-![IMG](./READMEIMG/1.png)
+![IMG](./README_IMG/1.png)
 
 ## 負責功能
 桌遊商城：商品列表展示商品，並有搜尋、篩選及收藏功能；可將商品加入購物車、使用綠界付款。
@@ -13,12 +13,12 @@
 客服聊天室：即時客服一對一諮詢，並可使用emoji、可愛貼圖及圖片上傳功能。
 
 ## 網站設計
-![IMG](./READMEIMG/3.png)
-![IMG](./READMEIMG/4.png)
-![IMG](./READMEIMG/5.png)
-![IMG](./READMEIMG/6.png)
+![IMG](./README_IMG/3.png)
+![IMG](./README_IMG/4.png)
+![IMG](./README_IMG/5.png)
+![IMG](./README_IMG/6.png)
 
 
 
 ## 開發及使用技術
-![IMG](./READMEIMG/2.png)
+![IMG](./README_IMG/2.png)
