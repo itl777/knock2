@@ -84,6 +84,13 @@ app.use("/productCMS", pdRouter);
 app.use("/warehousing", whRouter);
 
 
+// CMS登入頁面
+app.get("/login",async (req,res)=>{
+  res.locals.title ="登入 | " + res.locals.title;
+  res.locals.pageName ="pd_login";
+  res.render("login")
+})
+
 
 // 偵聽 port
 app.listen(3001, function () {

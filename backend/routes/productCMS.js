@@ -112,6 +112,9 @@ router.post("/add", async (req, res) => {
   body.created_at = new Date();
 //   連結會員名
   // body.last_modified_by=req.session.admin.nickname;
+  body.last_modified_by=req.my_jwt.data.nickname
+
+
   const sql = "INSERT INTO product_management SET ?";
   const [result] = await db.query(sql, [body]);
   res.json({
@@ -204,6 +207,8 @@ router.put("/api/:product_id", upload.none(), async (req, res) => {
 
   //   連結會員名
   // req.body.last_modified_by=req.session.admin.nickname;
+  body.last_modified_by=req.my_jwt.data.nickname
+
 
   try {
     const sql = "UPDATE `product_management` SET ? WHERE product_id =? ";
