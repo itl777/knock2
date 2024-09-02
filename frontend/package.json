@@ -2,11 +2,15 @@
   "name": "next-base",
   "version": "1.2",
   "private": true,
+  "homepage": "https://itl777.github.io/knock2",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
@@ -28,6 +32,7 @@
     "emoji-picker-react": "^4.11.1",
     "firebase": "^10.12.3",
     "framer-motion": "^11.3.4",
+    "gh-pages": "^6.1.1",
     "hover.css": "^2.3.2",
     "lodash": "^4.17.21",
     "matter-js": "^0.20.0",
@@ -50,6 +55,7 @@
     "react-slick": "^0.30.2",
     "react-spinners": "^0.14.1",
     "sass": "^1.77.6",
+    "serve": "^14.0.1",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.7.5",
     "styled-components": "^6.1.12",
