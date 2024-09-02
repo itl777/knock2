@@ -35,4 +35,10 @@ const nextConfig = {
   // },
 }
 
-module.exports = nextConfig
+// module.exports = nextConfig
+module.exports = {
+  output: 'export',
+  images: {
+    unoptimized: true, // 禁用圖片優化
+  },
+};
