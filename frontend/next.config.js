@@ -35,10 +35,10 @@ const nextConfig = {
   // },
 }
 
-// module.exports = nextConfig
-module.exports = {
-  output: 'export',
-  images: {
-    unoptimized: true, // 禁用圖片優化
-  },
-};
+module.exports = nextConfig
+// module.exports = {
+//   output: 'export', // 設置靜態導出
+//   images: {
+//     unoptimized: true, // 禁用圖片優化
+//   },
+// };
